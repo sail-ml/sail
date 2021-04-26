@@ -1,0 +1,94 @@
+\hypertarget{classTensorStorage}{}\section{Tensor\+Storage Class Reference}
+\label{classTensorStorage}\index{Tensor\+Storage@{Tensor\+Storage}}
+
+
+Collaboration diagram for Tensor\+Storage\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classTensorStorage__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a185e38a60bf24d574dfa2030275bbd02}\label{classTensorStorage_a185e38a60bf24d574dfa2030275bbd02}} 
+{\bfseries Tensor\+Storage} (int nd, void $\ast$in\+\_\+data, int64\+\_\+t in\+\_\+offset, Dtype dt, Tensor\+Shape st, Tensor\+Shape sh)
+\item 
+\mbox{\Hypertarget{classTensorStorage_a687c22d0f1c4ca429feb2b354096429e}\label{classTensorStorage_a687c22d0f1c4ca429feb2b354096429e}} 
+void {\bfseries reshape} (const Tensor\+Size new\+\_\+shape)
+\item 
+\mbox{\Hypertarget{classTensorStorage_ac2016f8cbd28d2382a505177afe78323}\label{classTensorStorage_ac2016f8cbd28d2382a505177afe78323}} 
+void {\bfseries expand\+\_\+dims} (const int dim)
+\item 
+\mbox{\Hypertarget{classTensorStorage_a8667175f454eb36f70dc7e9dfc185ad4}\label{classTensorStorage_a8667175f454eb36f70dc7e9dfc185ad4}} 
+void {\bfseries free\+\_\+data} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_afe0e9c666e89dea2fe69c97ffcd4a4c9}\label{classTensorStorage_afe0e9c666e89dea2fe69c97ffcd4a4c9}} 
+void $\ast$ {\bfseries operator\mbox{[}$\,$\mbox{]}} (int index)
+\item 
+\mbox{\Hypertarget{classTensorStorage_a3a4116b14541e8cae21110db98f5f7f5}\label{classTensorStorage_a3a4116b14541e8cae21110db98f5f7f5}} 
+Tensor\+Size {\bfseries get\+Shape} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_a239fb3bb35fb9db89b8413041c038654}\label{classTensorStorage_a239fb3bb35fb9db89b8413041c038654}} 
+std\+::string {\bfseries get\+Shape\+String} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_ab32ca2aaa137c68c0c3ceea76575022f}\label{classTensorStorage_ab32ca2aaa137c68c0c3ceea76575022f}} 
+std\+::string {\bfseries get\+Stridetring} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_acb84883442f719b2d7aeda4dd743ef20}\label{classTensorStorage_acb84883442f719b2d7aeda4dd743ef20}} 
+std\+::vector$<$ Tensor\+Size $>$ {\bfseries step\+\_\+back} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_a934218af682e938ebe22e89b2ae5edf4}\label{classTensorStorage_a934218af682e938ebe22e89b2ae5edf4}} 
+size\+\_\+t {\bfseries get\+Dtype\+Size} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_a618069b19b2b9171d6b07d874696cf27}\label{classTensorStorage_a618069b19b2b9171d6b07d874696cf27}} 
+size\+\_\+t {\bfseries get\+Total\+Size} ()
+\item 
+\mbox{\Hypertarget{classTensorStorage_a21a43d53a12ce9a37e02909ead533c8f}\label{classTensorStorage_a21a43d53a12ce9a37e02909ead533c8f}} 
+int {\bfseries numel} () const
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classTensorStorage_adc86cd3668de177f7f53895405d602f5}\label{classTensorStorage_adc86cd3668de177f7f53895405d602f5}} 
+static \hyperlink{classTensorStorage}{Tensor\+Storage} {\bfseries create\+Empty} (int nd, void $\ast$in\+\_\+data, int64\+\_\+t in\+\_\+offset, Dtype dt, Tensor\+Size st, Tensor\+Size sh)
+\item 
+\mbox{\Hypertarget{classTensorStorage_a7efa8bff4fad4642f035a28de2e0b494}\label{classTensorStorage_a7efa8bff4fad4642f035a28de2e0b494}} 
+static \hyperlink{classTensorStorage}{Tensor\+Storage} {\bfseries create\+Empty} (int nd, void $\ast$in\+\_\+data, int64\+\_\+t in\+\_\+offset, Dtype dt, Tensor\+Size st, Tensor\+Size sh, \hyperlink{structalignemnt__information}{alignemnt\+\_\+information} i)
+\item 
+\mbox{\Hypertarget{classTensorStorage_a91968d3da292d7069839e13ab9307110}\label{classTensorStorage_a91968d3da292d7069839e13ab9307110}} 
+static void {\bfseries check\+\_\+dimensions\+\_\+elementwise} (\hyperlink{classTensorStorage}{Tensor\+Storage} a, \hyperlink{classTensorStorage}{Tensor\+Storage} b)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a1288f01bbdaa9f55e685acc2df76b364}\label{classTensorStorage_a1288f01bbdaa9f55e685acc2df76b364}} 
+int {\bfseries arr\+\_\+numel}
+\item 
+\mbox{\Hypertarget{classTensorStorage_ac18d1ac2fe325bc1ae3bc988cb9058c2}\label{classTensorStorage_ac18d1ac2fe325bc1ae3bc988cb9058c2}} 
+int {\bfseries ndim}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a20ff45e34fbaa71b705f48b0706d1898}\label{classTensorStorage_a20ff45e34fbaa71b705f48b0706d1898}} 
+Dtype {\bfseries dtype}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a175bc84e9fef71edb10e9e8a7473ac82}\label{classTensorStorage_a175bc84e9fef71edb10e9e8a7473ac82}} 
+void $\ast$ {\bfseries data}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a82acc1fa796de34ac62930be0e3e1c99}\label{classTensorStorage_a82acc1fa796de34ac62930be0e3e1c99}} 
+int64\+\_\+t {\bfseries offset}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a9d62e01a2163a8c4d4efbfc2b9e1076f}\label{classTensorStorage_a9d62e01a2163a8c4d4efbfc2b9e1076f}} 
+Tensor\+Size {\bfseries strides}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a547b231dcfbc9c679860661a4e2291f6}\label{classTensorStorage_a547b231dcfbc9c679860661a4e2291f6}} 
+Tensor\+Size {\bfseries shape}
+\item 
+\mbox{\Hypertarget{classTensorStorage_a6d31da541697683ab7505bf42542d544}\label{classTensorStorage_a6d31da541697683ab7505bf42542d544}} 
+\hyperlink{structalignemnt__information}{alignemnt\+\_\+information} {\bfseries info}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/tuckersiegel/\+N\+V\+M\+E/sail/sail/csrc/src/Tensor\+\_\+storage.\+h\end{DoxyCompactItemize}
