@@ -1,13 +1,13 @@
-#pragma once 
+#pragma once
 
 #include <Python.h>
-#include "numpy/arrayobject.h"
 #include <structmember.h>
+#include <chrono>
+#include <iostream>
 #include "../../src/Tensor.h"
 #include "../../src/ops/reduction.h"
 #include "../py_tensor/py_tensor.h"
-#include <chrono>
-#include <iostream>
+#include "numpy/arrayobject.h"
 
 #include "../macros.h"
 
@@ -16,8 +16,7 @@
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT ops_sum(PyObject* self, PyObject *args) {
-
+RETURN_OBJECT ops_sum(PyObject* self, PyObject* args) {
     PyTensor* t1;
 
     if (!PyArg_ParseTuple(args, "O", &t1)) {
@@ -26,16 +25,14 @@ RETURN_OBJECT ops_sum(PyObject* self, PyObject *args) {
     }
 
     PyTensor* ret_class;
-    ret_class = (PyTensor *) PyTensorType.tp_alloc(&PyTensorType, 0);
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor);
 
     ret_class->ndim = ret_class->tensor.storage.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
-    return (PyObject *) ret_class;
+    return (PyObject*)ret_class;
 }
 
 /** end block **/
-
-

@@ -1,15 +1,15 @@
 #pragma once
 
 #include <Python.h>
-#include "numpy/arrayobject.h"
-#include "py_tensor.h"
 #include <structmember.h>
-#include "../../src/Tensor.h"
-#include "../../src/error.h"
-#include "../../src/dtypes.h"
 #include <chrono>
 #include <iostream>
+#include "../../src/Tensor.h"
+#include "../../src/dtypes.h"
+#include "../../src/error.h"
 #include "../macros.h"
+#include "numpy/arrayobject.h"
+#include "py_tensor.h"
 
 RETURN_OBJECT PyDimensionError;
 
@@ -18,17 +18,16 @@ RETURN_OBJECT PyDimensionError;
  * op = [+, -, *, /]
  */
 
-
 RETURN_OBJECT PyTensor_$name$(PyObject *self, PyObject *other) {
-
     BINARY_TENSOR_TYPE_CHECK(self, other);
 
-    PyTensor* ret_class;
-    ret_class = (PyTensor *) PyTensorType.tp_alloc(&PyTensorType, 0);
+    PyTensor *ret_class;
+    ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     try {
-        ret_class->tensor = ((PyTensor*)self)->tensor $op$ ((PyTensor*)other)->tensor;
-    } catch (DimensionError& err) {
+        ret_class->tensor =
+            ((PyTensor *)self)->tensor $op$((PyTensor *)other)->tensor;
+    } catch (DimensionError &err) {
         PyObject *tuple = PyTuple_New(2);
         PyTuple_SetItem(tuple, 0, PyUnicode_FromString(err.what()));
         PyTuple_SetItem(tuple, 1, PyLong_FromLong(257));
@@ -36,10 +35,10 @@ RETURN_OBJECT PyTensor_$name$(PyObject *self, PyObject *other) {
         return NULL;
     }
 
-    ret_class->ndim = ((PyTensor*)self)->ndim;
-    ret_class->dtype = ((PyTensor*)self)->dtype;
+    ret_class->ndim = ((PyTensor *)self)->ndim;
+    ret_class->dtype = ((PyTensor *)self)->dtype;
 
-    return (PyObject *) ret_class;
+    return (PyObject *)ret_class;
 }
 
 /** end block **/

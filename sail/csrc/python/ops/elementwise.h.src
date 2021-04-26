@@ -1,13 +1,13 @@
-#pragma once 
+#pragma once
 
 #include <Python.h>
-#include "numpy/arrayobject.h"
 #include <structmember.h>
+#include <chrono>
+#include <iostream>
 #include "../../src/Tensor.h"
 #include "../../src/ops/elementwise.h"
 #include "../py_tensor/py_tensor.h"
-#include <chrono>
-#include <iostream>
+#include "numpy/arrayobject.h"
 
 #include "../macros.h"
 
@@ -16,8 +16,7 @@
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT ops_$name$(PyObject* self, PyObject *args) {
-
+RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
     PyTensor* t1;
     PyTensor* t2;
 
@@ -29,16 +28,14 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject *args) {
     BINARY_TENSOR_TYPE_CHECK(t1, t2);
 
     PyTensor* ret_class;
-    ret_class = (PyTensor *) PyTensorType.tp_alloc(&PyTensorType, 0);
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = ((PyTensor*)t1)->tensor $op$ ((PyTensor*)t2)->tensor;
+    ret_class->tensor = ((PyTensor*)t1)->tensor $op$((PyTensor*)t2)->tensor;
 
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
-    return (PyObject *) ret_class;
+    return (PyObject*)ret_class;
 }
 
 /** end block **/
-
-

@@ -3,8 +3,8 @@
 #include <iostream>
 
 #include "../../Tensor.h"
-#include "../../types.h"
 #include "../../factories.h"
+#include "../../types.h"
 
 namespace sail {
 
@@ -15,7 +15,6 @@ inline Tensor expand_dims(const Tensor& tensor1, const int dim) {
     tensor1.reshape(s);
     return tensor1;
 }
-}
+}  // namespace ops
 
-
-} // end sail
+}  // namespace sail

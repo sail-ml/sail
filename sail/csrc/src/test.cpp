@@ -1,23 +1,17 @@
 #include "Tensor.h"
 #include "dtypes.h"
 
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 #include <iostream>
-
-namespace py = pybind11;
 
 #define MAX_VAL 320000
 
 int main() {
-
     double x[MAX_VAL];
     double y[MAX_VAL];
     int ndim = 1;
     Dtype dt = Dtype::sFloat64;
-    std::vector<py::ssize_t> st= {8};
-    std::vector<py::ssize_t> sh= {MAX_VAL};
-
+    TensorSize st = {8};
+    TensorSize sh = {MAX_VAL};
 
     for (int i = 0; i < MAX_VAL; i++) {
         x[i] = 0.01;
@@ -42,9 +36,5 @@ int main() {
     t1.free();
     t2.free();
 
-
     return 0;
-
-
-
 }

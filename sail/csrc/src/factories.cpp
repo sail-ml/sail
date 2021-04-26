@@ -3,8 +3,6 @@
 
 #include "factories.h"
 
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 #include <iostream>
 #include <vector>
 
@@ -19,7 +17,7 @@ namespace sail {
 
 Tensor empty(int ndims, Dtype dt, TensorSize strides, TensorSize shape) {
     auto size = GetDtypeSize(dt);
-    for (py::ssize_t value : shape) {
+    for (long value : shape) {
         size = size * value;
     }
     alignemnt_information info = getAlignment(dt);
@@ -32,7 +30,7 @@ Tensor empty(int ndims, Dtype dt, TensorSize strides, TensorSize shape) {
 }
 Tensor copy(Tensor t) {
     auto size = GetDtypeSize(t.storage.dtype);
-    for (py::ssize_t value : t.storage.shape) {
+    for (long value : t.storage.shape) {
         size = size * value;
     }
     alignemnt_information info = getAlignment(t.storage.dtype);

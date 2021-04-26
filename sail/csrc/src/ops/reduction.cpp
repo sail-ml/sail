@@ -18,5 +18,5 @@ Tensor mean(const Tensor& tensor1) {
     return empty_tensor;
 }
 
-}
-} // end sail
+}  // namespace ops
+}  // namespace sail

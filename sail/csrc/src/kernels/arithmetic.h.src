@@ -5,8 +5,6 @@
 #include "../Tensor.h"
 #include "base.h"
 
-
-
 namespace sail {
 
 /** begin block
@@ -16,32 +14,33 @@ namespace sail {
  */
 
 class $name$TTKernel : public Kernel {
-    public:
-        void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
-            launch_arithmetic(t1.storage.dtype, [&](auto pt) {
-                // std::cout << decltype(pt)::type << std::endl;
-                using T = typename decltype(pt)::type;    
-                using avx_name = typename decltype(pt)::avx_type;    
-                struct Impl {                                                                                        
-                    inline void call_base(T x1, T x2, T& out) {     
-                        out = x1 $baseOp$ x2;  
-                    }       
-                    inline avx_name avx_call(avx_name a, avx_name b) {
-                        return _mm256_$avxOp$_pd(a,b);
-                    }                                                                                 
-                    inline void call_avx_aligned(avx_name a, avx_name b, T* out) {
-                        avx_name res = avx_call(a, b);
-                        _mm256_store_pd(out, res);
-                    }                                                                              
-                    inline void call_avx_non_aligned(avx_name a, avx_name b, T* out) {
-                        avx_name res = avx_call(a, b);
-                        _mm256_storeu_pd(out, res);
-                    }                                                                              
-                };   
+   public:
+    void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
+        launch_arithmetic(t1.storage.dtype, [&](auto pt) {
+            // std::cout << decltype(pt)::type << std::endl;
+            using T = typename decltype(pt)::type;
+            using avx_name = typename decltype(pt)::avx_type;
+            struct Impl {
+                inline void call_base(T x1, T x2, T& out) {
+                    out = x1 $baseOp$ x2;
+                }
+                inline avx_name avx_call(avx_name a, avx_name b) {
+                    return _mm256_$avxOp$_pd(a, b);
+                }
+                inline void call_avx_aligned(avx_name a, avx_name b, T* out) {
+                    avx_name res = avx_call(a, b);
+                    _mm256_store_pd(out, res);
+                }
+                inline void call_avx_non_aligned(avx_name a, avx_name b,
+                                                 T* out) {
+                    avx_name res = avx_call(a, b);
+                    _mm256_storeu_pd(out, res);
+                }
+            };
 
-                ElemetwiseAVX<T, Impl, avx_name>(Impl{}, t1, t2, out_tensor);
-            });
-        }
+            ElemetwiseAVX<T, Impl, avx_name>(Impl{}, t1, t2, out_tensor);
+        });
+    }
 };
 
 /** end block **/
@@ -53,35 +52,35 @@ class $name$TTKernel : public Kernel {
  */
 
 class $name$TSKernel : public Kernel {
-    public:
-        void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
-            launch_arithmetic(t1.storage.dtype, [&](auto pt) {
-                // std::cout << decltype(pt)::type << std::endl;
-                using T = typename decltype(pt)::type;    
-                using avx_name = typename decltype(pt)::avx_type;    
-                struct Impl {                                                                                        
-                    inline void call_base(T x1, T x2, T& out) {     
-                        out = x1 $baseOp$ x2;  
-                    }       
-                    inline avx_name avx_call(avx_name a, avx_name b) {
-                        return _mm256_$avxOp$_pd(a,b);
-                    }                                                                                 
-                    inline void call_avx_aligned(avx_name a, avx_name b, T* out) {
-                        avx_name res = avx_call(a, b);
-                        _mm256_store_pd(out, res);
-                    }                                                                              
-                    inline void call_avx_non_aligned(avx_name a, avx_name b, T* out) {
-                        avx_name res = avx_call(a, b);
-                        _mm256_storeu_pd(out, res);
-                    }                                                                                
-                };   
+   public:
+    void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
+        launch_arithmetic(t1.storage.dtype, [&](auto pt) {
+            // std::cout << decltype(pt)::type << std::endl;
+            using T = typename decltype(pt)::type;
+            using avx_name = typename decltype(pt)::avx_type;
+            struct Impl {
+                inline void call_base(T x1, T x2, T& out) {
+                    out = x1 $baseOp$ x2;
+                }
+                inline avx_name avx_call(avx_name a, avx_name b) {
+                    return _mm256_$avxOp$_pd(a, b);
+                }
+                inline void call_avx_aligned(avx_name a, avx_name b, T* out) {
+                    avx_name res = avx_call(a, b);
+                    _mm256_store_pd(out, res);
+                }
+                inline void call_avx_non_aligned(avx_name a, avx_name b,
+                                                 T* out) {
+                    avx_name res = avx_call(a, b);
+                    _mm256_storeu_pd(out, res);
+                }
+            };
 
-                ElemetwiseScalarAVX<T, Impl, avx_name>(Impl{}, t1, t2, out_tensor);
-            });
-        }
+            ElemetwiseScalarAVX<T, Impl, avx_name>(Impl{}, t1, t2, out_tensor);
+        });
+    }
 };
 
 /** end block **/
 
-} // namespace end
-
+}  // namespace sail

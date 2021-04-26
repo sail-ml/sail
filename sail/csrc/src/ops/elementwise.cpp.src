@@ -1,46 +1,45 @@
 #include <iostream>
 
-#include "elementwise.h"
 #include "../Tensor.h"
 #include "../Tensor_storage.h"
 #include "../kernels/kernel.h"
+#include "elementwise.h"
 
 #include "../factories.h"
-
 
 namespace sail {
 
 namespace ops {
 
-
-/** begin block 
+/** begin block
  * name = [add, subtract, divide, multiply]
  * kName = [Add, Sub, Divide, Multiply]
  */
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
-    TensorStorage::check_dimensions_elementwise(tensor1.storage, tensor2.storage);
+    TensorStorage::check_dimensions_elementwise(tensor1.storage,
+                                                tensor2.storage);
     Tensor empty_tensor;
-    if ((tensor1.isScalar() && tensor2.isScalar()) || (!tensor1.isScalar() && !tensor2.isScalar())) {
-        empty_tensor = empty(
-            tensor1.storage.ndim, tensor1.storage.dtype, tensor1.storage.strides, tensor1.storage.shape);
+    if ((tensor1.isScalar() && tensor2.isScalar()) ||
+        (!tensor1.isScalar() && !tensor2.isScalar())) {
+        empty_tensor = empty(tensor1.storage.ndim, tensor1.storage.dtype,
+                             tensor1.storage.strides, tensor1.storage.shape);
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor);
     } else if (tensor1.isScalar() && !tensor2.isScalar()) {
-        empty_tensor = empty(
-            tensor2.storage.ndim, tensor2.storage.dtype, tensor2.storage.strides, tensor2.storage.shape);
+        empty_tensor = empty(tensor2.storage.ndim, tensor2.storage.dtype,
+                             tensor2.storage.strides, tensor2.storage.shape);
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor);
     } else {
-        empty_tensor = empty(
-            tensor1.storage.ndim, tensor1.storage.dtype, tensor1.storage.strides, tensor1.storage.shape);
+        empty_tensor = empty(tensor1.storage.ndim, tensor1.storage.dtype,
+                             tensor1.storage.strides, tensor1.storage.shape);
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor);
     }
-    
+
     return empty_tensor;
 }
 
 /** end block **/
 
-} // end ops
+}  // namespace ops
 
-} // end sail
-
+}  // namespace sail
