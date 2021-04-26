@@ -123,7 +123,8 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
         //     std::forward<Args>(args)...);
         // // case Dtype::sFloat16:
         // //     return std::forward<F>(f)(PrimitiveType<chainerx::Float16>{},
-        // std::forward<Args>(args)...); case Dtype::sFloat32:
+        // std::forward<Args>(args)...); 
+        // case Dtype::sFloat32:
         //     return std::forward<F>(f)(PrimitiveType<float>{},
         //     std::forward<Args>(args)...);
         case Dtype::sFloat64:

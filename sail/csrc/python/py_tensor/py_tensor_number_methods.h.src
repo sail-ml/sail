@@ -4,6 +4,7 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
+#include "../ops/elementwise.h"
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
 #include "../../src/error.h"
@@ -18,27 +19,22 @@ RETURN_OBJECT PyDimensionError;
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT PyTensor_$name$(PyObject *self, PyObject *other) {
-    BINARY_TENSOR_TYPE_CHECK(self, other);
+RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
 
-    PyTensor *ret_class;
-    ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+    sail::Tensor tensor1;
+    sail::Tensor tensor2;
+    
+    NUMERIC_PROCESS(t1, t2);
 
-    try {
-        ret_class->tensor =
-            ((PyTensor *)self)->tensor $op$((PyTensor *)other)->tensor;
-    } catch (DimensionError &err) {
-        PyObject *tuple = PyTuple_New(2);
-        PyTuple_SetItem(tuple, 0, PyUnicode_FromString(err.what()));
-        PyTuple_SetItem(tuple, 1, PyLong_FromLong(257));
-        PyErr_SetObject(PyDimensionError, tuple);
-        return NULL;
-    }
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->ndim = ((PyTensor *)self)->ndim;
-    ret_class->dtype = ((PyTensor *)self)->dtype;
+    ret_class->tensor = tensor1 $op$ tensor2;
 
-    return (PyObject *)ret_class;
+    ret_class->ndim = ret_class->tensor.storage.ndim;
+    ret_class->dtype = ((PyTensor*)t1)->dtype;
+
+    return (PyObject*)ret_class;
 }
 
 /** end block **/

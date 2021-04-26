@@ -97,43 +97,44 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     // if (omp)
     // auto start = high_resolution_clock::now();
 
-#ifdef USE_AVX2
-    if (omp) {
-        if (aligned) {
-#pragma omp parallel for
-            for (int i = 0; i < numel; i += jump) {
-                avx_name a = _mm256_load_pd(&p1[i]);
-                avx_name b = _mm256_load_pd(&p2[0]);
-                op.call_avx_aligned(a, b, &p3[i]);
-            }
-        } else {
-#pragma omp parallel for
-            for (int i = 0; i < numel; i += jump) {
-                avx_name a = _mm256_loadu_pd(&p1[i]);
-                avx_name b = _mm256_loadu_pd(&p2[0]);
-                op.call_avx_non_aligned(a, b, &p3[i]);
-            }
-        }
-    } else {
-        if (aligned) {
-            for (int i = 0; i < numel; i += jump) {
-                avx_name a = _mm256_load_pd(&p1[i]);
-                avx_name b = _mm256_load_pd(&p2[0]);
-                op.call_avx_aligned(a, b, &p3[i]);
-            }
-        } else {
-            for (int i = 0; i < numel; i += jump) {
-                avx_name a = _mm256_loadu_pd(&p1[i]);
-                avx_name b = _mm256_loadu_pd(&p2[0]);
-                op.call_avx_non_aligned(a, b, &p3[i]);
-            }
-        }
-    }
+// #ifdef USE_AVX2
+//     if (omp) {
+//         if (aligned) {
+// #pragma omp parallel for
+//             for (int i = 0; i < numel; i += jump) {
+//                 avx_name a = _mm256_load_pd(&p1[i]);
+//                 avx_name b = _mm256_load_pd(&p2[0]);
+//                 op.call_avx_aligned(a, b, &p3[i]);
+//             }
+//         } else {
+// #pragma omp parallel for
+//             for (int i = 0; i < numel; i += jump) {
+//                 avx_name a = _mm256_loadu_pd(&p1[i]);
+//                 avx_name b = _mm256_loadu_pd(&p2[0]);
+//                 op.call_avx_non_aligned(a, b, &p3[i]);
+//             }
+//         }
+//     } else {
+//         if (aligned) {
+//             for (int i = 0; i < numel; i += jump) {
+//                 avx_name a = _mm256_load_pd(&p1[i]);
+//                 avx_name b = _mm256_load_pd(&p2[0]);
+//                 op.call_avx_aligned(a, b, &p3[i]);
+//             }
+//         } else {
+//             for (int i = 0; i < numel; i += jump) {
+//                 avx_name a = _mm256_loadu_pd(&p1[i]);
+//                 avx_name b = _mm256_loadu_pd(&p2[0]);
+//                 op.call_avx_non_aligned(a, b, &p3[i]);
+//             }
+//         }
+//     }
 
-#else
+// #else
     if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
+            // std::cout << p1[i] << ", " << p2[0] << std::endl;
             op.call_base(p1[i], p2[0], p3[i]);
         }
 
@@ -142,7 +143,7 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
             op.call_base(p1[i], p2[0], p3[i]);
         }
     }
-#endif
+// #endif
     // auto stop = high_resolution_clock::now();
     // auto duration = duration_cast<microseconds>(stop - start);
     // std::cout << duration.count() << std::endl;

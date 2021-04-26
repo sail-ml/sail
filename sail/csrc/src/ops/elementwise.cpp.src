@@ -17,8 +17,8 @@ namespace ops {
  */
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
-    TensorStorage::check_dimensions_elementwise(tensor1.storage,
-                                                tensor2.storage);
+    // TensorStorage::check_dimensions_elementwise(tensor1.storage,
+    //                                             tensor2.storage);
     Tensor empty_tensor;
     if ((tensor1.isScalar() && tensor2.isScalar()) ||
         (!tensor1.isScalar() && !tensor2.isScalar())) {

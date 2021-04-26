@@ -72,7 +72,9 @@ Tensor Tensor::operator[](const int index) {
     return e;
 }
 
-Tensor Tensor::operator+(const Tensor& other) { return ops::add(*this, other); }
+Tensor Tensor::operator+(const Tensor& other) { 
+    return ops::add(*this, other); 
+}
 Tensor Tensor::operator-(const Tensor& other) {
     return ops::subtract(*this, other);
 }

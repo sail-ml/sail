@@ -91,6 +91,12 @@ arr1 = np.random.uniform(0, 1, (32000))#, 32))
 
 x1 = sail.Tensor(arr1)
 
+# x3 = x1 + x1
+# x3 = sail.multiply(x1, 2.0)
+x3 = x1 * 2.0
+print (x1.numpy())
+print (x3.numpy())
+
 print (np.sum(arr1))
 print (sail.sum(x1).numpy())
 
