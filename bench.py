@@ -93,3 +93,5 @@ x1 = sail.Tensor(arr1)
 
 print (np.sum(arr1))
 print (sail.sum(x1).numpy())
+
+print (sail.add.__doc__)

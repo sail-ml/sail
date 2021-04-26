@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-fpermissive"
+
 
 #include <iostream>
 #include <iterator>

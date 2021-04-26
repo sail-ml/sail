@@ -56,7 +56,7 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     if (dim < -1 || dim > t1->tensor.storage.ndim) {
         PyErr_SetString(
             PyExc_ValueError,
-            ("dim must be in the range of [-1, %s]", t1->tensor.storage.ndim));
+            ("dim must be in the range of [-1, ndim]"));
         return NULL;
     }
 

@@ -13,7 +13,7 @@ set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -Ofast -pthread -march=native -fpermissive -fopenmp -ffast-math -mavx2 -Wno-unused-variable")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -march=native -fpermissive -fopenmp -ffast-math -mavx2 -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 
 
 add_subdirectory(src)
