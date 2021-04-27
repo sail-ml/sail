@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "../Tensor.h"
-#include "../Tensor_storage.h"
 #include "../kernels/kernel.h"
 #include "elementwise.h"
 
@@ -16,22 +15,22 @@ namespace ops {
  * kName = [Add, Sub, Divide, Multiply]
  */
 
-Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
-    // TensorStorage::check_dimensions_elementwise(tensor1.storage,
-    //                                             tensor2.storage);
+Tensor $name$(Tensor& tensor1, Tensor& tensor2) {
+    
     Tensor empty_tensor;
-    if ((tensor1.isScalar() && tensor2.isScalar()) ||
-        (!tensor1.isScalar() && !tensor2.isScalar())) {
-        empty_tensor = empty(tensor1.storage.ndim, tensor1.storage.dtype,
-                             tensor1.storage.strides, tensor1.storage.shape);
+
+    if ((tensor1.is_scalar() && tensor2.is_scalar()) ||
+        (!tensor1.is_scalar() && !tensor2.is_scalar())) {
+        empty_tensor = empty(tensor1.ndim, tensor1.dtype,
+                             tensor1.strides, tensor1.shape);
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor);
-    } else if (tensor1.isScalar() && !tensor2.isScalar()) {
-        empty_tensor = empty(tensor2.storage.ndim, tensor2.storage.dtype,
-                             tensor2.storage.strides, tensor2.storage.shape);
+    } else if (tensor1.is_scalar() && !tensor2.is_scalar()) {
+        empty_tensor = empty(tensor2.ndim, tensor2.dtype,
+                             tensor2.strides, tensor2.shape);
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor);
     } else {
-        empty_tensor = empty(tensor1.storage.ndim, tensor1.storage.dtype,
-                             tensor1.storage.strides, tensor1.storage.shape);
+        empty_tensor = empty(tensor1.ndim, tensor1.dtype,
+                             tensor1.strides, tensor1.shape);
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor);
     }
 

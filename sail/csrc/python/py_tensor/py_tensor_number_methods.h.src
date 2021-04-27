@@ -31,7 +31,7 @@ RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
 
     ret_class->tensor = tensor1 $op$ tensor2;
 
-    ret_class->ndim = ret_class->tensor.storage.ndim;
+    ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;

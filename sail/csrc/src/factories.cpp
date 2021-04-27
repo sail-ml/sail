@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "Tensor.h"
-#include "Tensor_storage.h"
 #include "dtypes.h"
 #include "error.h"
 #include "types.h"
@@ -23,33 +22,40 @@ Tensor empty(int ndims, Dtype dt, TensorSize strides, TensorSize shape) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(size, info.alignment, info.dtype_size);
 
-    TensorStorage store =
-        TensorStorage::createEmpty(ndims, data, 0, dt, strides, shape, info);
+    TensorSize new_strides;
+    size_t dt_size = GetDtypeSize(dt);
+    for (size_t s : shape) {
+        new_strides.push_back(dt_size * s);
+    }
 
-    return Tensor(store);
+    Tensor _empty = Tensor::move(ndims, data, dt, new_strides, shape);
+
+    return _empty;
 }
 Tensor copy(Tensor t) {
-    auto size = GetDtypeSize(t.storage.dtype);
-    for (long value : t.storage.shape) {
+    auto size = GetDtypeSize(t.dtype);
+    for (long value : t.shape) {
         size = size * value;
     }
-    alignemnt_information info = getAlignment(t.storage.dtype);
+    alignemnt_information info = getAlignment(t.dtype);
     void* data =
-        _realloc_align(t.storage.data, size, info.alignment, info.dtype_size);
+        _realloc_align(t.data, size, info.alignment, info.dtype_size);
 
-    TensorStorage store =
-        TensorStorage::createEmpty(t.storage.ndim, data, 0, t.storage.dtype,
-                                   t.storage.strides, t.storage.shape, info);
+    Tensor _empty = Tensor(t.ndim, data, t.dtype, t.strides, t.shape);
 
-    return Tensor(store);
+    return _empty;
+    return Tensor();
 }
 
 Tensor empty_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
-    TensorStorage store =
-        TensorStorage::createEmpty(0, data, 0, dt, {info.dtype_size}, {}, info);
-    return Tensor(store);
+    int zero = 0;
+    TensorSize strides =  {info.dtype_size};
+    TensorSize shape = {};
+    Tensor _empty = Tensor(zero, data, dt, strides, shape);
+
+    return _empty;
 }
 
 }  // namespace sail

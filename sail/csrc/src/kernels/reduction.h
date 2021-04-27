@@ -17,7 +17,7 @@ namespace sail {
 class SumTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, Tensor& out_tensor) {
-        launch_arithmetic(t1.storage.dtype, [&](auto pt) {
+        launch_arithmetic(t1.dtype, [&](auto pt) {
             // std::cout << decltype(pt)::type << std::endl;
             using T = typename decltype(pt)::type;
             using avx_name = typename decltype(pt)::avx_type;
@@ -35,9 +35,9 @@ class MeanTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, Tensor& out_tensor) {
         SumTKernel().execute(t1, out_tensor);
-        Tensor lt = empty_scalar(out_tensor.storage.dtype);
-        int size = out_tensor.storage.numel();
-        lt.storage.data = &size;
+        Tensor lt = empty_scalar(out_tensor.dtype);
+        int size = out_tensor.numel();
+        lt.data = &size;
         out_tensor = out_tensor / lt;
         lt.free();
     }

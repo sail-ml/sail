@@ -86,18 +86,74 @@ def benchmark_shapes(shapes, op, verbose=False):
 # benchmark_shapes(linear_test_shapes, truediv)
 # benchmark_shapes(nd_test_shape, truediv)
 
-arr2 = np.random.uniform(0, 1, (32000))#, 32))
-arr1 = np.random.uniform(0, 1, (32000))#, 32))
+# arr2 = np.random.uniform(0, 1, (32000))#, 32))
+# arr1 = np.random.uniform(0, 1, (32000))#, 32))
+
+# x1 = sail.Tensor(arr1)
+
+# print (sail.mean(x1).numpy())
+
+# # x3 = x1 + x1
+# # x3 = sail.multiply(x1, 2.0)
+# x3 = x1 * x1
+# x3 = x1 * 2.0
+# print (x1.numpy())
+# print (x3.numpy())
+
+# print (np.sum(arr1))
+# print (sail.sum(x1).numpy())
+
+# print (sail.add.__doc__)
+
+
+arr1 = np.random.uniform(0, 100, (32)).astype(np.float64)
+arr2 = np.random.uniform(0, 100, (32)).astype(np.float64)
+
+# print (arr1 // arr2)
+# t = time.time()
+# for i in range(100):
+#     arr1 / 3 
+# print ((time.time() - t)/100)
+# t = time.time()
+# for i in range(100):
+#     arr1 / 3.0 
+# print ((time.time() - t)/100)
 
 x1 = sail.Tensor(arr1)
+# x2 = sail.Tensor(arr2)
+t = time.time()
+for _ in range(100):
+    arr1.astype(np.int32)
+print ((time.time() - t)/100)
+y = sail.cast_int32(x1)
+t = time.time()
+for _ in range(100):
+    y-y
+print ((time.time() - t)/100)
+print (y.numpy())
+# print((y + y).numpy())
+# print((y - y).numpy())
+# print((y * y).numpy())
+# print((y - y).numpy())
+print((y *y).numpy())
+# x2 = x1 / 3.0
+# print (x2.numpy())
 
-# x3 = x1 + x1
-# x3 = sail.multiply(x1, 2.0)
-x3 = x1 * 2.0
-print (x1.numpy())
-print (x3.numpy())
+# print (x1.numpy())
 
-print (np.sum(arr1))
-print (sail.sum(x1).numpy())
+# x3 = sail.add(x1, x2)#x1 + x2
+# print (x3.numpy())
 
-print (sail.add.__doc__)
+# print (x1.numpy())
+# print (sail.cast_int32(x1).numpy())
+# print (x1.numpy())
+
+# x3 = x2 + x1
+# print (x3.numpy())
+# x2 = sail.Tensor(arr2)
+# # print (x1.numpy())
+# x3 = x1 / x2
+# print (x3.numpy())
+# print (dir(arr1))
+# print (arr1.ctypes)
+

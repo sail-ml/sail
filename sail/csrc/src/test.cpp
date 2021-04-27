@@ -30,7 +30,7 @@ int main() {
     //     new_.free();
     // }
 
-    std::cout << *(double*)t1[0].storage.data << std::endl;
+    std::cout << *(double*)t1[0].data << std::endl;
     t1[0];
 
     t1.free();

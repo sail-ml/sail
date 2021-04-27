@@ -15,5 +15,9 @@ static PyMethodDef OpsMethods[] = {
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
 
     {"sum", (PyCFunction)ops_sum, METH_VARARGS, NULL},
+    {"mean", (PyCFunction)ops_mean, METH_VARARGS, NULL},
+
+    {"cast_int32", (PyCFunction)cast_int32, METH_VARARGS, NULL},
+
     {"add_docstring", (PyCFunction)add_docstring, METH_VARARGS, NULL},
     {NULL}};

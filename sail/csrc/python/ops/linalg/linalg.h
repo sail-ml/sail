@@ -38,7 +38,7 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
 
     ret_class->tensor.reshape(size);
 
-    ret_class->ndim = ret_class->tensor.storage.ndim;
+    ret_class->ndim = ret_class->tensor.ndim;
 
     return (PyObject*)ret_class;
 }
@@ -53,7 +53,7 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    if (dim < -1 || dim > t1->tensor.storage.ndim) {
+    if (dim < -1 || dim > t1->tensor.ndim) {
         PyErr_SetString(
             PyExc_ValueError,
             ("dim must be in the range of [-1, ndim]"));

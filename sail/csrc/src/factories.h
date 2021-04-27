@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Tensor.h"
-#include "Tensor_storage.h"
 #include "dtypes.h"
 #include "error.h"
 #include "types.h"

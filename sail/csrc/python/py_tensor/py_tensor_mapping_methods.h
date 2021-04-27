@@ -14,7 +14,7 @@
 RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
     int idx = static_cast<int>(PyLong_AsLong(key));
 
-    if (idx > ((PyTensor *)self)->tensor.storage.numel()) {
+    if (idx > ((PyTensor *)self)->tensor.numel()) {
         return NULL;
     }
 
@@ -26,7 +26,7 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
     // ret_class->base_object = self;
     // Py_INCREF(self);
 
-    ret_class->ndim = ((PyTensor *)ret_class)->tensor.storage.ndim;
+    ret_class->ndim = ((PyTensor *)ret_class)->tensor.ndim;
     ret_class->dtype = ((PyTensor *)self)->dtype;
 
     return (PyObject *)ret_class;

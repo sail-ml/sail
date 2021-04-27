@@ -11,7 +11,7 @@ namespace sail {
 namespace ops {
 
 inline Tensor expand_dims(const Tensor& tensor1, const int dim) {
-    TensorSize s = tensor1.storage.shape;
+    TensorSize s = tensor1.shape;
     tensor1.reshape(s);
     return tensor1;
 }

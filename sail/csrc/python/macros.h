@@ -29,11 +29,11 @@
         new_tensor = sail::empty_scalar(Dtype::sFloat64);\
         double val = PyFloat_AsDouble(number);\
         double *ptr = &val;\
-        memcpy(new_tensor.storage.data, ptr, sizeof(val));\
+        memcpy(new_tensor.data, ptr, sizeof(val));\
     } else if (PyObject_TypeCheck(number, &PyLong_Type)) {\
         new_tensor = sail::empty_scalar(Dtype::sFloat64);\
         new_tensor.free();\
-        new_tensor.storage.data = PyLong_AsVoidPtr(number);\
+        new_tensor.data = PyLong_AsVoidPtr(number);\
     }\
 }
 

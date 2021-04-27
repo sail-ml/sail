@@ -99,10 +99,10 @@ PyTensor_get_ndim(PyTensor *self, void *closure) {
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
     int ndims = self->ndim;
-    long int *shape = self->tensor.getShapePtr();
+    long int *shape = self->tensor.get_shape_ptr();
 
-    int type = self->tensor.getNPTypeNum();
-    void *data = std::move(static_cast<void *>(self->tensor.storage.data));
+    int type = self->tensor.get_np_type_num();
+    void *data = std::move(static_cast<void *>(self->tensor.data));
     Py_INCREF(self);
 
     PyObject *array = PyArray_SimpleNewFromData(ndims, shape, type, data);
