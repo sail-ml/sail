@@ -20,40 +20,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: STATUS INSTALLING GCC
-        run: echo 'INSTALLING GCC'
-      
       - name: Install GCC
         uses: egor-tensin/setup-gcc@v1
         with:
           # Target platform
           platform: x64
           
-      - name: STATUS INSTALLING CMAKE
-        run: echo 'INSTALLING CMAKE'
-          
       - name: get-cmake
         uses: lukka/get-cmake@v3.20.1
-        
-      - name: STATUS INSTALLING PYTHON
-        run: echo 'INSTALLING PYTHON'
           
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
         with:
           python-version: 3.8
           
-      - name: STATUS INSTALLING PYTHON DEPS
-        run: echo 'INSTALLING PYTHON DEPS'
-          
-      - name: Install Python dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          
-      - name: STATUS BUILDING PACKAGE
-        run: echo 'BUILDING PACKAGE'
 
-      - name: build package
+      - name: Build Package
         run: |
           python setup.py install
