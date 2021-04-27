@@ -2,8 +2,11 @@
 
 #include <immintrin.h>
 #include <cstring>
+// #include "Tensor.h"
 #include "error.h"
 #include "utils.h"
+
+// using Tensor = sail::Tensor;
 
 enum class Dtype {
     sBool = 1,
@@ -24,17 +27,11 @@ enum class Dtypekind {
     sFloat,
 };
 
-inline float* cast_to_float(void* x) {
-    return (float*)x;
-}
-inline double* cast_to_double(void* x) {
-    return (double*)x;
-}
-inline int* cast_to_int(void* x) {
-    return (int*)x;
-}
+inline float* cast_to_float(void* x) { return (float*)x; }
+inline double* cast_to_double(void* x) { return (double*)x; }
+inline int* cast_to_int(void* x) { return (int*)x; }
 
-inline __m256i _load_int32(int32_t *data) {
+inline __m256i _load_int32(int32_t* data) {
     int32_t* d = data;
     __m256i* avx_d = (__m256i*)d;
     return _mm256_load_si256(avx_d);
@@ -63,7 +60,6 @@ inline __m256i _avx_int32_div(__m256i veca, __m256i vecb) {
     return veca;
 }
 
-
 struct double_avx {
     using avx_type = __m256d;
     static const auto avx_loadu = _mm256_loadu_pd;
@@ -88,7 +84,6 @@ struct float_avx {
     static const auto div = _mm256_div_ps;
     static const auto mul = _mm256_mul_ps;
     static const bool all_avx_div = true;
-
 };
 
 struct int_32_avx {
@@ -104,7 +99,6 @@ struct int_32_avx {
     static const bool all_avx_div = false;
 };
 
-
 template <typename T>
 struct PrimitiveType;
 
@@ -112,23 +106,24 @@ template <typename T>
 struct NonPrimitveType;
 
 #define DEFINE_PRIMITIVE_TYPE(name, code, dtype, kind, t, dst, avx, avx_d) \
-    template <>                                                     \
-    struct PrimitiveType<t> {                                       \
-        using type = t;                                             \
-        using device_storage_type = dst;                            \
-        using avx_type = avx;                                       \
-        static constexpr auto avx_data = avx_d;                     \
-        static constexpr char sCharCode = code;                     \
-        static constexpr Dtype sDtype = dtype;                      \
-        static constexpr int64_t sElementSize = sizeof(type);       \
-        static constexpr Dtypekind sKind = kind;                    \
-        static const char* GetName() { return name; }               \
+    template <>                                                            \
+    struct PrimitiveType<t> {                                              \
+        using type = t;                                                    \
+        using device_storage_type = dst;                                   \
+        using avx_type = avx;                                              \
+        static constexpr auto avx_data = avx_d;                            \
+        static constexpr char sCharCode = code;                            \
+        static constexpr Dtype sDtype = dtype;                             \
+        static constexpr int64_t sElementSize = sizeof(type);              \
+        static constexpr Dtypekind sKind = kind;                           \
+        static const char* GetName() { return name; }                      \
     }
 
 // TODO(niboshi): Char codes are mapped according to current development
 // environment. They should be remapped depending on the executing environment,
 // // as in NumPy.
-// DEFINE_PRIMITIVE_TYPE("bool", '?', Dtype::sBool, Dtypekind::sBool, bool, bool,
+// DEFINE_PRIMITIVE_TYPE("bool", '?', Dtype::sBool, Dtypekind::sBool, bool,
+// bool,
 //                       __m256i, int8_avx{});
 // DEFINE_PRIMITIVE_TYPE("int8", 'b', Dtype::sInt8, Dtypekind::sInt, int8_t,
 //                       int8_t, __m256i, int8_avx{});
@@ -149,44 +144,8 @@ DEFINE_PRIMITIVE_TYPE("float64", 'd', Dtype::sFloat64, Dtypekind::sFloat,
 
 #undef DEFINE_PRIMITIVE_TYPE
 
-
 template <typename T>
 constexpr Dtype TypeToDtype = PrimitiveType<std::remove_const<T>>::sDtype;
-
-template <typename F, typename... Args>
-inline auto VisitDtype(Dtype dtype, F&& f, Args&&... args) {
-    switch (dtype) {
-        // case Dtype::sBool:
-        //     return std::forward<F>(f)(PrimitiveType<bool>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sInt8:
-        //     return std::forward<F>(f)(PrimitiveType<int8_t>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sInt16:
-        //     return std::forward<F>(f)(PrimitiveType<int16_t>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sInt32:
-        //     return std::forward<F>(f)(PrimitiveType<int32_t>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sInt64:
-        //     return std::forward<F>(f)(PrimitiveType<int64_t>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sUInt8:
-        //     return std::forward<F>(f)(PrimitiveType<uint8_t>{},
-        //                               std::forward<Args>(args)...);
-        // case Dtype::sFloat16:
-        //     return std::forward<F>(f)(PrimitiveType<chainerx::Float16>{},
-        //     std::forward<Args>(args)...);
-        case Dtype::sFloat32:
-            return std::forward<F>(f)(PrimitiveType<float>{},
-                                      std::forward<Args>(args)...);
-        case Dtype::sFloat64:
-            return std::forward<F>(f)(PrimitiveType<double>{},
-                                      std::forward<Args>(args)...);
-        default:
-            throw DtypeError{"Dtype error"};
-    }
-}
 
 template <typename F, typename... Args>
 inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
@@ -199,38 +158,7 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
         //     std::forward<Args>(args)...);
         case Dtype::sInt32:
             return std::forward<F>(f)(PrimitiveType<int32_t>{},
-            std::forward<Args>(args)...);
-        // case Dtype::sInt64:
-        //     return std::forward<F>(f)(PrimitiveType<int64_t>{},
-        //     std::forward<Args>(args)...);
-        // case Dtype::sUInt8:
-        //     return std::forward<F>(f)(PrimitiveType<uint8_t>{},
-        //     std::forward<Args>(args)...);
-        // // case Dtype::sFloat16:
-        // //     return std::forward<F>(f)(PrimitiveType<chainerx::Float16>{},
-        // std::forward<Args>(args)...); 
-        case Dtype::sFloat32:
-            return std::forward<F>(f)(PrimitiveType<float>{}, 
-            std::forward<Args>(args)...);
-        case Dtype::sFloat64:
-            return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
-        default:
-            throw DtypeError{"Dtype error in launch arithmetic"};
-    }
-}
-template <typename F, typename... Args>
-inline auto launch_cast(Dtype dtype, F&& f, Args&&... args) {
-    switch (dtype) {
-        // case Dtype::sInt8:
-        //     return std::forward<F>(f)(PrimitiveType<int8_t>{},
-        //     std::forward<Args>(args)...);
-        // case Dtype::sInt16:
-        //     return std::forward<F>(f)(PrimitiveType<int16_t>{},
-        //     std::forward<Args>(args)...);
-        case Dtype::sInt32:
-            return std::forward<F>(f)(PrimitiveType<int32_t>{},
-            std::forward<Args>(args)...);
         // case Dtype::sInt64:
         //     return std::forward<F>(f)(PrimitiveType<int64_t>{},
         //     std::forward<Args>(args)...);
@@ -239,10 +167,10 @@ inline auto launch_cast(Dtype dtype, F&& f, Args&&... args) {
         //     std::forward<Args>(args)...);
         // // case Dtype::sFloat16:
         // //     return std::forward<F>(f)(PrimitiveType<chainerx::Float16>{},
-        // std::forward<Args>(args)...); 
+        // std::forward<Args>(args)...);
         case Dtype::sFloat32:
-            return std::forward<F>(f)(PrimitiveType<float>{}, 
-            std::forward<Args>(args)...);
+            return std::forward<F>(f)(PrimitiveType<float>{},
+                                      std::forward<Args>(args)...);
         case Dtype::sFloat64:
             return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
@@ -252,7 +180,8 @@ inline auto launch_cast(Dtype dtype, F&& f, Args&&... args) {
 }
 
 inline char GetCharCode(Dtype dtype) {
-    return VisitDtype(dtype, [](auto pt) { return decltype(pt)::sCharCode; });
+    return launch_arithmetic(dtype,
+                             [](auto pt) { return decltype(pt)::sCharCode; });
 }
 
 inline Dtype GetDtype(const std::string& name) {
@@ -386,3 +315,6 @@ inline alignemnt_information getAlignment(Dtype dtype) {
             throw DtypeError{"Dtype error GET ALIGNMENT"};
     }
 }
+
+// inline bool can_cast(Dtype from, Dtype to){};
+// #include "Tensor.h"

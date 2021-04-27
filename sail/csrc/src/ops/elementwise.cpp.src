@@ -16,21 +16,22 @@ namespace ops {
  */
 
 Tensor $name$(Tensor& tensor1, Tensor& tensor2) {
-    
     Tensor empty_tensor;
 
-    if ((tensor1.is_scalar() && tensor2.is_scalar()) ||
-        (!tensor1.is_scalar() && !tensor2.is_scalar())) {
-        empty_tensor = empty(tensor1.ndim, tensor1.dtype,
-                             tensor1.strides, tensor1.shape);
+    bool t1_scalar = tensor1.is_scalar();
+    bool t2_scalar = tensor2.is_scalar();
+
+    if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
+        empty_tensor =
+            empty(tensor1.ndim, tensor1.dtype, tensor1.strides, tensor1.shape);
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor);
-    } else if (tensor1.is_scalar() && !tensor2.is_scalar()) {
-        empty_tensor = empty(tensor2.ndim, tensor2.dtype,
-                             tensor2.strides, tensor2.shape);
+    } else if (t1_scalar && !t2_scalar) {
+        empty_tensor =
+            empty(tensor2.ndim, tensor2.dtype, tensor2.strides, tensor2.shape);
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor);
     } else {
-        empty_tensor = empty(tensor1.ndim, tensor1.dtype,
-                             tensor1.strides, tensor1.shape);
+        empty_tensor =
+            empty(tensor1.ndim, tensor1.dtype, tensor1.strides, tensor1.shape);
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor);
     }
 

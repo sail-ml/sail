@@ -2,9 +2,9 @@
 
 #include <Python.h>
 #include <structmember.h>
+#include <algorithm>
 #include <chrono>
 #include <iostream>
-#include <algorithm>
 #include "../../../src/Tensor.h"
 #include "../../../src/ops/elementwise.h"
 #include "../../../src/types.h"
@@ -54,9 +54,8 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     }
 
     if (dim < -1 || dim > t1->tensor.ndim) {
-        PyErr_SetString(
-            PyExc_ValueError,
-            ("dim must be in the range of [-1, ndim]"));
+        PyErr_SetString(PyExc_ValueError,
+                        ("dim must be in the range of [-1, ndim]"));
         return NULL;
     }
 

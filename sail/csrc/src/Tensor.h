@@ -13,38 +13,34 @@ class Tensor {
    public:
     explicit Tensor(){};
 
-       void* data;
-       int ndim;
-       int arr_numel;
-       Dtype dtype;
-       TensorSize shape;
-       TensorSize strides;
-       alignemnt_information info;
+    void* data;
+    int ndim;
+    int arr_numel;
+    Dtype dtype;
+    TensorSize shape;
+    TensorSize strides;
+    alignemnt_information info;
 
-
-//     explicit Tensor(TensorStorage storage);
+    //     explicit Tensor(TensorStorage storage);
 
     Tensor(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
-           TensorSize& shape); 
+           TensorSize& shape);
     static Tensor move(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
-           TensorSize& shape); 
-//     Tensor(int ndims, void* data, Dtype dt, TensorSize strides,
-//            TensorSize shape);
+                       TensorSize& shape);
+    //     Tensor(int ndims, void* data, Dtype dt, TensorSize strides,
+    //            TensorSize shape);
 
+    Tensor cast(const Dtype dt);
+    Tensor reshape(const TensorSize new_shape);
+    Tensor expand_dims(const int dim);
 
+    void free();
 
-       Tensor cast(const Dtype dt);
-       Tensor reshape(const TensorSize new_shape);
-       Tensor expand_dims(const int dim);
+    long int* get_shape_ptr();
+    bool is_scalar();
+    int get_np_type_num();
 
-       void free();
-
-       long int* get_shape_ptr();
-       bool is_scalar();
-       int get_np_type_num();
-
-       int numel() const;
-
+    int numel() const;
 
     Tensor operator+(Tensor& t);
     Tensor operator-(Tensor& t);
@@ -54,29 +50,27 @@ class Tensor {
 
     Tensor sum();
 
-//     Tensor cast(const Dtype dt);
-//     void inplace_cast(const Dtype dt);
+    //     Tensor cast(const Dtype dt);
+    //     void inplace_cast(const Dtype dt);
 
-//     void reshape(const TensorSize s);
+    //     void reshape(const TensorSize s);
 
-//     Tensor expand_dims(const int dim);
+    //     Tensor expand_dims(const int dim);
 
-//     static Tensor createEmptyScalar(Dtype dt);
+    //     static Tensor createEmptyScalar(Dtype dt);
 
-//     void* data();
+    //     void* data();
 
-//     bool is_scalar();
+    //     bool is_scalar();
 
-//     Dtype dtype();
+    //     Dtype dtype();
 
-//     void free();
+    //     void free();
 
-//     long int* get_shape_ptr();
-//     int get_np_type_num();
+    //     long int* get_shape_ptr();
+    //     int get_np_type_num();
 
-
-//     TensorStorage storage;
-    
+    //     TensorStorage storage;
 };
 
 inline int _numel(TensorSize _shape) {

@@ -38,8 +38,7 @@ Tensor copy(Tensor t) {
         size = size * value;
     }
     alignemnt_information info = getAlignment(t.dtype);
-    void* data =
-        _realloc_align(t.data, size, info.alignment, info.dtype_size);
+    void* data = _realloc_align(t.data, size, info.alignment, info.dtype_size);
 
     Tensor _empty = Tensor(t.ndim, data, t.dtype, t.strides, t.shape);
 
@@ -51,7 +50,7 @@ Tensor empty_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
     int zero = 0;
-    TensorSize strides =  {info.dtype_size};
+    TensorSize strides = {info.dtype_size};
     TensorSize shape = {};
     Tensor _empty = Tensor(zero, data, dt, strides, shape);
 

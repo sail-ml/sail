@@ -19,7 +19,6 @@ namespace sail {
 template <typename T, typename Op, typename avx_name>
 void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
                    const Tensor &arr3) {
-
     T __restrict__ *p1 = static_cast<T *>(arr1.data);
     T __restrict__ *p2 = static_cast<T *>(arr2.data);
     T __restrict__ *p3 = static_cast<T *>(arr3.data);
@@ -60,13 +59,13 @@ void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
-                std::cout << p1[i] << std::endl;
+            std::cout << p1[i] << std::endl;
             op.call_base(p1[i], p2[i], p3[i]);
         }
 
     } else {
         for (i = 0; i < numel; i += 1) {
-                std::cout << p1[i] << std::endl;
+            std::cout << p1[i] << std::endl;
             op.call_base(p1[i], p2[i], p3[i]);
         }
     }
@@ -91,40 +90,40 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     // if (omp)
     // auto start = high_resolution_clock::now();
 
-// #ifdef USE_AVX2
-//     if (omp) {
-//         if (aligned) {
-// #pragma omp parallel for
-//             for (int i = 0; i < numel; i += jump) {
-//                 avx_name a = _mm256_load_pd(&p1[i]);
-//                 avx_name b = _mm256_load_pd(&p2[0]);
-//                 op.call_avx_aligned(a, b, &p3[i]);
-//             }
-//         } else {
-// #pragma omp parallel for
-//             for (int i = 0; i < numel; i += jump) {
-//                 avx_name a = _mm256_loadu_pd(&p1[i]);
-//                 avx_name b = _mm256_loadu_pd(&p2[0]);
-//                 op.call_avx_non_aligned(a, b, &p3[i]);
-//             }
-//         }
-//     } else {
-//         if (aligned) {
-//             for (int i = 0; i < numel; i += jump) {
-//                 avx_name a = _mm256_load_pd(&p1[i]);
-//                 avx_name b = _mm256_load_pd(&p2[0]);
-//                 op.call_avx_aligned(a, b, &p3[i]);
-//             }
-//         } else {
-//             for (int i = 0; i < numel; i += jump) {
-//                 avx_name a = _mm256_loadu_pd(&p1[i]);
-//                 avx_name b = _mm256_loadu_pd(&p2[0]);
-//                 op.call_avx_non_aligned(a, b, &p3[i]);
-//             }
-//         }
-//     }
+    // #ifdef USE_AVX2
+    //     if (omp) {
+    //         if (aligned) {
+    // #pragma omp parallel for
+    //             for (int i = 0; i < numel; i += jump) {
+    //                 avx_name a = _mm256_load_pd(&p1[i]);
+    //                 avx_name b = _mm256_load_pd(&p2[0]);
+    //                 op.call_avx_aligned(a, b, &p3[i]);
+    //             }
+    //         } else {
+    // #pragma omp parallel for
+    //             for (int i = 0; i < numel; i += jump) {
+    //                 avx_name a = _mm256_loadu_pd(&p1[i]);
+    //                 avx_name b = _mm256_loadu_pd(&p2[0]);
+    //                 op.call_avx_non_aligned(a, b, &p3[i]);
+    //             }
+    //         }
+    //     } else {
+    //         if (aligned) {
+    //             for (int i = 0; i < numel; i += jump) {
+    //                 avx_name a = _mm256_load_pd(&p1[i]);
+    //                 avx_name b = _mm256_load_pd(&p2[0]);
+    //                 op.call_avx_aligned(a, b, &p3[i]);
+    //             }
+    //         } else {
+    //             for (int i = 0; i < numel; i += jump) {
+    //                 avx_name a = _mm256_loadu_pd(&p1[i]);
+    //                 avx_name b = _mm256_loadu_pd(&p2[0]);
+    //                 op.call_avx_non_aligned(a, b, &p3[i]);
+    //             }
+    //         }
+    //     }
 
-// #else
+    // #else
     if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
@@ -137,26 +136,35 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
             op.call_base(p1[i], p2[0], p3[i]);
         }
     }
-// #endif
+    // #endif
     // auto stop = high_resolution_clock::now();
     // auto duration = duration_cast<microseconds>(stop - start);
     // std::cout << duration.count() << std::endl;
 }
 
-template <typename T, typename Op>
-void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2,
-                const Tensor &arr3) {
+template <typename T, typename T_out, typename Op>
+void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2) {
     T *p1 = static_cast<T *>(arr1.data);
-    T *p2 = static_cast<T *>(arr2.data);
-    T *p3 = static_cast<T *>(arr3.data);
+    T_out *p2 = static_cast<T_out *>(arr2.data);
 
     int numel = arr1.numel();
-    int i;
-    if (numel > OMP_MIN_VALUE)
+    bool aligned = isAlignedAs(p1, arr1.info.alignment) &&
+                   isAlignedAs(p2, arr1.info.alignment);
+    int jump = arr1.info.jump;
+    int i = 0;
+    bool omp = numel >= OMP_MIN_VALUE;
+
+    if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[i], p3[i]);
+            op.call_base(p1[i], p2[i]);
         }
+
+    } else {
+        for (i = 0; i < numel; i += 1) {
+            op.call_base(p1[i], p2[i]);
+        }
+    }
 }
 
 template <typename T, typename Op, typename avx_name>

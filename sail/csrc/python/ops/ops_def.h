@@ -1,7 +1,7 @@
 #pragma once
 
-#include "elementwise.h"
 #include "docstring.h"
+#include "elementwise.h"
 #include "linalg/linalg.h"
 #include "reduction.h"
 

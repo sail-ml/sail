@@ -6,13 +6,12 @@
 #include <iostream>
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
-#include "../../src/ops/elementwise.h"
 #include "../../src/factories.h"
+#include "../../src/ops/elementwise.h"
 #include "../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 
 #include "../macros.h"
-
 
 /** begin block
  * name = [add, sub, mul, div]
@@ -66,5 +65,4 @@ RETURN_OBJECT cast_int32(PyObject* unused, PyObject* args) {
     ret_class->dtype = 5;
 
     return (PyObject*)ret_class;
-
 }

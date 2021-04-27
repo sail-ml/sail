@@ -87,11 +87,12 @@ class CMakeBuild(build_ext):
 
         print()  # Add an empty line for cleaner output
         
-files = glob.glob("src/**/*.cpp*", recursive=True)
-files = list(files) + list(glob.glob("src/**/*.h*", recursive=True))
-files = list(files) + list(glob.glob("python/**/*.cpp*", recursive=True))
-files = list(files) + list(glob.glob("python/**/*.h*", recursive=True))
-# os.system("clang-format -i " + " ".join(files))
+files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
+files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
+files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
+files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
+
+os.system("clang-format -i " + " ".join(files))
 src_files = glob.glob("**/*.src", recursive=True)
 print (src_files)
 os.system("python template_converter.py " + " ".join(src_files))

@@ -4,11 +4,11 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../ops/elementwise.h"
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
 #include "../../src/error.h"
 #include "../macros.h"
+#include "../ops/elementwise.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
 
@@ -20,21 +20,20 @@ RETURN_OBJECT PyDimensionError;
  */
 
 RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
-
     sail::Tensor tensor1;
     sail::Tensor tensor2;
-    
+
     NUMERIC_PROCESS(t1, t2);
 
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+    PyTensor *ret_class;
+    ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = tensor1 $op$ tensor2;
 
     ret_class->ndim = ret_class->tensor.ndim;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
+    ret_class->dtype = ((PyTensor *)t1)->dtype;
 
-    return (PyObject*)ret_class;
+    return (PyObject *)ret_class;
 }
 
 /** end block **/

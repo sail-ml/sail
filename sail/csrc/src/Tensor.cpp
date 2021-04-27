@@ -24,7 +24,7 @@ namespace sail {
 // CONSTRUCTORS
 
 Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _strides,
-        TensorSize& _shape) {
+               TensorSize& _shape) {
     info = getAlignment(_dt);
 
     dtype = _dt;
@@ -33,12 +33,10 @@ Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _strides,
     shape = _shape;
     arr_numel = _numel(shape);
 
-    data = _realloc_align(_data, arr_numel, info.alignment,
-                            info.dtype_size);
+    data = _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
 }
-static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _strides,
-        TensorSize& _shape) {
-
+static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
+                           TensorSize& _strides, TensorSize& _shape) {
     Tensor t = Tensor();
     t.info = getAlignment(_dt);
 
@@ -52,13 +50,12 @@ static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _s
     return t;
 }
 
-
-Tensor Tensor::reshape(const TensorSize new_shape) { 
+Tensor Tensor::reshape(const TensorSize new_shape) {
     int s = prod_size_vector(new_shape);
     if (s != arr_numel) {
         throw DimensionError{"Cannot reshape tensor of shape ",
-                                getVectorString(shape), " to ",
-                                getVectorString(new_shape)};
+                             getVectorString(shape), " to ",
+                             getVectorString(new_shape)};
     }
 
     shape = new_shape;
@@ -82,7 +79,6 @@ Tensor Tensor::expand_dims(const int dim) {
     return *this;
 }
 
-
 bool Tensor::is_scalar() {
     if (arr_numel == 1) {
         return true;
@@ -90,18 +86,11 @@ bool Tensor::is_scalar() {
     return false;
 }
 
-int Tensor::numel() const {
-    return arr_numel;
-}
+int Tensor::numel() const { return arr_numel; }
 
+void Tensor::free() { std::free(data); }
 
-void Tensor::free() { 
-    std::free(data);
-}
-
-long int* Tensor::get_shape_ptr() {
-    return &shape[0];
-}
+long int* Tensor::get_shape_ptr() { return &shape[0]; }
 
 int Tensor::get_np_type_num() { return get_np_type_numFromDtype(dtype); }
 
@@ -113,29 +102,7 @@ Tensor Tensor::cast(const Dtype dt) {
         new_strides.push_back(dt_size * s);
     }
     Tensor empty_ = empty(ndim, dt, new_strides, shape);
-    launch_cast(dtype, [&](auto pt) {
-        launch_cast(dt, [&](auto xt) {
-            using T_to = typename decltype(xt)::type;
-            using T_from = typename decltype(pt)::type;
-
-            T_to *empty_pt = static_cast<T_to*>(empty_.data);
-            T_from *base_pt = static_cast<T_from*>(data);
-
-            int i = 0;
-            if (numel() > MIN_NUMEL_PAR) {
-                #pragma omp parallel for
-                for (i = 0; i < numel(); i++) {
-                    empty_pt[i] = (T_to)((T_from*)base_pt)[i];
-                }
-            } else {
-                for (i = 0; i < numel(); i++) {
-                    empty_pt[i] = (T_to)((T_from*)base_pt)[i];
-                }
-            }
-
-        });
-        
-    });
+    CopyTTKernel().execute(*this, empty_);
     return empty_;
 }
 
@@ -153,25 +120,17 @@ Tensor Tensor::operator[](const int index) {
         new_shape.push_back(shape[i]);
     }
 
-    int new_ndim = (ndim) - 1;
+    int new_ndim = (ndim)-1;
     Tensor e = empty(ndim, dtype, new_strides, new_shape);
     e.data = new_ptr;
 
     return e;
 }
 
-Tensor Tensor::operator+(Tensor& other) { 
-    return ops::add(*this, other); 
-}
-Tensor Tensor::operator-(Tensor& other) {
-    return ops::subtract(*this, other);
-}
-Tensor Tensor::operator*(Tensor& other) {
-    return ops::multiply(*this, other);
-}
-Tensor Tensor::operator/(Tensor& other) {
-    return ops::divide(*this, other);
-}
+Tensor Tensor::operator+(Tensor& other) { return ops::add(*this, other); }
+Tensor Tensor::operator-(Tensor& other) { return ops::subtract(*this, other); }
+Tensor Tensor::operator*(Tensor& other) { return ops::multiply(*this, other); }
+Tensor Tensor::operator/(Tensor& other) { return ops::divide(*this, other); }
 
 // UNARY OPS
 
