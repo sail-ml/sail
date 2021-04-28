@@ -18,17 +18,6 @@
             return NULL;                                       \
         }                                                      \
     }
-// #define CAST_TYPE_CHECK(x)                                   \
-//     {                                                        \
-//         if (PyObject_TypeCheck(x, &PyDtypeInt32)) {          \
-//         } else if (PyObject_TypeCheck(x, &PyDtypeFloat32)) { \
-//         } else if (PyObject_TypeCheck(x, &PyDtypeFloat64)) { \
-//         } else {                                             \
-//             return NULL;                                     \
-//         }                                                    \
-//     }
-
-// using RETURN_OBJECT = RETURN_OBJECT;
 
 static int PyTensor_init(PyTensor *self, PyObject *args) {
     PyArrayObject *array;
@@ -47,6 +36,7 @@ static int PyTensor_init(PyTensor *self, PyObject *args) {
     TensorShape shape, strides;
 
     long int *shape_ptr = PyArray_SHAPE(array);
+    // 0 check, cant have an array that is size 0
     long int *stride_ptr = PyArray_STRIDES(array);
 
     for (int i = 0; i < ndim; i++) {
