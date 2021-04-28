@@ -86,7 +86,10 @@ bool Tensor::is_scalar() {
 
 int Tensor::numel() const { return arr_numel; }
 
-void Tensor::free() { std::free(data); }
+void Tensor::free() {
+    std::free(data);
+    data = NULL;
+}
 
 long int* Tensor::get_shape_ptr() { return &shape[0]; }
 
