@@ -18,6 +18,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -march=nativ
 
 add_subdirectory(src)
 find_package(PythonLibs REQUIRED)
+find_package (Python3 COMPONENTS Interpreter NumPy)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
