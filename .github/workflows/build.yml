@@ -39,6 +39,19 @@ jobs:
           # Target platform
           platform: x64
           
+      - name: Cache CUDA installation
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-cuda-installation
+        with:
+          path: /usr/local/cuda-11.2
+          key: ${{ runner.os }}-cuda-${{ env.cache-name }}-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cuda-${{ env.cache-name }}-
+            ${{ runner.os }}-cuda-
+            ${{ runner.os }}-
+      
+          
       - name: cuda-toolkit
         uses: Jimver/cuda-toolkit@v0.2.1
         with:
