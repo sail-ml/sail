@@ -14,6 +14,9 @@ using namespace std::chrono;
 
 using Tensor = sail::Tensor;
 
+template <std::size_t N, typename... Args>
+using get = typename get_Nth_type<N, Args...>::type;
+
 namespace sail {
 
 namespace inner_elementwise {
@@ -26,13 +29,18 @@ void launch_binary_elementwise(Op op, const TensorPack... args) {
     int jump = vec[0].info.jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
-    using T1 = typename std::tuple_element<0, std::tuple<Ts...> >::type;
-    using T2 = typename std::tuple_element<1, std::tuple<Ts...> >::type;
-    using T3 = typename std::tuple_element<2, std::tuple<Ts...> >::type;
 
-    T1 __restrict__ *p1 = static_cast<T1 *>(vec[0].data);
-    T2 __restrict__ *p2 = static_cast<T2 *>(vec[1].data);
-    T3 __restrict__ *p3 = static_cast<T3 *>(vec[2].data);
+    // using T1 = typename get<0, Ts...>::type;
+    // using T2 = typename get<1, Ts...>::type;
+    // using T3 = typename get<2, Ts...>::type;
+
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
+
+    p1 = static_cast<decltype(p1)>(vec[0].data);
+    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p3 = static_cast<decltype(p3)>(vec[2].data);
 
     if (omp) {
 #pragma omp parallel for
@@ -56,13 +64,14 @@ void launch_binary_elementwise_avx(Op op, const TensorPack &... args) {
     int jump = vec[0].info.jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
-    using T1 = typename std::tuple_element<0, std::tuple<Ts...> >::type;
-    using T2 = typename std::tuple_element<1, std::tuple<Ts...> >::type;
-    using T3 = typename std::tuple_element<2, std::tuple<Ts...> >::type;
 
-    T1 __restrict__ *p1 = static_cast<T1 *>(vec[0].data);
-    T2 __restrict__ *p2 = static_cast<T2 *>(vec[1].data);
-    T3 __restrict__ *p3 = static_cast<T3 *>(vec[2].data);
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
+
+    p1 = static_cast<decltype(p1)>(vec[0].data);
+    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p3 = static_cast<decltype(p3)>(vec[2].data);
 
     if (omp) {
         if (aligned) {
@@ -88,10 +97,6 @@ void launch_binary_elementwise_avx(Op op, const TensorPack &... args) {
         }
     }
 }
-template <int I, typename... Ts>
-decltype(auto) extract_type(Ts &&... ts) {
-    return std::get<I>(std::forward_as_tuple(ts...));
-}
 
 template <typename... Ts, typename... TensorPack, typename Op>
 void launch_binary_elementwise_scalar(Op op, const TensorPack... args) {
@@ -101,13 +106,13 @@ void launch_binary_elementwise_scalar(Op op, const TensorPack... args) {
     int jump = vec[0].info.jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
-    using T1 = typename std::tuple_element<0, std::tuple<Ts...> >::type;
-    using T2 = typename std::tuple_element<1, std::tuple<Ts...> >::type;
-    using T3 = typename std::tuple_element<2, std::tuple<Ts...> >::type;
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
 
-    T1 __restrict__ *p1 = static_cast<T1 *>(vec[0].data);
-    T2 __restrict__ *p2 = static_cast<T2 *>(vec[1].data);
-    T3 __restrict__ *p3 = static_cast<T3 *>(vec[2].data);
+    p1 = static_cast<decltype(p1)>(vec[0].data);
+    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p3 = static_cast<decltype(p3)>(vec[2].data);
 
     if (omp) {
 #pragma omp parallel for
@@ -131,13 +136,13 @@ void launch_binary_elementwise_avx_scalar(Op op, const TensorPack &... args) {
     int jump = vec[0].info.jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
-    using T1 = typename std::tuple_element<0, std::tuple<Ts...> >::type;
-    using T2 = typename std::tuple_element<1, std::tuple<Ts...> >::type;
-    using T3 = typename std::tuple_element<2, std::tuple<Ts...> >::type;
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
 
-    T1 __restrict__ *p1 = static_cast<T1 *>(vec[0].data);
-    T2 __restrict__ *p2 = static_cast<T2 *>(vec[1].data);
-    T3 __restrict__ *p3 = static_cast<T3 *>(vec[2].data);
+    p1 = static_cast<decltype(p1)>(vec[0].data);
+    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p3 = static_cast<decltype(p3)>(vec[2].data);
 
     if (omp) {
         if (aligned) {
