@@ -49,3 +49,7 @@ jobs:
       - name: Build Package
         run: |
           python setup.py install
+      - name: Run Test Suite
+        run: |
+          chmod +x test.sh
+          ./test.sh
