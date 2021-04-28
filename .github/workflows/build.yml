@@ -20,6 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      
+      - name: Cache GCC installation
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-gcc-installation
+        with:
+          path: /usr/bin/gcc
+          key: ${{ runner.os }}-gcc-${{ env.cache-name }}-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gcc-${{ env.cache-name }}-
+            ${{ runner.os }}-gcc-
+            ${{ runner.os }}-
+      
       - name: Install GCC
         uses: egor-tensin/setup-gcc@v1
         with:
