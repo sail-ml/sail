@@ -26,6 +26,14 @@ jobs:
           # Target platform
           platform: x64
           
+      - name: cuda-toolkit
+    # You may pin to the exact commit or the version.
+      # uses: Jimver/cuda-toolkit@090906cc7326930fcf230641cac89f541393f388
+        uses: Jimver/cuda-toolkit@v0.2.1
+        with:
+          # Cuda version
+          cuda: 11# optional, default is 11.2.2
+
       - name: get-cmake
         uses: lukka/get-cmake@v3.20.1
           
