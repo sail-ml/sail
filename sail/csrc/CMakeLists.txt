@@ -15,6 +15,14 @@ ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -march=native -fpermissive -fopenmp -ffast-math -mavx2 -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src)
 find_package(PythonLibs REQUIRED)
@@ -29,8 +37,14 @@ target_link_libraries(sail_c PUBLIC Python3::NumPy)
 #          LIBRARY_OUTPUT_DIRECTORY csrc/)
 
 
-add_executable(test src/test.cpp)
-target_link_libraries(test PRIVATE src)
+# add_executable(test test/test_cpp/test.cpp)
+# target_link_libraries(test PRIVATE src)
 
+enable_testing()
 
+add_executable(test test/test_cpp/test.cpp)
+target_link_libraries(test src)
+target_link_libraries(test gtest_main)
 
+include(GoogleTest)
+gtest_discover_tests(test)

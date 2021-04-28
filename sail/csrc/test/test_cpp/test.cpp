@@ -1,10 +1,10 @@
-#include "Tensor.h"
-#include "dtypes.h"
-#include "ops/ops.h"
+#include "../../src/Tensor.h"
+#include "../../src/dtypes.h"
+#include "../../src/ops/ops.h"
 
 #include <iostream>
 
-#define MAX_VAL 3
+#define MAX_VAL 320000
 
 int main() {
     double x[MAX_VAL];
