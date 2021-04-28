@@ -37,12 +37,9 @@ PyObject* make_getter_code() {
     return d;
 }
 
-static PyModuleDef module = {
-    PyModuleDef_HEAD_INIT,
-    .m_name = "sail_c",
-    .m_doc = "Example module that creates an extension type.",
-    .m_size = -1,
-};
+static PyModuleDef module = {PyModuleDef_HEAD_INIT, "sail_c",
+                             "Example module that creates an extension type.",
+                             -1, 0};
 
 PyMODINIT_FUNC PyInit_libsail_c(void) {
     import_array();
