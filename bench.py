@@ -47,7 +47,7 @@ def benchmark_shapes(shapes, op, verbose=False):
         sail_time = benchmark_binary(x1, x2, op, 100)
 
 
-        # assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
+        assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
 
         # time.sleep(0.05)
 
