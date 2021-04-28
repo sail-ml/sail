@@ -6,7 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include "../../../src/Tensor.h"
-#include "../../../src/ops/elementwise.h"
+#include "../../../src/ops/ops.h"
 #include "../../../src/types.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
@@ -66,6 +66,33 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
 
     ret_class->tensor.expand_dims(dim);
     ret_class->ndim = ret_class->ndim + 1;
+
+    return (PyObject*)ret_class;
+}
+
+RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
+    PyObject* t1;
+    PyObject* t2;
+
+    sail::Tensor tensor1;
+    sail::Tensor tensor2;
+
+    if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
+        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
+        return NULL;
+    }
+
+    tensor1 = ((PyTensor*)t1)->tensor;
+    tensor2 = ((PyTensor*)t2)->tensor;
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    sail::Tensor res = sail::ops::matmul(tensor1, tensor2);
+
+    ret_class->tensor = res;
+    ret_class->ndim = ((PyTensor*)t1)->ndim;
+    ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
 }

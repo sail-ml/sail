@@ -1,7 +1,7 @@
 # from C import *
 # from .sail_c import *
 from .libsail_c import Tensor
-from .libsail_c import add, subtract, divide, multiply
+from .libsail_c import add, subtract, divide, multiply, matmul
 from .libsail_c import reshape, expand_dims
 from .libsail_c import sum, mean, add_docstring, cast_int32
 from .libsail_c import int32 as _int32 
@@ -14,7 +14,7 @@ float32 = _float32()
 float64 = _float64() 
 print (_int32)
 
-__all__ = ["Tensor", "add", "subtract", "divide", "multiply", "reshape", "expand_dims", "sum", "mean",
+__all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "sum", "mean",
            "int32", "float32", "float64"]
 
 
