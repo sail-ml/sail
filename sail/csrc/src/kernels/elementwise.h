@@ -30,10 +30,6 @@ void launch_binary_elementwise(Op op, const TensorPack... args) {
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
-    // using T1 = typename get<0, Ts...>::type;
-    // using T2 = typename get<1, Ts...>::type;
-    // using T3 = typename get<2, Ts...>::type;
-
     get<0, Ts...> __restrict__ *p1;
     get<1, Ts...> __restrict__ *p2;
     get<2, Ts...> __restrict__ *p3;

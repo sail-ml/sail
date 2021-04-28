@@ -59,18 +59,6 @@ void Unary(Op op, TensorPack &... args) {
     static_assert(sizeof...(Ts) == sizeof...(args),
                   "Data types must be specified for each Tensor. ");
 
-    // // get dtype to cast to
-
-    // #ifdef USE_AVX2
-
-    // allows_avx = allow_avx(std::forward<TensorPack>(args)...);
-    // // std::cout << allows_avx << std::endl;
-    // if (allows_avx) {
-    //     // inner_elementwise::launch_binary_elementwise_avx<Ts...>(op,
-    //     args...); return;
-    // }
-    // #else
-    // #endif
     inner_unary::launch_unary<Ts...>(op, args...);
 }
 
