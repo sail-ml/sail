@@ -217,7 +217,7 @@ inline Dtype GetDtype(const std::string& name) {
             return pair.dtype;
         }
     }
-    throw DtypeError{"Dtype not found"};
+    throw DtypeError{"Dtype not found get dtype"};
 }
 
 inline Dtype GetDtypeFromNumpyInt(int npdtype) {
@@ -232,7 +232,7 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
             break;
     }
     // throw DtypeError{"unsupported NumPy dtype"};
-    throw DtypeError{"Dtype not found"};
+    throw DtypeError{"Dtype not found np int"};
 }
 inline int get_np_type_numFromDtype(Dtype dtype) {
     switch (dtype) {
@@ -270,7 +270,7 @@ inline size_t GetDtypeSize(Dtype dtype) {
             return pair.size;
         }
     }
-    throw DtypeError{"Dtype not found"};
+    throw DtypeError{"Dtype not found get size"};
 }
 
 typedef struct {

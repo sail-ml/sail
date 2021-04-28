@@ -7,9 +7,27 @@
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
 #include "../../src/types.h"
+#include "../py_dtypes/py_dtype.h"
 #include "numpy/arrayobject.h"
 
 #include "../macros.h"
+
+#define CAST_TYPE_CHECK(args, x)                               \
+    {                                                          \
+        if (!PyArg_ParseTuple(args, "O!", &PyDtypeBase, &x)) { \
+            return NULL;                                       \
+        }                                                      \
+    }
+// #define CAST_TYPE_CHECK(x)                                   \
+//     {                                                        \
+//         if (PyObject_TypeCheck(x, &PyDtypeInt32)) {          \
+//         } else if (PyObject_TypeCheck(x, &PyDtypeFloat32)) { \
+//         } else if (PyObject_TypeCheck(x, &PyDtypeFloat64)) { \
+//         } else {                                             \
+//             return NULL;                                     \
+//         }                                                    \
+//     }
+
 // using RETURN_OBJECT = RETURN_OBJECT;
 
 static int PyTensor_init(PyTensor *self, PyObject *args) {
@@ -38,10 +56,6 @@ static int PyTensor_init(PyTensor *self, PyObject *args) {
 
     SCTensor tensor = SCTensor(ndim, data, dt, strides, shape);
     self->tensor = tensor;
-
-    // Py_INCREF(ndim);
-    // Py_INCREF(typ);
-    // Py_INCREF(data);
 
     self->ndim = ndim;
     self->dtype = dtype;
@@ -72,20 +86,7 @@ PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     if (self != NULL) {
         self->ndim = 0;
     }
-    // self = (CustomObject *) type->tp_alloc(type, 0);
-    // if (self != NULL) {
-    //     self->first = PyUnicode_FromString("");
-    //     if (self->first == NULL) {
-    //         Py_DECREF(self);
-    //         return NULL;
-    //     }
-    //     self->last = PyUnicode_FromString("");
-    //     if (self->last == NULL) {
-    //         Py_DECREF(self);
-    //         return NULL;
-    //     }
-    //     self->number = 0;
-    // }
+
     return (PyObject *)self;
 }
 
@@ -108,4 +109,23 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
     PyObject *array = PyArray_SimpleNewFromData(ndims, shape, type, data);
     PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);
+}
+
+RETURN_OBJECT
+PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
+    PyDtype *type;
+
+    CAST_TYPE_CHECK(args, type);
+
+    Dtype dt = ((PyDtype *)type)->dtype;
+
+    PyTensor *ret_class;
+    ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    ret_class->tensor = ((PyTensor *)self)->tensor.cast(dt);
+
+    ret_class->ndim = ret_class->tensor.ndim;
+    ret_class->dtype = ((PyDtype *)type)->dt_val;
+
+    return (PyObject *)ret_class;
 }
