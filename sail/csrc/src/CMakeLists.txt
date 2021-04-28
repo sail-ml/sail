@@ -4,5 +4,7 @@ find_package(CUDA REQUIRED)
 
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h")
 file(GLOB_RECURSE files CONFIGURE_DEPENDS "*.cpp")
+
 cuda_add_library(src STATIC  ${headers} ${files} "cuda/cuda_math.h" "cuda/cuda_math.cu")
+target_include_directories(src PRIVATE "../libs/xsimd/include")
 

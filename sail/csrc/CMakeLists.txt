@@ -21,9 +21,13 @@ find_package(PythonLibs REQUIRED)
 find_package (Python3 COMPONENTS Interpreter NumPy)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
+
+
 add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
 target_link_libraries(sail_c PRIVATE src)
 target_link_libraries(sail_c PUBLIC Python3::NumPy)
+target_include_directories(sail_c PRIVATE "libs/xsimd/include")
+
 
 include(FetchContent)
 FetchContent_Declare(
@@ -39,6 +43,8 @@ enable_testing()
 add_executable(test test/test_cpp/test.cpp)
 target_link_libraries(test src)
 target_link_libraries(test gtest_main)
+target_include_directories(test PRIVATE "libs/xsimd/include")
+
 
 include(GoogleTest)
 gtest_discover_tests(test)

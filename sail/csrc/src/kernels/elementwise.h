@@ -3,12 +3,14 @@
 #include <immintrin.h>
 #include <omp.h>
 #include <algorithm>
+#include <cassert>  // needed for xsimd
 #include <chrono>
 #include <vector>
 #include "../Tensor.h"
 #include "../dtypes.h"
 #include "../utils.h"
 #include "kernel_utils.h"
+#include "xsimd/xsimd.hpp"
 
 using namespace std::chrono;
 

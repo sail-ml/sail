@@ -27,96 +27,23 @@ enum class Dtypekind {
     sFloat,
 };
 
-inline float* cast_to_float(void* x) { return (float*)x; }
-inline double* cast_to_double(void* x) { return (double*)x; }
-inline int* cast_to_int(void* x) { return (int*)x; }
-
-inline __m256i _load_int32(int32_t* data) {
-    int32_t* d = data;
-    __m256i* avx_d = (__m256i*)d;
-    return _mm256_load_si256(avx_d);
-}
-inline __m256i _loadu_int32(int32_t data) {
-    int32_t* d = &data;
-    __m256i* avx_d = (__m256i*)d;
-    return _mm256_loadu_si256(avx_d);
-}
-inline void _store_int32(int32_t* mem_addr, __m256i a) {
-    _mm256_store_si256((__m256i*)mem_addr, a);
-}
-inline void _storeu_int32(int32_t* mem_addr, __m256i a) {
-    return _mm256_storeu_si256((__m256i*)mem_addr, a);
-}
-
-inline __m256i _avx_int32_div(__m256i veca, __m256i vecb) {
-    int32_t a = 0;
-    int32_t b = 0;
-    a = _mm256_extract_epi32(veca, 0);
-    b = _mm256_extract_epi32(vecb, 0);
-    std::cout << a << std::endl;
-    std::cout << a << std::endl;
-    std::cout << a << std::endl;
-    std::cout << a << std::endl;
-    return veca;
-}
-
-struct double_avx {
-    using avx_type = __m256d;
-    static const auto avx_loadu = _mm256_loadu_pd;
-    static const auto avx_load = _mm256_load_pd;
-    static const auto avx_store = _mm256_store_pd;
-    static const auto avx_storeu = _mm256_storeu_pd;
-    static const auto add = _mm256_add_pd;
-    static const auto sub = _mm256_sub_pd;
-    static const auto div = _mm256_div_pd;
-    static const auto mul = _mm256_mul_pd;
-    static const bool all_avx_div = true;
-};
-
-struct float_avx {
-    using avx_type = __m256;
-    static const auto avx_loadu = _mm256_loadu_ps;
-    static const auto avx_load = _mm256_load_ps;
-    static const auto avx_store = _mm256_store_ps;
-    static const auto avx_storeu = _mm256_storeu_ps;
-    static const auto add = _mm256_add_ps;
-    static const auto sub = _mm256_sub_ps;
-    static const auto div = _mm256_div_ps;
-    static const auto mul = _mm256_mul_ps;
-    static const bool all_avx_div = true;
-};
-
-struct int_32_avx {
-    using avx_type = __m256i;
-    static const auto avx_loadu = _loadu_int32;
-    static const auto avx_load = _load_int32;
-    static const auto avx_store = _store_int32;
-    static const auto avx_storeu = _storeu_int32;
-    static const auto add = _mm256_add_epi32;
-    static const auto sub = _mm256_sub_epi32;
-    static const auto div = _avx_int32_div;
-    static const auto mul = _mm256_mullo_epi32;
-    static const bool all_avx_div = false;
-};
-
 template <typename T>
 struct PrimitiveType;
 
 template <typename T>
 struct NonPrimitveType;
 
-#define DEFINE_PRIMITIVE_TYPE(name, code, dtype, kind, t, dst, avx, avx_d) \
-    template <>                                                            \
-    struct PrimitiveType<t> {                                              \
-        using type = t;                                                    \
-        using device_storage_type = dst;                                   \
-        using avx_type = avx;                                              \
-        static constexpr auto avx_data = avx_d;                            \
-        static constexpr char sCharCode = code;                            \
-        static constexpr Dtype sDtype = dtype;                             \
-        static constexpr int64_t sElementSize = sizeof(type);              \
-        static constexpr Dtypekind sKind = kind;                           \
-        static const char* GetName() { return name; }                      \
+#define DEFINE_PRIMITIVE_TYPE(name, code, dtype, kind, t, dst, avx) \
+    template <>                                                     \
+    struct PrimitiveType<t> {                                       \
+        using type = t;                                             \
+        using device_storage_type = dst;                            \
+        using avx_type = avx;                                       \
+        static constexpr char sCharCode = code;                     \
+        static constexpr Dtype sDtype = dtype;                      \
+        static constexpr int64_t sElementSize = sizeof(type);       \
+        static constexpr Dtypekind sKind = kind;                    \
+        static const char* GetName() { return name; }               \
     }
 
 // TODO(niboshi): Char codes are mapped according to current development
@@ -130,7 +57,7 @@ struct NonPrimitveType;
 // DEFINE_PRIMITIVE_TYPE("int16", 'h', Dtype::sInt16, Dtypekind::sInt, int16_t,
 //                       int16_t, __m256i, int16_avx{});
 DEFINE_PRIMITIVE_TYPE("int32", 'i', Dtype::sInt32, Dtypekind::sInt, int32_t,
-                      int32_t, __m256i, int_32_avx{});
+                      int32_t, __m256i);
 // DEFINE_PRIMITIVE_TYPE("int64", 'l', Dtype::sInt64, Dtypekind::sInt, int64_t,
 //                       int64_t, __m256i, int64_avx{});
 // DEFINE_PRIMITIVE_TYPE("uint8", 'B', Dtype::sUInt8, Dtypekind::sUInt, uint8_t,
@@ -138,9 +65,9 @@ DEFINE_PRIMITIVE_TYPE("int32", 'i', Dtype::sInt32, Dtypekind::sInt, int32_t,
 // CHAINERX_DEFINE_PRIMITIVE_TYPE("float16", 'e', Dtype::sFloat16,
 // Dtypesind::sFloat, chainerx::Float16, uint16_t);
 DEFINE_PRIMITIVE_TYPE("float32", 'f', Dtype::sFloat32, Dtypekind::sFloat, float,
-                      float, __m256, float_avx{});
+                      float, __m256);
 DEFINE_PRIMITIVE_TYPE("float64", 'd', Dtype::sFloat64, Dtypekind::sFloat,
-                      double, double, __m256d, double_avx{});
+                      double, double, __m256d);
 
 #undef DEFINE_PRIMITIVE_TYPE
 

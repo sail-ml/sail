@@ -8,18 +8,18 @@ import time, torch
 
 shape = 16000
 
-linear_test_shapes = list(range(0, 128, 4)) + list(range(256, 256**2, 256))
+linear_test_shapes = list(range(1, 128, 4)) + list(range(256, 256**2, 256)) + [25]
 
 nd_test_shape = [(16, 32), (32, 128), (256, 4), (784, 128), (4096, 4096)]
 
 def add(a, b):
-    a+b
+    return a+b
 def mul(a, b):
-    a*b
+    return a*b
 def sub(a, b):
-    a-b
+    return a-b
 def truediv(a, b):
-    a/b
+    return a/b
 
 def benchmark_binary(arr1, arr2, op, iters):
     # op(arr1, arr2)
@@ -46,6 +46,9 @@ def benchmark_shapes(shapes, op, verbose=False):
         # time.sleep(0.05)
         sail_time = benchmark_binary(x1, x2, op, 100)
 
+
+        assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
+
         # time.sleep(0.05)
 
         sails.append(sail_time)
@@ -70,21 +73,21 @@ def benchmark_shapes(shapes, op, verbose=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
     #     print ("FAILED ON: %s" % faster["FAIL"])
-# print ("ADD")
-# benchmark_shapes(linear_test_shapes, add)
-# # benchmark_shapes(nd_test_shape, add)
+print ("ADD")
+benchmark_shapes(linear_test_shapes, add)
+# benchmark_shapes(nd_test_shape, add)
 
-# print ("\nSUB")
-# benchmark_shapes(linear_test_shapes, sub)
-# # # # benchmark_shapes(nd_test_shape, sub)
+print ("\nSUB")
+benchmark_shapes(linear_test_shapes, sub)
+# # # benchmark_shapes(nd_test_shape, sub)
 
-# print ("\nMUL")
-# benchmark_shapes(linear_test_shapes, mul)
-# # # # benchmark_shapes(nd_test_shape, mul)
+print ("\nMUL")
+benchmark_shapes(linear_test_shapes, mul)
+# # # benchmark_shapes(nd_test_shape, mul)
 
-# print ("\nDIV")
-# benchmark_shapes(linear_test_shapes, truediv)
-# benchmark_shapes(nd_test_shape, truediv)
+print ("\nDIV")
+benchmark_shapes(linear_test_shapes, truediv)
+benchmark_shapes(nd_test_shape, truediv)
 
 # arr2 = np.random.uniform(0, 1, (32000))#, 32))
 # arr1 = np.random.uniform(0, 1, (32000))#, 32))
@@ -110,13 +113,13 @@ arr1 = np.random.uniform(0, 100, (32)).astype(np.int32)
 arr2 = np.random.uniform(0, 100, (32)).astype(np.float64)
 
 x1 = sail.Tensor(arr2)
-print (x1.numpy())
-print (sail.int32)
-print (np.int32)
-x2 = x1.astype(sail.int32)
-print (x2.numpy())
-x3 = x2.astype(sail.float64)
-print (x3.numpy())
+# print (x1.numpy())
+# print (sail.int32)
+# print (np.int32)
+# x2 = x1.astype(sail.int32)
+# print (x2.numpy())
+# x3 = x2.astype(sail.float64)
+# print (x3.numpy())
 
 # print (arr1 // arr2)
 # t = time.time()
