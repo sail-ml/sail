@@ -22,18 +22,7 @@ class $name$TTKernel : public Kernel {
             // std::cout << decltype(pt)::type << std::endl;
 
             using DtypeType = decltype(pt);
-
             using T = typename DtypeType::type;
-            using avx_name = typename DtypeType::avx_type;
-
-            const auto avx_data = DtypeType::avx_data;
-
-            static const auto fcn = avx_data.$avxOp$;
-            static const auto load = avx_data.avx_load;
-            static const auto loadu = avx_data.avx_loadu;
-
-            static const auto store = avx_data.avx_store;
-            static const auto storeu = avx_data.avx_storeu;
 
             using avx_type = xsimd::simd_type<T>;
 
@@ -41,27 +30,18 @@ class $name$TTKernel : public Kernel {
                 inline void call_base(T x1, T x2, T& out) {
                     out = x1 $baseOp$ x2;
                 }
-                inline avx_name avx_call(avx_name a, avx_name b) {
-                    return fcn(a, b);
-                }
-
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {
-                    // avx_name a = load(x1);
-                    // avx_name b = load(x2);
-                    // avx_name res = avx_call(a, b);
-                    // store(out, res);
                     avx_type a = xsimd::load_aligned(x1);
                     avx_type b = xsimd::load_aligned(x2);
                     auto c = a $baseOp$ b;
-                    // std::cout << "this" << std::endl;
-                    xsimd::store_unaligned(out, c);
+                    xsimd::store_aligned(out, c);
                 }
 
                 inline void call_avx_non_aligned(T* x1, T* x2, T* out) {
-                    avx_name a = loadu(x1);
-                    avx_name b = loadu(x2);
-                    avx_name res = avx_call(a, b);
-                    storeu(out, res);
+                    avx_type a = xsimd::load_unaligned(x1);
+                    avx_type b = xsimd::load_unaligned(x2);
+                    auto c = a $baseOp$ b;
+                    xsimd::store_unaligned(out, c);
                 }
             };
             BinaryElementwise<T, T, T>(Impl{}, t1, t2, out_tensor);
@@ -83,35 +63,24 @@ class $name$TSKernel : public Kernel {
         launch_arithmetic(t1.dtype, [&](auto pt) {
             // std::cout << decltype(pt)::type << std::endl;
             using T = typename decltype(pt)::type;
-            using avx_name = typename decltype(pt)::avx_type;
-
-            static const auto fcn = decltype(pt)::avx_data.$avxOp$;
-            static const auto load = decltype(pt)::avx_data.avx_load;
-            static const auto loadu = decltype(pt)::avx_data.avx_loadu;
-
-            static const auto store = decltype(pt)::avx_data.avx_store;
-            static const auto storeu = decltype(pt)::avx_data.avx_storeu;
+            using avx_type = xsimd::simd_type<T>;
 
             struct Impl {
                 inline void call_base(T x1, T x2, T& out) {
                     out = x1 $baseOp$ x2;
                 }
-                inline avx_name avx_call(avx_name a, avx_name b) {
-                    return fcn(a, b);
-                }
-
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {
-                    avx_name a = load(x1);
-                    avx_name b = load(x2);
-                    avx_name res = avx_call(a, b);
-                    store(out, res);
+                    avx_type a = xsimd::load_aligned(x1);
+                    avx_type b = xsimd::load_aligned(x2);
+                    auto c = a $baseOp$ b;
+                    xsimd::store_aligned(out, c);
                 }
 
                 inline void call_avx_non_aligned(T* x1, T* x2, T* out) {
-                    avx_name a = loadu(x1);
-                    avx_name b = loadu(x2);
-                    avx_name res = avx_call(a, b);
-                    storeu(out, res);
+                    avx_type a = xsimd::load_unaligned(x1);
+                    avx_type b = xsimd::load_unaligned(x2);
+                    auto c = a $baseOp$ b;
+                    xsimd::store_unaligned(out, c);
                 }
             };
 
