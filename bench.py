@@ -42,12 +42,10 @@ def benchmark_shapes(shapes, op, verbose=False):
         x2 = sail.Tensor(arr2)
 
 
-        np_time = benchmark_binary(arr1, arr2, op, 1)
+        np_time = benchmark_binary(arr1, arr2, op, 100)
         # time.sleep(0.05)
-        sail_time = benchmark_binary(x1, x2, op, 1)
+        sail_time = benchmark_binary(x1, x2, op, 100)
 
-        x3 = op(x1, x2)
-        print (np.sum(x3.numpy()))
 
         # assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
 
