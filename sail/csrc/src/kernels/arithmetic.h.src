@@ -2,10 +2,11 @@
 
 #include <immintrin.h>
 
+#include <cassert>  // needed for xsimd
 #include "../Tensor.h"
 #include "base.h"
 #include "elementwise.h"
-
+#include "xsimd/xsimd.hpp"
 namespace sail {
 
 /** begin block
@@ -34,6 +35,12 @@ class $name$TTKernel : public Kernel {
             static const auto store = avx_data.avx_store;
             static const auto storeu = avx_data.avx_storeu;
 
+            using avx_type = xsimd::simd_type<T>;
+            // std::size_t inc = avx_type::size;
+            // std::size_t size = res.size();
+            // size for which the vectorization is possible
+            // std::size_t vec_size = size - size % inc;
+
             struct Impl {
                 inline void call_base(T x1, T x2, T& out) {
                     out = x1 $baseOp$ x2;
@@ -43,10 +50,15 @@ class $name$TTKernel : public Kernel {
                 }
 
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {
-                    avx_name a = load(x1);
-                    avx_name b = load(x2);
-                    avx_name res = avx_call(a, b);
-                    store(out, res);
+                    // avx_name a = load(x1);
+                    // avx_name b = load(x2);
+                    // avx_name res = avx_call(a, b);
+                    // store(out, res);
+                    avx_type a = xsimd::load_aligned(x1);
+                    avx_type b = xsimd::load_aligned(x2);
+                    auto c = a $baseOp$ b;
+                    // std::cout << "this" << std::endl;
+                    xsimd::store_unaligned(out, c);
                 }
 
                 inline void call_avx_non_aligned(T* x1, T* x2, T* out) {

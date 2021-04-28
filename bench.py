@@ -70,9 +70,9 @@ def benchmark_shapes(shapes, op, verbose=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
     #     print ("FAILED ON: %s" % faster["FAIL"])
-# print ("ADD")
-# benchmark_shapes(linear_test_shapes, add)
-# # benchmark_shapes(nd_test_shape, add)
+print ("ADD")
+benchmark_shapes(linear_test_shapes, add)
+# benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
 # benchmark_shapes(linear_test_shapes, sub)

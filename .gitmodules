@@ -1,0 +1,3 @@
+[submodule "sail/csrc/libs/xsimd"]
+	path = sail/csrc/libs/xsimd
+	url = https://github.com/xtensor-stack/xsimd
