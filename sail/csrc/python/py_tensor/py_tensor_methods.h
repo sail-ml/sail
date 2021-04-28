@@ -72,20 +72,7 @@ PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     if (self != NULL) {
         self->ndim = 0;
     }
-    // self = (CustomObject *) type->tp_alloc(type, 0);
-    // if (self != NULL) {
-    //     self->first = PyUnicode_FromString("");
-    //     if (self->first == NULL) {
-    //         Py_DECREF(self);
-    //         return NULL;
-    //     }
-    //     self->last = PyUnicode_FromString("");
-    //     if (self->last == NULL) {
-    //         Py_DECREF(self);
-    //         return NULL;
-    //     }
-    //     self->number = 0;
-    // }
+
     return (PyObject *)self;
 }
 
