@@ -40,6 +40,7 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key);
 //////////// CLASS METHODS ////////////////
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
+RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
@@ -48,6 +49,7 @@ static PyMemberDef PyTensor_members[] = {
 static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS,
      "Return the name, combining the first and last name"},
+    {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, "Casts the tensor"},
     {NULL} /* Sentinel */
 };
 

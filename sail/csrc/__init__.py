@@ -4,11 +4,17 @@ from .libsail_c import Tensor
 from .libsail_c import add, subtract, divide, multiply
 from .libsail_c import reshape, expand_dims
 from .libsail_c import sum, mean, add_docstring, cast_int32
-libsail_c.int32 
-print ("Y")
-print (libsail_c.int32)
-exit()
+from .libsail_c import int32 as _int32 
+from .libsail_c import float32 as _float32 
+from .libsail_c import float64 as _float64 
 
-__all__ = ["Tensor", "add", "subtract", "divide", "multiply", "reshape", "expand_dims", "sum", "mean", "cast_int32"]
+# kinda hacky but whatever
+int32 = _int32()
+float32 = _float32()
+float64 = _float64() 
+print (_int32)
+
+__all__ = ["Tensor", "add", "subtract", "divide", "multiply", "reshape", "expand_dims", "sum", "mean",
+           "int32", "float32", "float64"]
 
 

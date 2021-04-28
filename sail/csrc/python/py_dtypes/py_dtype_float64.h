@@ -10,7 +10,7 @@
 
 #include "../macros.h"
 
-static PyTypeObject PyDTypeFloat64 = {
+static PyTypeObject PyDtypeFloat64 = {
     PyVarObject_HEAD_INIT(NULL, 0) "sail.float64", /* tp_name */
     sizeof(PyDtype),                               /* tp_basicsize */
     0,                                             /* tp_itemsize */
@@ -19,7 +19,7 @@ static PyTypeObject PyDTypeFloat64 = {
     0,                                             /* tp_getattr */
     0,                                             /* tp_setattr */
     0,                                             /* tp_reserved */
-    0,                                             /* tp_repr */
+    (reprfunc)PyDtype_Float64_repr,                /* tp_repr */
     0,                                             /* tp_as_number */
     0,                                             /* tp_as_sequence */
     0,                                             /* tp_as_mapping */
@@ -36,17 +36,16 @@ static PyTypeObject PyDTypeFloat64 = {
     (inquiry)PyDtype_clear,         /* tp_clear */
     0,                              /* tp_richcompare */
     0,                              /* tp_weaklistoffset */
-    0,  // (getiterfunc)Chromosone_getiter, /* tp_iter */
-    0,  /* tp_iter */
-    0,  /* tp_iternext */
-    0,  /* tp_methods */
-    0,  /* tp_members */
-    0,  // PyTensor_getsetters, /* tp_getset */
-    0,  /* tp_base */
-    0,  /* tp_dict */
-    0,  /* tp_descr_get */
-    0,  /* tp_descr_set */
-    0,  /* tp_dictoffset */
-    0,  //(initproc)PyDtype_init, /* tp_init */
-    0,  /* tp_alloc */
+    0,                              /* tp_iter */
+    0,                              /* tp_iternext */
+    0,                              /* tp_methods */
+    0,                              /* tp_members */
+    0,                              // PyTensor_getsetters, /* tp_getset */
+    &PyDtypeBase,                   /* tp_base */
+    0,                              /* tp_dict */
+    0,                              /* tp_descr_get */
+    0,                              /* tp_descr_set */
+    0,                              /* tp_dictoffset */
+    0,                              //(initproc)PyDtype_init, /* tp_init */
+    0,                              /* tp_alloc */
     PyDtype_Float64_new};

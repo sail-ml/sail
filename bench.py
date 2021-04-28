@@ -70,20 +70,20 @@ def benchmark_shapes(shapes, op, verbose=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
     #     print ("FAILED ON: %s" % faster["FAIL"])
-print ("ADD")
-benchmark_shapes(linear_test_shapes, add)
-# benchmark_shapes(nd_test_shape, add)
+# print ("ADD")
+# benchmark_shapes(linear_test_shapes, add)
+# # benchmark_shapes(nd_test_shape, add)
 
-print ("\nSUB")
-benchmark_shapes(linear_test_shapes, sub)
-# # # benchmark_shapes(nd_test_shape, sub)
+# print ("\nSUB")
+# benchmark_shapes(linear_test_shapes, sub)
+# # # # benchmark_shapes(nd_test_shape, sub)
 
-print ("\nMUL")
-benchmark_shapes(linear_test_shapes, mul)
-# # # benchmark_shapes(nd_test_shape, mul)
+# print ("\nMUL")
+# benchmark_shapes(linear_test_shapes, mul)
+# # # # benchmark_shapes(nd_test_shape, mul)
 
-print ("\nDIV")
-benchmark_shapes(linear_test_shapes, truediv)
+# print ("\nDIV")
+# benchmark_shapes(linear_test_shapes, truediv)
 # benchmark_shapes(nd_test_shape, truediv)
 
 # arr2 = np.random.uniform(0, 1, (32000))#, 32))
@@ -108,6 +108,13 @@ benchmark_shapes(linear_test_shapes, truediv)
 
 arr1 = np.random.uniform(0, 100, (32)).astype(np.int32)
 arr2 = np.random.uniform(0, 100, (32)).astype(np.float64)
+
+x1 = sail.Tensor(arr2)
+print (x1.numpy())
+print (sail.int32)
+print (np.int32)
+x2 = x1.astype(sail.int32)
+print (x2.numpy())
 
 # print (arr1 // arr2)
 # t = time.time()
