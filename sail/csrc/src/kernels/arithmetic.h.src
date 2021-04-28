@@ -115,25 +115,4 @@ class $name$TSKernel : public Kernel {
 
 /** end block **/
 
-class CopyTTKernel : public Kernel {
-   public:
-    void execute(const Tensor& t1, Tensor& out_tensor) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
-            launch_arithmetic(out_tensor.dtype, [&](auto pt) {
-                using T_in = typename decltype(pt)::type;
-                using T_out = typename decltype(pt)::type;
-
-                struct Impl {
-                    inline void call_base(T_in x1, T_out& out) {
-                        out = static_cast<T_out>(x1);
-                    }
-                };
-
-                Elemetwise<T_in, T_out, Impl>(Impl{}, t1, out_tensor);
-            });
-            // std::cout << decltype(pt)::type << std::endl;
-        });
-    }
-};
-
 }  // namespace sail

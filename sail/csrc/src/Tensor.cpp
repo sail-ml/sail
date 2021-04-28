@@ -8,9 +8,7 @@
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/kernel.h"
-#include "ops/elementwise.h"
-#include "ops/reduction.h"
-#include "ops/transformations/expand_dims.h"
+#include "ops/ops.h"
 #include "types.h"
 #include "utils.h"
 
@@ -96,14 +94,8 @@ int Tensor::get_np_type_num() { return get_np_type_numFromDtype(dtype); }
 
 // todo - move to op
 Tensor Tensor::cast(const Dtype dt) {
-    TensorSize new_strides;
-    size_t dt_size = GetDtypeSize(dtype);
-    for (size_t s : shape) {
-        new_strides.push_back(dt_size * s);
-    }
-    Tensor empty_ = empty(ndim, dt, new_strides, shape);
-    CopyTTKernel().execute(*this, empty_);
-    return empty_;
+    Tensor casted = ops::cast(*this, dt);
+    return casted;
 }
 
 // // operators

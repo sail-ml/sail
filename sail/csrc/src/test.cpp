@@ -1,9 +1,10 @@
 #include "Tensor.h"
 #include "dtypes.h"
+#include "ops/ops.h"
 
 #include <iostream>
 
-#define MAX_VAL 320000
+#define MAX_VAL 3
 
 int main() {
     double x[MAX_VAL];
@@ -14,8 +15,8 @@ int main() {
     TensorSize sh = {MAX_VAL};
 
     for (int i = 0; i < MAX_VAL; i++) {
-        x[i] = 0.01;
-        y[i] = 0.21;
+        x[i] = 2.21;
+        y[i] = 3.21;
     }
 
     void* xt = static_cast<void*>(x);
@@ -24,13 +25,10 @@ int main() {
     sail::Tensor t1 = sail::Tensor(ndim, xt, dt, st, sh);
     sail::Tensor t2 = sail::Tensor(ndim, yt, dt, st, sh);
 
-    // for (int i = 0; i < 2000; i ++) {
-    //     std::cout << i << std::endl;
-    //     sail::Tensor new_ = t1 + t2;
-    //     new_.free();
-    // }
+    sail::Tensor t3 = sail::ops::cast(t1, Dtype::sInt32);
+    std::cout << *(double*)(t1.data) << std::endl;
+    std::cout << *(int32_t*)(t3.data) << std::endl;
 
-    std::cout << *(double*)t1[0].data << std::endl;
     t1[0];
 
     t1.free();
