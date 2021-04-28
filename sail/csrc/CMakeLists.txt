@@ -23,6 +23,7 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 
 add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
 target_link_libraries(sail_c PRIVATE src)
+target_link_libraries(sail_c PUBLIC Python3::NumPy)
 
 # set_target_properties(sail_c PROPERTIES
 #          LIBRARY_OUTPUT_DIRECTORY csrc/)
