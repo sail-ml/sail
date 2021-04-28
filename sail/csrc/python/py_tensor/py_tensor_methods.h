@@ -122,7 +122,7 @@ PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     PyTensor *ret_class;
     ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = ((PyTensor *)self)->tensor.cast(Dtype::sInt32);
+    ret_class->tensor = ((PyTensor *)self)->tensor.cast(dt);
 
     ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyDtype *)type)->dt_val;

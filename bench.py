@@ -115,6 +115,8 @@ print (sail.int32)
 print (np.int32)
 x2 = x1.astype(sail.int32)
 print (x2.numpy())
+x3 = x2.astype(sail.float64)
+print (x3.numpy())
 
 # print (arr1 // arr2)
 # t = time.time()
