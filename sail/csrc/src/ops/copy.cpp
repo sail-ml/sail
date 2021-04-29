@@ -25,8 +25,8 @@ Tensor copy(Tensor& tensor1) {
 Tensor cast(Tensor& tensor1, Dtype dt) {
     Tensor empty_tensor;
     TensorSize new_strides;
-    size_t dt_size = GetDtypeSize(dt);
-    for (size_t s : tensor1.shape) {
+    long dt_size = GetDtypeSize(dt);
+    for (long s : tensor1.shape) {
         new_strides.push_back(dt_size * s);
     }
     empty_tensor = empty(tensor1.ndim, dt, new_strides, tensor1.shape);
