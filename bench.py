@@ -132,7 +132,7 @@ arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 # print (s0.numpy())
 c = 0
-for z in range(1):
+for z in range(10):
     for i in range(2, 5):
         for axis in range(i):
             # print (c, i, axis)
@@ -149,13 +149,20 @@ for z in range(1):
             c += 1
 
 print ("DONE")
-shape = [365, 1440, 621]
-arr1 = np.random.uniform(0, 1, shape).astype(np.float64)
-x1 = sail.Tensor(arr1)
-
 
 # print (np.sum(arr2), np.sum(arr2).strides)
 # print (np_v.numpy(), np_v.numpy().strides)
+arr1 = np.random.uniform(0, 100, (4, 2)).astype(np.float32)
+arr2 = np.random.uniform(0, 100, (2, 4)).astype(np.float32)
+
+print (np.matmul(arr1, arr2))
+
+x1 = sail.Tensor(arr1)
+x2 = sail.Tensor(arr2)
+
+y = sail.matmul(x1, x2)
+print (y.numpy())
+
 
 # print (x1.numpy())
 # print (sail.int32)

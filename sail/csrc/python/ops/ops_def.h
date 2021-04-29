@@ -10,6 +10,7 @@ static PyMethodDef OpsMethods[] = {
     {"subtract", (PyCFunction)ops_sub, METH_VARARGS, NULL},
     {"divide", (PyCFunction)ops_div, METH_VARARGS, NULL},
     {"multiply", (PyCFunction)ops_mul, METH_VARARGS, NULL},
+    {"matmul", (PyCFunction)ops_matmul, METH_VARARGS, NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
