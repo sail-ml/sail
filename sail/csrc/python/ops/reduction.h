@@ -37,7 +37,6 @@ RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
-
     return (PyObject*)ret_class;
 }
 

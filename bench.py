@@ -109,20 +109,53 @@ def benchmark_shapes(shapes, op, verbose=False):
 # print (sail.add.__doc__)
 
 
-arr1 = np.random.uniform(0, 100, (2, 2, 2)).astype(np.float64)
-arr2 = np.random.uniform(0, 100, (2, 2, 2)).astype(np.float64)
+arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
+arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
-print (arr2.strides)
-x1 = sail.Tensor(arr2)
-# x2 = x1[0]
-# print (arr2[0].shape)
-# print (arr2[0])
-# print (x2.numpy().shape)
-# print (x2.numpy())
-# print (x1[0].numpy())
-np_v = sail.sum(x1)
-print (np.sum(arr2), np.sum(arr2).strides)
-print (np_v.numpy(), np_v.numpy().strides)
+# axis = 1
+# print (arr2.strides)
+# x1 = sail.Tensor(arr2)
+# print (np.sum(arr2, axis))
+# print ("EXP STRIDES", np.sum(arr2, axis).strides)
+# print ("EXP SHAPE", np.sum(arr2, axis).shape)
+# print ("STRIDE CALC", 8 * np.r_[1, np.cumprod(np.sum(arr2, axis).shape[::-1][:-1])][::-1])
+# # x2 = x1[0]
+# # print (arr2[0].shape)
+# # print (arr2[0])
+# # print (x2.numpy().shape)
+# # print (x2.numpy())
+# # print (x1[0].numpy())
+# # s1 = sail.sum(x1)
+# s0 = sail.sum(x1, axis)
+# # s2 = sail.sum(x1, 1)
+# # s3 = sail.sum(x1, 2)
+
+# print (s0.numpy())
+c = 0
+for z in range(1):
+    for i in range(2, 5):
+        for axis in range(i):
+            # print (c, i, axis)
+            shape = [random.randint(0, 100) for _ in range(i)]
+            print (shape)
+            arr1 = np.random.uniform(0, 1, shape).astype(np.float64)
+
+            x1 = sail.Tensor(arr1)
+
+            sum_np = np.sum(arr1, axis=axis)
+            sum_sail = sail.sum(x1, axis=axis).numpy()
+
+            # assert(sum_np.all() == sum_sail.all())
+            c += 1
+
+print ("DONE")
+shape = [365, 1440, 621]
+arr1 = np.random.uniform(0, 1, shape).astype(np.float64)
+x1 = sail.Tensor(arr1)
+
+
+# print (np.sum(arr2), np.sum(arr2).strides)
+# print (np_v.numpy(), np_v.numpy().strides)
 
 # print (x1.numpy())
 # print (sail.int32)

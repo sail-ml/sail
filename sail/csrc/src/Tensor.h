@@ -33,7 +33,7 @@ class Tensor {
     Tensor cast(const Dtype dt);
     Tensor reshape(const TensorSize new_shape);
     Tensor expand_dims(const int dim);
-    size_t getTotalSize();
+    long getTotalSize();
 
     void free();
 

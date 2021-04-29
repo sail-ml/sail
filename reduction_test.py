@@ -66,30 +66,33 @@ import numpy as np
 
 import numpy as np
 
-a = np.arange(8).reshape(2, 2, 2)
+a = np.arange(15  * 4 * 14).reshape(15, 4,14)
 print (a)
 shape = a.shape
 
 b = a.flatten()
 print (b)
 
-axis = 1
+axis = 2
+ms = shape[axis]
 
 r_j = int(np.prod(shape[axis+1:]))
 print ("IC", r_j)
-o = [0] * 4
+o = []#[0] * len(b)
 idx = 0
 inner_count = 0
 insert_idx = 0
+print (np.sum(a, axis))
 while idx < len(b):
-    print (b[idx], idx, "add to", b[idx+r_j])
-    o[insert_idx] = (b[idx] + b[idx+r_j])
+    # print (b[idx], idx, "add to", b[idx+r_j])
+    # print ([b[idx + (r_j * i)] for i in range(ms)])
+    o.append(sum([b[idx + (r_j * i)] for i in range(ms)]))
     inner_count += 1
     idx += 1
     insert_idx += 1
-    if inner_count == r_j:
-        idx += r_j 
+    if inner_count == (r_j):
+        idx += (r_j * (ms - 1)) 
         inner_count = 0
+        # print (" ")
 
-print (np.sum(a, axis))
 print (np.array(o).reshape(np.sum(a, axis).shape))

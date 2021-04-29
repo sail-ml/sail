@@ -48,9 +48,9 @@ static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
     return t;
 }
 
-size_t Tensor::getTotalSize() {
-    auto size = GetDtypeSize(dtype);
-    for (size_t value : shape) {
+long Tensor::getTotalSize() {
+    long size = GetDtypeSize(dtype);
+    for (long value : shape) {
         size = size * value;
     }
     return size;
@@ -95,6 +95,7 @@ bool Tensor::is_scalar() {
 int Tensor::numel() const { return arr_numel; }
 
 void Tensor::free() {
+    // std::cout << "FREEING TENSOR" << std::endl;
     std::free(data);
     data = NULL;
 }
