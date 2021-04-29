@@ -33,6 +33,19 @@ Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _strides,
 
     data = _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
 }
+Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorSize& _strides,
+               TensorSize& _shape, bool rq) {
+    info = getAlignment(_dt);
+
+    dtype = _dt;
+    ndim = _ndims;
+    strides = _strides;
+    shape = _shape;
+    arr_numel = _numel(shape);
+    requires_grad = rq;
+
+    data = _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
+}
 static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
                            TensorSize& _strides, TensorSize& _shape) {
     Tensor t = Tensor();

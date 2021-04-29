@@ -17,12 +17,13 @@ typedef struct {
     SCTensor tensor;
     int ndim;
     int dtype;
+    bool requires_grad = false;
 } PyTensor;
 
 ///////////////////// DEFINITIONS ///////////////////////
 
 /////////////// BASE PY FCNS ////////////////
-static int PyTensor_init(PyTensor *self, PyObject *args);
+static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs);
 static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg);
 static int PyTensor_clear(PyTensor *self);
 static void PyTensor_dealloc(PyTensor *self);
@@ -44,7 +45,10 @@ RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
-    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"}, {NULL}};
+    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"},
+    {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
+     "requires_grad"},
+    {NULL}};
 
 static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS,

@@ -16,6 +16,7 @@ class Tensor {
     void* data;
     int ndim;
     int arr_numel;
+    bool requires_grad;
     Dtype dtype;
     TensorSize shape;
     TensorSize strides;
@@ -25,6 +26,8 @@ class Tensor {
 
     Tensor(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
            TensorSize& shape);
+    Tensor(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
+           TensorSize& shape, bool requires_grad);
     static Tensor move(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
                        TensorSize& shape);
     //     Tensor(int ndims, void* data, Dtype dt, TensorSize strides,

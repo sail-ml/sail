@@ -19,13 +19,22 @@
         }                                                      \
     }
 
-static int PyTensor_init(PyTensor *self, PyObject *args) {
+static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     PyArrayObject *array;
     // Py_INCREF(args);
     if (!PyArg_ParseTuple(args, "O!", &PyArray_Type, &array)) {
         PyErr_SetString(PyExc_TypeError,
                         "Input should be a numpy array of numbers.");
         return NULL;
+    }
+
+    bool requires_grad = false;
+    static char *kwlist[] = {"array", "requires_grad", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|b", kwlist, &array,
+                                     &requires_grad)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "must pass a tensor and a bool for requires_grad");
     }
 
     int ndim = PyArray_NDIM(array);
@@ -48,6 +57,7 @@ static int PyTensor_init(PyTensor *self, PyObject *args) {
     self->tensor = tensor;
 
     self->ndim = ndim;
+    self->requires_grad = requires_grad;
     self->dtype = dtype;
 
     return 0;
