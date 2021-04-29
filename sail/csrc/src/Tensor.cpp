@@ -48,6 +48,14 @@ static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
     return t;
 }
 
+long Tensor::getTotalSize() {
+    long size = GetDtypeSize(dtype);
+    for (long value : shape) {
+        size = size * value;
+    }
+    return size;
+}
+
 Tensor Tensor::reshape(const TensorSize new_shape) {
     int s = prod_size_vector(new_shape);
     if (s != arr_numel) {
@@ -87,6 +95,7 @@ bool Tensor::is_scalar() {
 int Tensor::numel() const { return arr_numel; }
 
 void Tensor::free() {
+    // std::cout << "FREEING TENSOR" << std::endl;
     std::free(data);
     data = NULL;
 }
@@ -110,14 +119,15 @@ Tensor Tensor::operator[](const int index) {
     for (int i = 1; i < ndim; i++) {
         new_strides.push_back(strides[i]);
     }
+    std::cout << getVectorString(new_strides) << std::endl;
     TensorSize new_shape;
     for (int i = 1; i < ndim; i++) {
         new_shape.push_back(shape[i]);
     }
 
     int new_ndim = (ndim)-1;
-    Tensor e = empty(ndim, dtype, new_strides, new_shape);
-    e.data = new_ptr;
+    Tensor e = empty(new_ndim, dtype, new_strides, new_shape);
+    e.data = std::move(new_ptr);
 
     return e;
 }

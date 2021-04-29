@@ -22,13 +22,17 @@ Tensor empty(int ndims, Dtype dt, TensorSize strides, TensorSize shape) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(size, info.alignment, info.dtype_size);
 
-    TensorSize new_strides;
-    size_t dt_size = GetDtypeSize(dt);
-    for (size_t s : shape) {
-        new_strides.push_back(dt_size * s);
-    }
+    // TensorSize new_strides;
+    // size_t dt_size = GetDtypeSize(dt);
+    // for (size_t s : shape) {
+    //     new_strides.push_back(dt_size * s);
+    // }
+    // new_strides.pop_back();
+    // new_strides.push_back(dt_size);
 
-    Tensor _empty = Tensor::move(ndims, data, dt, new_strides, shape);
+    // std::cout << "NEW STRIDES " << getVectorString(new_strides) << std::endl;
+
+    Tensor _empty = Tensor::move(ndims, data, dt, strides, shape);
 
     return _empty;
 }
