@@ -66,8 +66,8 @@ Tensor Tensor::reshape(const TensorSize new_shape) {
 
     shape = new_shape;
     TensorSize new_strides;
-    size_t dt_size = GetDtypeSize(dtype);
-    for (size_t s : shape) {
+    long dt_size = GetDtypeSize(dtype);
+    for (long s : shape) {
         new_strides.push_back(dt_size * s);
     }
     new_strides.pop_back();

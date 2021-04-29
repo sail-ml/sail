@@ -42,8 +42,8 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     new_shape.push_back(t2.shape[1]);
 
     TensorSize new_strides;
-    size_t dt_size = GetDtypeSize(t1.dtype);
-    for (size_t s : new_shape) {
+    long dt_size = GetDtypeSize(t1.dtype);
+    for (long s : new_shape) {
         new_strides.push_back(dt_size * s);
     }
     new_strides.pop_back();

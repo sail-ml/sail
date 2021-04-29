@@ -14,9 +14,9 @@ Tensor sum(const Tensor& tensor1, int axis) {
     TensorSize old_shape = tensor1.shape;
     TensorSize new_strides;
     TensorSize new_shape;
-    size_t dt_size = GetDtypeSize(tensor1.dtype);
+    long dt_size = GetDtypeSize(tensor1.dtype);
     int c = 0;
-    for (size_t s : tensor1.shape) {
+    for (long s : tensor1.shape) {
         if (c != axis) {
             new_shape.push_back(s);
         }
@@ -28,7 +28,7 @@ Tensor sum(const Tensor& tensor1, int axis) {
     old_shape.pop_back();
     long s = 1;
     c = 0;
-    for (size_t sa : old_shape) {
+    for (long sa : old_shape) {
         s *= sa;
         new_strides.push_back(s * dt_size);
         c += 1;

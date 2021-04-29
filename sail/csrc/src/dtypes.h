@@ -177,10 +177,10 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
     throw DtypeError{"Dtype not found NP DTYE"};
 }
 
-inline size_t GetDtypeSize(Dtype dtype) {
+inline long GetDtypeSize(Dtype dtype) {
     struct Pair {
         Dtype dtype;
-        const size_t size;
+        const long size;
     };
 
     static const Pair sMapping[] = {
