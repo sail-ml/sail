@@ -17,7 +17,6 @@ inline void* _malloc_align(long numel, long alignment, long dtype_size) {
 inline void* _realloc_align(void* src, long numel, long alignment,
                             long dtype_size) {
     // void* aligned = _mm_malloc(dtype_size * numel, alignment);
-    std::cout << numel * dtype_size << std::endl;
     void* aligned = _malloc_align(numel, alignment, dtype_size);
     if (aligned == NULL) {
         std::cout << "ALLOC FAIL" << std::endl;

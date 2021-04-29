@@ -137,7 +137,6 @@ for z in range(10):
         for axis in range(i):
             # print (c, i, axis)
             shape = [random.randint(0, 100) for _ in range(i)]
-            print (shape)
             arr1 = np.random.uniform(0, 1, shape).astype(np.float64)
 
             x1 = sail.Tensor(arr1)
@@ -148,7 +147,7 @@ for z in range(10):
             # assert(sum_np.all() == sum_sail.all())
             c += 1
 
-print ("DONE")
+print ("DONE SUM")
 
 # print (np.sum(arr2), np.sum(arr2).strides)
 # print (np_v.numpy(), np_v.numpy().strides)
