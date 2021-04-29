@@ -14,6 +14,7 @@ static PyMethodDef OpsMethods[] = {
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
+    {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 
     {"sum", (PyCFunction)ops_sum, METH_VARARGS | METH_KEYWORDS, NULL},
     {"mean", (PyCFunction)ops_mean, METH_VARARGS, NULL},

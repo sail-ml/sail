@@ -70,6 +70,33 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     return (PyObject*)ret_class;
 }
 
+RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
+    PyTensor* t1;
+    int dim;
+
+    if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "Inputs should be a sail tensor and an integer");
+        return NULL;
+    }
+
+    if (dim < -1 || dim > t1->tensor.ndim) {
+        PyErr_SetString(PyExc_ValueError,
+                        ("dim must be in the range of [-1, ndim]"));
+        return NULL;
+    }
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    COPY(t1, ret_class);
+
+    ret_class->tensor.squeeze(dim);
+    ret_class->ndim = ret_class->ndim + 1;
+
+    return (PyObject*)ret_class;
+}
+
 RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
     PyObject* t1;
     PyObject* t2;

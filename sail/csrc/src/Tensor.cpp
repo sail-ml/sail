@@ -85,6 +85,12 @@ Tensor Tensor::expand_dims(const int dim) {
     return *this;
 }
 
+Tensor Tensor::squeeze(const int dim) {
+    TensorSize s = shape;
+    ops::squeeze(*this, dim);
+    return *this;
+}
+
 bool Tensor::is_scalar() {
     if (arr_numel == 1) {
         return true;

@@ -132,7 +132,7 @@ arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 # print (s0.numpy())
 c = 0
-for z in range(10):
+for z in range(3):
     for i in range(2, 5):
         for axis in range(i):
             # print (c, i, axis)
@@ -161,6 +161,12 @@ x2 = sail.Tensor(arr2)
 
 y = sail.matmul(x1, x2)
 print (y.numpy())
+print (np.squeeze(np.expand_dims(y.numpy(), 2), 2)[0])
+z = sail.expand_dims(y, 2)
+z = sail.squeeze(z, 2)
+print (z.numpy())
+print (z[0].numpy())
+
 
 
 # print (x1.numpy())
