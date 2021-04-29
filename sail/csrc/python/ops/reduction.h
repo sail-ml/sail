@@ -16,18 +16,24 @@
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT ops_sum(PyObject* self, PyObject* args) {
+RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyTensor* t1;
+    int axis = -1;
+    static char* kwlist[] = {"tensor", "axis", NULL};
 
-    if (!PyArg_ParseTuple(args, "O", &t1)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i", kwlist, &t1, &axis)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "must pass a tensor and an integer for axis");
     }
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor);
+    if (axis == -1) {
+        ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor);
+    } else {
+        ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor, axis);
+    }
 
     ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;

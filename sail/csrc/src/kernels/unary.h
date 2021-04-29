@@ -38,17 +38,17 @@ void launch_unary(Op op, const TensorPack... args) {
     p1 = static_cast<decltype(p1)>(vec[0].data);
     p2 = static_cast<decltype(p2)>(vec[1].data);
 
-    if (omp) {
-#pragma omp parallel for
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[i]);
-        }
+    //     if (omp) {
+    // #pragma omp parallel for
+    //         for (i = 0; i < numel; i += 1) {
+    //             op.call_base(p1[i], p2[0]);
+    //         }
 
-    } else {
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[i]);
-        }
+    //     } else {
+    for (i = 0; i < numel; i += 1) {
+        op.call_base(p1[i], p2[0]);
     }
+    // }
 }
 
 }  // namespace inner_unary
