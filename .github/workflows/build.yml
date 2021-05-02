@@ -31,50 +31,41 @@ jobs:
       - name: Install gcc-8
         run: sudo apt-get install gcc-8 g++-8
         
-      - name: test 1
-        run: which gcc
-      - name: test 1
-        run: gcc --version
-      - name: test 2
-        run: which g++
-        
       - name: Set gcc option
         run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 100
       - name: Set gcc default
         run: sudo update-alternatives --set gcc /usr/bin/gcc-8
         
-      - name: test 1 a
-        run: which gcc
-      - name: test 1 a
-        run: gcc --version
-        
       - name: Set g++ option
         run: sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 100
       - name: Set g++ default
         run: sudo update-alternatives --set g++ /usr/bin/g++-8
+        
+      - name: Install cuda toolkit
+        run: sudo apt install nvidia-cuda-toolkit
 #       - name: cuda-toolkit
 #         uses: Jimver/cuda-toolkit@v0.2.1
 #         with:
 #           # Cuda version
 #           cuda: 11.2.2
 
-#       - name: get-cmake
-#         uses: lukka/get-cmake@v3.20.1
+      - name: get-cmake
+        uses: lukka/get-cmake@v3.20.1
           
 #       - name: Setup Python
-#         uses: actions/setup-python@v2.2.2
-#         with:
-#           python-version: 3.8
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
           
-#       - name: Install Python Dependencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           python -m pip install wheel
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install wheel
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-#       - name: Build Package
-#         run: |
-#           python setup.py install
+      - name: Build Package
+        run: |
+          python setup.py install
 #       - name: Run Test Suite
 #         run: |
 #           chmod +x test.sh
