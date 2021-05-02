@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include "dtypes.h"
@@ -8,6 +9,9 @@
 #include "types.h"
 
 namespace sail {
+namespace autograd {
+class Function;
+}  // namespace autograd
 
 class Tensor {
    public:
@@ -21,6 +25,8 @@ class Tensor {
     TensorSize shape;
     TensorSize strides;
     alignemnt_information info;
+
+    autograd::Function* fcn;
 
     //     explicit Tensor(TensorStorage storage);
 
@@ -47,6 +53,8 @@ class Tensor {
 
     int numel() const;
 
+    void backward();
+
     Tensor operator+(Tensor& t);
     Tensor operator-(Tensor& t);
     Tensor operator*(Tensor& t);
@@ -54,6 +62,8 @@ class Tensor {
     Tensor operator[](const int t);
 
     Tensor sum();
+
+    void register_op(autograd::Function* new_func);
 
     //     Tensor cast(const Dtype dt);
     //     void inplace_cast(const Dtype dt);

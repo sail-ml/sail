@@ -36,6 +36,7 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = tensor1 $op$ tensor2;
+    // std::cout << (ret_class->tensor.fcn)->getName() << std::endl;
 
     ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;

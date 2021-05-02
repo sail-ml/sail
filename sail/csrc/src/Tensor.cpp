@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 
+#include "autograd/autograd.h"
 #include "cuda/cuda_math.h"
 #include "dtypes.h"
 #include "factories.h"
@@ -113,6 +114,8 @@ bool Tensor::is_scalar() {
 
 int Tensor::numel() const { return arr_numel; }
 
+void Tensor::register_op(autograd::Function* new_func) { fcn = new_func; }
+
 void Tensor::free() {
     // std::cout << "FREEING TENSOR" << std::endl;
     std::free(data);
@@ -159,5 +162,10 @@ Tensor Tensor::operator/(Tensor& other) { return ops::divide(*this, other); }
 // UNARY OPS
 
 Tensor Tensor::sum() { return ops::sum(*this); }
+
+void Tensor::backward() {
+    std::cout << fcn->getName() << std::endl;
+    // for (Tensor i : fcn->)
+}
 
 }  // namespace sail

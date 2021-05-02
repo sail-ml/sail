@@ -5,6 +5,7 @@
 #include <vector>
 #include "../Tensor.h"
 #include "../ops/elementwise.h"
+#include "binary_function.h"
 #include "function.h"
 
 #define EXECUTE_OP(a, b, o, op)  \
@@ -45,37 +46,17 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-class Add : public Function {
-   public:
-    explicit Add(){};
-    TensorVector arg_storage;
-    std::string getName();
-    inline Tensor forward(TensorVector inputs);
-};
+/** begin block
+ * cName = [Add, Subtract, Divide, Multiply]
+ * op = [+, -, /, *]
+ */
 
-class Subtract : public Function {
-   public:
-    explicit Subtract(){};
-    TensorVector arg_storage;
-    std::string getName();
-    inline Tensor forward(TensorVector inputs);
-};
+std::string $cName$::getName() { return "$cName$Op"; }
+inline Tensor $cName$::forward(TensorVector inputs) {
+    return inputs[0] $op$ inputs[1];
+}
 
-class Divide : public Function {
-   public:
-    explicit Divide(){};
-    TensorVector arg_storage;
-    std::string getName();
-    inline Tensor forward(TensorVector inputs);
-};
-
-class Multiply : public Function {
-   public:
-    explicit Multiply(){};
-    TensorVector arg_storage;
-    std::string getName();
-    inline Tensor forward(TensorVector inputs);
-};
+/** end block **/
 
 }  // namespace autograd
 }  // namespace sail

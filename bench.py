@@ -30,7 +30,7 @@ def benchmark_binary(arr1, arr2, op, iters):
     # time.sleep(1)
     return t
 
-def benchmark_shapes(shapes, op, verbose=False):
+def benchmark_shapes(shapes, op, verbose=False, grad=False):
     faster = {"SAIL": 0, "NUMPY": 0, "FAIL":[]}
     sails = []
     numpys = []
@@ -38,8 +38,8 @@ def benchmark_shapes(shapes, op, verbose=False):
         arr1 = np.random.uniform(0, 1, s)
         arr2 = np.random.uniform(0, 1, s)
 
-        x1 = sail.Tensor(arr1)
-        x2 = sail.Tensor(arr2)
+        x1 = sail.Tensor(arr1, requires_grad=grad)
+        x2 = sail.Tensor(arr2, requires_grad=grad)
 
 
         np_time = benchmark_binary(arr1, arr2, op, 100)
@@ -73,30 +73,30 @@ def benchmark_shapes(shapes, op, verbose=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
     #     print ("FAILED ON: %s" % faster["FAIL"])
-# print ("ADD")
-# benchmark_shapes(linear_test_shapes, add)
+print ("ADD")
+benchmark_shapes(linear_test_shapes, add, grad=True)
 # # benchmark_shapes(nd_test_shape, add)
 
-# print ("\nSUB")
-# benchmark_shapes(linear_test_shapes, sub)
+print ("\nSUB")
+benchmark_shapes(linear_test_shapes, sub, grad=True)
 # # # # benchmark_shapes(nd_test_shape, sub)
 
-# print ("\nMUL")
-# benchmark_shapes(linear_test_shapes, mul)
+print ("\nMUL")
+benchmark_shapes(linear_test_shapes, mul, grad=True)
 # # # # benchmark_shapes(nd_test_shape, mul)
 
-# print ("\nDIV")
-# benchmark_shapes(linear_test_shapes, truediv)
-# benchmark_shapes(nd_test_shape, truediv)
+print ("\nDIV")
+benchmark_shapes(linear_test_shapes, truediv, grad=True)
+# # benchmark_shapes(nd_test_shape, truediv)
 
 # arr2 = np.random.uniform(0, 1, (32000))#, 32))
-# arr1 = np.random.uniform(0, 1, (32000))#, 32))
+arr1 = np.random.uniform(0, 1, (32))#, 32))
 
-# x1 = sail.Tensor(arr1)
+x1 = sail.Tensor(arr1, requires_grad=True)
 
 # print (sail.mean(x1).numpy())
 
-# # x3 = x1 + x1
+x3 = x1 + x1
 # # x3 = sail.multiply(x1, 2.0)
 # x3 = x1 * x1
 # x3 = x1 * 2.0
@@ -109,10 +109,11 @@ def benchmark_shapes(shapes, op, verbose=False):
 # print (sail.add.__doc__)
 
 
-arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
-arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
+# arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
+# arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 
 
-x1 = sail.Tensor(arr1, requires_grad=True)
-print (x1.requires_grad)
+# x1 = sail.Tensor(arr1, requires_grad=True)
+# print (x1.requires_grad)
+# sail.add(x1, x1);
