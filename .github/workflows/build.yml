@@ -31,6 +31,13 @@ jobs:
       - name: Install gcc-8
         run: sudo apt-get install gcc-8 g++-8
         
+      - name: test 1
+        run: which gcc
+      - name: test 1
+        run: gcc --version
+      - name: test 2
+        run: which g++
+        
       - name: Set gcc option
         run: sudo update-alternatives --install usr/bin/gcc gcc /usr/bin/gcc-8 100
       - name: Set gcc default
