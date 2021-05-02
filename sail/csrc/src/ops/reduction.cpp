@@ -36,8 +36,8 @@ Tensor sum(const Tensor& tensor1, int axis) {
     std::reverse(new_strides.begin(), new_strides.end());
     new_strides.push_back(dt_size);
 
-    Tensor empty_tensor =
-        empty(tensor1.ndim - 1, tensor1.dtype, new_strides, new_shape);
+    Tensor empty_tensor = empty(tensor1.ndim - 1, tensor1.dtype,
+                                TensorShape(new_shape, new_strides));
 
     SumTKernel().execute(tensor1, empty_tensor, axis);
     return empty_tensor;

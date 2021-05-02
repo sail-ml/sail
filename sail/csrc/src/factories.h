@@ -11,7 +11,7 @@
 
 namespace sail {
 
-Tensor empty(int ndims, Dtype dt, TensorSize strides, TensorSize shape);
+Tensor empty(int ndims, Dtype dt, TensorShape shape);
 Tensor copy(Tensor t);
 // Tensor empty_like(int ndims, void* data, Dtype dt, TensorSize strides,
 // TensorSize shape);

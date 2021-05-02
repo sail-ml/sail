@@ -1,4 +1,5 @@
 #include "../../src/Tensor.h"
+#include "../../src/tensor_shape.h"
 #include "../../src/dtypes.h"
 #include "../../src/ops/ops.h"
 
@@ -22,6 +23,8 @@ TEST(SailTest, FreeTest) {
     TensorSize st = {8};
     TensorSize sh = {MAX_VAL};
 
+    sail::TensorShape sp = sail::TensorShape(sh, st);
+
     for (int i = 0; i < MAX_VAL; i++) {
         x[i] = 2.21;
         y[i] = 3.21;
@@ -30,8 +33,8 @@ TEST(SailTest, FreeTest) {
     void* xt = static_cast<void*>(x);
     void* yt = static_cast<void*>(y);
 
-    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, st, sh);
-    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, st, sh);
+    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp);
+    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp);
 
     sail::Tensor t3 = t1 + t2;
 

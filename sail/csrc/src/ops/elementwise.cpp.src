@@ -19,25 +19,25 @@ namespace ops {
 Tensor $name$(Tensor& tensor1, Tensor& tensor2) {
     Tensor empty_tensor;
 
-    if (tensor1.requires_grad) {
-        Tensor o = (new sail::autograd::$agName$())->apply({tensor1, tensor2});
-        return o;
-    }
+    // if (tensor1.requires_grad) {
+    //     Tensor o = (new sail::autograd::$agName$())->apply({tensor1,
+    //     tensor2}); return o;
+    // }
 
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 
     if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
         empty_tensor =
-            empty(tensor1.ndim, tensor1.dtype, tensor1.strides, tensor1.shape);
+            empty(tensor1.ndim, tensor1.dtype, tensor1.shape_details);
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor);
     } else if (t1_scalar && !t2_scalar) {
         empty_tensor =
-            empty(tensor2.ndim, tensor2.dtype, tensor2.strides, tensor2.shape);
+            empty(tensor2.ndim, tensor2.dtype, tensor2.shape_details);
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor);
     } else {
         empty_tensor =
-            empty(tensor1.ndim, tensor1.dtype, tensor1.strides, tensor1.shape);
+            empty(tensor1.ndim, tensor1.dtype, tensor1.shape_details);
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor);
     }
 

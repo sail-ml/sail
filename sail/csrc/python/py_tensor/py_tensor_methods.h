@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
+#include "../../src/tensor_shape.h"
 #include "../../src/types.h"
 #include "../py_dtypes/py_dtype.h"
 #include "numpy/arrayobject.h"
@@ -42,7 +43,7 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
 
     void *data = std::move(static_cast<void *>(array->data));
     Dtype dt = GetDtypeFromNumpyInt(dtype);
-    TensorShape shape, strides;
+    TensorSize shape, strides;
 
     long int *shape_ptr = PyArray_SHAPE(array);
     // 0 check, cant have an array that is size 0
@@ -53,7 +54,8 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
         strides.push_back(stride_ptr[i]);
     }
 
-    SCTensor tensor = SCTensor(ndim, data, dt, strides, shape);
+    SCTensor tensor =
+        SCTensor(ndim, data, dt, sail::TensorShape(shape, strides));
     self->tensor = tensor;
 
     self->ndim = ndim;
@@ -104,6 +106,7 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
 
     int type = self->tensor.get_np_type_num();
     void *data = malloc(self->tensor.getTotalSize());  // self->tensor.data;
+
     memcpy(data, self->tensor.data, self->tensor.getTotalSize());
     Py_INCREF(self);
 

@@ -24,10 +24,10 @@ class SumTKernel : public Kernel {
             T* output_data = (T*)out_tensor.data;
 
             if (axis != -1) {
-                int ms = t1.shape[axis];
+                int ms = t1.shape_details.shape[axis];
                 int red_jump = 1;
                 int c = 0;
-                for (int s : t1.shape) {
+                for (int s : t1.shape_details.shape) {
                     if (c > axis) {
                         red_jump *= s;  //(s * GetDtypeSize(t1.dtype));
                     }

@@ -46,7 +46,6 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
         # time.sleep(0.05)
         sail_time = benchmark_binary(x1, x2, op, 100)
 
-
         assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
 
         # time.sleep(0.05)
@@ -87,7 +86,7 @@ benchmark_shapes(linear_test_shapes, mul, grad=True)
 
 print ("\nDIV")
 benchmark_shapes(linear_test_shapes, truediv, grad=True)
-# # benchmark_shapes(nd_test_shape, truediv)
+# benchmark_shapes(nd_test_shape, truediv)
 
 # arr2 = np.random.uniform(0, 1, (32000))#, 32))
 arr1 = np.random.uniform(0, 1, (32))#, 32))
@@ -97,6 +96,7 @@ x1 = sail.Tensor(arr1, requires_grad=True)
 # print (sail.mean(x1).numpy())
 
 x3 = x1 + x1
+print (x3.numpy())
 # # x3 = sail.multiply(x1, 2.0)
 # x3 = x1 * x1
 # x3 = x1 * 2.0

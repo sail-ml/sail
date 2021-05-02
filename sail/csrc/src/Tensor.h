@@ -6,6 +6,7 @@
 
 #include "dtypes.h"
 #include "error.h"
+#include "tensor_shape.h"
 #include "types.h"
 
 namespace sail {
@@ -25,22 +26,23 @@ class Tensor {
     TensorSize shape;
     TensorSize strides;
     alignemnt_information info;
+    TensorShape shape_details;
 
     autograd::Function* fcn;
 
     //     explicit Tensor(TensorStorage storage);
 
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
-           TensorSize& shape);
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
-           TensorSize& shape, bool requires_grad);
-    static Tensor move(int& ndims, void*& data, Dtype& dt, TensorSize& strides,
-                       TensorSize& shape);
+    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data);
+    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data,
+           bool requires_grad);
+
+    static Tensor move(int& ndims, void*& data, Dtype& dt,
+                       TensorShape shape_data);
     //     Tensor(int ndims, void* data, Dtype dt, TensorSize strides,
     //            TensorSize shape);
 
     Tensor cast(const Dtype dt);
-    Tensor reshape(const TensorSize new_shape);
+    Tensor reshape(const TensorShape new_shape);
     Tensor expand_dims(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();
