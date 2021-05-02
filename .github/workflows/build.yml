@@ -23,11 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-#       - name: Install GCC
-#         uses: egor-tensin/setup-gcc@v1
-#         with:
-#           # Target platform
-#           platform: x64
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
+        
       - name: Install gcc-8
         run: sudo apt-get install gcc-8 g++-8
         
