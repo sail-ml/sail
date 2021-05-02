@@ -42,7 +42,7 @@ jobs:
         run: sudo update-alternatives --set g++ /usr/bin/g++-8
         
       - name: Install cuda toolkit
-        run: sudo apt install nvidia-cuda-toolkit
+        run: sudo apt update && sudo apt install nvidia-cuda-toolkit
 #       - name: cuda-toolkit
 #         uses: Jimver/cuda-toolkit@v0.2.1
 #         with:
