@@ -39,12 +39,17 @@ jobs:
         run: which g++
         
       - name: Set gcc option
-        run: sudo update-alternatives --install usr/bin/gcc gcc /usr/bin/gcc-8 100
+        run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 100
       - name: Set gcc default
         run: sudo update-alternatives --set gcc /usr/bin/gcc-8
         
+      - name: test 1 a
+        run: which gcc
+      - name: test 1 a
+        run: gcc --version
+        
       - name: Set g++ option
-        run: sudo update-alternatives --install usr/bin/g++ g++ /usr/bin/g++-8 100
+        run: sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 100
       - name: Set g++ default
         run: sudo update-alternatives --set g++ /usr/bin/g++-8
 #       - name: cuda-toolkit
