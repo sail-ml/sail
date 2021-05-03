@@ -22,6 +22,8 @@ class Tensor {
     int ndim;
     int arr_numel;
     bool requires_grad;
+    bool has_grad = false;
+    Tensor* grad;
     Dtype dtype;
     TensorSize shape;
     TensorSize strides;
@@ -57,6 +59,7 @@ class Tensor {
     int get_ndim();
 
     void backward();
+    void backward(Tensor grad);
 
     Tensor operator+(Tensor& t);
     Tensor operator-(Tensor& t);

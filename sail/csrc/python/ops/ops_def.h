@@ -1,5 +1,6 @@
 #pragma once
 
+#include "broadcast.h"
 #include "docstring.h"
 #include "elementwise.h"
 #include "linalg/linalg.h"
@@ -22,4 +23,6 @@ static PyMethodDef OpsMethods[] = {
     {"cast_int32", (PyCFunction)cast_int32, METH_VARARGS, NULL},
 
     {"add_docstring", (PyCFunction)add_docstring, METH_VARARGS, NULL},
+
+    {"broadcast_to", (PyCFunction)ops_broadcast_to, METH_VARARGS, NULL},
     {NULL}};

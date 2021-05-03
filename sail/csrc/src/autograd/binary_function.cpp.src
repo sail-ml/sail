@@ -55,6 +55,11 @@ std::string $cName$::getName() { return "$cName$Op"; }
 inline Tensor $cName$::forward(TensorVector inputs) {
     return inputs[0] $op$ inputs[1];
 }
+inline TensorVector $cName$::backward(Tensor grad) {
+    TensorVector o = {grad $op$ Function::arg_storage[1],
+                      grad $op$ Function::arg_storage[0]};
+    return o;
+}
 
 /** end block **/
 

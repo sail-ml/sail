@@ -35,6 +35,7 @@ class Function {
     virtual std::string getName();
     virtual inline Tensor forward(TensorVector inputs);
     virtual inline Tensor apply(TensorVector inputs);
+    virtual inline TensorVector backward(Tensor grad);
 };
 
 }  // namespace autograd

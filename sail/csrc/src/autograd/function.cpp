@@ -37,6 +37,9 @@ inline Tensor Function::apply(TensorVector inputs) {
 inline Tensor Function::forward(TensorVector inputs) {
     throw "not implemented yet.";
 }
+inline TensorVector Function::backward(Tensor inputs) {
+    throw "not implemented yet.";
+}
 
 }  // namespace autograd
 }  // namespace sail

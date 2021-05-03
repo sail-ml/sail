@@ -72,37 +72,41 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
-print ("ADD")
-benchmark_shapes(linear_test_shapes, add, grad=True)
-# # benchmark_shapes(nd_test_shape, add)
+# print ("ADD")
+# benchmark_shapes(linear_test_shapes, add, grad=True)
+# # # benchmark_shapes(nd_test_shape, add)
 
-print ("\nSUB")
-benchmark_shapes(linear_test_shapes, sub, grad=True)
-# # # # benchmark_shapes(nd_test_shape, sub)
+# print ("\nSUB")
+# benchmark_shapes(linear_test_shapes, sub, grad=True)
+# # # # # benchmark_shapes(nd_test_shape, sub)
 
-print ("\nMUL")
-benchmark_shapes(linear_test_shapes, mul, grad=True)
-# # # # benchmark_shapes(nd_test_shape, mul)
+# print ("\nMUL")
+# benchmark_shapes(linear_test_shapes, mul, grad=True)
+# # # # # benchmark_shapes(nd_test_shape, mul)
 
-print ("\nDIV")
-benchmark_shapes(linear_test_shapes, truediv, grad=True)
+# print ("\nDIV")
+# benchmark_shapes(linear_test_shapes, truediv, grad=True)
 # # # benchmark_shapes(nd_test_shape, truediv)
 
-# arr2 = np.random.uniform(0, 1, (32000))#, 32))
-arr1 = np.random.uniform(0, 1, (3))#, 32))
-arr2 = np.random.uniform(0, 1, (3, 3, 2, 3))#, 32))
+# # arr2 = np.random.uniform(0, 1, (32000))#, 32))
+# arr1 = np.random.uniform(0, 1, (3))#, 32))
+# arr2 = np.random.uniform(0, 1, (3, 3, 2, 3))#, 32))
 
 # print (arr1.strides)
 
-x1 = sail.Tensor(arr1, requires_grad=True)
-x2 = sail.Tensor(arr2, requires_grad=True)
+# x1 = sail.Tensor(arr1, requires_grad=True)
+# x2 = sail.broadcast_to(x1, (3, 3))
 
-# print (sail.mean(x1).numpy())
+# print (x2.shape)
+# print (x2.numpy())
+# x2 = sail.Tensor(arr2, requires_grad=True)
 
-x3 = x1 + x2
-print (x3.shape)
-print (" ")
-print (arr1 + arr2)
+# # print (sail.mean(x1).numpy())
+
+# x3 = x1 + x2
+# print (x3.shape)
+# print (" ")
+# print (arr1 + arr2)
 # # x3 = sail.multiply(x1, 2.0)
 # x3 = x1 * x1
 # x3 = x1 * 2.0
@@ -119,6 +123,15 @@ print (arr1 + arr2)
 # arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 
+arr1 = np.random.uniform(0, 1, (10))#, 32))
+arr2 = np.random.uniform(0, 1, (10))#, 32))
+x1 = sail.Tensor(arr1, requires_grad=True)
+x2 = sail.Tensor(arr2, requires_grad=True)
+x3 = x1 + x2
+x4 = sail.sum(x3)
+print (x4.numpy())
+x4.backward()
+print (x1.get_grad())
 
 # x1 = sail.Tensor(arr1, requires_grad=True)
 # print (x1.requires_grad)

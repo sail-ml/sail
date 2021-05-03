@@ -32,6 +32,7 @@ Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorShape shape_data) {
     shape_details = shape_data;
     ndim = shape_details.ndim();
     arr_numel = shape_details.numel();
+    fcn = new autograd::Function();
 
     data = _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
 }
@@ -46,6 +47,7 @@ Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorShape shape_data,
     shape_details = shape_data;
     ndim = shape_details.ndim();
     arr_numel = shape_details.numel();
+    fcn = new autograd::Function();
 
     data = _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
 }
@@ -62,6 +64,7 @@ static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
     t.data = std::move(_data);
     t.shape_details = shape_data;
     t.arr_numel = t.shape_details.numel();
+    t.fcn = new autograd::Function();
     return t;
 }
 
@@ -161,8 +164,46 @@ Tensor Tensor::operator/(Tensor& other) { return ops::divide(*this, other); }
 Tensor Tensor::sum() { return ops::sum(*this); }
 
 void Tensor::backward() {
-    std::cout << fcn->getName() << std::endl;
+    // double data = 1.0;
+    Tensor t = one_scalar(dtype);
+    std::cout << *((double*)t.data) << std::endl;
+
+    backward(t);
+    std::cout << "FINAL" << std::endl;
+    std::cout << *((double*)(grad->data)) << std::endl;
     // for (Tensor i : fcn->)
+}
+void Tensor::backward(Tensor _grad) {
+    std::cout << fcn->getName() << std::endl;
+    // // for (Tensor i : fcn->)
+    if (requires_grad) {
+        if (has_grad) {
+            _grad = (*grad) + _grad;
+            std::cout << *((double*)_grad.data) << std::endl;
+            memcpy(grad, &_grad, sizeof(Tensor));
+            // grad = &_grad;
+        } else {
+            std::cout << *((double*)_grad.data) << std::endl;
+            grad = &_grad;
+            has_grad = true;
+        }
+        if (fcn->getName() != "NONE") {  ////// THIS NEEDS TO CHANGE
+
+            std::vector<Tensor> grad_arglist = fcn->arg_storage;
+            std::vector<Tensor> new_grads = fcn->backward(_grad);
+            if (new_grads.size() == 1) {
+                if (fcn->arg_storage[0].requires_grad) {
+                    fcn->arg_storage[0].backward(new_grads[0]);
+                }
+            } else {
+                for (int i = 0; i < new_grads.size(); i++) {
+                    if (grad_arglist[i].requires_grad) {
+                        grad_arglist[i].backward(new_grads[i]);
+                    }
+                }
+            }
+        }
+    }
 }
 
 }  // namespace sail

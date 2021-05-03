@@ -98,19 +98,30 @@ PyTensor_get_ndim(PyTensor *self, void *closure) {
     long x = static_cast<long>(self->ndim);
     return PyLong_FromLong(x);
 }
+PyObject *inner_numpy(sail::Tensor tensor) {
+    int ndims = tensor.get_ndim();
+    long int *shape = tensor.get_shape_ptr();
 
-RETURN_OBJECT
-PyTensor_get_numpy(PyTensor *self, void *closure) {
-    int ndims = self->tensor.get_ndim();
-    long int *shape = self->tensor.get_shape_ptr();
+    int type = tensor.get_np_type_num();
+    void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
 
-    int type = self->tensor.get_np_type_num();
-    void *data = malloc(self->tensor.getTotalSize());  // self->tensor.data;
-
-    memcpy(data, self->tensor.data, self->tensor.getTotalSize());
-    Py_INCREF(self);
+    memcpy(data, tensor.data, tensor.getTotalSize());
 
     PyObject *array = PyArray_SimpleNewFromData(ndims, shape, type, data);
+    return array;
+}
+RETURN_OBJECT
+PyTensor_get_numpy(PyTensor *self, void *closure) {
+    Py_INCREF(self);
+    PyObject *array = inner_numpy(self->tensor);
+    PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
+    return PyArray_Return((PyArrayObject *)array);
+}
+
+RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
+    Py_INCREF(self);
+    std::cout << *((double *)((self->tensor.grad)->data)) << std::endl;
+    PyObject *array = inner_numpy(*(self->tensor.grad));
     PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);
 }
@@ -148,4 +159,9 @@ static int PyTensor_set_shape(PyTensor *self, void *closure) {
     PyErr_SetString(PyExc_AttributeError,
                     "Shape cannot be modified like this. Use reshape");
     return -1;
+}
+
+RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure) {
+    self->tensor.backward();
+    return (PyObject *)self;
 }

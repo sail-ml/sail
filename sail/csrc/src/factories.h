@@ -17,4 +17,5 @@ Tensor copy(Tensor t);
 // TensorSize shape);
 
 Tensor empty_scalar(Dtype dt);
+Tensor one_scalar(Dtype dt);
 }  // namespace sail

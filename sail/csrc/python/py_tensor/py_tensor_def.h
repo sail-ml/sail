@@ -47,6 +47,8 @@ static int PyTensor_set_shape(PyTensor *self,
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
+RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
+RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
@@ -59,6 +61,10 @@ static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS,
      "Return the name, combining the first and last name"},
     {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, "Casts the tensor"},
+    {"get_grad", (PyCFunction)PyTensor_get_grad, METH_VARARGS,
+     "PyTensor_get_grad"},
+    {"backward", (PyCFunction)PyTensor_backward, METH_VARARGS,
+     "PyTensor_backward"},
     {NULL} /* Sentinel */
 };
 

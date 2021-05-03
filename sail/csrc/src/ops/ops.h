@@ -1,3 +1,4 @@
+#include "broadcast.h"
 #include "copy.h"
 #include "elementwise.h"
 #include "linalg/matmul.h"
