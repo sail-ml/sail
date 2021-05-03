@@ -22,6 +22,7 @@ class TensorShape {
 
     void insert_one(const int dim);
     void remove_one(const int dim);
+    void recompute();
 
     int next();
     void reset();

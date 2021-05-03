@@ -60,8 +60,15 @@ class ArrayIterator():
         self.coordinates = [0] * (self.ndim)
         self.d_ptr = 0
         self.back_strides = [self.strides[i] * (self.shape[i] - 1) for i in range(self.ndim)]
+        print (self.shape)
+        print (self.strides)
+        print (self.back_strides)
+        self.shape = (4, 4, 4)
+        self.strides = (4, 0, 1)
+        self.back_strides = (12, 0, 3)
     def next(self):
         for i in range(self.ndim-1, -1, -1):
+            print (self.coordinates[i], 3)
             if (self.coordinates[i] < (self.shape[i] - 1)):
                 self.coordinates[i] += 1
                 self.d_ptr += self.strides[i]
@@ -72,6 +79,8 @@ class ArrayIterator():
                 self.d_ptr -= self.back_strides[i]
 
     def get(self):
+        print ("DP", self.d_ptr)
+        print (self.coordinates)
         return self.data[self.d_ptr]
 
     def get_next(self):
@@ -79,40 +88,37 @@ class ArrayIterator():
         return self.get()
 
             
-A=np.arange(np.prod((2, 2, 2))).reshape(2,2,2)
-B=np.arange(np.prod((2, 1, 2))).reshape(2, 1, 2)
+A=np.arange(np.prod((4, 4, 4))).reshape(4,4,4)
+B=np.arange(np.prod((4, 1, 4))).reshape(4, 1, 4)
 # A,B=np.lib.stride_tricks.broadcast_arrays(A, B)
 
-x = np.arange(np.prod((3, 8, 20, 2))).reshape(3, 8, 20, 2)
-print (x.strides)
-# exit()
-
-x_shape = [3, 8, 20, 2]
-x_shape = x_shape[1:]
-x_shape.append(1)
-x_shape = x_shape[::-1]
-for i in range(1, len(x_shape)):
-    x_shape[i] = x_shape[i] * x_shape[i-1]
-print (x_shape[::-1])
-exit()
-
-
 it = np.nditer((A, B))
+z = 0
 for _, b in it:
     print (b)
+    if z > 12:
+        break 
+    z += 1
 print (" ")
 
 
-shape = (2, 2, 2)
-strides = (2, 0, 1)
+shape = A.shape
+strides = (4, 0, 1)
 x = np.arange(np.prod(shape)).reshape(shape).flatten().tolist()
 
 ar = ArrayIterator(x, shape, (2, 2, 2), strides)
-print (ar.get()) # 0
-print (ar.get_next()) # 1
-print (ar.get_next()) # 2
-print (ar.get_next()) # 3
-print (ar.get_next()) # 4
-print (ar.get_next()) # 5
-print (ar.get_next()) # 6
-print (ar.get_next()) # 7
+# print (ar.get()) # 0
+# print (ar.get_next()) # 1
+# print (ar.get_next()) # 2
+# print (ar.get_next()) # 3
+# print (ar.get_next()) # 4
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+# print (ar.get_next()) # 5
+for i in range(len(x)):
+    ar.get_next()

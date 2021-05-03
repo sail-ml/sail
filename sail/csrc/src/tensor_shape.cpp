@@ -17,8 +17,6 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
 
     std::vector<long> co(shape.size(), 0);
     coordinates = co;
-    std::cout << coordinates[0] << std::endl;
-    std::cout << coordinates[1] << std::endl;
 
     for (int i; i < shape_.size(); i++) {
         if (i > 0) {
@@ -38,8 +36,6 @@ TensorShape::TensorShape(LongVec shape_) {
 
     std::vector<long> co(shape.size(), 0);
     coordinates = co;
-    std::cout << coordinates[0] << std::endl;
-    std::cout << coordinates[1] << std::endl;
 
     strides.erase(strides.begin());
     for (int i; i < shape_.size(); i++) {
@@ -54,9 +50,9 @@ TensorShape::TensorShape(LongVec shape_) {
 int TensorShape::next() {
     int i;
     for (i = shape.size() - 1; i >= 0; i--) {
-        if (coordinates[i] < shape_m1[i]) {
+        if (coordinates[i] < (shape[i] - 1)) {
             coordinates[i] += 1;
-            d_ptr += 1;
+            d_ptr += strides[i];
             break;
         } else {
             coordinates[i] = 0;
@@ -64,6 +60,16 @@ int TensorShape::next() {
         }
     }
     return d_ptr;
+}
+
+void TensorShape::recompute() {
+    LongVec new_s_m1, n_b_s;
+    for (int i; i < shape.size(); i++) {
+        new_s_m1.push_back(shape[i] - 1);
+        n_b_s.push_back(strides[i] * shape_m1[i]);
+    }
+    shape_m1 = new_s_m1;
+    back_strides = n_b_s;
 }
 
 void TensorShape::reset() {

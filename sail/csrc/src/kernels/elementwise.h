@@ -113,6 +113,32 @@ void launch_binary_elementwise_broadcast(Op op, const TensorPack... args) {
     p2 = static_cast<decltype(p2)>(vec[1].data);
     p3 = static_cast<decltype(p3)>(vec[2].data);
 
+    TensorSize shape1 = vec[0].shape_details.shape;
+    TensorSize shape2 = vec[1].shape_details.shape;
+    for (int i = 0; i < vec[0].ndim; i++) {
+        // std::cout << vec[0].shape_details.shape[i] << ", "
+        //           << vec[1].shape_details.shape[i] << std::endl;
+        if (shape1[i] != shape2[i]) {
+            // if (shape1[i])
+            // std::cout << "MIS" << std::endl;
+            if (shape1[i] == 1) {
+                // bc = true;
+                // break;
+                vec[0].shape_details.strides[i] = 0;
+                vec[0].shape_details.shape[i] = shape2[i];
+
+            } else if (shape2[i] == 1) {
+                // bc = true;
+                // break;
+                vec[1].shape_details.strides[i] = 0;
+                vec[1].shape_details.shape[i] = shape1[i];
+            }
+        }
+    }
+
+    vec[0].shape_details.recompute();
+    vec[1].shape_details.recompute();
+
     TensorShape small_shape = vec[1].shape_details;
     int small_idx = 0;
 
@@ -126,7 +152,6 @@ void launch_binary_elementwise_broadcast(Op op, const TensorPack... args) {
 
     //     } else {
     for (i = 0; i < numel; i += 1) {
-        std::cout << "PTR " << small_shape.d_ptr << std::endl;
         op.call_base(p1[i], p2[small_shape.d_ptr], p3[i]);
         small_shape.next();
     }
@@ -217,38 +242,44 @@ void BinaryElementwise(Op op, TensorPack &... args) {
     // // get dtype to cast to
 
     std::vector<Tensor> vec = {args...};
+    bool bc = false;
     if (vec[0].ndim != vec[1].ndim) {
-        std::cout << "NDIM MISMATCH" << std::endl;
+        bc = true;
     } else {
         TensorSize shape1 = vec[0].shape_details.shape;
         TensorSize shape2 = vec[1].shape_details.shape;
         for (int i = 0; i < vec[0].ndim; i++) {
-            // std::cout << vec[0].shape_details.shape[i] << ", "
-            //           << vec[1].shape_details.shape[i] << std::endl;
             if (shape1[i] != shape2[i]) {
-                // if (shape1[i])
-                // std::cout << "MIS" << std::endl;
                 if (shape1[i] == 1) {
-                    vec[0].shape_details.strides[i] = 0;
+                    bc = true;
+                    break;
+
                 } else if (shape2[i] == 1) {
-                    vec[1].shape_details.strides[i] = 0;
+                    bc = true;
+                    break;
+
+                } else {
+                    throw "shapes cannot be broadcasted together";
                 }
             }
         }
     }
-
+    if (bc) {
+        inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op,
+                                                                      args...);
+        return;
+    }
 #ifdef USE_AVX2
 
     allows_avx = allow_avx(std::forward<TensorPack>(args)...);
     // std::cout << allows_avx << std::endl;
     if (allows_avx) {
-        inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op,
-                                                                      args...);
+        inner_elementwise::launch_binary_elementwise_avx<Ts...>(op, args...);
         return;
     }
 // #else
 #endif
-    inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op, args...);
+    inner_elementwise::launch_binary_elementwise<Ts...>(op, args...);
 }
 
 template <typename... Ts, typename... TensorPack, typename Op>
