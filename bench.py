@@ -99,10 +99,10 @@ x2 = sail.Tensor(arr2, requires_grad=True)
 
 # print (sail.mean(x1).numpy())
 
-# x3 = x1 + x2
-# print (x3.numpy())
-# print (" ")
-# print (arr1 + arr2)
+x3 = x1 + x2
+print (x3.shape)
+print (" ")
+print (arr1 + arr2)
 # # x3 = sail.multiply(x1, 2.0)
 # x3 = x1 * x1
 # x3 = x1 * 2.0

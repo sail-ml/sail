@@ -54,6 +54,7 @@ class Tensor {
     int get_np_type_num();
 
     int numel() const;
+    int get_ndim();
 
     void backward();
 

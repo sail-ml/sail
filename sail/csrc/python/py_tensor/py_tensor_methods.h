@@ -101,7 +101,7 @@ PyTensor_get_ndim(PyTensor *self, void *closure) {
 
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
-    int ndims = self->tensor.ndim;
+    int ndims = self->tensor.get_ndim();
     long int *shape = self->tensor.get_shape_ptr();
 
     int type = self->tensor.get_np_type_num();
@@ -132,4 +132,20 @@ PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     ret_class->dtype = ((PyDtype *)type)->dt_val;
 
     return (PyObject *)ret_class;
+}
+
+RETURN_OBJECT
+PyTensor_get_shape(PyTensor *self, void *closure) {
+    PyObject *tuple = PyTuple_New(self->tensor.get_ndim());
+    int c = 0;
+    for (long s : self->tensor.shape_details.shape) {
+        PyTuple_SetItem(tuple, c, PyLong_FromLong(s));
+        c += 1;
+    }
+    return tuple;
+}
+static int PyTensor_set_shape(PyTensor *self, void *closure) {
+    PyErr_SetString(PyExc_AttributeError,
+                    "Shape cannot be modified like this. Use reshape");
+    return -1;
 }

@@ -127,6 +127,8 @@ Tensor Tensor::cast(const Dtype dt) {
     return casted;
 }
 
+int Tensor::get_ndim() { return shape_details.ndim(); }
+
 // // operators
 
 Tensor Tensor::operator[](const int index) {
