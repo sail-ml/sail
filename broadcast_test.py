@@ -83,6 +83,20 @@ A=np.arange(np.prod((2, 2, 2))).reshape(2,2,2)
 B=np.arange(np.prod((2, 1, 2))).reshape(2, 1, 2)
 # A,B=np.lib.stride_tricks.broadcast_arrays(A, B)
 
+x = np.arange(np.prod((3, 8, 20, 2))).reshape(3, 8, 20, 2)
+print (x.strides)
+# exit()
+
+x_shape = [3, 8, 20, 2]
+x_shape = x_shape[1:]
+x_shape.append(1)
+x_shape = x_shape[::-1]
+for i in range(1, len(x_shape)):
+    x_shape[i] = x_shape[i] * x_shape[i-1]
+print (x_shape[::-1])
+exit()
+
+
 it = np.nditer((A, B))
 for _, b in it:
     print (b)

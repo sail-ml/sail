@@ -1,5 +1,6 @@
 #include "tensor_shape.h"
 
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -9,19 +10,65 @@
 namespace sail {
 TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     shape = shape_;
-    strides = strides_;
+    strides = shape_;
+    strides.erase(strides.begin());
+    strides.push_back(1);
+    std::reverse(strides.begin(), strides.end());
+
+    std::vector<long> co(shape.size(), 0);
+    coordinates = co;
+    std::cout << coordinates[0] << std::endl;
+    std::cout << coordinates[1] << std::endl;
 
     for (int i; i < shape_.size(); i++) {
+        if (i > 0) {
+            strides[i] = strides[i] * strides[i - 1];
+        }
         shape_m1.push_back(shape_[i] - 1);
         back_strides.push_back(strides[i] * shape_m1[i]);
     }
+    std::reverse(strides.begin(), strides.end());
 }
 TensorShape::TensorShape(LongVec shape_) {
     shape = shape_;
+    strides = shape_;
+    strides.erase(strides.begin());
+    strides.push_back(1);
+    std::reverse(strides.begin(), strides.end());
 
+    std::vector<long> co(shape.size(), 0);
+    coordinates = co;
+    std::cout << coordinates[0] << std::endl;
+    std::cout << coordinates[1] << std::endl;
+
+    strides.erase(strides.begin());
     for (int i; i < shape_.size(); i++) {
+        if (i > 0) {
+            strides[i] = strides[i] * strides[i - 1];
+        }
         shape_m1.push_back(shape_[i] - 1);
+        back_strides.push_back(strides[i] * shape_m1[i]);
     }
+    std::reverse(strides.begin(), strides.end());
+}
+int TensorShape::next() {
+    int i;
+    for (i = shape.size() - 1; i >= 0; i--) {
+        if (coordinates[i] < shape_m1[i]) {
+            coordinates[i] += 1;
+            d_ptr += 1;
+            break;
+        } else {
+            coordinates[i] = 0;
+            d_ptr -= back_strides[i];
+        }
+    }
+    return d_ptr;
+}
+
+void TensorShape::reset() {
+    std::vector<long> coordinates(shape.size(), 0);
+    d_ptr = 0;
 }
 
 void TensorShape::insert_one(const int dim) {

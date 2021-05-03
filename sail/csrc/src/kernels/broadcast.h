@@ -29,6 +29,7 @@ class BroadcastToKernel : public Kernel {
                 if ((broadcast_shape[i] != shape[o_i]) && (shape[o_i] != 1)) {
                     throw "dimensions cannot be broadcasted together"
                 }
+                o_i -= 1;
             }
 
             // using avx_name = typename decltype(pt)::avx_type;
