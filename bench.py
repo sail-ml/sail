@@ -90,7 +90,7 @@ benchmark_shapes(linear_test_shapes, add, grad=True)
 
 # arr2 = np.random.uniform(0, 1, (32000))#, 32))
 arr1 = np.random.uniform(0, 1, (4, 1, 4))#, 32))
-arr2 = np.random.uniform(0, 1, (4, 1, 1))#, 32))
+arr2 = np.random.uniform(0, 1, (1, 1, 1))#, 32))
 
 x1 = sail.Tensor(arr1, requires_grad=True)
 x2 = sail.Tensor(arr2, requires_grad=True)
