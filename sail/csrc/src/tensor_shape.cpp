@@ -66,10 +66,12 @@ void TensorShape::recompute() {
     LongVec new_s_m1, n_b_s;
     for (int i; i < shape.size(); i++) {
         new_s_m1.push_back(shape[i] - 1);
-        n_b_s.push_back(strides[i] * shape_m1[i]);
+        n_b_s.push_back(strides[i] * new_s_m1[i]);
     }
     shape_m1 = new_s_m1;
     back_strides = n_b_s;
+    std::vector<long> co(shape_m1.size(), 0);
+    coordinates = co;
 }
 
 void TensorShape::reset() {

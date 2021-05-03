@@ -101,8 +101,8 @@ template <typename... Ts, typename... TensorPack, typename Op>
 void launch_binary_elementwise_broadcast(Op op, const TensorPack... args) {
     std::vector<Tensor> vec = {args...};
     // using T = {Ts...}[0];
-    int numel = vec[0].numel();
-    int jump = vec[0].info.jump;
+    int numel = vec[2].numel();
+    int jump = vec[2].info.jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     get<0, Ts...> __restrict__ *p1;
@@ -113,49 +113,49 @@ void launch_binary_elementwise_broadcast(Op op, const TensorPack... args) {
     p2 = static_cast<decltype(p2)>(vec[1].data);
     p3 = static_cast<decltype(p3)>(vec[2].data);
 
-    TensorSize shape1 = vec[0].shape_details.shape;
-    TensorSize shape2 = vec[1].shape_details.shape;
-    for (int i = 0; i < vec[0].ndim; i++) {
-        // std::cout << vec[0].shape_details.shape[i] << ", "
-        //           << vec[1].shape_details.shape[i] << std::endl;
+    TensorShape vec0_shape = vec[0].shape_details;
+    TensorShape vec1_shape = vec[1].shape_details;
+
+    if (vec0_shape.ndim() < vec[1].shape_details.ndim()) {
+        while (vec0_shape.shape.size() < vec1_shape.ndim()) {
+            vec0_shape.shape.insert(vec0_shape.shape.begin(), 1);
+            vec0_shape.strides.insert(vec0_shape.strides.begin(), 0);
+        }
+    } else {
+        while (vec1_shape.shape.size() < vec0_shape.ndim()) {
+            vec1_shape.shape.insert(vec1_shape.shape.begin(), 1);
+            vec1_shape.strides.insert(vec1_shape.strides.begin(), 0);
+        }
+    }
+
+    TensorSize shape1 = vec0_shape.shape;
+    TensorSize shape2 = vec1_shape.shape;
+    for (int i = 0; i < vec0_shape.ndim(); i++) {
         if (shape1[i] != shape2[i]) {
-            // if (shape1[i])
-            // std::cout << "MIS" << std::endl;
             if (shape1[i] == 1) {
-                // bc = true;
-                // break;
-                vec[0].shape_details.strides[i] = 0;
-                vec[0].shape_details.shape[i] = shape2[i];
+                vec0_shape.strides[i] = 0;
+                vec0_shape.shape[i] = shape2[i];
 
             } else if (shape2[i] == 1) {
-                // bc = true;
-                // break;
-                vec[1].shape_details.strides[i] = 0;
-                vec[1].shape_details.shape[i] = shape1[i];
+                vec1_shape.strides[i] = 0;
+                vec1_shape.shape[i] = shape1[i];
             }
         }
     }
 
-    vec[0].shape_details.recompute();
-    vec[1].shape_details.recompute();
+    vec0_shape.recompute();
+    vec1_shape.recompute();
 
-    TensorShape small_shape = vec[1].shape_details;
-    int small_idx = 0;
+    TensorShape s0 = vec0_shape;
+    TensorShape s1 = vec1_shape;
 
-    //     if (omp) {
-    // #pragma omp parallel for
-    //         for (i = 0; i < numel; i += 1) {
-    //             op.call_base(p1[i], p2[small_shape.d_ptr], p3[i]);
-    //             small_shape.next();
-    //         }
-    //         small_shape.reset();
-
-    //     } else {
     for (i = 0; i < numel; i += 1) {
-        op.call_base(p1[i], p2[small_shape.d_ptr], p3[i]);
-        small_shape.next();
+        op.call_base(p1[s0.d_ptr], p2[s1.d_ptr], p3[i]);
+        s0.next();
+        s1.next();
     }
-    small_shape.reset();
+    s0.reset();
+    s1.reset();
     // }
 }
 template <typename... Ts, typename... TensorPack, typename Op>
@@ -234,37 +234,14 @@ void launch_binary_elementwise_avx_scalar(Op op, const TensorPack &... args) {
 }  // namespace inner_elementwise
 
 template <typename... Ts, typename... TensorPack, typename Op>
-void BinaryElementwise(Op op, TensorPack &... args) {
+void BinaryElementwise(Op op, bool broadcast, TensorPack &... args) {
     bool allows_avx = false;
     static_assert(sizeof...(Ts) == sizeof...(args),
                   "Data types must be specified for each Tensor. ");
 
     // // get dtype to cast to
 
-    std::vector<Tensor> vec = {args...};
-    bool bc = false;
-    if (vec[0].ndim != vec[1].ndim) {
-        bc = true;
-    } else {
-        TensorSize shape1 = vec[0].shape_details.shape;
-        TensorSize shape2 = vec[1].shape_details.shape;
-        for (int i = 0; i < vec[0].ndim; i++) {
-            if (shape1[i] != shape2[i]) {
-                if (shape1[i] == 1) {
-                    bc = true;
-                    break;
-
-                } else if (shape2[i] == 1) {
-                    bc = true;
-                    break;
-
-                } else {
-                    throw "shapes cannot be broadcasted together";
-                }
-            }
-        }
-    }
-    if (bc) {
+    if (broadcast) {
         inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op,
                                                                       args...);
         return;

@@ -60,15 +60,10 @@ class ArrayIterator():
         self.coordinates = [0] * (self.ndim)
         self.d_ptr = 0
         self.back_strides = [self.strides[i] * (self.shape[i] - 1) for i in range(self.ndim)]
-        print (self.shape)
         print (self.strides)
-        print (self.back_strides)
-        self.shape = (4, 4, 4)
-        self.strides = (4, 0, 1)
-        self.back_strides = (12, 0, 3)
+        print (self.shape)
     def next(self):
         for i in range(self.ndim-1, -1, -1):
-            print (self.coordinates[i], 3)
             if (self.coordinates[i] < (self.shape[i] - 1)):
                 self.coordinates[i] += 1
                 self.d_ptr += self.strides[i]
@@ -79,19 +74,22 @@ class ArrayIterator():
                 self.d_ptr -= self.back_strides[i]
 
     def get(self):
-        print ("DP", self.d_ptr)
-        print (self.coordinates)
+        print (self.coordinates, self.d_ptr)
         return self.data[self.d_ptr]
 
     def get_next(self):
         self.next()
         return self.get()
 
-            
-A=np.arange(np.prod((4, 4, 4))).reshape(4,4,4)
-B=np.arange(np.prod((4, 1, 4))).reshape(4, 1, 4)
-# A,B=np.lib.stride_tricks.broadcast_arrays(A, B)
 
+s0 = (3, 3, 2, 3)
+s1 = (3)
+A=np.arange(np.prod(s0)).reshape(s0)
+B=np.arange(np.prod(s1)).reshape(s1)
+# A,B=np.lib.stride_tricks.broadcast_arrays(A, B)
+# print (A.strides)
+# print (B.strides)
+# exit()
 it = np.nditer((A, B))
 z = 0
 for _, b in it:
@@ -103,7 +101,7 @@ print (" ")
 
 
 shape = A.shape
-strides = (4, 0, 1)
+strides = (0,0,0,1)
 x = np.arange(np.prod(shape)).reshape(shape).flatten().tolist()
 
 ar = ArrayIterator(x, shape, (2, 2, 2), strides)
