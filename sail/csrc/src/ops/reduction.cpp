@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "../Tensor.h"
+#include "../autograd/reduction_function.h"
 #include "../dtypes.h"
 #include "../factories.h"
 #include "../kernels/kernel.h"
@@ -36,15 +37,22 @@ Tensor sum(const Tensor& tensor1, int axis) {
     std::reverse(new_strides.begin(), new_strides.end());
     new_strides.push_back(dt_size);
 
-    Tensor empty_tensor =
-        empty(tensor1.ndim - 1, tensor1.dtype, new_strides, new_shape);
+    Tensor empty_tensor = empty(tensor1.ndim - 1, tensor1.dtype,
+                                TensorShape(new_shape, new_strides));
 
     SumTKernel().execute(tensor1, empty_tensor, axis);
     return empty_tensor;
 }
 
-Tensor sum(const Tensor& tensor1) {
-    Tensor empty_tensor = empty_scalar(tensor1.dtype);
+Tensor sum(Tensor& tensor1) {
+    Tensor empty_tensor;
+    if (tensor1.requires_grad) {
+        empty_tensor =
+            (new autograd::Sum())
+                ->apply({&tensor1});  //{std::make_shared<Tensor>(tensor1)});
+        return empty_tensor;
+    }
+    empty_tensor = empty_scalar(tensor1.dtype);
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;

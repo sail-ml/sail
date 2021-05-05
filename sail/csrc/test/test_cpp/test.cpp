@@ -1,4 +1,6 @@
 #include "../../src/Tensor.h"
+#include "../../src/tensor_shape.h"
+#include "../../src/autograd/autograd.h"
 #include "../../src/dtypes.h"
 #include "../../src/ops/ops.h"
 
@@ -13,32 +15,56 @@
 #define MAX_VAL 320000
 
 // Demonstrate some basic assertions.
-// TEST(SailTest, FreeTest) {
-//   // Expect two strings not to be equal.
-//     double x[MAX_VAL];
-//     double y[MAX_VAL];
-//     int ndim = 1;
-//     Dtype dt = Dtype::sFloat64;
-//     TensorSize st = {8};
-//     TensorSize sh = {MAX_VAL};
+TEST(SailTest, FreeTest) {
+  // Expect two strings not to be equal.
+    double x[MAX_VAL];
+    double y[MAX_VAL];
+    int ndim = 1;
+    Dtype dt = Dtype::sFloat64;
+    TensorSize st = {8};
+    TensorSize sh = {MAX_VAL};
 
-//     for (int i = 0; i < MAX_VAL; i++) {
-//         x[i] = 2.21;
-//         y[i] = 3.21;
-//     }
+    sail::TensorShape sp = sail::TensorShape(sh, st);
 
-//     void* xt = static_cast<void*>(x);
-//     void* yt = static_cast<void*>(y);
+    for (int i = 0; i < MAX_VAL; i++) {
+        x[i] = 2.21;
+        y[i] = 3.21;
+    }
 
-//     sail::Tensor t1 = sail::Tensor(ndim, xt, dt, st, sh);
-//     sail::Tensor t2 = sail::Tensor(ndim, yt, dt, st, sh);
+    void* xt = static_cast<void*>(x);
+    void* yt = static_cast<void*>(y);
 
-//     t1.free();
-//     t2.free();
+    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
+    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
 
-//     ASSERT_EQ(t1.data, NULL);
-//     ASSERT_EQ(t2.data, NULL);
-// }
+    sail::Tensor t3 = t1 + t2;
+    sail::Tensor t4 = sail::ops::sum(t3);
+
+
+    t4.backward();
+    std::cout << (t4.fcn)->getName() << std::endl;
+    std::cout << (t3.fcn)->getName() << std::endl;
+    std::cout << (t2.fcn)->getName() << std::endl;
+    std::cout << (t1.fcn)->getName() << std::endl;
+    std::cout << "T4 " << &(t4) << std::endl;
+    std::cout << "T3 " << &(t3) << std::endl;
+    std::cout << "T2 " << &(t2) << std::endl;
+    std::cout << "T1 " << &(t1) << std::endl;
+    std::cout << "T4 " << t4.has_grad << std::endl;
+    std::cout << "T3 " << t3.has_grad << std::endl;
+    std::cout << "T2 " << t2.has_grad << std::endl;
+    std::cout << "T1 " << t1.has_grad << std::endl;
+    std::cout << "T2 " << *(double*)(t2.grad->data) << std::endl;
+
+
+    t1.free();
+    t2.free();
+    t3.free();
+    t4.free();
+
+    ASSERT_EQ(t1.data, NULL);
+    ASSERT_EQ(t2.data, NULL);
+}
 
 // TEST(SailTest, CastFloat32ToInt32) {
 //     float x[MAX_VAL];
@@ -109,37 +135,28 @@
 // }
 
 TEST(SailTest, CBlas) {
-    int i=0;
-    double A[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};  // 2x3       
-    double B[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};  // 3x2
-    double C[4] = {0, 0, 0, 0}; // 2x2
+    double x[32];
+    double y[32];
+    int ndim = 1;
+    Dtype dt = Dtype::sFloat64;
+    TensorSize st = {8};
+    TensorSize sh = {32};
 
-    // M = cols of A
-    // N = rows of B
-    // K = rows of A and cols of B
+    sail::TensorShape sp = sail::TensorShape(sh, st);
 
-    int M = 2;
-    int N = 2;
-    int K = 3;
+    for (int i = 0; i < 32; i++) {
+        x[i] = 2.21;
+        y[i] = 3.21;
+    }
 
-    // cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans,3,3,2,1,A, 3, B, 3,1,C,3);
-    cblas_dgemm(
-        CblasRowMajor,
-        CblasNoTrans, // TRANSA
-        CblasNoTrans, // TRANSB
-        M, // M (rows of matrix A and C)
-        N, // M (cols of matrix B and C)
-        K, // K (cols of matrix A and rows of B)
-        1, // Alpha (multiply A by)
-        A, // matrix A
-        K, // LDA (first dimension of A to be called on? I think it is the stride of the row)
-        B, // matrix B
-        N, // LDB (first dimension of B to be called on? I think it is the stride of the row)
-        1, // Beta (multiply B by)
-        C, // matrix C (res)
-        N // LDC (same as LDB and LDA)
-    );
-    for(i=0; i<4; i++)
-        printf("%lf ", C[i]);
-    printf("\n");
+    void* xt = static_cast<void*>(x);
+    void* yt = static_cast<void*>(y);
+
+    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
+    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
+
+    std::cout << sail::ops::tensor_repr(t1) << std::endl;
+
+    t1.free();
+    t2.free();
 }

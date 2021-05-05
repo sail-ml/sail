@@ -8,6 +8,7 @@
 #include <vector>
 #include "../Tensor.h"
 #include "../dtypes.h"
+#include "../tensor_shape.h"
 #include "../utils.h"
 #include "kernel_utils.h"
 #include "xsimd/xsimd.hpp"
@@ -97,6 +98,67 @@ void launch_binary_elementwise_avx(Op op, const TensorPack &... args) {
 }
 
 template <typename... Ts, typename... TensorPack, typename Op>
+void launch_binary_elementwise_broadcast(Op op, const TensorPack... args) {
+    std::vector<Tensor> vec = {args...};
+    // using T = {Ts...}[0];
+    int numel = vec[2].numel();
+    int jump = vec[2].info.jump;
+    int i = 0;
+    bool omp = numel >= OMP_MIN_VALUE;
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
+
+    p1 = static_cast<decltype(p1)>(vec[0].data);
+    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p3 = static_cast<decltype(p3)>(vec[2].data);
+
+    TensorShape vec0_shape = vec[0].shape_details;
+    TensorShape vec1_shape = vec[1].shape_details;
+
+    if (vec0_shape.ndim() < vec[1].shape_details.ndim()) {
+        while (vec0_shape.shape.size() < vec1_shape.ndim()) {
+            vec0_shape.shape.insert(vec0_shape.shape.begin(), 1);
+            vec0_shape.strides.insert(vec0_shape.strides.begin(), 0);
+        }
+    } else {
+        while (vec1_shape.shape.size() < vec0_shape.ndim()) {
+            vec1_shape.shape.insert(vec1_shape.shape.begin(), 1);
+            vec1_shape.strides.insert(vec1_shape.strides.begin(), 0);
+        }
+    }
+
+    TensorSize shape1 = vec0_shape.shape;
+    TensorSize shape2 = vec1_shape.shape;
+    for (int i = 0; i < vec0_shape.ndim(); i++) {
+        if (shape1[i] != shape2[i]) {
+            if (shape1[i] == 1) {
+                vec0_shape.strides[i] = 0;
+                vec0_shape.shape[i] = shape2[i];
+
+            } else if (shape2[i] == 1) {
+                vec1_shape.strides[i] = 0;
+                vec1_shape.shape[i] = shape1[i];
+            }
+        }
+    }
+
+    vec0_shape.recompute();
+    vec1_shape.recompute();
+
+    TensorShape s0 = vec0_shape;
+    TensorShape s1 = vec1_shape;
+
+    for (i = 0; i < numel; i += 1) {
+        op.call_base(p1[s0.d_ptr], p2[s1.d_ptr], p3[i]);
+        s0.next();
+        s1.next();
+    }
+    s0.reset();
+    s1.reset();
+    // }
+}
+template <typename... Ts, typename... TensorPack, typename Op>
 void launch_binary_elementwise_scalar(Op op, const TensorPack... args) {
     std::vector<Tensor> vec = {args...};
     // using T = {Ts...}[0];
@@ -115,12 +177,14 @@ void launch_binary_elementwise_scalar(Op op, const TensorPack... args) {
     if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[i], p3[i]);
+            op.call_base(p1[i], p2[0], p3[i]);
+            // small_idx = small_shape.next();
         }
 
     } else {
         for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[i], p3[i]);
+            op.call_base(p1[i], p2[0], p3[i]);
+            // small_idx = small_shape.next();
         }
     }
 }
@@ -170,13 +234,18 @@ void launch_binary_elementwise_avx_scalar(Op op, const TensorPack &... args) {
 }  // namespace inner_elementwise
 
 template <typename... Ts, typename... TensorPack, typename Op>
-void BinaryElementwise(Op op, TensorPack &... args) {
+void BinaryElementwise(Op op, bool broadcast, TensorPack &... args) {
     bool allows_avx = false;
     static_assert(sizeof...(Ts) == sizeof...(args),
                   "Data types must be specified for each Tensor. ");
 
     // // get dtype to cast to
 
+    if (broadcast) {
+        inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op,
+                                                                      args...);
+        return;
+    }
 #ifdef USE_AVX2
 
     allows_avx = allow_avx(std::forward<TensorPack>(args)...);

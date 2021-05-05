@@ -17,16 +17,18 @@ typedef struct {
     SCTensor tensor;
     int ndim;
     int dtype;
+    bool requires_grad = false;
 } PyTensor;
 
 ///////////////////// DEFINITIONS ///////////////////////
 
 /////////////// BASE PY FCNS ////////////////
-static int PyTensor_init(PyTensor *self, PyObject *args);
+static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs);
 static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg);
 static int PyTensor_clear(PyTensor *self);
 static void PyTensor_dealloc(PyTensor *self);
 RETURN_OBJECT PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+RETURN_OBJECT PyTensor_repr(PyTensor *self);
 
 /////////////// ARITHMETIC /////////////////
 RETURN_OBJECT PyTensor_add(PyObject *self, PyObject *other);
@@ -37,19 +39,39 @@ RETURN_OBJECT PyTensor_truediv(PyObject *self, PyObject *other);
 ///////////// MAPPING ///////////////////
 RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key);
 
+///////////// GET SET //////////////////
+RETURN_OBJECT PyTensor_get_shape(PyTensor *self, void *closure);
+static int PyTensor_set_shape(PyTensor *self,
+                              void *closure);  // DOES NOTHING
+
 //////////// CLASS METHODS ////////////////
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
+RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
+RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
-    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"}, {NULL}};
+    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"},
+    {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
+     "requires_grad"},
+    {NULL}};
 
 static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS,
      "Return the name, combining the first and last name"},
     {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, "Casts the tensor"},
+    {"get_grad", (PyCFunction)PyTensor_get_grad, METH_VARARGS,
+     "PyTensor_get_grad"},
+    {"backward", (PyCFunction)PyTensor_backward, METH_VARARGS,
+     "PyTensor_backward"},
+    {NULL} /* Sentinel */
+};
+
+static PyGetSetDef PyTensor_get_setters[] = {
+    {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, "shape",
+     NULL},
     {NULL} /* Sentinel */
 };
 
@@ -118,7 +140,7 @@ static PyTypeObject PyTensorType = {
     0,                                                 /* tp_getattr */
     0,                                                 /* tp_setattr */
     0,                                                 /* tp_reserved */
-    0,                                                 /* tp_repr */
+    (reprfunc)PyTensor_repr,                           /* tp_repr */
     &PyTensorNumberMethods,                            /* tp_as_number */
     0,                                                 /* tp_as_sequence */
     &PyTensorMappingMethods,                           /* tp_as_mapping */
@@ -135,19 +157,18 @@ static PyTypeObject PyTensorType = {
     (inquiry)PyTensor_clear,         /* tp_clear */
     0,                               /* tp_richcompare */
     0,                               /* tp_weaklistoffset */
-    // (getiterfunc)Chromosone_getiter, /* tp_iter */
-    0,                       /* tp_iter */
-    0,                       /* tp_iternext */
-    PyTensor_methods,        /* tp_methods */
-    PyTensor_members,        /* tp_members */
-    0,                       // PyTensor_getsetters, /* tp_getset */
-    0,                       /* tp_base */
-    0,                       /* tp_dict */
-    0,                       /* tp_descr_get */
-    0,                       /* tp_descr_set */
-    0,                       /* tp_dictoffset */
-    (initproc)PyTensor_init, /* tp_init */
-    0,                       /* tp_alloc */
-    PyTensor_new             /* tp_new */
+    0,                               /* tp_iter */
+    0,                               /* tp_iternext */
+    PyTensor_methods,                /* tp_methods */
+    PyTensor_members,                /* tp_members */
+    PyTensor_get_setters,            // PyTensor_getsetters, /* tp_getset */
+    0,                               /* tp_base */
+    0,                               /* tp_dict */
+    0,                               /* tp_descr_get */
+    0,                               /* tp_descr_set */
+    0,                               /* tp_dictoffset */
+    (initproc)PyTensor_init,         /* tp_init */
+    0,                               /* tp_alloc */
+    PyTensor_new                     /* tp_new */
 
 };

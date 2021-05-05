@@ -15,6 +15,7 @@
 
 /** begin block
  * name = [add, sub, mul, div]
+ * fname = [add, subtract, multiply, divide]
  * op = [+, -, *, /]
  */
 
@@ -35,7 +36,9 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = tensor1 $op$ tensor2;
+    ret_class->tensor =
+        sail::ops::$fname$(((PyTensor*)t1)->tensor, ((PyTensor*)t2)->tensor);
+    // std::cout << (ret_class->tensor.fcn)->getName() << std::endl;
 
     ret_class->ndim = ret_class->tensor.ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;

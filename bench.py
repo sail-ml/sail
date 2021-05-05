@@ -30,7 +30,7 @@ def benchmark_binary(arr1, arr2, op, iters):
     # time.sleep(1)
     return t
 
-def benchmark_shapes(shapes, op, verbose=False):
+def benchmark_shapes(shapes, op, verbose=False, grad=False):
     faster = {"SAIL": 0, "NUMPY": 0, "FAIL":[]}
     sails = []
     numpys = []
@@ -38,14 +38,13 @@ def benchmark_shapes(shapes, op, verbose=False):
         arr1 = np.random.uniform(0, 1, s)
         arr2 = np.random.uniform(0, 1, s)
 
-        x1 = sail.Tensor(arr1)
-        x2 = sail.Tensor(arr2)
+        x1 = sail.Tensor(arr1, requires_grad=grad)
+        x2 = sail.Tensor(arr2, requires_grad=grad)
 
 
         np_time = benchmark_binary(arr1, arr2, op, 100)
         # time.sleep(0.05)
         sail_time = benchmark_binary(x1, x2, op, 100)
-
 
         assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
 
@@ -72,31 +71,42 @@ def benchmark_shapes(shapes, op, verbose=False):
     print ("SAIL FASTER FOR %s/%s" % (faster["SAIL"], len(shapes)))
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
-    #     print ("FAILED ON: %s" % faster["FAIL"])
+#     #     print ("FAILED ON: %s" % faster["FAIL"])
 # print ("ADD")
-# benchmark_shapes(linear_test_shapes, add)
-# # benchmark_shapes(nd_test_shape, add)
+# benchmark_shapes(linear_test_shapes, add, grad=True)
+# # # benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
-# benchmark_shapes(linear_test_shapes, sub)
-# # # # benchmark_shapes(nd_test_shape, sub)
+# benchmark_shapes(linear_test_shapes, sub, grad=True)
+# # # # # benchmark_shapes(nd_test_shape, sub)
 
 # print ("\nMUL")
-# benchmark_shapes(linear_test_shapes, mul)
-# # # # benchmark_shapes(nd_test_shape, mul)
+# benchmark_shapes(linear_test_shapes, mul, grad=True)
+# # # # # benchmark_shapes(nd_test_shape, mul)
 
 # print ("\nDIV")
-# benchmark_shapes(linear_test_shapes, truediv)
-# benchmark_shapes(nd_test_shape, truediv)
+# benchmark_shapes(linear_test_shapes, truediv, grad=True)
+# # # benchmark_shapes(nd_test_shape, truediv)
 
-# arr2 = np.random.uniform(0, 1, (32000))#, 32))
-# arr1 = np.random.uniform(0, 1, (32000))#, 32))
+# # arr2 = np.random.uniform(0, 1, (32000))#, 32))
+# arr1 = np.random.uniform(0, 1, (3))#, 32))
+# arr2 = np.random.uniform(0, 1, (3, 3, 2, 3))#, 32))
 
-# x1 = sail.Tensor(arr1)
+# print (arr1.strides)
 
-# print (sail.mean(x1).numpy())
+# x1 = sail.Tensor(arr1, requires_grad=True)
+# x2 = sail.broadcast_to(x1, (3, 3))
 
-# # x3 = x1 + x1
+# print (x2.shape)
+# print (x2.numpy())
+# x2 = sail.Tensor(arr2, requires_grad=True)
+
+# # print (sail.mean(x1).numpy())
+
+# x3 = x1 + x2
+# print (x3.shape)
+# print (" ")
+# print (arr1 + arr2)
 # # x3 = sail.multiply(x1, 2.0)
 # x3 = x1 * x1
 # x3 = x1 * 2.0
@@ -107,121 +117,37 @@ def benchmark_shapes(shapes, op, verbose=False):
 # print (sail.sum(x1).numpy())
 
 # print (sail.add.__doc__)
+# x = np.random.uniform(0, 1, (1, 10))
+# x = np.broadcast_to(x, (5, 10))
+# print (x)
+
+# arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
+# arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 
-arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
-arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
+arr1 = np.random.uniform(0, 1, (2000)).astype(np.float64)#, 32))
+# arr2 = np.random.randint(0, 2, (10)).astype(np.float64)#, 32))
+x1 = sail.Tensor(arr1, requires_grad=True)
+print (arr1)
+print (x1)
+# x2 = x1[0]
+# print (x2[0].numpy())
+# x2 = sail.Tensor(arr2, requires_grad=True)
+# # x3 = x1 + x2
+# x3 = sail.add(x1, x2)
+# x4 = sail.sum(x3)
 
-# axis = 1
-# print (arr2.strides)
-# x1 = sail.Tensor(arr2)
-# print (np.sum(arr2, axis))
-# print ("EXP STRIDES", np.sum(arr2, axis).strides)
-# print ("EXP SHAPE", np.sum(arr2, axis).shape)
-# print ("STRIDE CALC", 8 * np.r_[1, np.cumprod(np.sum(arr2, axis).shape[::-1][:-1])][::-1])
-# # x2 = x1[0]
-# # print (arr2[0].shape)
-# # print (arr2[0])
-# # print (x2.numpy().shape)
-# # print (x2.numpy())
-# # print (x1[0].numpy())
-# # s1 = sail.sum(x1)
-# s0 = sail.sum(x1, axis)
-# # s2 = sail.sum(x1, 1)
-# # s3 = sail.sum(x1, 2)
+# # print (x1.requires_grad)
+# # print (x2.requires_grad)
+# # print (x3.requires_grad)
+# # print (x4.requires_grad)
+# # print (x4.numpy())
+# x4.backward()
+# print (x4.get_grad())
+# print (x3.get_grad())
+# print (x2.get_grad())
+# print (x1.get_grad())
 
-# print (s0.numpy())
-c = 0
-for z in range(3):
-    for i in range(2, 5):
-        for axis in range(i):
-            # print (c, i, axis)
-            shape = [random.randint(0, 100) for _ in range(i)]
-            arr1 = np.random.uniform(0, 1, shape).astype(np.float64)
-
-            x1 = sail.Tensor(arr1)
-
-            sum_np = np.sum(arr1, axis=axis)
-            sum_sail = sail.sum(x1, axis=axis).numpy()
-
-            # assert(sum_np.all() == sum_sail.all())
-            c += 1
-
-print ("DONE SUM")
-
-# print (np.sum(arr2), np.sum(arr2).strides)
-# print (np_v.numpy(), np_v.numpy().strides)
-arr1 = np.random.uniform(0, 100, (4, 2)).astype(np.float32)
-arr2 = np.random.uniform(0, 100, (2, 4)).astype(np.float32)
-
-print (np.matmul(arr1, arr2))
-
-x1 = sail.Tensor(arr1)
-x2 = sail.Tensor(arr2)
-
-y = sail.matmul(x1, x2)
-print (y.numpy())
-print (np.squeeze(np.expand_dims(y.numpy(), 2), 2)[0])
-z = sail.expand_dims(y, 2)
-z = sail.squeeze(z, 2)
-print (z.numpy())
-print (z[0].numpy())
-
-
-
-# print (x1.numpy())
-# print (sail.int32)
-# print (np.int32)
-# x2 = x1.astype(sail.int32)
-# print (x2.numpy())
-# x3 = x2.astype(sail.float64)
-# print (x3.numpy())
-
-# print (arr1 // arr2)
-# t = time.time()
-# for i in range(100):
-#     arr1 / 3 
-# print ((time.time() - t)/100)
-# t = time.time()
-# for i in range(100):
-#     arr1 / 3.0 
-# print ((time.time() - t)/100)
-
-# x1 = sail.Tensor(arr1)
-# # x2 = sail.Tensor(arr2)
-# t = time.time()
-# for _ in range(100):
-#     arr1.astype(np.int32)
-# print ((time.time() - t)/100)
-# y = sail.cast_int32(x1)
-# t = time.time()
-# for _ in range(100):
-#     y-y
-# print ((time.time() - t)/100)
-# print (y.numpy())
-# # print((y + y).numpy())
-# # print((y - y).numpy())
-# # print((y * y).numpy())
-# # print((y - y).numpy())
-# print((y *y).numpy())
-# x2 = x1 / 3.0
-# print (x2.numpy())
-
-# print (x1.numpy())
-
-# x3 = sail.add(x1, x2)#x1 + x2
-# print (x3.numpy())
-
-# print (x1.numpy())
-# print (sail.cast_int32(x1).numpy())
-# print (x1.numpy())
-
-# x3 = x2 + x1
-# print (x3.numpy())
-# x2 = sail.Tensor(arr2)
-# # print (x1.numpy())
-# x3 = x1 / x2
-# print (x3.numpy())
-# print (dir(arr1))
-# print (arr1.ctypes)
-
+# x1 = sail.Tensor(arr1, requires_grad=True)
+# print (x1.requires_grad)
+# sail.add(x1, x1);

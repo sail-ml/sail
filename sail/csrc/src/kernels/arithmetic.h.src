@@ -16,7 +16,8 @@ namespace sail {
 
 class $name$TTKernel : public Kernel {
    public:
-    void execute(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor) {
+    void execute(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
+                 bool broadcast) {
         launch_arithmetic(t1.dtype, [&](auto pt) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
@@ -41,7 +42,7 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_unaligned(out, c);
                 }
             };
-            BinaryElementwise<T, T, T>(Impl{}, t1, t2, out_tensor);
+            BinaryElementwise<T, T, T>(Impl{}, broadcast, t1, t2, out_tensor);
         });
     }
 };
@@ -56,7 +57,8 @@ class $name$TTKernel : public Kernel {
 
 class $name$TSKernel : public Kernel {
    public:
-    void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
+    void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
+                 bool broadcast) {
         launch_arithmetic(t1.dtype, [&](auto pt) {
             using T = typename decltype(pt)::type;
             using avx_type = xsimd::simd_type<T>;

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "../../../src/Tensor.h"
 #include "../../../src/ops/ops.h"
+#include "../../../src/tensor_shape.h"
 #include "../../../src/types.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
@@ -34,9 +35,11 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
 
     std::reverse(size.begin(), size.end());
 
+    sail::TensorShape new_ = sail::TensorShape(size);
+
     COPY(t1, ret_class);
 
-    ret_class->tensor.reshape(size);
+    ret_class->tensor.reshape(new_);
 
     ret_class->ndim = ret_class->tensor.ndim;
 

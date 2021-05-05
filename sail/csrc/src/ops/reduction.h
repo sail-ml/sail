@@ -9,7 +9,7 @@
 namespace sail {
 namespace ops {
 
-Tensor sum(const Tensor& tensor1);
+Tensor sum(Tensor& tensor1);
 Tensor sum(const Tensor& tensor1, int axis);
 Tensor mean(const Tensor& tensor1);
 

@@ -147,6 +147,9 @@ inline Dtype GetDtype(const std::string& name) {
     throw DtypeError{"Dtype not found get dtype"};
 }
 
+template <typename T>
+constexpr bool IsFloatingPointV = std::is_floating_point<T>::value;
+
 inline Dtype GetDtypeFromNumpyInt(int npdtype) {
     switch (npdtype) {
         case 5:

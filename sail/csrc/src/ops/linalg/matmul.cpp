@@ -49,7 +49,8 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     new_strides.pop_back();
     new_strides.push_back(dt_size);
 
-    empty_tensor = empty(t1.ndim, t1.dtype, new_strides, new_shape);
+    empty_tensor =
+        empty(t1.ndim, t1.dtype, TensorShape(new_shape, new_strides));
 
     MatmulTTKernel().execute(t1, t2, empty_tensor);
 
