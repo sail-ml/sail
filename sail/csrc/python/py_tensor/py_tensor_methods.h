@@ -124,7 +124,6 @@ RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
     Py_INCREF(self);
     PyObject *array = inner_numpy(self->tensor);
-    std::cout << "returning again" << std::endl;
 
     // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);
