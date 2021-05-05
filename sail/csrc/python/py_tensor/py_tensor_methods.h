@@ -106,22 +106,34 @@ PyObject *inner_numpy(sail::Tensor tensor) {
     void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
 
     memcpy(data, tensor.data, tensor.getTotalSize());
+    PyObject *array;
+    if (!tensor.broadcasted) {
+        array = PyArray_SimpleNewFromData(ndims, shape, type, data);
+    } else {
+        PyObject *temp_array;
+        shape = tensor.old_shape.get_shape_ptr();
+        ndims = tensor.old_shape.ndim();
+        array = PyArray_SimpleNewFromData(ndims, shape, type, data);
 
-    PyObject *array = PyArray_SimpleNewFromData(ndims, shape, type, data);
+        PyArray_BroadcastToShape(array, tensor.get_shape_ptr(),
+                                 tensor.get_ndim());
+    }
     return array;
 }
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
     Py_INCREF(self);
     PyObject *array = inner_numpy(self->tensor);
-    PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
+    std::cout << "returning again" << std::endl;
+
+    // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);
 }
 
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
     Py_INCREF(self);
     PyObject *array = inner_numpy(*(self->tensor.grad));
-    PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
+    // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);
 }
 

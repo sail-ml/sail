@@ -33,6 +33,9 @@ class Tensor {
 
     autograd::Function* fcn;
 
+    bool broadcasted = false;
+    TensorShape old_shape;
+
     //     explicit Tensor(TensorStorage storage);
 
     Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data);

@@ -57,7 +57,7 @@ inline Tensor Add::forward(RefTensorVector inputs) {
 inline TensorVector Add::backward(Tensor grad) {
     Tensor* a = Function::arg_storage[0];
     Tensor* b = Function::arg_storage[1];
-    TensorVector o = {*b, *a};
+    TensorVector o = {grad, grad};
     return o;
 }
 
@@ -68,7 +68,7 @@ inline Tensor Subtract::forward(RefTensorVector inputs) {
 inline TensorVector Subtract::backward(Tensor grad) {
     Tensor* a = Function::arg_storage[0];
     Tensor* b = Function::arg_storage[1];
-    TensorVector o = {*b, *a};
+    TensorVector o = {grad, grad};
     return o;
 }
 
@@ -79,7 +79,7 @@ inline Tensor Divide::forward(RefTensorVector inputs) {
 inline TensorVector Divide::backward(Tensor grad) {
     Tensor* a = Function::arg_storage[0];
     Tensor* b = Function::arg_storage[1];
-    TensorVector o = {*b, *a};
+    TensorVector o = {grad * (*b), grad * (*a)};
     return o;
 }
 
