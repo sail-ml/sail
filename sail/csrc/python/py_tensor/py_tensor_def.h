@@ -43,13 +43,14 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key);
 RETURN_OBJECT PyTensor_get_shape(PyTensor *self, void *closure);
 static int PyTensor_set_shape(PyTensor *self,
                               void *closure);  // DOES NOTHING
+RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
+static int PyTensor_set_grad(PyTensor *self, void *closure);
 
 //////////// CLASS METHODS ////////////////
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
 RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
-RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
@@ -70,8 +71,8 @@ static PyMethodDef PyTensor_methods[] = {
 };
 
 static PyGetSetDef PyTensor_get_setters[] = {
-    {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, "shape",
-     NULL},
+    {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, "shape"},
+    {"grad", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, "grad"},
     {NULL} /* Sentinel */
 };
 

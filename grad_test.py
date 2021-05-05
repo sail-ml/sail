@@ -50,7 +50,7 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     output.backward()
     grads_dic = {}
     for i, p in enumerate(param_dictionary):
-        grads_dic[p] = params[i].get_grad() 
+        grads_dic[p] = params[i].grad.numpy() 
 
     parameters = dictionary_to_vector(param_dictionary)
     grads = dictionary_to_vector(grads_dic)

@@ -125,29 +125,16 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 
-arr1 = np.random.uniform(0, 1, (2000)).astype(np.float64)#, 32))
-# arr2 = np.random.randint(0, 2, (10)).astype(np.float64)#, 32))
+arr1 = np.random.uniform(0, 1, (32, 32)).astype(np.float64)#, 32))
+arr2 = np.random.uniform(0, 1, (32, 32)).astype(np.float64)#, 32))
 x1 = sail.Tensor(arr1, requires_grad=True)
-print (arr1)
-print (x1)
-# x2 = x1[0]
-# print (x2[0].numpy())
-# x2 = sail.Tensor(arr2, requires_grad=True)
-# # x3 = x1 + x2
-# x3 = sail.add(x1, x2)
-# x4 = sail.sum(x3)
+x2 = sail.Tensor(arr2, requires_grad=True)
 
-# # print (x1.requires_grad)
-# # print (x2.requires_grad)
-# # print (x3.requires_grad)
-# # print (x4.requires_grad)
-# # print (x4.numpy())
-# x4.backward()
-# print (x4.get_grad())
-# print (x3.get_grad())
-# print (x2.get_grad())
-# print (x1.get_grad())
+x3 = sail.multiply(x1, x2)
+x4 = sail.sum(x3)
 
-# x1 = sail.Tensor(arr1, requires_grad=True)
-# print (x1.requires_grad)
-# sail.add(x1, x1);
+print (x4)
+x4.backward()
+print (x1.get_grad())
+
+# print (x1.grad)

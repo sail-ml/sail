@@ -172,15 +172,19 @@ void Tensor::backward() {
     backward(t);
 }
 void Tensor::backward(Tensor _grad) {
+    std::cout << _grad.data << std::endl;
     // // for (Tensor i : fcn->)
     if (requires_grad) {
         if (has_grad) {
             // _grad = (*grad) + _grad;
+            // grad = &_grad;
             grad = std::make_shared<Tensor>(_grad);
         } else {
             this->has_grad = true;
             // grad = &_grad;
             grad = std::make_shared<Tensor>(_grad);
+            // grad = &_grad;
+            std::cout << grad->data << std::endl;
 
             // memcpy(grad, &_grad, sizeof(Tensor));
         }

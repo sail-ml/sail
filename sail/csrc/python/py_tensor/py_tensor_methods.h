@@ -134,10 +134,25 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
 }
 
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
-    Py_INCREF(self);
-    PyObject *array = inner_numpy(*(self->tensor.grad));
-    // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
-    return PyArray_Return((PyArrayObject *)array);
+    if (self->tensor.has_grad == false) {
+        return Py_None;
+    } else {
+        Py_INCREF(self);
+        PyTensor *grad;
+        grad = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+        SCTensor gr = *(self->tensor.grad);
+        grad->tensor = gr;
+        grad->ndim = grad->tensor.ndim;
+        grad->dtype = self->dtype;
+        grad->ob_base = *(PyObject *)self;
+        return (PyObject *)grad;
+    }
+}
+
+static int PyTensor_set_grad(PyTensor *self, void *closure) {
+    PyErr_SetString(PyExc_AttributeError, "Grad cannot be modified");
+    return -1;
 }
 
 RETURN_OBJECT
