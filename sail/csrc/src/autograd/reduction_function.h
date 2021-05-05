@@ -48,9 +48,9 @@ using TensorVector = std::vector<Tensor>;
 class Sum : public Function {
    public:
     explicit Sum(){};
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(TensorVector inputs);
+    inline Tensor forward(RefTensorVector inputs);
     inline TensorVector backward(Tensor grad);
 };
 

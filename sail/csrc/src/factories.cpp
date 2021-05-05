@@ -43,7 +43,6 @@ Tensor empty_scalar(Dtype dt) {
     int zero = 0;
     TensorSize shape = {1};
     TensorShape ts = TensorShape(shape);
-    std::cout << "malloc done" << std::endl;
     Tensor _empty = Tensor(zero, data, dt, ts);
 
     return _empty;
@@ -54,15 +53,13 @@ Tensor one_scalar(Dtype dt) {
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
     launch_arithmetic(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
-        T data2 = (T)0;
+        T data2 = (T)1;
         memcpy(data, (void*)(&data2), sizeof(T));
     });
-    std::cout << *((double*)data) << std::endl;
     // memset(data, 1, info.dtype_size);
     int zero = 0;
     TensorSize shape = {1};
     TensorShape ts = TensorShape(shape);
-    std::cout << "malloc done" << std::endl;
     Tensor _empty = Tensor(zero, data, dt, ts);
 
     return _empty;

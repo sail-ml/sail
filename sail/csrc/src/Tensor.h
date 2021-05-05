@@ -23,7 +23,8 @@ class Tensor {
     int arr_numel;
     bool requires_grad;
     bool has_grad = false;
-    Tensor* grad;
+    std::shared_ptr<Tensor> grad;
+    // Tensor* grad;
     Dtype dtype;
     TensorSize shape;
     TensorSize strides;

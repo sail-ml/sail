@@ -1,5 +1,6 @@
 #include "../../src/Tensor.h"
 #include "../../src/tensor_shape.h"
+#include "../../src/autograd/autograd.h"
 #include "../../src/dtypes.h"
 #include "../../src/ops/ops.h"
 
@@ -33,14 +34,33 @@ TEST(SailTest, FreeTest) {
     void* xt = static_cast<void*>(x);
     void* yt = static_cast<void*>(y);
 
-    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp);
-    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp);
+    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
+    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
 
     sail::Tensor t3 = t1 + t2;
+    sail::Tensor t4 = sail::ops::sum(t3);
+
+
+    t4.backward();
+    std::cout << (t4.fcn)->getName() << std::endl;
+    std::cout << (t3.fcn)->getName() << std::endl;
+    std::cout << (t2.fcn)->getName() << std::endl;
+    std::cout << (t1.fcn)->getName() << std::endl;
+    std::cout << "T4 " << &(t4) << std::endl;
+    std::cout << "T3 " << &(t3) << std::endl;
+    std::cout << "T2 " << &(t2) << std::endl;
+    std::cout << "T1 " << &(t1) << std::endl;
+    std::cout << "T4 " << t4.has_grad << std::endl;
+    std::cout << "T3 " << t3.has_grad << std::endl;
+    std::cout << "T2 " << t2.has_grad << std::endl;
+    std::cout << "T1 " << t1.has_grad << std::endl;
+    std::cout << "T2 " << *(double*)(t2.grad->data) << std::endl;
+
 
     t1.free();
     t2.free();
     t3.free();
+    t4.free();
 
     ASSERT_EQ(t1.data, NULL);
     ASSERT_EQ(t2.data, NULL);

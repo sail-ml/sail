@@ -54,8 +54,8 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
         strides.push_back(stride_ptr[i]);
     }
 
-    SCTensor tensor =
-        SCTensor(ndim, data, dt, sail::TensorShape(shape, strides));
+    SCTensor tensor = SCTensor(
+        ndim, data, dt, sail::TensorShape(shape, strides), requires_grad);
     self->tensor = tensor;
 
     self->ndim = ndim;
@@ -120,7 +120,6 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
 
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
     Py_INCREF(self);
-    std::cout << *((double *)((self->tensor.grad)->data)) << std::endl;
     PyObject *array = inner_numpy(*(self->tensor.grad));
     PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
     return PyArray_Return((PyArrayObject *)array);

@@ -12,21 +12,24 @@ namespace autograd {
 #define DISABLE_GRAD(inputs)                      \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i].requires_grad = false;      \
+            inputs[i]->requires_grad = false;     \
         }                                         \
     }
 #define ENABLE_GRAD(inputs)                       \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i].requires_grad = true;       \
+            inputs[i]->requires_grad = true;      \
         }                                         \
     }
 
 using TensorVector = std::vector<Tensor>;
 
 std::string Function::getName() { return "NONE"; }
-inline Tensor Function::apply(TensorVector inputs) {
-    arg_storage = inputs;
+inline Tensor Function::apply(RefTensorVector inputs) {
+    // arg_storage = inputs;
+    for (Tensor* i : inputs) {
+        arg_storage.push_back(i);
+    }
     DISABLE_GRAD(inputs);
     Tensor o = forward(inputs);
     ENABLE_GRAD(inputs);
@@ -34,7 +37,7 @@ inline Tensor Function::apply(TensorVector inputs) {
     o.register_op(this);
     return o;
 }
-inline Tensor Function::forward(TensorVector inputs) {
+inline Tensor Function::forward(RefTensorVector inputs) {
     throw "not implemented yet.";
 }
 inline TensorVector Function::backward(Tensor inputs) {

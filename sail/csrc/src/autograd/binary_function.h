@@ -48,36 +48,36 @@ using TensorVector = std::vector<Tensor>;
 class Add : public Function {
    public:
     explicit Add(){};
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(TensorVector inputs);
+    inline Tensor forward(RefTensorVector inputs);
     inline TensorVector backward(Tensor grad);
 };
 
 class Subtract : public Function {
    public:
     explicit Subtract(){};
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(TensorVector inputs);
+    inline Tensor forward(RefTensorVector inputs);
     inline TensorVector backward(Tensor grad);
 };
 
 class Divide : public Function {
    public:
     explicit Divide(){};
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(TensorVector inputs);
+    inline Tensor forward(RefTensorVector inputs);
     inline TensorVector backward(Tensor grad);
 };
 
 class Multiply : public Function {
    public:
     explicit Multiply(){};
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(TensorVector inputs);
+    inline Tensor forward(RefTensorVector inputs);
     inline TensorVector backward(Tensor grad);
 };
 

@@ -26,15 +26,16 @@ namespace autograd {
     }
 
 using TensorVector = std::vector<Tensor>;
+using RefTensorVector = std::vector<Tensor*>;
 
 class Function {
    public:
-    TensorVector arg_storage;
+    RefTensorVector arg_storage;
     explicit Function(){};
     std::string name = "NONE";
     virtual std::string getName();
-    virtual inline Tensor forward(TensorVector inputs);
-    virtual inline Tensor apply(TensorVector inputs);
+    virtual inline Tensor forward(RefTensorVector inputs);
+    virtual inline Tensor apply(RefTensorVector inputs);
     virtual inline TensorVector backward(Tensor grad);
 };
 

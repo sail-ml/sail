@@ -141,7 +141,6 @@ Tensor Tensor::operator[](const int index) {
     for (int i = 1; i < ndim; i++) {
         new_strides.push_back(strides[i]);
     }
-    std::cout << getVectorString(new_strides) << std::endl;
     TensorSize new_shape;
     for (int i = 1; i < ndim; i++) {
         new_shape.push_back(shape[i]);
@@ -166,39 +165,33 @@ Tensor Tensor::sum() { return ops::sum(*this); }
 void Tensor::backward() {
     // double data = 1.0;
     Tensor t = one_scalar(dtype);
-    std::cout << *((double*)t.data) << std::endl;
-
     backward(t);
-    std::cout << "FINAL" << std::endl;
-    std::cout << *((double*)(grad->data)) << std::endl;
-    // for (Tensor i : fcn->)
 }
 void Tensor::backward(Tensor _grad) {
-    std::cout << fcn->getName() << std::endl;
     // // for (Tensor i : fcn->)
     if (requires_grad) {
         if (has_grad) {
-            _grad = (*grad) + _grad;
-            std::cout << *((double*)_grad.data) << std::endl;
-            memcpy(grad, &_grad, sizeof(Tensor));
-            // grad = &_grad;
+            // _grad = (*grad) + _grad;
+            grad = std::make_shared<Tensor>(_grad);
         } else {
-            std::cout << *((double*)_grad.data) << std::endl;
-            grad = &_grad;
-            has_grad = true;
+            this->has_grad = true;
+            // grad = &_grad;
+            grad = std::make_shared<Tensor>(_grad);
+
+            // memcpy(grad, &_grad, sizeof(Tensor));
         }
         if (fcn->getName() != "NONE") {  ////// THIS NEEDS TO CHANGE
 
-            std::vector<Tensor> grad_arglist = fcn->arg_storage;
+            std::vector<Tensor*> grad_arglist = fcn->arg_storage;
             std::vector<Tensor> new_grads = fcn->backward(_grad);
             if (new_grads.size() == 1) {
-                if (fcn->arg_storage[0].requires_grad) {
-                    fcn->arg_storage[0].backward(new_grads[0]);
+                if (fcn->arg_storage[0]->requires_grad) {
+                    fcn->arg_storage[0]->backward(new_grads[0]);
                 }
             } else {
                 for (int i = 0; i < new_grads.size(); i++) {
-                    if (grad_arglist[i].requires_grad) {
-                        grad_arglist[i].backward(new_grads[i]);
+                    if (grad_arglist[i]->requires_grad) {
+                        grad_arglist[i]->backward(new_grads[i]);
                     }
                 }
             }

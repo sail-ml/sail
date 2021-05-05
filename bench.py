@@ -127,10 +127,19 @@ arr1 = np.random.uniform(0, 1, (10))#, 32))
 arr2 = np.random.uniform(0, 1, (10))#, 32))
 x1 = sail.Tensor(arr1, requires_grad=True)
 x2 = sail.Tensor(arr2, requires_grad=True)
-x3 = x1 + x2
+# x3 = x1 + x2
+x3 = sail.add(x1, x2)
 x4 = sail.sum(x3)
-print (x4.numpy())
+
+# print (x1.requires_grad)
+# print (x2.requires_grad)
+# print (x3.requires_grad)
+# print (x4.requires_grad)
+# print (x4.numpy())
 x4.backward()
+# print (x4.get_grad())
+# print (x3.get_grad())
+# print (x2.get_grad())
 print (x1.get_grad())
 
 # x1 = sail.Tensor(arr1, requires_grad=True)

@@ -46,18 +46,15 @@ Tensor sum(const Tensor& tensor1, int axis) {
 
 Tensor sum(Tensor& tensor1) {
     Tensor empty_tensor;
-    std::cout << "here" << std::endl;
     if (tensor1.requires_grad) {
-        empty_tensor = (new autograd::Sum())->apply({tensor1});
-        std::cout << *((double*)(empty_tensor.data)) << std::endl;
+        empty_tensor =
+            (new autograd::Sum())
+                ->apply({&tensor1});  //{std::make_shared<Tensor>(tensor1)});
         return empty_tensor;
     }
-    std::cout << "there" << std::endl;
     empty_tensor = empty_scalar(tensor1.dtype);
-    std::cout << "creation complete" << std::endl;
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
-    std::cout << "exec complete" << std::endl;
     return empty_tensor;
 }
 Tensor mean(const Tensor& tensor1) {

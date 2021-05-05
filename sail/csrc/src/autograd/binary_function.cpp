@@ -1,11 +1,10 @@
-
 #pragma once
 
+#include "binary_function.h"
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
 #include "../ops/elementwise.h"
-#include "binary_function.h"
 #include "function.h"
 
 #define EXECUTE_OP(a, b, o, op)  \
@@ -51,13 +50,47 @@ using TensorVector = std::vector<Tensor>;
  * op = [+, -, /, *]
  */
 
-std::string $cName$::getName() { return "$cName$Op"; }
-inline Tensor $cName$::forward(TensorVector inputs) {
-    return inputs[0] $op$ inputs[1];
+std::string Add::getName() { return "AddOp"; }
+inline Tensor Add::forward(RefTensorVector inputs) {
+    return ops::add(*(inputs[0]), *(inputs[1]));
 }
-inline TensorVector $cName$::backward(Tensor grad) {
-    TensorVector o = {grad $op$ Function::arg_storage[1],
-                      grad $op$ Function::arg_storage[0]};
+inline TensorVector Add::backward(Tensor grad) {
+    Tensor* a = Function::arg_storage[0];
+    Tensor* b = Function::arg_storage[1];
+    TensorVector o = {*b, *a};
+    return o;
+}
+
+std::string Subtract::getName() { return "SubtractOp"; }
+inline Tensor Subtract::forward(RefTensorVector inputs) {
+    return *(inputs[0]) - *(inputs[1]);
+}
+inline TensorVector Subtract::backward(Tensor grad) {
+    Tensor* a = Function::arg_storage[0];
+    Tensor* b = Function::arg_storage[1];
+    TensorVector o = {*b, *a};
+    return o;
+}
+
+std::string Divide::getName() { return "DivideOp"; }
+inline Tensor Divide::forward(RefTensorVector inputs) {
+    return *(inputs[0]) / *(inputs[1]);
+}
+inline TensorVector Divide::backward(Tensor grad) {
+    Tensor* a = Function::arg_storage[0];
+    Tensor* b = Function::arg_storage[1];
+    TensorVector o = {*b, *a};
+    return o;
+}
+
+std::string Multiply::getName() { return "MultiplyOp"; }
+inline Tensor Multiply::forward(RefTensorVector inputs) {
+    return *(inputs[0]) * *(inputs[1]);
+}
+inline TensorVector Multiply::backward(Tensor grad) {
+    Tensor* a = Function::arg_storage[0];
+    Tensor* b = Function::arg_storage[1];
+    TensorVector o = {*b, *a};
     return o;
 }
 
