@@ -14,6 +14,7 @@ class TensorShape {
     LongVec coordinates;
     LongVec back_strides;
     long d_ptr = 0;
+    long at = 0;
 
     explicit TensorShape(){};
 

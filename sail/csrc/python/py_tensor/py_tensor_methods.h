@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
+#include "../../src/ops/ops.h"
 #include "../../src/tensor_shape.h"
 #include "../../src/types.h"
 #include "../py_dtypes/py_dtype.h"
@@ -92,8 +93,11 @@ PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     return (PyObject *)self;
 }
 
-RETURN_OBJECT
-PyTensor_get_ndim(PyTensor *self, void *closure) {
+RETURN_OBJECT PyTensor_repr(PyTensor *self) {
+    return PyUnicode_FromString(sail::ops::tensor_repr(self->tensor).c_str());
+}
+
+RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure) {
     Py_INCREF(self->ndim);
     long x = static_cast<long>(self->ndim);
     return PyLong_FromLong(x);

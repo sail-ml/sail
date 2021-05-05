@@ -28,6 +28,7 @@ static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg);
 static int PyTensor_clear(PyTensor *self);
 static void PyTensor_dealloc(PyTensor *self);
 RETURN_OBJECT PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+RETURN_OBJECT PyTensor_repr(PyTensor *self);
 
 /////////////// ARITHMETIC /////////////////
 RETURN_OBJECT PyTensor_add(PyObject *self, PyObject *other);
@@ -139,7 +140,7 @@ static PyTypeObject PyTensorType = {
     0,                                                 /* tp_getattr */
     0,                                                 /* tp_setattr */
     0,                                                 /* tp_reserved */
-    0,                                                 /* tp_repr */
+    (reprfunc)PyTensor_repr,                           /* tp_repr */
     &PyTensorNumberMethods,                            /* tp_as_number */
     0,                                                 /* tp_as_sequence */
     &PyTensorMappingMethods,                           /* tp_as_mapping */

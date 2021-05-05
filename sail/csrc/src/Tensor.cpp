@@ -65,6 +65,7 @@ static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
     t.shape_details = shape_data;
     t.arr_numel = t.shape_details.numel();
     t.fcn = new autograd::Function();
+
     return t;
 }
 
@@ -135,16 +136,23 @@ int Tensor::get_ndim() { return shape_details.ndim(); }
 // // operators
 
 Tensor Tensor::operator[](const int index) {
-    auto new_ptr = ((void*)data) + ((index * strides[0]));
-
+    void* new_ptr;
     TensorSize new_shape;
-    for (int i = 1; i < ndim; i++) {
-        new_shape.push_back(shape_details.shape[i]);
+    if (shape_details.ndim() >= 2) {
+        new_ptr = ((void*)data) +
+                  ((index * shape_details.strides[0] * info.dtype_size));
+
+        for (int i = 1; i < shape_details.ndim(); i++) {
+            new_shape.push_back(shape_details.shape[i]);
+        }
+    } else {
+        new_ptr = ((void*)data) + (index * info.dtype_size);
+        new_shape = {};
     }
 
     int new_ndim = (ndim)-1;
     Tensor e = empty(new_ndim, dtype, TensorShape(new_shape));
-    e.data = std::move(new_ptr);
+    e.data = new_ptr;
 
     return e;
 }

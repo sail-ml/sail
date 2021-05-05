@@ -30,7 +30,9 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
 TensorShape::TensorShape(LongVec shape_) {
     shape = shape_;
     strides = shape_;
-    strides.erase(strides.begin());
+    if (shape_.size() != 0) {
+        strides.erase(strides.begin());
+    }
     strides.push_back(1);
     std::reverse(strides.begin(), strides.end());
 
@@ -49,14 +51,30 @@ TensorShape::TensorShape(LongVec shape_) {
 }
 int TensorShape::next() {
     int i;
-    for (i = shape.size() - 1; i >= 0; i--) {
-        if (coordinates[i] < (shape[i] - 1)) {
-            coordinates[i] += 1;
-            d_ptr += strides[i];
-            break;
+    bool contiguous = true;
+    if (contiguous) {
+        d_ptr += 1;
+    } else if (shape.size() == 2) {
+        if (coordinates[1] < shape_m1[1]) {
+            coordinates[1]++;
+            d_ptr += strides[1];
         } else {
-            coordinates[i] = 0;
-            d_ptr -= back_strides[i];
+            coordinates[1] = 0;
+            coordinates[0]++;
+            d_ptr += strides[0] - back_strides[1];
+        }
+    } else {
+        for (i = shape.size() - 1; i >= 0; i--) {
+            if (coordinates[i] < shape_m1[i]) {
+                coordinates[i] += 1;
+                d_ptr += strides[i];
+                at = i;
+                break;
+            } else {
+                coordinates[i] = 0;
+                d_ptr -= back_strides[i];
+                at = i;
+            }
         }
     }
     return d_ptr;
@@ -77,6 +95,7 @@ void TensorShape::recompute() {
 void TensorShape::reset() {
     std::vector<long> coordinates(shape.size(), 0);
     d_ptr = 0;
+    at = -1;
 }
 
 void TensorShape::insert_one(const int dim) {
@@ -122,12 +141,11 @@ std::vector<long> TensorShape::generate_all_indexes() {
     std::vector<long> out;
     for (int i = 0; i < numel(); i++) {
         out.push_back(d_ptr);
-        step();
+        next();
     }
     reset();
     return out;
 }
-
 
 long* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
 int TensorShape::ndim() { return shape.size(); }

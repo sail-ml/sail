@@ -55,6 +55,12 @@ class FloatFormatter {
                 digits_after_e_ = e_digits;
             }
         }
+        if (value <= 0.0001) {
+            int e_digits = GetNDigits(static_cast<int64_t>(std::log10(value)));
+            if (digits_after_e_ < e_digits) {
+                digits_after_e_ = e_digits;
+            }
+        }
         if (digits_after_e_ > 0) {
             return;
         }
@@ -186,16 +192,20 @@ class ReprKernel : public Kernel {
     void ArrayReprRecursive(Tensor& tensor, Formatter<T>& formatter,
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
-        const uint8_t ndim = tensor.shape_details.ndim();
+        long ndim = tensor.shape_details.ndim();
         if (ndim == 0) {
             formatter.Print(os, static_cast<T>(((T*)tensor.data)[0]));
             return;
         }
         auto print_indent = [ndim, indent, &os](int64_t i) {
             if (i != 0) {
-                os << ",";
+                os << "";
                 if (ndim > 1 || i % kMaxItemNumPerLine == 0) {
-                    PrintNTimes(os, '\n', ndim - 1);
+                    if (ndim == 1) {
+                        PrintNTimes(os, '\n', ndim);
+                    } else {
+                        PrintNTimes(os, '\n', ndim - 1);
+                    }
                     PrintNTimes(os, ' ', indent);
                 } else {
                     os << ' ';
@@ -203,30 +213,33 @@ class ReprKernel : public Kernel {
             }
         };
         os << "[";
-        // int64_t size = tensor.shape_details.shape[0];
-        // // if (abbreviate && size > kEdgeItems * 2) {
-        // //     for (int64_t i = 0; i < kEdgeItems; ++i) {
-        // //         print_indent(i);
-        // //         ArrayReprRecursive<T>(internal::At(array,
-        // {ArrayIndex{i}}), formatter, indent + 1, os, abbreviate);
-        // //     }
-        // //     print_indent(1);
-        // //     os << "...";
-        // //     print_indent(1);
-        // //     for (int64_t i = 0; i < kEdgeItems; ++i) {
-        // //         print_indent(i);
-        // //         ArrayReprRecursive<T>(internal::At(array, {ArrayIndex{i -
-        // kEdgeItems}}), formatter, indent + 1, os, abbreviate);
-        // //     }
-        // // } else {
-        //     TensorShape shape = tensor.shape_details;
 
-        //     for (int64_t i = 0; i < size; ++i) {
-        //         print_indent(i);
-        //         ArrayReprRecursive<T>(internal::At(array, {ArrayIndex{i}}),
-        //         formatter, indent + 1, os, abbreviate);
-        //     }
-        // }
+        long size = tensor.shape_details.shape[0];
+        T* data = (T*)tensor.data;
+        // if (tensor.broadcasted) {
+        TensorShape shape = tensor.shape_details;
+
+        if (abbreviate && size > kEdgeItems * 2) {
+            for (int64_t i = 0; i < kEdgeItems; ++i) {
+                print_indent(i);
+                Tensor t = tensor[i];
+                ArrayReprRecursive<T>(t, formatter, indent + 1, os, abbreviate);
+            }
+            print_indent(1);
+            os << "...";
+            print_indent(1);
+            for (int64_t i = size - 3; i < size; ++i) {
+                print_indent(i);
+                Tensor t = tensor[i];
+                ArrayReprRecursive<T>(t, formatter, indent + 1, os, abbreviate);
+            }
+        } else {
+            for (long i = 0; i < size; ++i) {
+                print_indent(i);
+                Tensor t = tensor[i];
+                ArrayReprRecursive<T>(t, formatter, indent + 1, os, abbreviate);
+            }
+        }
         os << "]";
     }
 };
