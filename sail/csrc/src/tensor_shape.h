@@ -23,6 +23,7 @@ class TensorShape {
     void insert_one(const int dim);
     void remove_one(const int dim);
     void recompute();
+    std::vector<long> generate_all_indexes();
 
     int next();
     void reset();

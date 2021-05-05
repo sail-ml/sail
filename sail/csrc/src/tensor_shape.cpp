@@ -118,6 +118,17 @@ std::string TensorShape::get_string() {
     return std::string("(") + x + std::string(")");
 }
 
+std::vector<long> TensorShape::generate_all_indexes() {
+    std::vector<long> out;
+    for (int i = 0; i < numel(); i++) {
+        out.push_back(d_ptr);
+        step();
+    }
+    reset();
+    return out;
+}
+
+
 long* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
 int TensorShape::ndim() { return shape.size(); }
 }  // namespace sail

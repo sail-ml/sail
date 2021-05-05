@@ -117,7 +117,9 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # print (sail.sum(x1).numpy())
 
 # print (sail.add.__doc__)
-
+x = np.random.uniform(0, 1, (10,1))
+x = np.broadcast_to(x, (10, 5))
+print (x)
 
 # arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 # arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
@@ -128,7 +130,7 @@ arr2 = np.random.randint(0, 2, (10)).astype(np.float64)#, 32))
 x1 = sail.Tensor(arr1, requires_grad=True)
 x2 = sail.Tensor(arr2, requires_grad=True)
 # x3 = x1 + x2
-x3 = sail.multiply(x1, x2)
+x3 = sail.add(x1, x2)
 x4 = sail.sum(x3)
 
 # print (x1.requires_grad)

@@ -137,17 +137,13 @@ int Tensor::get_ndim() { return shape_details.ndim(); }
 Tensor Tensor::operator[](const int index) {
     auto new_ptr = ((void*)data) + ((index * strides[0]));
 
-    TensorSize new_strides;
-    for (int i = 1; i < ndim; i++) {
-        new_strides.push_back(strides[i]);
-    }
     TensorSize new_shape;
     for (int i = 1; i < ndim; i++) {
-        new_shape.push_back(shape[i]);
+        new_shape.push_back(shape_details.shape[i]);
     }
 
     int new_ndim = (ndim)-1;
-    Tensor e = empty(new_ndim, dtype, TensorShape(new_shape, new_strides));
+    Tensor e = empty(new_ndim, dtype, TensorShape(new_shape));
     e.data = std::move(new_ptr);
 
     return e;
