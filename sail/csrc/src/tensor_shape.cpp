@@ -10,9 +10,11 @@
 namespace sail {
 TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     shape = shape_;
-    strides = shape_;
-    strides.erase(strides.begin());
-    strides.push_back(1);
+    strides = strides_;
+    // if (shape.size() != 0) {
+    //     strides.erase(strides.begin());
+    // }
+    // strides.push_back(1);
     std::reverse(strides.begin(), strides.end());
 
     std::vector<long> co(shape.size(), 0);
@@ -30,30 +32,36 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
 TensorShape::TensorShape(LongVec shape_) {
     shape = shape_;
     strides = shape_;
-    if (shape_.size() != 0) {
+    if (shape.size() != 0) {
         strides.erase(strides.begin());
     }
     strides.push_back(1);
     std::reverse(strides.begin(), strides.end());
 
-    std::vector<long> co(shape.size(), 0);
-    coordinates = co;
+    if (shape.size() > 0) {
+        std::vector<long> co(shape.size(), 0);
+        coordinates = co;
 
-    strides.erase(strides.begin());
-    for (int i; i < shape_.size(); i++) {
-        if (i > 0) {
-            strides[i] = strides[i] * strides[i - 1];
+        for (int i; i < shape_.size(); i++) {
+            if (i > 0) {
+                strides[i] = strides[i] * strides[i - 1];
+            }
+            shape_m1.push_back(shape_[i] - 1);
+            back_strides.push_back(strides[i] * shape_m1[i]);
         }
-        shape_m1.push_back(shape_[i] - 1);
-        back_strides.push_back(strides[i] * shape_m1[i]);
+        std::reverse(strides.begin(), strides.end());
     }
-    std::reverse(strides.begin(), strides.end());
 }
 int TensorShape::next() {
     int i;
-    bool contiguous = true;
-    if (contiguous) {
-        d_ptr += 1;
+    // if (contiguous) {
+    //     d_ptr += 1;
+    if (shape.size() == 0 || shape.size() == 1 && shape[0] == 1) {
+        return d_ptr;
+    }
+    if (shape.size() == 1) {
+        d_ptr += strides[0];
+        coordinates[0]++;
     } else if (shape.size() == 2) {
         if (coordinates[1] < shape_m1[1]) {
             coordinates[1]++;

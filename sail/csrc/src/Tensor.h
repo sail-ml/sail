@@ -34,6 +34,8 @@ class Tensor {
     autograd::Function* fcn;
 
     bool broadcasted = false;
+    bool view = false;
+    TensorShape view_base_shape;
     TensorShape old_shape;
 
     //     explicit Tensor(TensorStorage storage);

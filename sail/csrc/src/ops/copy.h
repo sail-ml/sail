@@ -11,6 +11,7 @@ namespace sail {
 namespace ops {
 
 Tensor copy(Tensor& tensor1);
+Tensor view(Tensor& tensor1);
 Tensor cast(Tensor& tensor1, Dtype dt);
 
 }  // namespace ops

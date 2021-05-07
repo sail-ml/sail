@@ -39,7 +39,7 @@ dic = {"a": np.random.uniform(0, 1, (10)),
        }
 
 def forward(a, b):
-    c = sail.multiply(a, b)
+    c = sail.add(a, b)
     d = sail.sum(c)
     return d
 

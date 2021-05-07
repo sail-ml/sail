@@ -2,8 +2,10 @@
 
 #include <Python.h>
 #include <structmember.h>
+#include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <vector>
 #include "../../src/Tensor.h"
 #include "../../src/ops/ops.h"
 #include "../../src/ops/reduction.h"
@@ -23,14 +25,26 @@ RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
     }
 
     int len = PyTuple_Size(tuple);
+    if (len == -1) {
+        PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+    }
     std::vector<long> shape;
     while (len--) {
         shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
     }
+    std::reverse(shape.begin(), shape.end());
 
     sail::TensorShape s = sail::TensorShape(shape);
 
-    t1->tensor = sail::ops::broadcast_to(t1->tensor, s);
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    return (PyObject*)t1;
+    ret_class->tensor = sail::ops::broadcast_to(t1->tensor, s);
+
+    ret_class->ndim = ret_class->tensor.shape_details.ndim();
+    ret_class->dtype = t1->ndim;
+    ret_class->requires_grad = t1->requires_grad;
+    ret_class->ob_base = *(PyObject*)t1;
+
+    return (PyObject*)ret_class;
 }

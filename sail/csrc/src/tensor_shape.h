@@ -15,6 +15,7 @@ class TensorShape {
     LongVec back_strides;
     long d_ptr = 0;
     long at = 0;
+    bool contiguous = true;
 
     explicit TensorShape(){};
 

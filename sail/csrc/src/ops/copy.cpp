@@ -35,6 +35,21 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
     return empty_tensor;
 }
 
+Tensor view(Tensor& t1) {
+    Tensor new_;
+    new_.data = t1.data;
+    new_.dtype = t1.dtype;
+    new_.fcn = t1.fcn;
+    new_.grad = t1.grad;
+    new_.requires_grad = t1.requires_grad;
+    new_.shape_details = t1.shape_details;
+    new_.info = t1.info;
+    new_.has_grad = t1.has_grad;
+    new_.view = true;
+    new_.view_base_shape = t1.shape_details;
+    return new_;
+}
+
 /** end block **/
 
 }  // namespace ops

@@ -138,20 +138,19 @@ int Tensor::get_ndim() { return shape_details.ndim(); }
 Tensor Tensor::operator[](const int index) {
     void* new_ptr;
     TensorSize new_shape;
-    if (shape_details.ndim() >= 2) {
-        new_ptr = ((void*)data) +
-                  ((index * shape_details.strides[0] * info.dtype_size));
+    TensorSize new_strides;
+    long dim = shape_details.shape[0];
+    long offset = 0;
 
-        for (int i = 1; i < shape_details.ndim(); i++) {
-            new_shape.push_back(shape_details.shape[i]);
-        }
-    } else {
-        new_ptr = ((void*)data) + (index * info.dtype_size);
-        new_shape = {};
+    offset += (shape_details.strides[0] * info.dtype_size) * (index);
+    new_ptr = ((void*)data) + offset;
+    for (int i = 1; i < shape_details.ndim(); i++) {
+        new_shape.push_back(shape_details.shape[i]);
+        new_strides.push_back(shape_details.strides[i]);
     }
 
     int new_ndim = (ndim)-1;
-    Tensor e = empty(new_ndim, dtype, TensorShape(new_shape));
+    Tensor e = empty(new_ndim, dtype, TensorShape(new_shape, new_strides));
     e.data = new_ptr;
 
     return e;
