@@ -32,6 +32,7 @@ Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
     }
 
     new_.shape_details = shape_new;
+    new_.shape_details.recompute();
 
     return new_;
 }
