@@ -52,9 +52,7 @@ Tensor sum(Tensor& tensor1) {
                 ->apply({&tensor1});  //{std::make_shared<Tensor>(tensor1)});
         return empty_tensor;
     }
-    std::cout << "M" << std::endl;
     empty_tensor = empty_scalar(tensor1.dtype);
-    std::cout << "2" << std::endl;
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;

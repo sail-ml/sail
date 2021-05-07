@@ -39,14 +39,10 @@ Tensor copy(Tensor t) {
 
 Tensor empty_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
-    std::cout << "Sjhape made" << std::endl;
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
-    std::cout << "Sjhape made" << std::endl;
     int zero = 0;
     TensorSize shape = {};
-    std::cout << "Sjhape made" << std::endl;
     TensorShape ts = TensorShape(shape);
-    std::cout << "Sjhape made" << std::endl;
     Tensor _empty = Tensor(zero, data, dt, ts);
 
     return _empty;
