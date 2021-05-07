@@ -68,7 +68,7 @@ inline Tensor Subtract::forward(RefTensorVector inputs) {
 inline TensorVector Subtract::backward(Tensor grad) {
     Tensor* a = Function::arg_storage[0];
     Tensor* b = Function::arg_storage[1];
-    TensorVector o = {grad, grad};
+    TensorVector o = {grad, -grad};
     return o;
 }
 

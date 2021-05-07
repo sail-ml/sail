@@ -1,7 +1,8 @@
 #pragma once
 
-#include "arithmetic.h"
+#include "math/math.h"
+#include "reduction/reduction.h"
+
 #include "copy.h"
 #include "linalg/matmul.h"
-#include "reduction.h"
 #include "repr.h"

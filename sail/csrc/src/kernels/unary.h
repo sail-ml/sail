@@ -26,7 +26,7 @@ template <typename... Ts, typename... TensorPack, typename Op>
 void launch_unary(Op op, const TensorPack... args) {
     std::vector<Tensor> vec = {args...};
 
-    int numel = vec[0].numel();
+    int numel = vec[0].shape_details.numel();
     int jump = vec[0].info.jump;
     int i = 0;
 
@@ -38,17 +38,26 @@ void launch_unary(Op op, const TensorPack... args) {
     p1 = static_cast<decltype(p1)>(vec[0].data);
     p2 = static_cast<decltype(p2)>(vec[1].data);
 
-    //     if (omp) {
-    // #pragma omp parallel for
-    //         for (i = 0; i < numel; i += 1) {
-    //             op.call_base(p1[i], p2[0]);
-    //         }
+    if (vec[0].view) {
+        TensorShape sh = vec[0].shape_details;
+        for (i = 0; i < numel; i += 1) {
+            op.call_base(p1[sh.d_ptr], p2[i]);
+            sh.next();
+        }
+        sh.reset();
+    } else {
+        if (omp) {
+#pragma omp parallel for
+            for (i = 0; i < numel; i += 1) {
+                op.call_base(p1[i], p2[i]);
+            }
 
-    //     } else {
-    for (i = 0; i < numel; i += 1) {
-        op.call_base(p1[i], p2[0]);
+        } else {
+            for (i = 0; i < numel; i += 1) {
+                op.call_base(p1[i], p2[i]);
+            }
+        }
     }
-    // }
 }
 
 }  // namespace inner_unary

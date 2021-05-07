@@ -69,6 +69,7 @@ class Tensor {
 
     Tensor operator+(Tensor& t);
     Tensor operator-(Tensor& t);
+    Tensor operator-();
     Tensor operator*(Tensor& t);
     Tensor operator/(Tensor& t);
     Tensor operator[](const int t);

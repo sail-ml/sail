@@ -158,6 +158,7 @@ Tensor Tensor::operator[](const int index) {
 
 Tensor Tensor::operator+(Tensor& other) { return ops::add(*this, other); }
 Tensor Tensor::operator-(Tensor& other) { return ops::subtract(*this, other); }
+Tensor Tensor::operator-() { return ops::negate(*this); }
 Tensor Tensor::operator*(Tensor& other) { return ops::multiply(*this, other); }
 Tensor Tensor::operator/(Tensor& other) { return ops::divide(*this, other); }
 
