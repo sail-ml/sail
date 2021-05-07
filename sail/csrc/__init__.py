@@ -13,7 +13,6 @@ from .libsail_c import float64 as _float64
 int32 = _int32()
 float32 = _float32()
 float64 = _float64() 
-print (_int32)
 
 __all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "squeeze", "sum", "mean",
            "int32", "float32", "float64", "broadcast_to"]

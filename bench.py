@@ -138,6 +138,7 @@ print (arr3)
 # print (x3)
 x3 = sail.broadcast_to(x1, (2,3))
 print (x3)
+print (x3.numpy())
 # print (x1)
 
 # x3 = sail.multiply(x1, x2)

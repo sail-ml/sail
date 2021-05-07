@@ -112,29 +112,26 @@ PyObject *inner_numpy(sail::Tensor tensor) {
 
     memcpy(data, tensor.data, tensor.getTotalSize());
     PyObject *array;
-    // if (!tensor.broadcasted) {
-    array = PyArray_SimpleNewFromData(ndims, shape, type, data);
-    // } else {
-    //     std::cout << "RUNNING THIS ONE" << std::endl;
-    //     long numel = tensor.shape_details.numel();
-    //     std::cout << numel << std::endl;
-    //     void *new_data = malloc(numel * tensor.info.dtype_size);
-    //     launch_arithmetic(tensor.dtype, [&](auto pt) {
-    //         using T = typename decltype(pt)::type;
-    //         T *data = (T *)tensor.data;
-    //         T *data2 = (T *)new_data;
-    //         sail::TensorShape s0 = tensor.old_shape;
-    //         for (int i = 0; i < numel; i++) {
-    //             data2[i] = data[s0.d_ptr];
-    //             std::cout << s0.d_ptr << std::endl;
-    //             s0.next();
-    //         }
-    //         s0.reset();
-    //     });
-    //     shape = tensor.shape_details.get_shape_ptr();
-    //     ndims = tensor.shape_details.ndim();
-    //     array = PyArray_SimpleNewFromData(ndims, shape, type, new_data);
-    // }
+    if (!tensor.view) {
+        array = PyArray_SimpleNewFromData(ndims, shape, type, data);
+    } else {
+        long numel = tensor.shape_details.numel();
+        void *new_data = malloc(numel * tensor.info.dtype_size);
+        launch_arithmetic(tensor.dtype, [&](auto pt) {
+            using T = typename decltype(pt)::type;
+            T *data = (T *)tensor.data;
+            T *data2 = (T *)new_data;
+            sail::TensorShape s0 = tensor.shape_details;
+            for (int i = 0; i < numel; i++) {
+                data2[i] = data[s0.d_ptr];
+                s0.next();
+            }
+            s0.reset();
+        });
+        shape = tensor.shape_details.get_shape_ptr();
+        ndims = tensor.shape_details.ndim();
+        array = PyArray_SimpleNewFromData(ndims, shape, type, new_data);
+    }
     return array;
 }
 RETURN_OBJECT
