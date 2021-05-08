@@ -170,6 +170,7 @@ static PyTypeObject PyTensorType = {
     0,                               /* tp_dictoffset */
     (initproc)PyTensor_init,         /* tp_init */
     0,                               /* tp_alloc */
-    PyTensor_new                     /* tp_new */
+    PyTensor_new,                    /* tp_new */
+    PyObject_GC_Del                  /* tp_free */
 
 };

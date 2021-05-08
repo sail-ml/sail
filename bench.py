@@ -8,7 +8,7 @@ import time, torch
 
 shape = 16000
 
-linear_test_shapes = list(range(1, 128, 4)) + list(range(256, 256**2, 256)) + [25]
+linear_test_shapes = list(range(1, 512, 4))# + list(range(256, 256**2, 256)) + [25]
 
 nd_test_shape = [(16, 32), (32, 128), (256, 4), (784, 128), (4096, 4096)]
 
@@ -34,19 +34,21 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     faster = {"SAIL": 0, "NUMPY": 0, "FAIL":[]}
     sails = []
     numpys = []
+    np_time = 0
+    sail_time = 0
     for s in shapes:
-        arr1 = np.random.uniform(0, 1, s)
-        arr2 = np.random.uniform(0, 1, s)
+        for i in range(10000):
+            arr1 = np.random.uniform(0, 1, s)
+            arr2 = np.random.uniform(0, 1, s)
 
-        x1 = sail.Tensor(arr1, requires_grad=grad)
-        x2 = sail.Tensor(arr2, requires_grad=grad)
+            x1 = sail.Tensor(arr1, requires_grad=False)
+            # x2 = sail.Tensor(arr2, requires_grad=grad)
 
+            # assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
+            # np_time += benchmark_binary(arr1, arr2, op, 1)
+            # time.sleep(0.05)
+            # sail_time += benchmark_binary(x1, x2, op, 1)
 
-        np_time = benchmark_binary(arr1, arr2, op, 100)
-        # time.sleep(0.05)
-        sail_time = benchmark_binary(x1, x2, op, 100)
-
-        assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
 
         # time.sleep(0.05)
 
@@ -73,20 +75,20 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     # if faster["FAIL"] != []:
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
 # print ("ADD")
-# benchmark_shapes(linear_test_shapes, add, grad=True)
-# # # benchmark_shapes(nd_test_shape, add)
+# benchmark_shapes(linear_test_shapes, add, grad=False)
+# # benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
-# benchmark_shapes(linear_test_shapes, sub, grad=True)
-# # # # # benchmark_shapes(nd_test_shape, sub)
+# benchmark_shapes(linear_test_shapes, sub, grad=False)
+# # # # # # benchmark_shapes(nd_test_shape, sub)
 
 # print ("\nMUL")
-# benchmark_shapes(linear_test_shapes, mul, grad=True)
-# # # # # benchmark_shapes(nd_test_shape, mul)
+# benchmark_shapes(linear_test_shapes, mul, grad=False)
+# # # # # # benchmark_shapes(nd_test_shape, mul)
 
 # print ("\nDIV")
-# benchmark_shapes(linear_test_shapes, truediv, grad=True)
-# # # benchmark_shapes(nd_test_shape, truediv)
+# benchmark_shapes(linear_test_shapes, truediv, grad=False)
+# # benchmark_shapes(nd_test_shape, truediv)
 
 # # arr2 = np.random.uniform(0, 1, (32000))#, 32))
 # arr1 = np.random.uniform(0, 1, (3))#, 32))
@@ -126,21 +128,36 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 
 
 # arr1 = np.random.uniform(0, 1, (1, 3)).astype(np.float64)#, 32))
-arr1 = np.random.uniform(0, 1, (2,2,2)).astype(np.float64)#, 32))
-arr2 = np.random.uniform(0, 1, (2,2, 2)).astype(np.float64)#, 32))
-x1 = sail.Tensor(arr1, requires_grad=True)
-x2 = sail.Tensor(arr2, requires_grad=True)
+# arr1 = np.random.uniform(1, 4, (10)).astype(np.float64)#, 32))
+# arr2 = np.random.uniform(1, 4, (10)).astype(np.float64)#, 32))
+# x1 = sail.Tensor(arr1, requires_grad=True)
+# # print (x1)
+# x2 = sail.Tensor(arr2, requires_grad=True)
 
-x3 = sail.subtract(x1, x2)
-x4 = sail.sum(x3)
+# x3 = sail.divide(x1, x2)
+# print (x3)
+# x4 = sail.sum(x3)
 
 # # print (x4)
-x4.backward()
-# # # print (x1.get_grad())
-# # # print (x1)
-# # # print (x4)
-# # print (x3.grad)
+# x4.backward()
+# # print (x4)
+# # # # # # print (x1.get_grad())
+# # # # # # print (x1)
+# # # # # # print (x4)
+# # # # # print (x3.grad)
 
-print (x1.grad)
-print (x2.grad)
+# # print (x1.grad)
+# print (x1.grad.numpy())
+# print (x4)
+# print (x4.numpy())
+import gc
+for i in range(1):
+    arr1 = np.random.uniform(0, 1, (32000)).astype(np.float64)#, 32))
+    # gc.collect()
+    x1 = sail.Tensor(arr1, requires_grad=False)
+    # print (x1)
+    x2 = x1 + x1
+    # print (x2.numpy())
+    print (x2)
 
+    # print (x1.numpy())

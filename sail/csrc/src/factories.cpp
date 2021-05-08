@@ -29,7 +29,8 @@ Tensor copy(Tensor t) {
     auto size = t.shape_details.getTotalSize(GetDtypeSize(t.dtype));
 
     alignemnt_information info = getAlignment(t.dtype);
-    void* data = _realloc_align(t.data, size, info.alignment, info.dtype_size);
+    void* data =
+        _realloc_align(t.get_data(), size, info.alignment, info.dtype_size);
 
     Tensor _empty = Tensor(t.ndim, data, t.dtype, t.shape_details);
 

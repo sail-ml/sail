@@ -16,11 +16,7 @@ class NegateTKernel : public Kernel {
             using T = typename DtypeType::type;
 
             struct Impl {
-                inline void call_base(T x1, T& out) {
-                    std::cout << "AH" << std::endl;
-                    out = -x1;
-                    std::cout << out << std::endl;
-                }
+                inline void call_base(T x1, T& out) { out = -x1; }
             };
             Unary<T, T>(Impl{}, t1, out_tensor);
         });

@@ -23,8 +23,7 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
 
     ret_class->tensor = ((PyTensor *)self)->tensor[idx];
 
-    Py_INCREF(self);
-    ret_class->ob_base = *(PyObject *)self;
+    SET_BASE(self, ret_class);
 
     ret_class->ndim = ((PyTensor *)ret_class)->tensor.ndim;
     ret_class->dtype = ((PyTensor *)self)->dtype;

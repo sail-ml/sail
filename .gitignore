@@ -11,6 +11,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+valgrind-out.txt
+
 *.d
 
 .vscode

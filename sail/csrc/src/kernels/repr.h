@@ -160,17 +160,24 @@ class ReprKernel : public Kernel {
             using T = typename decltype(pt)::type;
             Formatter<T> formatter;
 
-            T* data = (T*)t1.data;
+            T* data = (T*)t1.get_data();
 
             // scan all elements
             TensorShape shape = t1.shape_details;
             long numel = shape.numel();
-            for (int i = 0; i < numel; i++) {
-                T value = data[shape.d_ptr];
-                formatter.Scan(value);
-                shape.next();
+            if (t1.view) {
+                for (int i = 0; i < numel; i++) {
+                    T value = data[shape.d_ptr];
+                    formatter.Scan(value);
+                    shape.next();
+                }
+                shape.reset();
+            } else {
+                for (int i = 0; i < numel; i++) {
+                    T value = data[i];
+                    formatter.Scan(value);
+                }
             }
-            shape.reset();
 
             os << "array(";
             if (t1.shape_details.numel() == 0) {
@@ -195,7 +202,7 @@ class ReprKernel : public Kernel {
                             bool abbreviate = false) const {
         long ndim = tensor.shape_details.ndim();
         if (ndim == 0) {
-            formatter.Print(os, static_cast<T>(((T*)tensor.data)[0]));
+            formatter.Print(os, static_cast<T>(((T*)tensor.get_data())[0]));
             return;
         }
         auto print_indent = [ndim, indent, &os](int64_t i) {
@@ -216,7 +223,7 @@ class ReprKernel : public Kernel {
         os << "[";
 
         long size = tensor.shape_details.shape[0];
-        T* data = (T*)tensor.data;
+        T* data = (T*)tensor.get_data();
         // if (tensor.broadcasted) {
         TensorShape shape = tensor.shape_details;
 

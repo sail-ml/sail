@@ -17,7 +17,7 @@ using TensorVector = std::vector<Tensor>;
 
 std::string Sum::getName() { return "SumOp"; }
 inline Tensor Sum::forward(RefTensorVector inputs) {
-    return ops::sum(*(inputs[0]));
+    return ops::sum(*inputs[0]);
 }
 inline TensorVector Sum::backward(Tensor grad) {
     Tensor full_size =

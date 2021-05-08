@@ -12,7 +12,9 @@
 namespace sail {
 
 namespace ops {
-bool must_broadcast(Tensor& t1, Tensor& t2) {
+using RefTensorVector = std::vector<Tensor*>;
+
+bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     TensorSize shape1 = t1.shape_details.shape;
     TensorSize shape2 = t2.shape_details.shape;
     // Tensor& larger_shape = (new Tensor());
@@ -73,10 +75,14 @@ std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
  * agName = [Add, Subtract, Divide, Multiply]
  */
 
-Tensor $name$(Tensor& tensor1, Tensor& tensor2) {
+Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
+    // std::cout << &tensor1 << std::endl;
     Tensor empty_tensor;
     if (tensor1.requires_grad || tensor2.requires_grad) {
-        empty_tensor = (new autograd::$agName$())->apply({&tensor1, &tensor2});
+        RefTensorVector vec;
+        vec.emplace_back(&tensor1);
+        vec.emplace_back(&tensor2);
+        empty_tensor = (new autograd::$agName$())->apply(vec);
         return empty_tensor;
     }
 
@@ -88,7 +94,6 @@ Tensor $name$(Tensor& tensor1, Tensor& tensor2) {
     } else {
         s = tensor1.shape_details;
     }
-
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 

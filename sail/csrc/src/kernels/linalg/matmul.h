@@ -27,20 +27,20 @@ class MatmulTTKernel : public Kernel {
             if (name == "float64") {
                 using T = double;
                 cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
-                            1, (T*)t1.data, K, (T*)t2.data, N, 1,
-                            (T*)out_tensor.data, N);
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
+                            (T*)out_tensor.get_data(), N);
                 // } else if (name == "float32") {
                 //     using T = float;
                 //     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M,
                 //     N, K,
-                //                 1, (T*)t1.data, K, (T*)t2.data, N, 1,
-                //                 (T*)out_tensor.data, N); // not sure why this
-                //                 doesnt work
+                //                 1, (T*)t1.get_data(), K, (T*)t2.get_data(),
+                //                 N, 1, (T*)out_tensor.get_data(), N); // not
+                //                 sure why this doesnt work
             } else {
                 using T = typename decltype(pt)::type;
-                T* matA = (T*)t1.data;
-                T* matB = (T*)t2.data;
-                T* matC = (T*)out_tensor.data;
+                T* matA = (T*)t1.get_data();
+                T* matB = (T*)t2.get_data();
+                T* matC = (T*)out_tensor.get_data();
                 for (int i = 0; i < M; i++) {
                     for (int j = 0; j < N; j++) {
                         T sum = 0.0;

@@ -42,13 +42,12 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     int ndim = PyArray_NDIM(array);
     int dtype = PyArray_TYPE(array);
 
-    void *data = std::move(static_cast<void *>(array->data));
+    void *data = static_cast<void *>(array->data);
     Dtype dt = GetDtypeFromNumpyInt(dtype);
     int dt_size = GetDtypeSize(dt);
     TensorSize shape, strides;
 
     long int *shape_ptr = PyArray_SHAPE(array);
-    // 0 check, cant have an array that is size 0
     long int *stride_ptr = PyArray_STRIDES(array);
 
     for (int i = 0; i < ndim; i++) {
@@ -56,9 +55,10 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
         strides.push_back(stride_ptr[i] / dt_size);
     }
 
-    SCTensor tensor = SCTensor(
-        ndim, data, dt, sail::TensorShape(shape, strides), requires_grad);
-    self->tensor = tensor;
+    // SCTensor tensor = SCTensor(
+    //     ndim, data, dt, sail::TensorShape(shape, strides), requires_grad);
+    self->tensor = SCTensor(ndim, data, dt, sail::TensorShape(shape, strides),
+                            requires_grad);
 
     self->ndim = ndim;
     self->requires_grad = requires_grad;
@@ -67,13 +67,12 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     return 0;
 }
 static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg) {
-    Py_VISIT(self->base_object);
-    // Py_VISIT(self->last);
+    // Py_VISIT(self->base_object);
     return 0;
 }
 
 static int PyTensor_clear(PyTensor *self) {
-    self->tensor.free();
+    self->tensor.~Tensor();  // explicity call tensor destructor
     return 0;
 }
 
@@ -99,18 +98,18 @@ RETURN_OBJECT PyTensor_repr(PyTensor *self) {
 }
 
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure) {
-    Py_INCREF(self->ndim);
     long x = static_cast<long>(self->ndim);
     return PyLong_FromLong(x);
 }
-PyObject *inner_numpy(sail::Tensor tensor) {
+PyObject *inner_numpy(sail::Tensor &tensor) {
+    std::cout << "inner_nuimpy called" << std::endl;
     int ndims = tensor.get_ndim();
     long int *shape = tensor.get_shape_ptr();
 
     int type = tensor.get_np_type_num();
     void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
 
-    memcpy(data, tensor.data, tensor.getTotalSize());
+    memcpy(data, tensor.get_data(), tensor.getTotalSize());
     PyObject *array;
     if (!tensor.view) {
         array = PyArray_SimpleNewFromData(ndims, shape, type, data);
@@ -119,8 +118,9 @@ PyObject *inner_numpy(sail::Tensor tensor) {
         void *new_data = malloc(numel * tensor.info.dtype_size);
         launch_arithmetic(tensor.dtype, [&](auto pt) {
             using T = typename decltype(pt)::type;
-            T *data = (T *)tensor.data;
+            T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
+            std::cout << "NUMEL " << numel << std::endl;
             sail::TensorShape s0 = tensor.shape_details;
             for (int i = 0; i < numel; i++) {
                 data2[i] = data[s0.d_ptr];
@@ -132,11 +132,12 @@ PyObject *inner_numpy(sail::Tensor tensor) {
         ndims = tensor.shape_details.ndim();
         array = PyArray_SimpleNewFromData(ndims, shape, type, new_data);
     }
+    PyArray_ENABLEFLAGS((PyArrayObject *)array, NPY_ARRAY_OWNDATA);
     return array;
 }
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
-    Py_INCREF(self);
+    // Py_INCREF(self);
     PyObject *array = inner_numpy(self->tensor);
 
     // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);
@@ -155,7 +156,8 @@ RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
         grad->tensor = gr;
         grad->ndim = grad->tensor.ndim;
         grad->dtype = self->dtype;
-        grad->ob_base = *(PyObject *)self;
+        SET_BASE(self, grad);
+
         return (PyObject *)grad;
     }
 }

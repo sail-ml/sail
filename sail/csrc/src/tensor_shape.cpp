@@ -21,9 +21,9 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     coordinates = co;
 
     for (int i; i < shape_.size(); i++) {
-        if (i > 0) {
-            strides[i] = strides[i] * strides[i - 1];
-        }
+        // if (i > 0) {
+        //     strides[i] = strides[i] * strides[i - 1];
+        // }
         shape_m1.push_back(shape_[i] - 1);
         back_strides.push_back(strides[i] * shape_m1[i]);
     }
@@ -119,7 +119,7 @@ void TensorShape::remove_one(const int dim) {
     back_strides.erase(back_strides.begin() + dim);
 }
 
-long TensorShape::numel() {
+long TensorShape::numel() const {
     long s = 1;
     for (long a : shape) {
         s *= a;

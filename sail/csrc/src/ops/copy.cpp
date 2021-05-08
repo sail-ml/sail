@@ -37,7 +37,7 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
 
 Tensor view(Tensor& t1) {
     Tensor new_;
-    new_.data = t1.data;
+    new_.set_data(t1.get_shared_ptr());
     new_.dtype = t1.dtype;
     new_.fcn = t1.fcn;
     new_.grad = t1.grad;

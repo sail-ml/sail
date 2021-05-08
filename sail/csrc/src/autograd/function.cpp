@@ -25,11 +25,8 @@ namespace autograd {
 using TensorVector = std::vector<Tensor>;
 
 std::string Function::getName() { return "NONE"; }
-inline Tensor Function::apply(RefTensorVector inputs) {
-    // arg_storage = inputs;
-    for (Tensor* i : inputs) {
-        arg_storage.push_back(i);
-    }
+inline Tensor Function::apply(RefTensorVector& inputs) {
+    arg_storage = inputs;
     DISABLE_GRAD(inputs);
     Tensor o = forward(inputs);
     ENABLE_GRAD(inputs);

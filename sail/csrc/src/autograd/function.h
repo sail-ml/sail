@@ -12,21 +12,9 @@ namespace sail {
 
 namespace autograd {
 
-#define DISABLE_GRAD(inputs)         \
-    {                                \
-        for (Tensor t : inputs) {    \
-            t.requires_grad = false; \
-        }                            \
-    }
-#define ENABLE_GRAD(inputs)         \
-    {                               \
-        for (Tensor t : inputs) {   \
-            t.requires_grad = true; \
-        }                           \
-    }
-
 using TensorVector = std::vector<Tensor>;
 using RefTensorVector = std::vector<Tensor*>;
+// using RefTensorVector = std::vector<Tensor*>;
 
 class Function {
    public:
@@ -35,7 +23,7 @@ class Function {
     std::string name = "NONE";
     virtual std::string getName();
     virtual inline Tensor forward(RefTensorVector inputs);
-    virtual inline Tensor apply(RefTensorVector inputs);
+    virtual inline Tensor apply(RefTensorVector& inputs);
     virtual inline TensorVector backward(Tensor grad);
 };
 

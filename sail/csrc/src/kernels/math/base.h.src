@@ -25,7 +25,7 @@ class $name$TTKernel : public Kernel {
             using avx_type = xsimd::simd_type<T>;
 
             struct Impl {
-                inline void call_base(T x1, T x2, T& out) {
+                inline void call_base(T& x1, T& x2, T& out) {
                     out = x1 $baseOp$ x2;
                 }
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {

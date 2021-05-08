@@ -4,14 +4,11 @@
 #include <immintrin.h>
 #include <omp.h>
 #include <algorithm>
-#include <chrono>
 #include <vector>
 #include "../Tensor.h"
 #include "../dtypes.h"
 #include "../utils.h"
 #include "kernel_utils.h"
-
-using namespace std::chrono;
 
 using Tensor = sail::Tensor;
 
@@ -35,8 +32,8 @@ void launch_reduction(Op op, const TensorPack... args) {
     get<0, Ts...> __restrict__ *p1;
     get<1, Ts...> __restrict__ *p2;
 
-    p1 = static_cast<decltype(p1)>(vec[0].data);
-    p2 = static_cast<decltype(p2)>(vec[1].data);
+    p1 = static_cast<decltype(p1)>(vec[0].get_data());
+    p2 = static_cast<decltype(p2)>(vec[1].get_data());
 
     if (omp) {
 #pragma omp parallel for

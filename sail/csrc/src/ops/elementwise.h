@@ -9,10 +9,10 @@ namespace sail {
 
 namespace ops {
 
-Tensor add(Tensor& tensor1, Tensor& tensor2);
-Tensor subtract(Tensor& tensor1, Tensor& tensor2);
-Tensor multiply(Tensor& tensor1, Tensor& tensor2);
-Tensor divide(Tensor& tensor1, Tensor& tensor2);
+Tensor add(const Tensor& tensor1, const Tensor& tensor2);
+Tensor subtract(const Tensor& tensor1, const Tensor& tensor2);
+Tensor multiply(const Tensor& tensor1, const Tensor& tensor2);
+Tensor divide(const Tensor& tensor1, const Tensor& tensor2);
 
 }  // namespace ops
 

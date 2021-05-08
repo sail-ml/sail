@@ -11,18 +11,16 @@ inline bool isAlignedAs(const void* p, const int8_t alignment) {
 }
 
 inline void* _malloc_align(long numel, long alignment, long dtype_size) {
+    // return malloc(dtype_size * numel);
     return aligned_alloc(alignment, dtype_size * numel);
 }
 
 inline void* _realloc_align(void* src, long numel, long alignment,
                             long dtype_size) {
-    // void* aligned = _mm_malloc(dtype_size * numel, alignment);
     void* aligned = _malloc_align(numel, alignment, dtype_size);
     if (aligned == NULL) {
         std::cout << "ALLOC FAIL" << std::endl;
     }
-    // void* aligned = static_cast<void*>(new char[dtype_size * numel,
-    // alignment]);
     memcpy(aligned, src, dtype_size * numel);
     return aligned;
 }
