@@ -178,16 +178,22 @@ class ReprKernel : public Kernel {
                     formatter.Scan(value);
                 }
             }
+            if (!t1.is_scalar()) {
+                os << "array(";
+                if (t1.shape_details.numel() == 0) {
+                    os << "[]";
+                } else {
+                    bool should_abbreviate =
+                        t1.shape_details.numel() > kThreshold;
+                    ArrayReprRecursive<T>(t1, formatter, 7, os,
+                                          should_abbreviate);
+                }
+                os << ", shape=" << t1.shape_details.get_string();
+                os << ")";
 
-            os << "array(";
-            if (t1.shape_details.numel() == 0) {
-                os << "[]";
             } else {
-                bool should_abbreviate = t1.shape_details.numel() > kThreshold;
-                ArrayReprRecursive<T>(t1, formatter, 7, os, should_abbreviate);
+                ArrayReprRecursive<T>(t1, formatter, 7, os, false);
             }
-            os << ", shape=" << t1.shape_details.get_string();
-            os << ")";
         });
     }
 
@@ -201,8 +207,8 @@ class ReprKernel : public Kernel {
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
         long ndim = tensor.shape_details.ndim();
-        if (ndim == 0) {
-            formatter.Print(os, static_cast<T>(((T*)tensor.get_data())[0]));
+        if (ndim == 0 || tensor.is_scalar()) {
+            formatter.Print(os, *(T*)tensor.get_data());
             return;
         }
         auto print_indent = [ndim, indent, &os](int64_t i) {

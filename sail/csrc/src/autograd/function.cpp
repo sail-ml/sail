@@ -37,7 +37,7 @@ inline Tensor Function::apply(RefTensorVector& inputs) {
 inline Tensor Function::forward(RefTensorVector inputs) {
     throw "not implemented yet.";
 }
-inline TensorVector Function::backward(Tensor inputs) {
+inline TensorVector Function::backward(Tensor& inputs) {
     throw "not implemented yet.";
 }
 

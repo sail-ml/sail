@@ -59,8 +59,8 @@
     }
 #define SET_BASE(src, dest)                  \
     {                                        \
-        dest->base_object = (PyObject *)src; \
         Py_INCREF(src);                      \
+        dest->base_object = (PyObject *)src; \
     }
 
 #define NUMERIC_PROCESS(t1, t2)                              \

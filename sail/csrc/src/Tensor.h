@@ -48,6 +48,7 @@ class Tensor {
 
     // std::shared_ptr<void> data;
     void* data = nullptr;
+    bool freed = false;
 
     Tensor::~Tensor() {
         // std::cout << "Trying to destruct" << std::endl;
@@ -57,9 +58,16 @@ class Tensor {
             // std::cout << "freeing" << std::endl;
             std::free(data);
             delete fcn;
+            if (has_grad) {
+                grad.get()->~Tensor();
+            }
+            std::free(grad.get());
             owner = false;
         }
     }
+
+    // Tensor(const Tensor& t) = default;
+    // Tensor& operator=(const Tensor& t) = default;
 
     Tensor(const Tensor& t) {
         // std::cout << "copy" << std::endl;
@@ -82,6 +90,9 @@ class Tensor {
     }
 
     Tensor(Tensor&& t) noexcept {
+        if (t.freed) {
+            std::cout << "why are we moving froma  freed object" << std::endl;
+        }
         // std::cout << "move called" << std::endl;
         ndim = t.ndim;
         arr_numel = t.arr_numel;
@@ -94,16 +105,17 @@ class Tensor {
         shape_details = t.shape_details;
 
         grad = t.grad;
-        // t.grad = nullptr;
         data = t.data;  //
-        t.data = nullptr;
         fcn = t.fcn;
-        t.fcn = nullptr;
-
-        owner = true;
-        t.owner = false;
+        if (t.owner) {
+            this->owner = true;
+            t.owner = false;
+        } else {
+            owner = false;
+        }
     }
 
+    // COPY ASSIGNMENT OPERATOR
     Tensor& operator=(const Tensor& t) {
         // std::cout << "copy assignment" << std::endl;
         ndim = t.ndim;
@@ -126,7 +138,11 @@ class Tensor {
         return *this;
     }
 
+    // MOVE ASSIGNMENT OPERATOR
     Tensor& operator=(Tensor&& t) noexcept {
+        if (t.freed) {
+            std::cout << "why are we moving froma  freed object" << std::endl;
+        }
         // std::cout << "move assignment" << std::endl;
         ndim = t.ndim;
         arr_numel = t.arr_numel;
@@ -139,16 +155,14 @@ class Tensor {
         shape_details = t.shape_details;
 
         grad = t.grad;
-        // t.grad = nullptr;
         data = t.data;  //
-        t.data = nullptr;
         fcn = t.fcn;
-        t.fcn = nullptr;
-
-        this->owner = true;
-        t.owner = false;
-        // std::cout << this << std::endl;
-        // std::cout << &t << std::endl;
+        if (t.owner) {
+            this->owner = true;
+            t.owner = false;
+        } else {
+            owner = false;
+        }
 
         return *this;
     }
@@ -182,7 +196,7 @@ class Tensor {
     int get_ndim();
 
     void backward();
-    void backward(Tensor grad);
+    void backward(Tensor& grad);
 
     Tensor operator+(const Tensor& t);
     Tensor operator-(const Tensor& t);

@@ -123,7 +123,7 @@ void Tensor::set_data(const std::shared_ptr<void>& new_data) {
 }
 
 bool Tensor::is_scalar() {
-    if (arr_numel == 1) {
+    if (numel() == 1) {
         return true;
     }
     return false;
@@ -196,40 +196,40 @@ void Tensor::backward() {
     // double data = 1.0;
     Tensor t = one_scalar(dtype);
     backward(t);
+    t.owner = false;
 }
-void Tensor::backward(Tensor _grad) {
-    // // for (Tensor i : fcn->)
-    // if (requires_grad) {
-    //     if (has_grad) {
-    //         // _grad = (*grad) + _grad;
-    //         // grad = &_grad;
-    //         grad = std::make_shared<Tensor>(_grad);
-    //     } else {
-    //         this->has_grad = true;
-    //         // grad = &_grad;
-    //         grad = std::make_shared<Tensor>(_grad);
-    //         // grad = &_grad;
+void Tensor::backward(Tensor& _grad) {
+    // for (Tensor i : fcn->)
+    if (requires_grad) {
+        if (has_grad) {
+            // _grad = (*grad) + _grad;
+            // grad = &_grad;
+            grad = std::make_shared<Tensor>(std::move(_grad));
+        } else {
+            this->has_grad = true;
+            // grad = &_grad;
+            grad = std::make_shared<Tensor>(std::move(_grad));
+            // grad = &_grad;
 
-    //         // memcpy(grad, &_grad, sizeof(Tensor));
-    //     }
-    //     if (fcn->getName() != "NONE") {  ////// THIS NEEDS TO CHANGE
+            // memcpy(grad, &_grad, sizeof(Tensor));
+        }
+        if (fcn->getName() != "NONE") {  ////// THIS NEEDS TO CHANGE
 
-    //         RefTensorVector grad_arglist = fcn->arg_storage;
-    //         std::vector<Tensor> new_grads = fcn->backward(_grad);
-    //         if (new_grads.size() == 1) {
-    //             if (fcn->arg_storage[0]->requires_grad) {
-    //                 fcn->arg_storage[0]->backward(new_grads[0]);
-    //             }
-    //         } else {
-    //             for (int i = 0; i < new_grads.size(); i++) {
-    //                 if (grad_arglist[i]->requires_grad) {
-    //                     grad_arglist[i]->backward(new_grads[i]);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    std::cout << "ja" << std::endl;
+            RefTensorVector grad_arglist = fcn->arg_storage;
+            std::vector<Tensor> new_grads = fcn->backward(_grad);
+            if (new_grads.size() == 1) {
+                if (fcn->arg_storage[0]->requires_grad) {
+                    fcn->arg_storage[0]->backward(new_grads[0]);
+                }
+            } else {
+                for (int i = 0; i < new_grads.size(); i++) {
+                    if (grad_arglist[i]->requires_grad) {
+                        grad_arglist[i]->backward(new_grads[i]);
+                    }
+                }
+            }
+        }
+    }
 }
 
 }  // namespace sail

@@ -24,7 +24,7 @@ class Function {
     virtual std::string getName();
     virtual inline Tensor forward(RefTensorVector inputs);
     virtual inline Tensor apply(RefTensorVector& inputs);
-    virtual inline TensorVector backward(Tensor grad);
+    virtual inline TensorVector backward(Tensor& grad);
 };
 
 }  // namespace autograd

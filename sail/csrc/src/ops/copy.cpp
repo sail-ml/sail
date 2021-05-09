@@ -47,6 +47,7 @@ Tensor view(Tensor& t1) {
     new_.has_grad = t1.has_grad;
     new_.view = true;
     new_.view_base_shape = t1.shape_details;
+    new_.owner = false;
     return new_;
 }
 

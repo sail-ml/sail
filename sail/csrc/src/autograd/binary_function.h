@@ -51,7 +51,7 @@ class Add : public Function {
     RefTensorVector arg_storage;
     std::string getName();
     inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor grad);
+    inline TensorVector backward(Tensor& grad);
 };
 
 class Subtract : public Function {
@@ -60,7 +60,7 @@ class Subtract : public Function {
     RefTensorVector arg_storage;
     std::string getName();
     inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor grad);
+    inline TensorVector backward(Tensor& grad);
 };
 
 class Divide : public Function {
@@ -69,7 +69,7 @@ class Divide : public Function {
     RefTensorVector arg_storage;
     std::string getName();
     inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor grad);
+    inline TensorVector backward(Tensor& grad);
 };
 
 class Multiply : public Function {
@@ -78,7 +78,7 @@ class Multiply : public Function {
     RefTensorVector arg_storage;
     std::string getName();
     inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor grad);
+    inline TensorVector backward(Tensor& grad);
 };
 
 }  // namespace autograd

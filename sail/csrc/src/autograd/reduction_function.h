@@ -51,7 +51,7 @@ class Sum : public Function {
     RefTensorVector arg_storage;
     std::string getName();
     inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor grad);
+    inline TensorVector backward(Tensor& grad);
 };
 
 }  // namespace autograd

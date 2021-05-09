@@ -72,6 +72,7 @@ static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg) {
 }
 
 static int PyTensor_clear(PyTensor *self) {
+    // std::cout << "PY FREE" << std::endl;
     self->tensor.~Tensor();  // explicity call tensor destructor
     return 0;
 }
@@ -102,7 +103,6 @@ RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure) {
     return PyLong_FromLong(x);
 }
 PyObject *inner_numpy(sail::Tensor &tensor) {
-    std::cout << "inner_nuimpy called" << std::endl;
     int ndims = tensor.get_ndim();
     long int *shape = tensor.get_shape_ptr();
 
@@ -120,7 +120,6 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
             using T = typename decltype(pt)::type;
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
-            std::cout << "NUMEL " << numel << std::endl;
             sail::TensorShape s0 = tensor.shape_details;
             for (int i = 0; i < numel; i++) {
                 data2[i] = data[s0.d_ptr];
@@ -204,5 +203,5 @@ static int PyTensor_set_shape(PyTensor *self, void *closure) {
 
 RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure) {
     self->tensor.backward();
-    return (PyObject *)self;
+    return Py_None;
 }

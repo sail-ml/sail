@@ -15,7 +15,7 @@
 #define MAX_VAL 320000
 
 int main() {
-    std::vector<int> g = {4, 8, 16};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
+    std::vector<int> g = {1000, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
     // int a = 1000;
     // void* b = &a;
@@ -47,9 +47,8 @@ int main() {
             sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, false);
             sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, false);
 
-            sail::Tensor t3 = sail::ops::add(t1, t2);
-            std::cout << "calling repr" << std::endl;
-            std::cout << sail::ops::tensor_repr(t2) << std::endl;
+            // sail::Tensor t3 = sail::ops::add(t1, t2);
+            // t3.backward();
 
         
 

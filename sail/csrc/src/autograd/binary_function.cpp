@@ -54,8 +54,10 @@ std::string Add::getName() { return "AddOp"; }
 inline Tensor Add::forward(RefTensorVector inputs) {
     return ops::add(*inputs[0], *inputs[1]);
 }
-inline TensorVector Add::backward(Tensor grad) {
-    TensorVector o = {grad, grad};
+inline TensorVector Add::backward(Tensor& grad) {
+    TensorVector o;
+    o.emplace_back(grad);
+    o.emplace_back(grad);
     return o;
 }
 
@@ -63,8 +65,10 @@ std::string Subtract::getName() { return "SubtractOp"; }
 inline Tensor Subtract::forward(RefTensorVector inputs) {
     return ops::subtract(*inputs[0], *inputs[1]);
 }
-inline TensorVector Subtract::backward(Tensor grad) {
-    TensorVector o = {grad, -grad};
+inline TensorVector Subtract::backward(Tensor& grad) {
+    TensorVector o;
+    o.emplace_back(grad);
+    o.emplace_back(-grad);
     return o;
 }
 
@@ -72,24 +76,29 @@ std::string Divide::getName() { return "DivideOp"; }
 inline Tensor Divide::forward(RefTensorVector inputs) {
     return ops::divide(*inputs[0], *inputs[1]);
 }
-inline TensorVector Divide::backward(Tensor grad) {
+inline TensorVector Divide::backward(Tensor& grad) {
     Tensor a = *Function::arg_storage[0];
     Tensor b = *Function::arg_storage[1];
 
     Tensor gx0 = grad / b;
     Tensor gx1 = (-grad) * ((a / b) / b);
     // TensorVector o = {grad * (*b), grad * (*a)};
-    return {gx0, gx1};
+    TensorVector o;  // = {b, a};
+    o.emplace_back(gx0);
+    o.emplace_back(gx1);
+    return o;
 }
 
 std::string Multiply::getName() { return "MultiplyOp"; }
 inline Tensor Multiply::forward(RefTensorVector inputs) {
     return ops::multiply(*inputs[0], *inputs[1]);
 }
-inline TensorVector Multiply::backward(Tensor grad) {
+inline TensorVector Multiply::backward(Tensor& grad) {
     Tensor a = *Function::arg_storage[0];
     Tensor b = *Function::arg_storage[1];
     TensorVector o = {b, a};
+    // o.emplace_back(b);
+    // o.emplace_back(a);
     return o;
 }
 
