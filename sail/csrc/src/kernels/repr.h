@@ -156,14 +156,14 @@ using Formatter =
 class ReprKernel : public Kernel {
    public:
     void execute(Tensor& t1, std::ostream& os) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             Formatter<T> formatter;
 
             T* data = (T*)t1.get_data();
 
             // scan all elements
-            TensorShape shape = t1.shape_details;
+            TensorShape shape = t1.get_shape();
             long numel = shape.numel();
             if (t1.view) {
                 for (int i = 0; i < numel; i++) {
@@ -180,15 +180,15 @@ class ReprKernel : public Kernel {
             }
             if (!t1.is_scalar()) {
                 os << "array(";
-                if (t1.shape_details.numel() == 0) {
+                if (t1.get_shape().numel() == 0) {
                     os << "[]";
                 } else {
                     bool should_abbreviate =
-                        t1.shape_details.numel() > kThreshold;
+                        t1.get_shape().numel() > kThreshold;
                     ArrayReprRecursive<T>(t1, formatter, 7, os,
                                           should_abbreviate);
                 }
-                os << ", shape=" << t1.shape_details.get_string();
+                os << ", shape=" << t1.get_shape().get_string();
                 os << ")";
 
             } else {
@@ -206,7 +206,7 @@ class ReprKernel : public Kernel {
     void ArrayReprRecursive(Tensor& tensor, Formatter<T>& formatter,
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
-        long ndim = tensor.shape_details.ndim();
+        long ndim = tensor.get_shape().ndim();
         if (ndim == 0 || tensor.is_scalar()) {
             formatter.Print(os, *(T*)tensor.get_data());
             return;
@@ -228,10 +228,10 @@ class ReprKernel : public Kernel {
         };
         os << "[";
 
-        long size = tensor.shape_details.shape[0];
+        long size = tensor.get_shape().shape[0];
         T* data = (T*)tensor.get_data();
         // if (tensor.broadcasted) {
-        TensorShape shape = tensor.shape_details;
+        TensorShape shape = tensor.get_shape();
 
         if (abbreviate && size > kEdgeItems * 2) {
             for (int64_t i = 0; i < kEdgeItems; ++i) {

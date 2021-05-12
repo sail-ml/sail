@@ -30,9 +30,9 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
         throw SailCError("Inner dimensions must match");
     }
 
-    if (t1.dtype != t2.dtype) {
+    if (t1.get_dtype() != t2.get_dtype()) {
         cast = true;
-        casted = t2.cast(t1.dtype);
+        casted = t2.cast(t1.get_dtype());
     } else {
         casted = t2;
     }
@@ -42,7 +42,7 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     new_shape.push_back(t2.shape[1]);
 
     TensorSize new_strides;
-    long dt_size = GetDtypeSize(t1.dtype);
+    long dt_size = GetDtypeSize(t1.get_dtype());
     for (long s : new_shape) {
         new_strides.push_back(dt_size * s);
     }
@@ -50,7 +50,7 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     new_strides.push_back(dt_size);
 
     empty_tensor =
-        empty(t1.ndim, t1.dtype, TensorShape(new_shape, new_strides));
+        empty(t1.ndim, t1.get_dtype(), TensorShape(new_shape, new_strides));
 
     MatmulTTKernel().execute(t1, t2, empty_tensor);
 

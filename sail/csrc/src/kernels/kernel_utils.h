@@ -14,8 +14,8 @@ inline Dtype avx_support[3] = {Dtype::sInt32, Dtype::sFloat32, Dtype::sFloat64};
 template <typename... TensorPack>
 inline bool allow_avx(TensorPack... tensors) {
     for (Tensor x : {tensors...}) {
-        Dtype* foo =
-            std::find(std::begin(avx_support), std::end(avx_support), x.dtype);
+        Dtype* foo = std::find(std::begin(avx_support), std::end(avx_support),
+                               x.get_dtype());
         if (foo == std::end(avx_support)) {
             return false;
         }

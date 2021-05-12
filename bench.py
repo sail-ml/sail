@@ -76,6 +76,7 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
 # print ("ADD")
 # benchmark_shapes(linear_test_shapes, add, grad=False)
+# exit()
 # # benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
@@ -127,20 +128,33 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
 
-arr1 = np.random.uniform(1, 4, (10)).astype(np.float64)#, 32))
-arr2 = np.random.uniform(1, 4, (10)).astype(np.float64)#, 32))
-x1 = sail.Tensor(arr1, requires_grad=True)
-# print (x1)
-x2 = sail.Tensor(arr2, requires_grad=True)
+arr1 = np.random.uniform(1, 4, (32)).astype(np.float64)#, 32))
+arr2 = np.random.uniform(1, 4, (32)).astype(np.float64)#, 32))
+for i in range(10000000):
+    x1 = sail.Tensor(arr1, requires_grad=True)
+    # print (x1)
+    x2 = sail.Tensor(arr2, requires_grad=True)
 
-x3 = sail.multiply(x1, x2)
-x4 = sail.sum(x3)
-x4.backward()
-print (x4)
-print (x4.grad)
-print (x3.grad)
-print (x2.grad)
-print (x1.grad)
+    x3 = sail.divide(x1, x2)
+    print (x3)
+    # x4 = sail.sum(x3)
+    x3.backward()
+    print ("back complete")
+    print (x4.grad)
+    print (x3.grad)
+    print (x2.grad)
+    print (x1.grad)
+    exit()
+# print (x3)
+# print (x3)
+# error when not added here. IDK why
+# print (x3.grad)
+# print (x3.grad)
+# print (x2.grad)
+# print (x1.grad)
+
+
+
 # print (sys.getrefcount(x3))
 # print (x3)
 # print (x3.grad)

@@ -11,7 +11,7 @@ namespace ops {
 Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
     Tensor new_ = view(tensor);
 
-    TensorShape shape_base = tensor.shape_details;
+    TensorShape shape_base = tensor.get_shape();
     TensorShape shape_new = shape;
 
     int indexer_2 = shape_base.ndim() - 1;
@@ -25,14 +25,14 @@ Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
             } else if (shape_base.shape[indexer_2] == shape_new.shape[i]) {
                 shape_new.strides[i] = shape_base.strides[indexer_2];
             } else {
-                throw "shapes cannot be broadcasted together";
+                throw SailCError("shapes cannot be broadcasted together");
             }
         }
         indexer_2 -= 1;
     }
 
-    new_.shape_details = shape_new;
-    new_.shape_details.recompute();
+    new_.get_shape() = shape_new;
+    new_.get_shape().recompute();
 
     return new_;
 }

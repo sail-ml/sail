@@ -11,7 +11,7 @@ namespace sail {
 class NegateTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, const Tensor& out_tensor) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
 

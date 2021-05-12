@@ -15,18 +15,18 @@ namespace ops {
 using RefTensorVector = std::vector<Tensor*>;
 
 bool must_broadcast(const Tensor& t1, const Tensor& t2) {
-    TensorSize shape1 = t1.shape_details.shape;
-    TensorSize shape2 = t2.shape_details.shape;
+    TensorSize shape1 = t1.get_shape().shape;
+    TensorSize shape2 = t2.get_shape().shape;
     // Tensor& larger_shape = (new Tensor());
     // Tensor& smaller_shape = (new Tensor());
     TensorShape larger_shape, smaller_shape;
     bool bc = false;
     if (t1.ndim > t2.ndim) {
-        larger_shape = t1.shape_details;
-        smaller_shape = t2.shape_details;
+        larger_shape = t1.get_shape();
+        smaller_shape = t2.get_shape();
     } else {
-        larger_shape = t2.shape_details;
-        smaller_shape = t1.shape_details;
+        larger_shape = t2.get_shape();
+        smaller_shape = t1.get_shape();
     }
 
     int idx_2 = smaller_shape.ndim() - 1;
@@ -78,36 +78,52 @@ std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // std::cout << &tensor1 << std::endl;
     Tensor empty_tensor;
-    if (tensor1.requires_grad || tensor2.requires_grad) {
-        RefTensorVector vec;
-        vec.emplace_back(&tensor1);
-        vec.emplace_back(&tensor2);
-        empty_tensor = (new autograd::$agName$())->apply(vec);
-        return empty_tensor;
-    }
+    // if (tensor1.requires_grad || tensor2.requires_grad) {
+    //     // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
+    //     // &tensor2});
+    //     RefTensorVector vec;
+    //     vec.emplace_back(&tensor1);
+    //     vec.emplace_back(&tensor2);
+    //     empty_tensor = (new autograd::$agName$())->apply(vec);
+    //     // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
+    //     // std::endl;
 
-    bool broadcast = must_broadcast(tensor1, tensor2);
+    //     return empty_tensor;
+    // }
+
+    bool broadcast = false;  // must_broadcast(tensor1, tensor2);
     TensorShape s;
-    if (broadcast) {
-        s = TensorShape(merge_shapes(tensor1.shape_details.shape,
-                                     tensor2.shape_details.shape));
-    } else {
-        s = tensor1.shape_details;
-    }
+    // if (broadcast) {
+    //     s = TensorShape(
+    //         merge_shapes(tensor1.get_shape().shape,
+    //         tensor2.get_shape().shape));
+    // } else {
+    s = tensor1.get_shape();
+    // }
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 
+    std::cout << t1_scalar << t2_scalar << std::endl;
+
     if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
-        empty_tensor = empty(s.ndim(), tensor1.dtype, s);
+        empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+        std::cout << empty_tensor.get_shape().get_string() << std::endl;
+        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
+        // std::endl;
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     } else if (t1_scalar && !t2_scalar) {
-        empty_tensor = empty(s.ndim(), tensor2.dtype, s);
+        empty_tensor = empty(s.ndim(), tensor2.get_dtype(), s);
+        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
+        // std::endl;
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor, broadcast);
     } else {
-        empty_tensor = empty(s.ndim(), tensor1.dtype, s);
+        empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
+        // std::endl;
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     }
 
+    // std::cout << &empty_tensor << ", " << empty_tensor.owner << std::endl;
     return empty_tensor;
 }
 

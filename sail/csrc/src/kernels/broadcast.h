@@ -6,6 +6,7 @@
 
 #include "../Tensor.h"
 #include "../dtypes.h"
+#include "../errors.h"
 #include "../factories.h"
 
 namespace sail {
@@ -14,7 +15,7 @@ class BroadcastToKernel : public Kernel {
    public:
     void execute(const Tensor& t1, const TensorSize broadcast_shape,
                  Tensor& out_tensor) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
 
             TensorSize shape = t1.shape;
@@ -27,7 +28,8 @@ class BroadcastToKernel : public Kernel {
                     continue;
                 }
                 if ((broadcast_shape[i] != shape[o_i]) && (shape[o_i] != 1)) {
-                    throw "dimensions cannot be broadcasted together"
+                    throw SailCError(
+                        "dimensions cannot be broadcasted together");
                 }
                 o_i -= 1;
             }
@@ -46,7 +48,7 @@ class BroadcastToKernel : public Kernel {
             //     int c = 0;
             //     for (int s : t1.shape) {
             //         if (c > axis) {
-            //             red_jump *= s;  //(s * GetDtypeSize(t1.dtype));
+            //             red_jump *= s;  //(s * GetDtypeSize(t1.get_dtype()));
             //         }
             //         c += 1;
             //     }

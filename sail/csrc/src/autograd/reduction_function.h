@@ -48,10 +48,10 @@ using TensorVector = std::vector<Tensor>;
 class Sum : public Function {
    public:
     explicit Sum(){};
-    RefTensorVector arg_storage;
+    // RefTensorVector arg_storage;
     std::string getName();
-    inline Tensor forward(RefTensorVector inputs);
-    inline TensorVector backward(Tensor& grad);
+    Tensor forward(RefTensorVector inputs);
+    TensorVector backward(Tensor& grad);
 };
 
 }  // namespace autograd

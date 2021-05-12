@@ -14,7 +14,7 @@ namespace sail {
 class MatmulTTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             // std::cout << decltype(pt)::type << std::endl;
             auto name = decltype(pt)::GetName();
 

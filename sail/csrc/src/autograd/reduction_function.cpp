@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
+#include "../factories.h"
 #include "../ops/broadcast.h"
 #include "../ops/reduction.h"
 #include "function.h"
@@ -16,13 +17,11 @@ namespace autograd {
 using TensorVector = std::vector<Tensor>;
 
 std::string Sum::getName() { return "SumOp"; }
-inline Tensor Sum::forward(RefTensorVector inputs) {
-    return ops::sum(*inputs[0]);
-}
-inline TensorVector Sum::backward(Tensor& grad) {
+Tensor Sum::forward(RefTensorVector inputs) { return ops::sum(*inputs[0]); }
+TensorVector Sum::backward(Tensor& grad) {
     Tensor full_size =
         ops::broadcast_to(grad, Function::arg_storage[0]->shape_details);
-    return {full_size};
+    return {clone(full_size)};
 }
 
 }  // namespace autograd

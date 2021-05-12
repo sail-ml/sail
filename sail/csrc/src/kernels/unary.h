@@ -19,24 +19,23 @@ namespace sail {
 
 namespace inner_unary {
 
-template <typename... Ts, typename... TensorPack, typename Op>
-void launch_unary(Op op, const TensorPack... args) {
-    std::vector<Tensor> vec = {args...};
-
-    int numel = vec[0].shape_details.numel();
-    int jump = vec[0].info.jump;
+template <typename... Ts, typename Op>
+void launch_unary(Op op, const Tensor& t1, const Tensor& out) {
+    int numel = t1.get_shape().numel();
+    int jump = t1.info.jump;
     int i = 0;
 
     bool omp = numel >= OMP_MIN_VALUE;
 
-    get<0, Ts...> __restrict__ *p1;
-    get<1, Ts...> __restrict__ *p2;
+    get<0, Ts...> __restrict__* p1;
+    get<1, Ts...> __restrict__* p2;
 
-    p1 = static_cast<decltype(p1)>(vec[0].get_data());
-    p2 = static_cast<decltype(p2)>(vec[1].get_data());
+    p1 = static_cast<decltype(p1)>(t1.get_data());
+    p2 = static_cast<decltype(p2)>(out.get_data());
 
-    if (vec[0].view) {
-        TensorShape sh = vec[0].shape_details;
+    if (t1.view) {
+        TensorShape sh = t1.get_shape();
+        sh.reset();
         for (i = 0; i < numel; i += 1) {
             op.call_base(p1[sh.d_ptr], p2[i]);
             sh.next();
@@ -59,13 +58,12 @@ void launch_unary(Op op, const TensorPack... args) {
 
 }  // namespace inner_unary
 
-template <typename... Ts, typename... TensorPack, typename Op>
-void Unary(Op op, TensorPack &... args) {
+template <typename... Ts, typename Op>
+void Unary(Op op, const Tensor& t1,
+           const Tensor& out) {  // TensorPack &... args) {
     bool allows_avx = false;
-    static_assert(sizeof...(Ts) == sizeof...(args),
-                  "Data types must be specified for each Tensor. ");
 
-    inner_unary::launch_unary<Ts...>(op, args...);
+    inner_unary::launch_unary<Ts...>(op, t1, out);
 }
 
 }  // namespace sail

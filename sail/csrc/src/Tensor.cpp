@@ -2,7 +2,9 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <vector>
+#include "TensorBody.h"
 
 #include "autograd/autograd.h"
 #include "cuda/cuda_math.h"
@@ -21,68 +23,14 @@ using RefTensorVector = std::vector<Tensor*>;
 
 namespace sail {
 
-// CONSTRUCTORS
-
-Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorShape shape_data) {
-    info = getAlignment(_dt);
-
-    dtype = _dt;
-    ndim = _ndims;
-    // arr_numel = _numel(shape);
-    shape_details = shape_data;
-    ndim = shape_details.ndim();
-    arr_numel = shape_details.numel();
-    fcn = new autograd::Function();
-
-    void* new_data =
-        _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
-    set_data(new_data);
-    owner = true;
-
-    // data = std::unique_ptr<void>(
-    //     _realloc_align(_data, arr_numel, info.alignment, info.dtype_size),
-    //     std::free);
-}
-Tensor::Tensor(int& _ndims, void*& _data, Dtype& _dt, TensorShape shape_data,
-               bool rq) {
-    info = getAlignment(_dt);
-
-    dtype = _dt;
-    ndim = _ndims;
-    // arr_numel = _numel(shape);
-    requires_grad = rq;
-    shape_details = shape_data;
-    ndim = shape_details.ndim();
-    arr_numel = shape_details.numel();
-    fcn = new autograd::Function();
-
-    void* new_data =
-        _realloc_align(_data, arr_numel, info.alignment, info.dtype_size);
-    set_data(new_data);
-    owner = true;
-}
-
-static Tensor Tensor::move(int& _ndims, void*& _data, Dtype& _dt,
-                           TensorShape shape_data) {
-    Tensor t = Tensor();
-    t.info = getAlignment(_dt);
-
-    t.dtype = _dt;
-    t.ndim = _ndims;
-    // t.arr_numel = _numel(t.shape);
-
-    t.data = MAKE_PTR(_data);
-    t.shape_details = shape_data;
-    t.arr_numel = t.shape_details.numel();
-    t.fcn = new autograd::Function();
-    t.owner = false;
-
-    return t;
+std::ostream& operator<<(std::ostream& os, Tensor& tensor) {
+    ReprKernel().execute(tensor, os);
+    return os;
 }
 
 long Tensor::getTotalSize() {
-    long size = GetDtypeSize(dtype);
-    for (long value : shape_details.shape) {
+    long size = GetDtypeSize(get_dtype());
+    for (long value : get_shape().shape) {
         size = size * value;
     }
     return size;
@@ -90,18 +38,18 @@ long Tensor::getTotalSize() {
 
 Tensor Tensor::reshape(const TensorShape new_shape) {
     int s = new_shape.numel();
-    if (s != arr_numel) {
+    if (s != numel()) {
         throw DimensionError{"Cannot reshape tensor of shape ",
                              shape_details.get_string(), " to ",
                              new_shape.get_string()};
     }
 
-    shape_details = new_shape;
+    body->set_shape(new_shape);
     return *this;
 }
 
 Tensor Tensor::expand_dims(const int dim) {
-    TensorShape s = shape_details;
+    TensorShape s = get_shape();
     s.insert_one(dim);
     // TensorSize s = shape;
     // s.insert(s.begin() + dim, 1);
@@ -110,16 +58,9 @@ Tensor Tensor::expand_dims(const int dim) {
 }
 
 Tensor Tensor::squeeze(const int dim) {
-    shape_details.remove_one(dim);
+    get_shape().remove_one(dim);
     // ops::squeeze(*this, dim);
     return *this;
-}
-
-void Tensor::set_data(void* new_data) {
-    data = MAKE_PTR(new_data);  // std::make_shared<unsigned char*>(new_data);
-}
-void Tensor::set_data(const std::shared_ptr<void>& new_data) {
-    data = std::move(new_data.get());
 }
 
 bool Tensor::is_scalar() {
@@ -128,8 +69,6 @@ bool Tensor::is_scalar() {
     }
     return false;
 }
-
-int Tensor::numel() const { return shape_details.numel(); }
 
 void Tensor::register_op(autograd::Function* new_func) { fcn = new_func; }
 
@@ -141,24 +80,23 @@ void Tensor::free() {
     // }
 }
 
-long int* Tensor::get_shape_ptr() { return shape_details.get_shape_ptr(); }
+long int* Tensor::get_shape_ptr() { return get_shape().get_shape_ptr(); }
 
-int Tensor::get_np_type_num() { return get_np_type_numFromDtype(dtype); }
+int Tensor::get_np_type_num() { return get_np_type_numFromDtype(get_dtype()); }
 
 // todo - move to op
 Tensor Tensor::cast(const Dtype dt) {
     Tensor casted = ops::cast(*this, dt);
     return casted;
 }
-
-int Tensor::get_ndim() { return shape_details.ndim(); }
-
 // // operators
 
 Tensor Tensor::operator[](const int index) const {
     void* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
+    alignemnt_information info = get_info();
+    TensorShape shape_details = get_shape();
     long dim = shape_details.shape[0];
     long offset = 0;
 
@@ -170,8 +108,8 @@ Tensor Tensor::operator[](const int index) const {
     }
 
     int new_ndim = (ndim)-1;
-    Tensor e = empty(new_ndim, dtype, TensorShape(new_shape, new_strides));
-    e.data = MAKE_PTR(new_ptr);
+    Tensor e = make_view(new_ndim, new_ptr, get_dtype(),
+                         TensorShape(new_shape, new_strides));
 
     return e;
 }
@@ -194,40 +132,61 @@ Tensor Tensor::sum() { return ops::sum(*this); }
 
 void Tensor::backward() {
     // double data = 1.0;
-    Tensor t = one_scalar(dtype);
+    Tensor t = one_scalar(get_dtype());
+    t = ops::broadcast_to(t, TensorShape(get_shape().shape));
     backward(t);
-    t.owner = false;
 }
 void Tensor::backward(Tensor& _grad) {
+    // _grad.owner = false;
+    std::cout << "_grad.view" << std::endl;
+    std::cout << _grad.view << std::endl;
+    // std::cout << g->owner << std::endl;
+
     // for (Tensor i : fcn->)
     if (requires_grad) {
+        Tensor* g = new Tensor(std::move(_grad));
+        std::cout << "calculating" << std::endl;
+        // std::shared_ptr<Tensor> g = std::make_shared<Tensor>(_grad);//new
+        // Tensor(std::move(clone(_grad))); _grad.owner = false;
         if (has_grad) {
             // _grad = (*grad) + _grad;
             // grad = &_grad;
-            grad = std::make_shared<Tensor>(std::move(_grad));
+            // grad = g;
+            grad = g;
+            grad->is_grad = true;
+            // grad.get()->owner = true;
         } else {
-            this->has_grad = true;
+            has_grad = true;
             // grad = &_grad;
-            grad = std::make_shared<Tensor>(std::move(_grad));
+            // std::cout << "grad.owner" << std::endl;
+            // std::cout << _grad.owner << std::endl;
+            // grad = g;  // std::make_shared<Tensor>(_grad);
+            grad = g;
+            // std::cout << _grad.owner << std::endl;
+
+            grad->is_grad = true;
+            grad->owner = true;
+            // std::cout << grad.get()->owner << std::endl;
             // grad = &_grad;
 
             // memcpy(grad, &_grad, sizeof(Tensor));
         }
-        if (fcn->getName() != "NONE") {  ////// THIS NEEDS TO CHANGE
+        // _grad.owner = false;
+        //     // std::cout << grad.get()->is_grad << std::endl;
+        if (fcn != nullptr) {  ////// THIS NEEDS TO CHANGE
 
             RefTensorVector grad_arglist = fcn->arg_storage;
-            std::vector<Tensor> new_grads = fcn->backward(_grad);
-            if (new_grads.size() == 1) {
-                if (fcn->arg_storage[0]->requires_grad) {
-                    fcn->arg_storage[0]->backward(new_grads[0]);
-                }
-            } else {
-                for (int i = 0; i < new_grads.size(); i++) {
-                    if (grad_arglist[i]->requires_grad) {
-                        grad_arglist[i]->backward(new_grads[i]);
-                    }
+            std::vector<Tensor> new_grads = fcn->backward(*g);
+
+            for (int i = 0; i < new_grads.size(); i++) {
+                if (grad_arglist[i]->requires_grad) {
+                    std::cout << i << ", " << new_grads[i] << std::endl;
+                    Tensor g = new_grads[i];
+                    grad_arglist[i]->backward(g);
+                    // grad_arglist[i]->backward(new_grads[i]);
                 }
             }
+            //         }
         }
     }
 }

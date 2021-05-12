@@ -2,14 +2,16 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <vector>
+#include "TensorBody.h"
 
 #include "dtypes.h"
 #include "error.h"
 #include "tensor_shape.h"
 #include "types.h"
 
-#define MAKE_PTR(value) value;  // std::shared_ptr<void>(value, std::free)
+#define MAKE_PTR(value) std::shared_ptr<TensorBody>(new TensorBody(value));
 
 namespace sail {
 namespace autograd {
@@ -26,12 +28,16 @@ class Tensor {
     // bool is_reference = false;
 
     // void* data;
+
+    TensorBody::pointer body;
+
     int ndim;
     int arr_numel;
     bool requires_grad;
     bool has_grad = false;
-    std::shared_ptr<Tensor> grad;
-    // Tensor* grad;
+    // std::shared_ptr<Tensor> grad;
+    // std::unique_ptr<Tensor> grad;
+    Tensor* grad = nullptr;
     Dtype dtype;
     TensorSize shape;
     TensorSize strides;
@@ -47,132 +53,58 @@ class Tensor {
     TensorShape old_shape;
 
     // std::shared_ptr<void> data;
-    void* data = nullptr;
+    // void* data = nullptr;
     bool freed = false;
 
-    Tensor::~Tensor() {
-        // std::cout << "Trying to destruct" << std::endl;
-        // std::cout << this << std::endl;
-        // std::cout << owner << std::endl;
-        if (owner) {
-            // std::cout << "freeing" << std::endl;
-            std::free(data);
-            delete fcn;
-            if (has_grad) {
-                grad.get()->~Tensor();
-            }
-            std::free(grad.get());
-            owner = false;
-        }
+    bool is_grad = false;
+
+    // Tensor::~Tensor() = default;
+
+    // Tensor(Tensor& old, bool _requires_grad)
+    //     : body(intrusive_ptr<TensorBody>::reclaim(old.body.get())),
+    //       requires_grad(_requires_grad){};
+    // Tensor(intrusive_ptr<TensorBody>& data, bool _requires_grad)
+    //     : body(std::move(data)), requires_grad(_requires_grad){};
+    Tensor(Tensor& old, bool _requires_grad)
+        : body(old.body.get(), false), requires_grad(_requires_grad){};
+    Tensor(TensorBody::pointer data, bool _requires_grad)
+        : body(std::move(data)), requires_grad(_requires_grad){};
+
+    Tensor(const Tensor&) = default;
+    Tensor(Tensor&&) = default;
+
+    Tensor& operator=(const Tensor& x) & {
+        body = x.body;
+        requires_grad = x.requires_grad;
+        return *this;
     }
-
-    // Tensor(const Tensor& t) = default;
-    // Tensor& operator=(const Tensor& t) = default;
-
-    Tensor(const Tensor& t) {
-        // std::cout << "copy" << std::endl;
-        ndim = t.ndim;
-        arr_numel = t.arr_numel;
-        requires_grad = t.requires_grad;
-        has_grad = t.has_grad;
-        grad = t.grad;
-        dtype = t.dtype;
-        info = t.info;
-        fcn = t.fcn;
-        broadcasted = t.broadcasted;
-        view = t.view;
-        shape_details = t.shape_details;
-
-        data = t.data;
-        grad = t.grad;
-        fcn = t.fcn;
-        owner = false;
-    }
-
-    Tensor(Tensor&& t) noexcept {
-        if (t.freed) {
-            std::cout << "why are we moving froma  freed object" << std::endl;
-        }
-        // std::cout << "move called" << std::endl;
-        ndim = t.ndim;
-        arr_numel = t.arr_numel;
-        requires_grad = t.requires_grad;
-        has_grad = t.has_grad;
-        dtype = t.dtype;
-        info = t.info;
-        broadcasted = t.broadcasted;
-        view = t.view;
-        shape_details = t.shape_details;
-
-        grad = t.grad;
-        data = t.data;  //
-        fcn = t.fcn;
-        if (t.owner) {
-            this->owner = true;
-            t.owner = false;
-        } else {
-            owner = false;
-        }
-    }
-
-    // COPY ASSIGNMENT OPERATOR
-    Tensor& operator=(const Tensor& t) {
-        // std::cout << "copy assignment" << std::endl;
-        ndim = t.ndim;
-        arr_numel = t.arr_numel;
-        requires_grad = t.requires_grad;
-        has_grad = t.has_grad;
-        grad = t.grad;
-        dtype = t.dtype;
-        info = t.info;
-        fcn = t.fcn;
-        broadcasted = t.broadcasted;
-        view = t.view;
-        shape_details = t.shape_details;
-
-        data = t.data;
-        grad = t.grad;
-        fcn = t.fcn;
-        owner = false;
-
+    Tensor& operator=(Tensor&& x) & {
+        body = std::move(x.body);
+        requires_grad = std::move(x.requires_grad);
         return *this;
     }
 
-    // MOVE ASSIGNMENT OPERATOR
-    Tensor& operator=(Tensor&& t) noexcept {
-        if (t.freed) {
-            std::cout << "why are we moving froma  freed object" << std::endl;
-        }
-        // std::cout << "move assignment" << std::endl;
-        ndim = t.ndim;
-        arr_numel = t.arr_numel;
-        requires_grad = t.requires_grad;
-        has_grad = t.has_grad;
-        dtype = t.dtype;
-        info = t.info;
-        broadcasted = t.broadcasted;
-        view = t.view;
-        shape_details = t.shape_details;
+    // // RG
+    // Tensor& operator=(const Tensor& x) & {
+    //     std::cout << "tensor copy assign" << std::endl;
+    //     body = x.body;
+    //     return *this;
+    // }
+    // Tensor& operator=(Tensor&& x) & {
+    //     std::cout << "tensor move assign" << std::endl;
+    //     body = std::move(x.body);
+    //     return *this;
+    // }
 
-        grad = t.grad;
-        data = t.data;  //
-        fcn = t.fcn;
-        if (t.owner) {
-            this->owner = true;
-            t.owner = false;
-        } else {
-            owner = false;
-        }
+    long numel() const { return body.get()->get_shape().numel(); }
 
-        return *this;
-    }
+    Dtype get_dtype() const { return body.get()->get_dtype(); }
 
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data);
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data,
-           bool requires_grad);
+    TensorShape get_shape() const { return body.get()->get_shape(); }
 
-    static Tensor move(int& ndims, void*& data, Dtype& dt,
-                       TensorShape shape_data);
+    void* get_data() const { return body.get()->get_data(); }
+    alignemnt_information get_info() const { return body.get()->get_info(); }
+    bool is_view() const { return body.get()->is_view(); }
 
     Tensor cast(const Dtype dt);
     Tensor reshape(const TensorShape new_shape);
@@ -181,18 +113,11 @@ class Tensor {
     long getTotalSize();
 
     void free();
-    inline void* get_data() { return data; }
-    inline void* get_data() const { return data; }
-    inline void* get_shared_ptr() const { return data; }
-
-    void set_data(void* new_data);
-    void set_data(const std::shared_ptr<void>& new_data);
 
     long int* get_shape_ptr();
     bool is_scalar();
     int get_np_type_num();
 
-    int numel() const;
     int get_ndim();
 
     void backward();
@@ -205,12 +130,16 @@ class Tensor {
     Tensor operator/(const Tensor& t);
     Tensor operator[](const int t) const;
 
+    friend std::ostream& operator<<(std::ostream& os, const Tensor& dt);
+
     Tensor sum();
 
     void register_op(autograd::Function* new_func);
 
     //    private:
 };
+
+std::ostream& operator<<(std::ostream& os, Tensor& tensor);
 
 inline int _numel(TensorSize _shape) {
     auto size = 1;

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <iostream>
 #include "../../src/Tensor.h"
+#include "../../src/TensorBody.h"
 #include "../../src/dtypes.h"
 #include "../../src/ops/ops.h"
 #include "../../src/tensor_shape.h"
@@ -57,8 +58,9 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
 
     // SCTensor tensor = SCTensor(
     //     ndim, data, dt, sail::TensorShape(shape, strides), requires_grad);
-    self->tensor = SCTensor(ndim, data, dt, sail::TensorShape(shape, strides),
-                            requires_grad);
+    sail::TensorBody *b =
+        new sail::TensorBody(data, dt, sail::TensorShape(shape, strides));
+    self->tensor = SCTensor(b, requires_grad);
 
     self->ndim = ndim;
     self->requires_grad = requires_grad;
@@ -73,7 +75,7 @@ static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg) {
 
 static int PyTensor_clear(PyTensor *self) {
     // std::cout << "PY FREE" << std::endl;
-    self->tensor.~Tensor();  // explicity call tensor destructor
+    // self->tensor.~Tensor();  // explicity call tensor destructor
     return 0;
 }
 
@@ -145,18 +147,19 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
 
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
     if (self->tensor.has_grad == false) {
+        Py_INCREF(Py_None);
         return Py_None;
     } else {
-        Py_INCREF(self);
+        // Py_INCREF(self);
         PyTensor *grad;
         grad = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-        SCTensor gr = *(self->tensor.grad);
-        grad->tensor = gr;
+        SCTensor gr = clone(*(self->tensor.grad));
+        // self->tensor.grad->owner = false;
+        grad->tensor = std::move(gr);
         grad->ndim = grad->tensor.ndim;
         grad->dtype = self->dtype;
-        SET_BASE(self, grad);
-
+        // SET_BASE(self, grad);
         return (PyObject *)grad;
     }
 }
@@ -203,5 +206,6 @@ static int PyTensor_set_shape(PyTensor *self, void *closure) {
 
 RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure) {
     self->tensor.backward();
+    Py_INCREF(Py_None);
     return Py_None;
 }

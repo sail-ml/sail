@@ -21,6 +21,9 @@
 
 //     return new_tensor;
 // }
+// new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
+            // new_tensor.free();                                 \
+            // new_tensor.set_data(PyLong_AsVoidPtr(number));     \
 
 #define GET_NUMERIC(number, new_tensor)                        \
     {                                                          \
@@ -30,9 +33,7 @@
             double *ptr = &val;                                \
             memcpy(new_tensor.get_data(), ptr, sizeof(val));   \
         } else if (PyObject_TypeCheck(number, &PyLong_Type)) { \
-            new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
-            new_tensor.free();                                 \
-            new_tensor.set_data(PyLong_AsVoidPtr(number));     \
+            PyErr_SetString(PyExc_TypeError, "Nah.");          \
         }                                                      \
     }
 

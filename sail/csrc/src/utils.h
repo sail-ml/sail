@@ -3,7 +3,6 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
-#include "Tensor.h"
 #include "types.h"
 
 inline bool isAlignedAs(const void* p, const int8_t alignment) {

@@ -11,8 +11,8 @@ namespace sail {
 namespace ops {
 
 inline Tensor expand_dims(const Tensor& tensor1, const int dim) {
-    tensor1.shape_details.insert_one(dim);
-    tensor1.reshape(tensor1.shape_details);
+    tensor1.get_shape().insert_one(dim);
+    tensor1.reshape(tensor1.get_shape());
     return tensor1;
 }
 }  // namespace ops
