@@ -8,7 +8,8 @@ import time, torch
 
 shape = 16000
 
-linear_test_shapes = list(range(1, 128, 4)) + list(range(256, 256**2, 256)) + [25]
+linear_test_shapes = [10]#list(range(1, 128, 4))
+# linear_test_shapes =  list(range(256, int(256**1.2), 256)) + [25] #list(range(4, 128, 4)) +
 
 nd_test_shape = [(16, 32), (32, 128), (256, 4), (784, 128), (4096, 4096)]
 
@@ -37,6 +38,7 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     np_time = 0
     sail_time = 0
     for s in shapes:
+        # print (s)
         # for i in range(10000):
         arr1 = np.random.uniform(0, 1, s)
         arr2 = np.random.uniform(0, 1, s)
@@ -45,9 +47,9 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
         x2 = sail.Tensor(arr2, requires_grad=grad)
 
         assert(np.sum(op(arr1, arr2)) == np.sum(op(x1, x2).numpy()))
-        np_time += benchmark_binary(arr1, arr2, op, 100)
+        np_time = benchmark_binary(arr1, arr2, op, 10)
         # time.sleep(0.05)
-        sail_time += benchmark_binary(x1, x2, op, 100)
+        sail_time = benchmark_binary(x1, x2, op, 10)
 
 
         # time.sleep(0.05)
@@ -74,9 +76,9 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
-# print ("ADD")
-# benchmark_shapes(linear_test_shapes, add, grad=False)
-# exit()
+print ("ADD")
+benchmark_shapes(linear_test_shapes, add, grad=False)
+exit()
 # # benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
@@ -127,24 +129,27 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # arr1 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 # arr2 = np.random.uniform(0, 1, (5, 20, 2)).astype(np.float64)
 
+for z in range(256, 256*4, 8):
+    print (z)
+    arr1 = np.random.uniform(1, 4, (z)).astype(np.float64)#, 32))
+    arr2 = np.random.uniform(1, 4, (z)).astype(np.float64)#, 32))
+    for i in range(100):
+        x1 = sail.Tensor(arr1, requires_grad=False)
+        # print (x1)
+        x2 = sail.Tensor(arr2, requires_grad=False)
 
-arr1 = np.random.uniform(1, 4, (32)).astype(np.float64)#, 32))
-arr2 = np.random.uniform(1, 4, (32)).astype(np.float64)#, 32))
-for i in range(10000000):
-    x1 = sail.Tensor(arr1, requires_grad=True)
-    # print (x1)
-    x2 = sail.Tensor(arr2, requires_grad=True)
-
-    x3 = sail.divide(x1, x2)
-    print (x3)
+        for i in range(100):
+            x3 = sail.add(x1, x2)
+    # print (x3)
+    # print (x3)
     # x4 = sail.sum(x3)
-    x3.backward()
-    print ("back complete")
-    print (x4.grad)
-    print (x3.grad)
-    print (x2.grad)
-    print (x1.grad)
-    exit()
+    # x3.backward()
+    # print ("back complete")
+    # print (x4.grad)
+    # print (x3.grad)
+    # print (x2.grad)
+    # print (x1.grad)
+    # exit()
 # print (x3)
 # print (x3)
 # error when not added here. IDK why

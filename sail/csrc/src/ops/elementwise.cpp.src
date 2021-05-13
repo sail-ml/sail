@@ -21,7 +21,7 @@ bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     // Tensor& smaller_shape = (new Tensor());
     TensorShape larger_shape, smaller_shape;
     bool bc = false;
-    if (t1.ndim > t2.ndim) {
+    if (t1.get_ndim() > t2.get_ndim()) {
         larger_shape = t1.get_shape();
         smaller_shape = t2.get_shape();
     } else {
@@ -85,7 +85,6 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     //     vec.emplace_back(&tensor1);
     //     vec.emplace_back(&tensor2);
     //     empty_tensor = (new autograd::$agName$())->apply(vec);
-    //     // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
     //     // std::endl;
 
     //     return empty_tensor;
@@ -103,27 +102,17 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 
-    std::cout << t1_scalar << t2_scalar << std::endl;
-
     if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
         empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
-        std::cout << empty_tensor.get_shape().get_string() << std::endl;
-        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
-        // std::endl;
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     } else if (t1_scalar && !t2_scalar) {
         empty_tensor = empty(s.ndim(), tensor2.get_dtype(), s);
-        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
-        // std::endl;
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor, broadcast);
     } else {
         empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
-        // std::cout << &empty_tensor << ", " << empty_tensor.owner <<
-        // std::endl;
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     }
 
-    // std::cout << &empty_tensor << ", " << empty_tensor.owner << std::endl;
     return empty_tensor;
 }
 

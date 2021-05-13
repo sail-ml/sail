@@ -21,9 +21,9 @@ void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     T __restrict__ *p3 = static_cast<T *>(arr3.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment) &&
-                   isAlignedAs(p2, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment) &&
+                   isAlignedAs(p2, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
@@ -78,8 +78,8 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     T __restrict__ *p3 = static_cast<T *>(arr3.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     // if (omp)
@@ -143,9 +143,9 @@ void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2) {
     T_out *p2 = static_cast<T_out *>(arr2.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment) &&
-                   isAlignedAs(p2, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment) &&
+                   isAlignedAs(p2, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
@@ -168,8 +168,8 @@ void UnaryAVX(Op op, const Tensor &arr1, const Tensor &arr_out) {
     T __restrict__ *p_out = static_cast<T *>(arr_out.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     T sum = 0;

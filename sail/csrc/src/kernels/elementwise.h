@@ -26,7 +26,7 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
                                const Tensor &out) {
     // using T = {Ts...}[0];
     int numel = t1.get_shape().numel();
-    int jump = t1.info.jump;
+    int jump = t1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
@@ -83,9 +83,15 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     p1 = static_cast<decltype(p1)>(t1.get_data());
     p2 = static_cast<decltype(p2)>(t2.get_data());
     p3 = static_cast<decltype(p3)>(out.get_data());
+    // p1 = static_cast<decltype(p1)>(t1.get_data());
+    // p2 = static_cast<decltype(p2)>(t2.get_data());
+    // p3 = static_cast<decltype(p3)>(out.get_data());
 
     bool aligned = true;  // is_aligned_vec(vec);
-
+    // bool aligned = isAlignedAs(p1, t1.get_info().alignment) &&
+    //                isAlignedAs(p2, t1.get_info().alignment);
+    // std::cout << "aligned " << aligned << std::endl;
+    std::cout << numel << std::endl;
     if (omp) {
         if (aligned) {
 #pragma omp parallel for
@@ -116,7 +122,7 @@ void launch_binary_elementwise_broadcast(Op op, const TensorPack &... args) {
     std::vector<Tensor> vec = {args...};
     // using T = {Ts...}[0];
     int numel = vec[2].numel();
-    int jump = vec[2].info.jump;
+    int jump = vec[2].get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     get<0, Ts...> __restrict__ *p1;
@@ -177,7 +183,7 @@ void launch_binary_elementwise_scalar(Op op, const TensorPack &... args) {
     std::vector<Tensor> vec = {args...};
     // using T = {Ts...}[0];
     int numel = vec[0].numel();
-    int jump = vec[0].info.jump;
+    int jump = vec[0].get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     get<0, Ts...> __restrict__ *p1;
@@ -209,7 +215,7 @@ void launch_binary_elementwise_avx_scalar(Op op, const TensorPack &... args) {
     // using T = {Ts...}[0];
     int numel = vec[0].numel();
     bool aligned = true;  // is_aligned_vec(vec);
-    int jump = vec[0].info.jump;
+    int jump = vec[0].get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     get<0, Ts...> __restrict__ *p1;
@@ -274,7 +280,7 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
                        const Tensor &t2, const Tensor &t3) {
     bool allows_avx = false;
 
-    // if (t1.view || t2.view) {
+    // if (t1.is_view() || t2.is_view()) {
     //     inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
     //     return;
     // }

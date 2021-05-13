@@ -41,7 +41,7 @@ RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
 
     ret_class->tensor = sail::ops::broadcast_to(t1->tensor, s);
 
-    ret_class->ndim = ret_class->tensor.shape_details.ndim();
+    ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;
     ret_class->requires_grad = t1->requires_grad;
     ret_class->base_object = (PyObject*)t1;

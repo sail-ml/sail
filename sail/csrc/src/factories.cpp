@@ -17,6 +17,7 @@
 namespace sail {
 
 Tensor empty(int ndims, Dtype dt, TensorShape shape) {
+    std::cout << "EMPTY SHAPE " << shape.get_string() << std::endl;
     TensorBody::pointer body =
         TensorBody::pointer(new TensorBody(dt, shape), true);
 
@@ -57,7 +58,7 @@ Tensor clone(Tensor& t) {
 
 Tensor make_view(int ndims, void* data, Dtype dt, TensorShape shape) {
     TensorBody::pointer b =
-        TensorBody::pointer((new TensorBody(data, dt, shape, true)), false);
+        TensorBody::pointer((new TensorBody(data, dt, shape, true)));
     Tensor _empty = Tensor(b, false);
     return _empty;
 }
@@ -102,7 +103,6 @@ Tensor one_scalar(Dtype dt) {
     TensorBody::pointer b = new TensorBody(data, dt, ts);
 
     Tensor _empty = Tensor(b, false);
-    _empty.owner = true;
 
     return _empty;
 }

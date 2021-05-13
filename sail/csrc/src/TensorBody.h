@@ -1,4 +1,5 @@
 #pragma once
+#include <immintrin.h>
 #include <boost/atomic.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <iostream>
@@ -6,6 +7,7 @@
 #include <stdexcept>
 #include "dtypes.h"
 #include "tensor_shape.h"
+#include "utils.h"
 
 namespace sail {
 
@@ -31,7 +33,7 @@ class TensorBody {
    private:
     void* data;
     Dtype dtype;
-    TensorShape shape;
+    TensorShape* shape;
     alignemnt_information info;
     bool view;
 
@@ -48,18 +50,30 @@ class TensorBody {
     TensorBody(Dtype _dtype, TensorShape _shape, bool view = false);
 
     ~TensorBody() {
-        if (!view) {
-            std::free(data);
+        if (data != 0) {
+            if (!view) {
+                std::free(data);
+            }
+            delete shape;
+
+            data = 0;
+            shape = nullptr;
         }
     }
 
-    void* get_data();
-    Dtype get_dtype();
-    TensorShape get_shape();
-    alignemnt_information get_info();
-    bool is_view();
+    inline void* get_data() { return data; }
+    inline Dtype get_dtype() { return dtype; }
+    inline TensorShape get_shape() { return *shape; }
+    inline alignemnt_information get_info() { return info; }
+    inline bool is_view() { return view; }
 
-    void set_shape(const TensorShape& s) { shape = s; }
+    void set_shape(const TensorShape& s) {
+        delete shape;
+        shape = new TensorShape(s);
+        // shape = s;
+    }
+
+    long int* get_shape_ptr() { return shape->get_shape_ptr(); }
 };
 
 }  // namespace sail

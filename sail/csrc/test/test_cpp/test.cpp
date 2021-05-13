@@ -15,7 +15,7 @@
 #define MAX_VAL 320000
 
 int main() {
-    std::vector<int> g = {32};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
+    std::vector<int> g = {11};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
     // int a = 1000;
     // void* b = &a;
@@ -23,10 +23,7 @@ int main() {
     // void* d = (unsigned char*)(b);
     // int e = *(int*)(d);
     // std::cout << e << ", " << a << std::endl;
-    for (int i = 0; i < 1; i++) {
-        // std::cout << i << std::endl;
-        for (int z : g) {
-
+    for (int z : g) {
             double x[z];
             double y[z];
             int ndim = 1;
@@ -47,10 +44,11 @@ int main() {
             void* xt = static_cast<void*>(x);
             void* yt = static_cast<void*>(y);
 
-            std::cout << xt << ", " << yt << std::endl;
+            // std::cout << xt << ", " << yt << std::endl;
 
             sail::Tensor t1 = sail::from_data(xt, dt, sp);
             sail::Tensor t2 = sail::from_data(yt, dt, sp);
+        for (int i = 0; i < 10; i++) {
             sail::Tensor t3 = sail::ops::add(t1, t2);
 
             // std::cout << t1 << std::endl;

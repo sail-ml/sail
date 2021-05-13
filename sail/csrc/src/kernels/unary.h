@@ -22,7 +22,7 @@ namespace inner_unary {
 template <typename... Ts, typename Op>
 void launch_unary(Op op, const Tensor& t1, const Tensor& out) {
     int numel = t1.get_shape().numel();
-    int jump = t1.info.jump;
+    int jump = t1.get_info().jump;
     int i = 0;
 
     bool omp = numel >= OMP_MIN_VALUE;
@@ -33,7 +33,7 @@ void launch_unary(Op op, const Tensor& t1, const Tensor& out) {
     p1 = static_cast<decltype(p1)>(t1.get_data());
     p2 = static_cast<decltype(p2)>(out.get_data());
 
-    if (t1.view) {
+    if (t1.is_view()) {
         TensorShape sh = t1.get_shape();
         sh.reset();
         for (i = 0; i < numel; i += 1) {

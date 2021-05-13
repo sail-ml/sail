@@ -165,7 +165,7 @@ class ReprKernel : public Kernel {
             // scan all elements
             TensorShape shape = t1.get_shape();
             long numel = shape.numel();
-            if (t1.view) {
+            if (t1.is_view()) {
                 for (int i = 0; i < numel; i++) {
                     T value = data[shape.d_ptr];
                     formatter.Scan(value);

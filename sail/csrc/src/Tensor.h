@@ -31,30 +31,12 @@ class Tensor {
 
     TensorBody::pointer body;
 
-    int ndim;
-    int arr_numel;
     bool requires_grad;
     bool has_grad = false;
     // std::shared_ptr<Tensor> grad;
     // std::unique_ptr<Tensor> grad;
     Tensor* grad = nullptr;
-    Dtype dtype;
-    TensorSize shape;
-    TensorSize strides;
-    alignemnt_information info;
-    TensorShape shape_details;
-
     autograd::Function* fcn = nullptr;
-
-    bool broadcasted = false;
-    bool view = false;
-    bool owner = true;
-    TensorShape view_base_shape;
-    TensorShape old_shape;
-
-    // std::shared_ptr<void> data;
-    // void* data = nullptr;
-    bool freed = false;
 
     bool is_grad = false;
 
@@ -118,7 +100,7 @@ class Tensor {
     bool is_scalar();
     int get_np_type_num();
 
-    int get_ndim();
+    int get_ndim() { return get_shape().ndim(); }
 
     void backward();
     void backward(Tensor& grad);

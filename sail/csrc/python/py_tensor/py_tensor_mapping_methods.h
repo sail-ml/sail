@@ -25,7 +25,7 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
 
     SET_BASE(self, ret_class);
 
-    ret_class->ndim = ((PyTensor *)ret_class)->tensor.ndim;
+    ret_class->ndim = ((PyTensor *)ret_class)->tensor.get_ndim();
     ret_class->dtype = ((PyTensor *)self)->dtype;
 
     return (PyObject *)ret_class;

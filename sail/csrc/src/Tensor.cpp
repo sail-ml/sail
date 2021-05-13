@@ -40,7 +40,7 @@ Tensor Tensor::reshape(const TensorShape new_shape) {
     int s = new_shape.numel();
     if (s != numel()) {
         throw DimensionError{"Cannot reshape tensor of shape ",
-                             shape_details.get_string(), " to ",
+                             get_shape().get_string(), " to ",
                              new_shape.get_string()};
     }
 
@@ -80,7 +80,7 @@ void Tensor::free() {
     // }
 }
 
-long int* Tensor::get_shape_ptr() { return get_shape().get_shape_ptr(); }
+long int* Tensor::get_shape_ptr() { return body->get_shape_ptr(); }
 
 int Tensor::get_np_type_num() { return get_np_type_numFromDtype(get_dtype()); }
 
@@ -107,7 +107,7 @@ Tensor Tensor::operator[](const int index) const {
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    int new_ndim = (ndim)-1;
+    int new_ndim = (get_ndim()) - 1;
     Tensor e = make_view(new_ndim, new_ptr, get_dtype(),
                          TensorShape(new_shape, new_strides));
 
@@ -138,22 +138,19 @@ void Tensor::backward() {
 }
 void Tensor::backward(Tensor& _grad) {
     // _grad.owner = false;
-    std::cout << "_grad.view" << std::endl;
-    std::cout << _grad.view << std::endl;
+    std::cout << "_grad.is_view()" << std::endl;
+    std::cout << _grad.is_view() << std::endl;
     // std::cout << g->owner << std::endl;
 
     // for (Tensor i : fcn->)
     if (requires_grad) {
         Tensor* g = new Tensor(std::move(_grad));
         std::cout << "calculating" << std::endl;
-        // std::shared_ptr<Tensor> g = std::make_shared<Tensor>(_grad);//new
-        // Tensor(std::move(clone(_grad))); _grad.owner = false;
         if (has_grad) {
             // _grad = (*grad) + _grad;
             // grad = &_grad;
             // grad = g;
             grad = g;
-            grad->is_grad = true;
             // grad.get()->owner = true;
         } else {
             has_grad = true;
@@ -164,8 +161,6 @@ void Tensor::backward(Tensor& _grad) {
             grad = g;
             // std::cout << _grad.owner << std::endl;
 
-            grad->is_grad = true;
-            grad->owner = true;
             // std::cout << grad.get()->owner << std::endl;
             // grad = &_grad;
 

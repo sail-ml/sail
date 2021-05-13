@@ -1,17 +1,41 @@
 #pragma once
 
+#include <malloc.h>
 #include <iostream>
 #include <iterator>
 #include <vector>
+
 #include "types.h"
 
 inline bool isAlignedAs(const void* p, const int8_t alignment) {
     return ((int8_t)(p) & ((alignment)-1)) == 0;
 }
 
+inline long roundUp(long numToRound, long multiple) {
+    if (multiple == 0) return numToRound;
+
+    long remainder = numToRound % multiple;
+    if (remainder == 0) return numToRound;
+
+    return numToRound + multiple - remainder;
+}
+
 inline void* _malloc_align(long numel, long alignment, long dtype_size) {
     // return malloc(dtype_size * numel);
-    return aligned_alloc(alignment, dtype_size * numel);
+    // std::cout << dtype_size * numel << ", " << alignment << std::endl;
+    // return _mm_malloc(dtype_size * numel, alignment);
+    // long v = dtype_size * numel;
+    // if ((v & (v - 1)) == 0) {
+    //     std::cout << "not two" << std::endl;
+    long size = dtype_size * numel;
+    if (size % alignment != 0) {
+        std::cout << "rounding " << size;
+        size = roundUp(size, alignment);
+        std::cout << " to " << size << std::endl;
+    }
+    // }
+    // return memalign(alignment, v);
+    return aligned_alloc(alignment, size);
 }
 
 inline void* _realloc_align(void* src, long numel, long alignment,

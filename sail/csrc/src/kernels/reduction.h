@@ -22,7 +22,7 @@ namespace inner_reduction {
 template <typename... Ts, typename Op>
 void launch_reduction(Op op, const Tensor& input, const Tensor& out) {
     int numel = input.get_shape().numel();
-    int jump = input.info.jump;
+    int jump = input.get_info().jump;
     int i = 0;
 
     bool omp = numel >= OMP_MIN_VALUE;

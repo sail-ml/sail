@@ -18,9 +18,9 @@ class MatmulTTKernel : public Kernel {
             // std::cout << decltype(pt)::type << std::endl;
             auto name = decltype(pt)::GetName();
 
-            int M = t1.shape[0];  // ROWS IN A
-            int N = t2.shape[1];  // COLS IN B
-            int K = t1.shape[1];  // COLS IN A AND ROWS IN B
+            int M = t1.get_shape().shape[0];  // ROWS IN A
+            int N = t2.get_shape().shape[1];  // COLS IN B
+            int K = t1.get_shape().shape[1];  // COLS IN A AND ROWS IN B
 
             // std::cout << (decltype(pt)::GetName() == "float64") << std::endl;
 

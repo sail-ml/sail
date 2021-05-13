@@ -22,11 +22,11 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
         throw SailCError("Cannot pass scalars to matmul");
     }
 
-    if (t1.ndim != t2.ndim) {
+    if (t1.get_ndim() != t2.get_ndim()) {
         throw SailCError("Number of dimensions must match");
     }
 
-    if (t1.shape[1] != t2.shape[0]) {
+    if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
         throw SailCError("Inner dimensions must match");
     }
 
@@ -38,8 +38,8 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     }
 
     TensorSize new_shape;
-    new_shape.push_back(t1.shape[0]);
-    new_shape.push_back(t2.shape[1]);
+    new_shape.push_back(t1.get_shape().shape[0]);
+    new_shape.push_back(t2.get_shape().shape[1]);
 
     TensorSize new_strides;
     long dt_size = GetDtypeSize(t1.get_dtype());
@@ -49,8 +49,8 @@ Tensor matmul(Tensor& t1, Tensor& t2) {
     new_strides.pop_back();
     new_strides.push_back(dt_size);
 
-    empty_tensor =
-        empty(t1.ndim, t1.get_dtype(), TensorShape(new_shape, new_strides));
+    empty_tensor = empty(t1.get_ndim(), t1.get_dtype(),
+                         TensorShape(new_shape, new_strides));
 
     MatmulTTKernel().execute(t1, t2, empty_tensor);
 

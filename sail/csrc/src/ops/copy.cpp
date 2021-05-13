@@ -15,7 +15,7 @@ namespace ops {
 Tensor copy(Tensor& tensor1) {
     Tensor empty_tensor;
     empty_tensor =
-        empty(tensor1.ndim, tensor1.get_dtype(), tensor1.get_shape());
+        empty(tensor1.get_ndim(), tensor1.get_dtype(), tensor1.get_shape());
 
     CopyTTKernel().execute(tensor1, empty_tensor);
 
@@ -26,10 +26,10 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
     Tensor empty_tensor;
     TensorSize new_strides;
     long dt_size = GetDtypeSize(dt);
-    for (long s : tensor1.shape) {
-        new_strides.push_back(dt_size * s);
-    }
-    empty_tensor = empty(tensor1.ndim, dt, tensor1.get_shape());
+    // for (long s : tensor1.get_shape().shape) {
+    //     new_strides.push_back(dt_size * s);
+    // }
+    empty_tensor = empty(tensor1.get_ndim(), dt, tensor1.get_shape());
 
     CopyTTKernel().execute(tensor1, empty_tensor);
 
@@ -44,11 +44,8 @@ Tensor view(Tensor& t1) {
     new_.grad = t1.grad;
     new_.requires_grad = t1.requires_grad;
     // new_.get_shape() = t1.get_shape();
-    new_.info = t1.info;
     new_.has_grad = t1.has_grad;
-    new_.view = true;
-    // new_.view_base_shape = t1.get_shape();
-    new_.owner = false;
+    // new_.is_view()_base_shape = t1.get_shape();
     return new_;
 }
 
