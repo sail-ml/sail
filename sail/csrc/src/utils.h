@@ -21,20 +21,10 @@ inline long roundUp(long numToRound, long multiple) {
 }
 
 inline void* _malloc_align(long numel, long alignment, long dtype_size) {
-    // return malloc(dtype_size * numel);
-    // std::cout << dtype_size * numel << ", " << alignment << std::endl;
-    // return _mm_malloc(dtype_size * numel, alignment);
-    // long v = dtype_size * numel;
-    // if ((v & (v - 1)) == 0) {
-    //     std::cout << "not two" << std::endl;
     long size = dtype_size * numel;
     if (size % alignment != 0) {
-        std::cout << "rounding " << size;
         size = roundUp(size, alignment);
-        std::cout << " to " << size << std::endl;
     }
-    // }
-    // return memalign(alignment, v);
     return aligned_alloc(alignment, size);
 }
 

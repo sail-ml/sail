@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace sail {
-TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
+TensorShape::TensorShape(LongVec& shape_, LongVec& strides_) {
     shape = shape_;
     strides = strides_;
     // if (shape.size() != 0) {
@@ -29,7 +29,7 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     }
     std::reverse(strides.begin(), strides.end());
 }
-TensorShape::TensorShape(LongVec shape_) {
+TensorShape::TensorShape(LongVec& shape_) {
     shape = shape_;
     strides = shape_;
     if (shape.size() != 0) {

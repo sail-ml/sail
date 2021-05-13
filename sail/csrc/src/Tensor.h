@@ -100,7 +100,7 @@ class Tensor {
     bool is_scalar();
     int get_np_type_num();
 
-    int get_ndim() { return get_shape().ndim(); }
+    int get_ndim() const { return get_shape().ndim(); }
 
     void backward();
     void backward(Tensor& grad);

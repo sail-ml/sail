@@ -16,8 +16,7 @@
 
 namespace sail {
 
-Tensor empty(int ndims, Dtype dt, TensorShape shape) {
-    std::cout << "EMPTY SHAPE " << shape.get_string() << std::endl;
+Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape) {
     TensorBody::pointer body =
         TensorBody::pointer(new TensorBody(dt, shape), true);
 

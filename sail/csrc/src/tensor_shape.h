@@ -19,8 +19,8 @@ class TensorShape {
 
     explicit TensorShape(){};
 
-    TensorShape(LongVec shape_, LongVec size_);
-    TensorShape(LongVec shape_);
+    TensorShape(LongVec& shape_, LongVec& size_);
+    TensorShape(LongVec& shape_);
 
     void insert_one(const int dim);
     void remove_one(const int dim);

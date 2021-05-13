@@ -77,7 +77,9 @@ std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // std::cout << &tensor1 << std::endl;
-    Tensor empty_tensor;
+    TensorShape s = tensor1.get_shape();
+    Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+
     // if (tensor1.requires_grad || tensor2.requires_grad) {
     //     // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
     //     // &tensor2});
@@ -91,25 +93,22 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // }
 
     bool broadcast = false;  // must_broadcast(tensor1, tensor2);
-    TensorShape s;
     // if (broadcast) {
     //     s = TensorShape(
     //         merge_shapes(tensor1.get_shape().shape,
     //         tensor2.get_shape().shape));
     // } else {
-    s = tensor1.get_shape();
     // }
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 
     if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
-        empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
         $kName$TTKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     } else if (t1_scalar && !t2_scalar) {
-        empty_tensor = empty(s.ndim(), tensor2.get_dtype(), s);
+        // empty_tensor = empty(s.ndim(), tensor2.get_dtype(), s);
         $kName$TSKernel().execute(tensor2, tensor1, empty_tensor, broadcast);
     } else {
-        empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+        // empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
         $kName$TSKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
     }
 

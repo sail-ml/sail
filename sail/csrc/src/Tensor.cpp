@@ -133,7 +133,9 @@ Tensor Tensor::sum() { return ops::sum(*this); }
 void Tensor::backward() {
     // double data = 1.0;
     Tensor t = one_scalar(get_dtype());
-    t = ops::broadcast_to(t, TensorShape(get_shape().shape));
+    TensorSize x = get_shape().shape;
+    TensorShape y = TensorShape(x);
+    t = ops::broadcast_to(t, y);
     backward(t);
 }
 void Tensor::backward(Tensor& _grad) {

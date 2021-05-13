@@ -91,27 +91,26 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     // bool aligned = isAlignedAs(p1, t1.get_info().alignment) &&
     //                isAlignedAs(p2, t1.get_info().alignment);
     // std::cout << "aligned " << aligned << std::endl;
-    std::cout << numel << std::endl;
     if (omp) {
         if (aligned) {
 #pragma omp parallel for
             for (int i = 0; i < numel; i += jump) {
-                op.call_avx_aligned(&p1[i], &p2[i], &p3[i]);
+                op.call_avx_aligned(p1 + i, p2 + i, p3 + i);
             }
         } else {
 #pragma omp parallel for
             for (int i = 0; i < numel; i += jump) {
-                op.call_avx_non_aligned(&p1[i], &p2[i], &p3[i]);
+                op.call_avx_non_aligned(p1 + i, p2 + i, p3 + i);
             }
         }
     } else {
         if (aligned) {
             for (int i = 0; i < numel; i += jump) {
-                op.call_avx_aligned(&p1[i], &p2[i], &p3[i]);
+                op.call_avx_aligned(p1 + i, p2 + i, p3 + i);
             }
         } else {
             for (int i = 0; i < numel; i += jump) {
-                op.call_avx_non_aligned(&p1[i], &p2[i], &p3[i]);
+                op.call_avx_non_aligned(p1 + i, p2 + i, p3 + i);
             }
         }
     }

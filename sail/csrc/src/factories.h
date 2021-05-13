@@ -11,7 +11,7 @@
 
 namespace sail {
 
-Tensor empty(int ndims, Dtype dt, TensorShape shape);
+Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape);
 Tensor make_view(int ndims, void* data, Dtype dt, TensorShape shape);
 Tensor copy(Tensor t);
 Tensor clone(Tensor& t);
