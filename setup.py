@@ -119,5 +119,5 @@ setup(
 )
 
 for f in created_names:
-    # os.remove(f)
+    os.remove(f)
     print (f)
