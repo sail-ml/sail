@@ -23,7 +23,7 @@ def create_test():
 
     return True
 
-def add_test():
+def test_add():
     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
@@ -45,7 +45,7 @@ def add_test():
 
     return True
 
-def sub_test():
+def test_sub():
     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
@@ -67,7 +67,7 @@ def sub_test():
 
     return True
 
-def mult_test():
+def test_mult():
     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
@@ -89,7 +89,7 @@ def mult_test():
 
     return True
 
-def divide_test():
+def test_divide():
     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
