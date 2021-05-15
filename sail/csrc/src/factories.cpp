@@ -25,6 +25,14 @@ Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape) {
     return _empty;
 }
 
+Tensor empty_like(const Tensor& tensor) {
+    TensorBody::pointer body = TensorBody::pointer(
+        new TensorBody(tensor.get_dtype(), tensor.get_shape()));
+
+    Tensor _empty = Tensor(body, tensor.requires_grad);
+    return _empty;
+}
+
 Tensor clone(Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     std::cout << "ALLOC SIZE " << size << std::endl;

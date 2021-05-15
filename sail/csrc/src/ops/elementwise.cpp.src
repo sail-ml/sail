@@ -77,8 +77,9 @@ std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // std::cout << &tensor1 << std::endl;
-    TensorShape s = tensor1.get_shape();
-    Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+    Tensor empty_tensor = empty_like(tensor1);
+    // TensorShape s = tensor1.get_shape();
+    // Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
 
     // if (tensor1.requires_grad || tensor2.requires_grad) {
     //     // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
