@@ -67,10 +67,11 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    COPY(t1, ret_class);
-
-    ret_class->tensor.expand_dims(dim);
-    ret_class->ndim = ret_class->ndim + 1;
+    ret_class->tensor = t1->tensor.expand_dims(dim);
+    ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->base_object = (PyObject*)t1;
+    Py_INCREF(t1);
 
     return (PyObject*)ret_class;
 }
@@ -94,10 +95,11 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    COPY(t1, ret_class);
-
-    ret_class->tensor.squeeze(dim);
-    ret_class->ndim = ret_class->ndim + 1;
+    ret_class->tensor = t1->tensor.squeeze(dim);
+    ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->base_object = (PyObject*)t1;
+    Py_INCREF(t1);
 
     return (PyObject*)ret_class;
 }

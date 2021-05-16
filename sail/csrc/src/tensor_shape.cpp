@@ -7,7 +7,12 @@
 #include <string>
 #include <vector>
 
+#include "error.h"
+
 namespace sail {
+
+bool is_one(LongVec& shape, int dim) { return shape[dim] == 1; }
+
 TensorShape::TensorShape(LongVec& shape_, LongVec& strides_) {
     shape = shape_;
     strides = strides_;
@@ -88,14 +93,37 @@ int TensorShape::next() {
     return d_ptr;
 }
 
-void TensorShape::recompute() {
-    LongVec new_s_m1, n_b_s;
-    for (int i; i < shape.size(); i++) {
-        new_s_m1.push_back(shape[i] - 1);
-        n_b_s.push_back(strides[i] * new_s_m1[i]);
+void TensorShape::recompute_strides() {
+    LongVec strides = shape;
+    if (shape.size() != 0) {
+        strides.erase(strides.begin());
     }
-    shape_m1 = new_s_m1;
-    back_strides = n_b_s;
+    strides.push_back(1);
+    std::reverse(strides.begin(), strides.end());
+
+    if (shape.size() > 0) {
+        for (int i; i < shape.size(); i++) {
+            if (i > 0) {
+                strides[i] = strides[i] * strides[i - 1];
+            }
+            shape_m1.push_back(shape[i] - 1);
+            back_strides.push_back(strides[i] * shape_m1[i]);
+        }
+        std::reverse(strides.begin(), strides.end());
+    }
+}
+void TensorShape::recompute(bool strides_too = false) {
+    if (strides_too) {
+        recompute_strides();
+    } else {
+        LongVec new_s_m1, n_b_s;
+        for (int i; i < shape.size(); i++) {
+            new_s_m1.push_back(shape[i] - 1);
+            n_b_s.push_back(strides[i] * new_s_m1[i]);
+        }
+        shape_m1 = new_s_m1;
+        back_strides = n_b_s;
+    }
     std::vector<long> co(shape_m1.size(), 0);
     coordinates = co;
 }
@@ -107,16 +135,32 @@ void TensorShape::reset() {
 }
 
 void TensorShape::insert_one(const int dim) {
-    shape.insert(shape.begin() + dim, 1);
-    strides.insert(strides.begin() + dim, 1);
-    shape_m1.insert(shape_m1.begin() + dim, 0);
-    back_strides.insert(back_strides.begin() + dim, 0);
+    if (dim == -1) {
+        shape.push_back(1);
+    } else {
+        if (dim > shape.size()) {
+            throw DimensionError(
+                "Dimension value is too large for expand_dims");
+        }
+        shape.insert(shape.begin() + dim, 1);
+    }
+    recompute(true);
 }
 void TensorShape::remove_one(const int dim) {
-    shape.erase(shape.begin() + dim);
-    strides.erase(strides.begin() + dim);
-    shape_m1.erase(shape_m1.begin() + dim);
-    back_strides.erase(back_strides.begin() + dim);
+    if (dim == -1) {
+        int new_dim = shape.size() - 1;
+        if (is_one(shape, new_dim)) {
+            shape.erase(shape.begin() + new_dim);
+        }
+    } else {
+        if (dim > shape.size()) {
+            throw DimensionError("Dimension value is too large for squeeze");
+        }
+        if (is_one(shape, dim)) {
+            shape.erase(shape.begin() + dim);
+        }
+    }
+    recompute(true);
 }
 
 long TensorShape::numel() const {

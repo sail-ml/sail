@@ -43,26 +43,33 @@ Tensor Tensor::reshape(const TensorShape& new_shape) const {
                              get_shape().get_string(), " to ",
                              new_shape.get_string()};
     }
-    TensorBody::pointer new_body = TensorBody::pointer(
-        new TensorBody(body->get_data(), body->get_dtype(), new_shape, true));
+    TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
+        body->get_data(), body->get_dtype(), new_shape, /*is_view*/ true));
     Tensor new_tensor = Tensor(new_body, requires_grad);
 
     return new_tensor;
 }
 
 Tensor Tensor::expand_dims(const int dim) {
-    TensorShape s = get_shape();
+    TensorShape s = body->get_shape();
     s.insert_one(dim);
-    // TensorSize s = shape;
-    // s.insert(s.begin() + dim, 1);
-    reshape(s);
-    return *this;
+    TensorShape x = TensorShape(s.shape);  // this is a super hacky fix
+    TensorBody::pointer new_body = TensorBody::pointer(
+        new TensorBody(body->get_data(), body->get_dtype(), x,
+                       /*is_view*/ true));
+    Tensor new_tensor = Tensor(new_body, requires_grad);
+    return new_tensor;
 }
 
 Tensor Tensor::squeeze(const int dim) {
-    get_shape().remove_one(dim);
-    // ops::squeeze(*this, dim);
-    return *this;
+    TensorShape s = body->get_shape();
+    s.remove_one(dim);
+    TensorShape x = TensorShape(s.shape);
+    TensorBody::pointer new_body = TensorBody::pointer(
+        new TensorBody(body->get_data(), body->get_dtype(), x,
+                       /*is_view*/ true));
+    Tensor new_tensor = Tensor(new_body, requires_grad);
+    return new_tensor;
 }
 
 bool Tensor::is_scalar() {

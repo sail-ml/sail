@@ -24,7 +24,8 @@ class TensorShape {
 
     void insert_one(const int dim);
     void remove_one(const int dim);
-    void recompute();
+    void recompute_strides();
+    void recompute(bool strides_too = false);
     std::vector<long> generate_all_indexes();
 
     int next();

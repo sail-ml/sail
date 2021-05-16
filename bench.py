@@ -131,11 +131,14 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 
 # for z in range(256, 256*4, 8):
 #     print (z)
-arr1 = np.random.uniform(1, 4, (30, 10)).astype(np.float64)#, 32))
+arr1 = np.random.uniform(1, 4, (30, 20)).astype(np.float64)#, 32))
 arr2 = np.random.uniform(1, 4, (2048)).astype(np.float64)#, 32))
-for i in range(1000000000):
+for i in range(100000000):
     x1 = sail.Tensor(arr1, requires_grad=False)
-    x2 = sail.reshape(x1, (3, 10,10))
+    x2 = sail.expand_dims(x1, 2)
+    # print (x3)
+    # print (x4)
+    # print (x5)
     # print (x1)
     # print (x2.numpy())
 # print (x2.numpy())
