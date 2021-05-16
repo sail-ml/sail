@@ -32,10 +32,9 @@ def test_add():
         times.append(time.time() - t)
         arr3 = arr1 + arr2 
 
-        if (not assert_eq_np_sail(arr3, x3)):
-            return False
+        assert_eq_np_sail(arr3, x3)
 
-    print (report_time(np.mean(times), "ADD"))
+    log_time(np.mean(times), "ADD")
 
     return True
 
@@ -54,10 +53,9 @@ def test_sub():
         times.append(time.time() - t)
         arr3 = arr1 - arr2 
 
-        if (not assert_eq_np_sail(arr3, x3)):
-            return False
+        assert_eq_np_sail(arr3, x3)
 
-    print (report_time(np.mean(times), "SUBTRACT"))
+    log_time(np.mean(times), "SUBTRACT")
 
     return True
 
@@ -76,10 +74,9 @@ def test_mult():
         times.append(time.time() - t)
         arr3 = arr1 * arr2 
 
-        if (not assert_eq_np_sail(arr3, x3)):
-            return False
+        assert_eq_np_sail(arr3, x3)
 
-    print (report_time(np.mean(times), "MULTIPLY"))
+    log_time(np.mean(times), "MULTIPLY")
 
     return True
 
@@ -98,10 +95,9 @@ def test_divide():
         times.append(time.time() - t)
         arr3 = arr1 / arr2 
 
-        if (not assert_eq_np_sail(arr3, x3)):
-            return False
+        assert_eq_np_sail(arr3, x3)
 
-    print (report_time(np.mean(times), "DIVIDE"))
+    log_time(np.mean(times), "DIVIDE")
 
     return True
 

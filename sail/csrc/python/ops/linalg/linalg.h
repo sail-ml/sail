@@ -22,12 +22,8 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_TypeError, "must pass a tensor and a shape");
     }
 
-    std::cout << "ok" << std::endl;
-
     // BINARY_TENSOR_TYPE_CHECK(t1, t2);
     int len = PyTuple_Size(py_tuple);
-    std::cout << "got size?" << std::endl;
-    std::cout << len << std::endl;
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
     }
@@ -48,7 +44,6 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     ret_class->dtype = t1->dtype;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(t1);
-    std::cout << "REF " << ret_class->tensor.get_body_ref_count() << std::endl;
 
     return (PyObject*)ret_class;
 }

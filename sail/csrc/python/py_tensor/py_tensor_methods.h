@@ -70,12 +70,15 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     return 0;
 }
 static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg) {
-    // Py_VISIT(self->base_object);
+    Py_VISIT(self->base_object);
     return 0;
 }
 
 static int PyTensor_clear(PyTensor *self) {
     // std::cout << "PY FREE" << std::endl;
+    if (self->base_object != NULL) {
+        Py_DECREF(self->base_object);
+    }
     self->tensor.~Tensor();  // explicity call tensor destructor
     return 0;
 }
@@ -110,11 +113,12 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
     long int *shape = tensor.get_shape_ptr();
 
     int type = tensor.get_np_type_num();
-    void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
 
-    memcpy(data, tensor.get_data(), tensor.getTotalSize());
     PyObject *array;
     if (!tensor.is_view()) {
+        void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
+
+        memcpy(data, tensor.get_data(), tensor.getTotalSize());
         array = PyArray_SimpleNewFromData(ndims, shape, type, data);
     } else {
         long numel = tensor.get_shape().numel();
@@ -124,7 +128,7 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
             sail::TensorShape s0 = tensor.get_shape();
-            std::cout << "s0 " << s0.get_string() << std::endl;
+            s0.recompute();
             for (int i = 0; i < numel; i++) {
                 data2[i] = data[s0.d_ptr];
                 s0.next();
@@ -133,9 +137,7 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
         });
         shape = tensor.get_shape_ptr();
         ndims = tensor.get_ndim();
-        std::cout << *shape << ", " << ndims << std::endl;
         array = PyArray_SimpleNewFromData(ndims, shape, type, new_data);
-        std::cout << "created" << std::endl;
     }
     PyArray_ENABLEFLAGS((PyArrayObject *)array, NPY_ARRAY_OWNDATA);
     return array;
@@ -143,7 +145,6 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
     // Py_INCREF(self);
-    std::cout << "REF " << self->tensor.get_body_ref_count() << std::endl;
 
     PyObject *array = inner_numpy(self->tensor);
 

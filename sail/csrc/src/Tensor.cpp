@@ -47,8 +47,6 @@ Tensor Tensor::reshape(const TensorShape& new_shape) const {
         new TensorBody(body->get_data(), body->get_dtype(), new_shape, true));
     Tensor new_tensor = Tensor(new_body, requires_grad);
 
-    std::cout << get_shape().get_string() << std::endl;
-    std::cout << new_tensor.get_shape().get_string() << std::endl;
     return new_tensor;
 }
 
