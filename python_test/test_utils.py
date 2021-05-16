@@ -12,7 +12,10 @@ def assert_eq_np(np_arr, np_sail_arr):
     assert np.array_equal(np_arr, np_sail_arr) == True
 
 def assert_eq(a, b):
-    return a == b
+    assert a == b
+
+def assert_true(condition):
+    assert condition
 
 def log_time(time, function):
     return print ("TEST | %s mean execution time: %s" % (function, time))

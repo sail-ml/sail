@@ -209,7 +209,7 @@ class ReprKernel : public Kernel {
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
         long ndim = tensor.get_shape().ndim();
-        if (ndim == 0 || tensor.is_scalar()) {
+        if (ndim == 0) {
             formatter.Print(os, *(T*)tensor.get_data());
             return;
         }
