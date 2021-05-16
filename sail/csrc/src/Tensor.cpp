@@ -36,16 +36,20 @@ long Tensor::getTotalSize() {
     return size;
 }
 
-Tensor Tensor::reshape(const TensorShape new_shape) {
+Tensor Tensor::reshape(const TensorShape& new_shape) const {
     int s = new_shape.numel();
     if (s != numel()) {
         throw DimensionError{"Cannot reshape tensor of shape ",
                              get_shape().get_string(), " to ",
                              new_shape.get_string()};
     }
+    TensorBody::pointer new_body = TensorBody::pointer(
+        new TensorBody(body->get_data(), body->get_dtype(), new_shape, true));
+    Tensor new_tensor = Tensor(new_body, requires_grad);
 
-    body->set_shape(new_shape);
-    return *this;
+    std::cout << get_shape().get_string() << std::endl;
+    std::cout << new_tensor.get_shape().get_string() << std::endl;
+    return new_tensor;
 }
 
 Tensor Tensor::expand_dims(const int dim) {

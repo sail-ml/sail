@@ -155,6 +155,6 @@ std::vector<long> TensorShape::generate_all_indexes() {
     return out;
 }
 
-long* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
+long int* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
 int TensorShape::ndim() { return shape.size(); }
 }  // namespace sail

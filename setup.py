@@ -9,6 +9,8 @@ import platform
 import setuptools
 import subprocess
 import glob, pathlib
+from shutil import copyfile
+
 
 from distutils.version import LooseVersion
 from setuptools import setup, Extension
@@ -107,3 +109,6 @@ setup(
 for f in created_names:
     os.remove(f)
     print (f)
+
+
+copyfile("build/lib.linux-x86_64-3.7/sail/csrc/libsail_c.so", "sail/csrc/libsail_c.so")

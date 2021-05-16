@@ -55,12 +55,13 @@ class FloatFormatter {
                 digits_after_e_ = e_digits;
             }
         }
-        if (value <= 0.0001) {
-            int e_digits = GetNDigits(static_cast<int64_t>(std::log10(value)));
-            if (digits_after_e_ < e_digits) {
-                digits_after_e_ = e_digits;
-            }
-        }
+        // if (value <= 0.0001) {
+        //     int e_digits =
+        //     GetNDigits(static_cast<int64_t>(std::log10(value))); if
+        //     (digits_after_e_ < e_digits) {
+        //         digits_after_e_ = e_digits;
+        //     }
+        // }
         if (digits_after_e_ > 0) {
             return;
         }
@@ -164,6 +165,7 @@ class ReprKernel : public Kernel {
 
             // scan all elements
             TensorShape shape = t1.get_shape();
+            shape.recompute();
             long numel = shape.numel();
             if (t1.is_view()) {
                 for (int i = 0; i < numel; i++) {
@@ -179,20 +181,20 @@ class ReprKernel : public Kernel {
                 }
             }
             if (!t1.is_scalar()) {
-                os << "array(";
+                os << "tensor(";
                 if (t1.get_shape().numel() == 0) {
                     os << "[]";
                 } else {
                     bool should_abbreviate =
                         t1.get_shape().numel() > kThreshold;
-                    ArrayReprRecursive<T>(t1, formatter, 7, os,
+                    ArrayReprRecursive<T>(t1, formatter, 8, os,
                                           should_abbreviate);
                 }
                 os << ", shape=" << t1.get_shape().get_string();
                 os << ")";
 
             } else {
-                ArrayReprRecursive<T>(t1, formatter, 7, os, false);
+                ArrayReprRecursive<T>(t1, formatter, 8, os, false);
             }
         });
     }

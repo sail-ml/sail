@@ -30,7 +30,7 @@ class TensorShape {
     int next();
     void reset();
 
-    long* get_shape_ptr();
+    long int* get_shape_ptr();
 
     long numel() const;
     long getTotalSize(int mod);

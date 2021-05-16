@@ -67,6 +67,8 @@ class TensorBody {
     inline alignemnt_information get_info() { return info; }
     inline bool is_view() { return view; }
 
+    inline int get_ref_count() { return (int)refcount_; }
+
     void set_shape(const TensorShape& s) {
         delete shape;
         shape = new TensorShape(s);

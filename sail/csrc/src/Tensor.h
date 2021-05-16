@@ -22,13 +22,6 @@ class Tensor {
    public:
     explicit Tensor(){};
 
-    // smart desruction stuff
-    // long data_references;
-    // Tensor* parent_ref = nullptr;
-    // bool is_reference = false;
-
-    // void* data;
-
     TensorBody::pointer body;
 
     bool requires_grad;
@@ -40,13 +33,6 @@ class Tensor {
 
     bool is_grad = false;
 
-    // Tensor::~Tensor() = default;
-
-    // Tensor(Tensor& old, bool _requires_grad)
-    //     : body(intrusive_ptr<TensorBody>::reclaim(old.body.get())),
-    //       requires_grad(_requires_grad){};
-    // Tensor(intrusive_ptr<TensorBody>& data, bool _requires_grad)
-    //     : body(std::move(data)), requires_grad(_requires_grad){};
     Tensor(Tensor& old, bool _requires_grad)
         : body(old.body.get(), false), requires_grad(_requires_grad){};
     Tensor(TensorBody::pointer data, bool _requires_grad)
@@ -66,18 +52,6 @@ class Tensor {
         return *this;
     }
 
-    // // RG
-    // Tensor& operator=(const Tensor& x) & {
-    //     std::cout << "tensor copy assign" << std::endl;
-    //     body = x.body;
-    //     return *this;
-    // }
-    // Tensor& operator=(Tensor&& x) & {
-    //     std::cout << "tensor move assign" << std::endl;
-    //     body = std::move(x.body);
-    //     return *this;
-    // }
-
     long numel() const { return body.get()->get_shape().numel(); }
 
     Dtype get_dtype() const { return body.get()->get_dtype(); }
@@ -89,16 +63,20 @@ class Tensor {
     bool is_view() const { return body.get()->is_view(); }
 
     Tensor cast(const Dtype dt);
-    Tensor reshape(const TensorShape new_shape);
+    Tensor reshape(const TensorShape& new_shape) const;
     Tensor expand_dims(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();
+
+    int get_body_ref_count() { return body.get()->get_ref_count(); }
 
     void free();
 
     long int* get_shape_ptr();
     bool is_scalar();
     int get_np_type_num();
+
+    void set_shape(TensorShape& s) { body.get()->set_shape(s); }
 
     int get_ndim() const { return get_shape().ndim(); }
 

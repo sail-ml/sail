@@ -81,25 +81,26 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // TensorShape s = tensor1.get_shape();
     // Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
 
-    // if (tensor1.requires_grad || tensor2.requires_grad) {
-    //     // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
-    //     // &tensor2});
-    //     RefTensorVector vec;
-    //     vec.emplace_back(&tensor1);
-    //     vec.emplace_back(&tensor2);
-    //     empty_tensor = (new autograd::$agName$())->apply(vec);
-    //     // std::endl;
+    if (tensor1.requires_grad || tensor2.requires_grad) {
+        // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
+        // &tensor2});
+        RefTensorVector vec;
+        vec.emplace_back(&tensor1);
+        vec.emplace_back(&tensor2);
+        empty_tensor = (new autograd::$agName$())->apply(vec);
+        // std::endl;
 
-    //     return empty_tensor;
-    // }
+        return empty_tensor;
+    }
 
-    bool broadcast = false;  // must_broadcast(tensor1, tensor2);
-    // if (broadcast) {
-    //     s = TensorShape(
-    //         merge_shapes(tensor1.get_shape().shape,
-    //         tensor2.get_shape().shape));
-    // } else {
-    // }
+    bool broadcast = must_broadcast(tensor1, tensor2);
+    if (broadcast) {
+        std::vector<long> new_ =
+            merge_shapes(tensor1.get_shape().shape, tensor2.get_shape().shape);
+        TensorShape s = TensorShape(new_);
+        empty_tensor.set_shape(s);
+    }
+
     bool t1_scalar = tensor1.is_scalar();
     bool t2_scalar = tensor2.is_scalar();
 

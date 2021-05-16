@@ -124,15 +124,18 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
             sail::TensorShape s0 = tensor.get_shape();
+            std::cout << "s0 " << s0.get_string() << std::endl;
             for (int i = 0; i < numel; i++) {
                 data2[i] = data[s0.d_ptr];
                 s0.next();
             }
             s0.reset();
         });
-        shape = tensor.get_shape().get_shape_ptr();
-        ndims = tensor.get_shape().ndim();
+        shape = tensor.get_shape_ptr();
+        ndims = tensor.get_ndim();
+        std::cout << *shape << ", " << ndims << std::endl;
         array = PyArray_SimpleNewFromData(ndims, shape, type, new_data);
+        std::cout << "created" << std::endl;
     }
     PyArray_ENABLEFLAGS((PyArrayObject *)array, NPY_ARRAY_OWNDATA);
     return array;
@@ -140,6 +143,8 @@ PyObject *inner_numpy(sail::Tensor &tensor) {
 RETURN_OBJECT
 PyTensor_get_numpy(PyTensor *self, void *closure) {
     // Py_INCREF(self);
+    std::cout << "REF " << self->tensor.get_body_ref_count() << std::endl;
+
     PyObject *array = inner_numpy(self->tensor);
 
     // PyArray_SetBaseObject((PyArrayObject *)array, (PyObject *)self);

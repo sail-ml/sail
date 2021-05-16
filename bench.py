@@ -76,9 +76,9 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     print (np.mean(sails), np.mean(numpys))
     # if faster["FAIL"] != []:
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
-print ("ADD")
-benchmark_shapes(linear_test_shapes, add, grad=False)
-exit()
+# print ("ADD")
+# benchmark_shapes(linear_test_shapes, add, grad=False)
+# exit()
 # # benchmark_shapes(nd_test_shape, add)
 
 # print ("\nSUB")
@@ -131,17 +131,24 @@ exit()
 
 # for z in range(256, 256*4, 8):
 #     print (z)
-arr1 = np.random.uniform(1, 4, (2048)).astype(np.float64)#, 32))
+arr1 = np.random.uniform(1, 4, (30, 10)).astype(np.float64)#, 32))
 arr2 = np.random.uniform(1, 4, (2048)).astype(np.float64)#, 32))
 #     for i in range(100):
 x1 = sail.Tensor(arr1, requires_grad=False)
-# print (x1)
-x2 = sail.Tensor(arr2, requires_grad=False)
+x2 = sail.reshape(x1, (3, 10,10))
+print (x1)
+print (x2)
+# print (x2.numpy())
+# # print (x1)
+# x2 = sail.Tensor(arr2, requires_grad=True)
 
-# for i in range(100):
-t = time.time()
-for i in range(100):
-    x3 = sail.add(x1, x2)
+# # for i in range(100):
+# t = time.time()
+# for i in range(100000):
+#     x3 = sail.add(x1, x2)
+
+# print (x3)
+# print (arr1 + arr2)
     # print (x3)
     # print (x3)
     # x4 = sail.sum(x3)
