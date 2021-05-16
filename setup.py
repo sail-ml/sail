@@ -6,86 +6,60 @@ import re
 import sys
 import sysconfig
 import platform
+import setuptools
 import subprocess
-import glob
+import glob, pathlib
+from shutil import copyfile
+
 
 from distutils.version import LooseVersion
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
-
 class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+
+    def __init__(self, name):
+        # don't invoke the original build_ext for this special extension
+        super().__init__(name, sources=[])
 
 
 class CMakeBuild(build_ext):
+
     def run(self):
-        try:
-            out = subprocess.check_output(['cmake', '--version'])
-        except OSError:
-            raise RuntimeError(
-                "CMake must be installed to build the following extensions: " +
-                ", ".join(e.name for e in self.extensions))
-
-        if platform.system() == "Windows":
-            cmake_version = LooseVersion(re.search(r'version\s*([\d.]+)',
-                                         out.decode()).group(1))
-            if cmake_version < '3.1.0':
-                raise RuntimeError("CMake >= 3.1.0 is required on Windows")
-
         for ext in self.extensions:
-            self.build_extension(ext)
+            self.build_cmake(ext)
+        super().run()
 
-    def build_extension(self, ext):
-        # print (dir(ext))
-        # print (ext.sourcedir)
-        # print (self.get_ext_fullpath(ext.name))
+    def build_cmake(self, ext):
+        cwd = pathlib.Path().absolute()
 
-        extdir = os.path.abspath(ext.sourcedir)# + "/sail/csrc")
-        # extdir = os.path.abspath(
-        #     os.path.dirname(self.get_ext_fullpath(ext.name)))
-        print (extdir)
-        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + os.path.abspath("sail/csrc"),
-                      '-DPYTHON_EXECUTABLE=' + sys.executable]
+        # these dirs will be created in build_py, so if you don't have
+        # any python sources to bundle, the dirs will be missing
+        build_temp = pathlib.Path(self.build_temp)
+        build_temp.mkdir(parents=True, exist_ok=True)
+        extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
+        extdir.mkdir(parents=True, exist_ok=True)
 
-        cfg = 'Debug' if self.debug else 'Release'
-        build_args = ['--config', cfg]
+        # example of cmake args
+        config = 'Debug' if self.debug else 'Release'
+        cmake_args = [
+            '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
+            '-DCMAKE_BUILD_TYPE=' + config
+        ]
 
-        # if platform.system() == "Windows":
-        #     cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
-        #         cfg.upper(),
-        #         extdir)]
-        #     if sys.maxsize > 2**32:
-        #         cmake_args += ['-A', 'x64']
-        #     build_args += ['--', '/m']
-        # else:
-        cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
-        build_args += ['--', '-j2']
+        # example of build args
+        build_args = [
+            '--config', config,
+            '--', '-j4'
+        ]
 
-        env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
-            env.get('CXXFLAGS', ''),
-            self.distribution.get_version())
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-
-        print (cmake_args)
-        print (build_args)
-        # print (ext.sourcedir)
-        # print (self.build_temp)
-        # exit()
-        # exit()
-
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args,
-                              cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] + build_args,
-                              cwd=self.build_temp)
-
-        # subprocess.check_call(["mv", "libsail_c.so", "sail/csrc/libsail_c.so"])
-
-        print()  # Add an empty line for cleaner output
+        os.chdir(str(build_temp))
+        self.spawn(['cmake', str(cwd)] + cmake_args)
+        if not self.dry_run:
+            self.spawn(['cmake', '--build', '.'] + build_args)
+        # Troubleshooting: if fail on line above then delete all possible 
+        # temporary CMake files including "CMakeCache.txt" in top level dir.
+        os.chdir(str(cwd))
         
 files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
 files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
@@ -102,6 +76,18 @@ for n in src_files:
     newname = base
     created_names.append(newname)
 
+# print (setuptools.find_packages(
+#         where = './',
+#     ))
+
+print (setuptools.find_packages())
+print (setuptools.find_packages())
+print (setuptools.find_packages())
+print (setuptools.find_packages())
+print (setuptools.find_packages())
+
+# exit()
+
 setup(
     name='sail',
     version='0.0.1a',
@@ -110,9 +96,11 @@ setup(
     # description='A hybrid Python/C++ test project',
     # long_description='',
     # add extension module
-    packages=["sail", "sail.csrc"],
-    package_data={"sail": [os.path.abspath("sail/csrc/libsail_c.so")]},
-    ext_modules=[CMakeExtension('sail_c')],
+    packages = ["sail", "sail.csrc"],#setuptools.find_packages(),
+    # ext_modules=[CMakeExtension('DolphinTrading/indicator_bindings')],
+    # packages=["sail", "sail.csrc"],
+    # package_data={"sail": [os.path.abspath("sail/csrc/libsail_c.so")]},
+    ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
     # add custom build_ext command
     cmdclass=dict(build_ext=CMakeBuild),
     # zip_safe=False,
@@ -121,3 +109,6 @@ setup(
 for f in created_names:
     os.remove(f)
     print (f)
+
+
+copyfile("build/lib.linux-x86_64-3.7/sail/csrc/libsail_c.so", "sail/csrc/libsail_c.so")

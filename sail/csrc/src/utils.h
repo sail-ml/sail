@@ -1,28 +1,39 @@
 #pragma once
 
+#include <malloc.h>
 #include <iostream>
 #include <iterator>
 #include <vector>
-#include "Tensor.h"
+
 #include "types.h"
 
 inline bool isAlignedAs(const void* p, const int8_t alignment) {
     return ((int8_t)(p) & ((alignment)-1)) == 0;
 }
 
+inline long roundUp(long numToRound, long multiple) {
+    if (multiple == 0) return numToRound;
+
+    long remainder = numToRound % multiple;
+    if (remainder == 0) return numToRound;
+
+    return numToRound + multiple - remainder;
+}
+
 inline void* _malloc_align(long numel, long alignment, long dtype_size) {
-    return aligned_alloc(alignment, dtype_size * numel);
+    long size = dtype_size * numel;
+    if (size % alignment != 0) {
+        size = roundUp(size, alignment);
+    }
+    return aligned_alloc(alignment, size);
 }
 
 inline void* _realloc_align(void* src, long numel, long alignment,
                             long dtype_size) {
-    // void* aligned = _mm_malloc(dtype_size * numel, alignment);
     void* aligned = _malloc_align(numel, alignment, dtype_size);
     if (aligned == NULL) {
         std::cout << "ALLOC FAIL" << std::endl;
     }
-    // void* aligned = static_cast<void*>(new char[dtype_size * numel,
-    // alignment]);
     memcpy(aligned, src, dtype_size * numel);
     return aligned;
 }

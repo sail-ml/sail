@@ -30,8 +30,9 @@ RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
 
     ret_class->tensor = tensor1 $op$ tensor2;
 
-    ret_class->ndim = ret_class->tensor.ndim;
+    ret_class->ndim = ret_class->tensor.get_ndim();
     ret_class->requires_grad = ret_class->tensor.requires_grad;
+    // SET_BASE(t1, ret_class);
 
     return (PyObject *)ret_class;
 }

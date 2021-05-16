@@ -14,57 +14,87 @@
 
 #define MAX_VAL 320000
 
-// Demonstrate some basic assertions.
-TEST(SailTest, FreeTest) {
-  // Expect two strings not to be equal.
-    double x[MAX_VAL];
-    double y[MAX_VAL];
-    int ndim = 1;
-    Dtype dt = Dtype::sFloat64;
-    TensorSize st = {8};
-    TensorSize sh = {MAX_VAL};
+int main() {
+    std::vector<int> g = {11};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
-    sail::TensorShape sp = sail::TensorShape(sh, st);
+    // int a = 1000;
+    // void* b = &a;
+    // unsigned char c = *(unsigned char*)(b);
+    // void* d = (unsigned char*)(b);
+    // int e = *(int*)(d);
+    // std::cout << e << ", " << a << std::endl;
+    for (int z : g) {
+            double x[z];
+            double y[z];
+            int ndim = 1;
+            Dtype dt = Dtype::sFloat64;
+            TensorSize st = {1};
+            TensorSize sh = {z};
 
-    for (int i = 0; i < MAX_VAL; i++) {
-        x[i] = 2.21;
-        y[i] = 3.21;
+            sail::TensorShape sp = sail::TensorShape(sh, st);
+
+            for (int i = 0; i < z; i++) {
+                x[i] = 2.21;
+                y[i] = 3.21;
+            }
+
+            x[1] = 10.1;
+            y[1] = -23.3;
+
+            void* xt = static_cast<void*>(x);
+            void* yt = static_cast<void*>(y);
+
+            // std::cout << xt << ", " << yt << std::endl;
+
+            sail::Tensor t1 = sail::from_data(xt, dt, sp);
+            sail::Tensor t2 = sail::from_data(yt, dt, sp);
+        for (int i = 0; i < 10; i++) {
+            sail::Tensor t3 = sail::ops::add(t1, t2);
+
+            // std::cout << t1 << std::endl;
+            // std::cout << t2 << std::endl;
+            // std::cout << t3 << std::endl;
+    
+
+        }
     }
-
-    void* xt = static_cast<void*>(x);
-    void* yt = static_cast<void*>(y);
-
-    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
-    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
-
-    sail::Tensor t3 = t1 + t2;
-    sail::Tensor t4 = sail::ops::sum(t3);
-
-
-    t4.backward();
-    std::cout << (t4.fcn)->getName() << std::endl;
-    std::cout << (t3.fcn)->getName() << std::endl;
-    std::cout << (t2.fcn)->getName() << std::endl;
-    std::cout << (t1.fcn)->getName() << std::endl;
-    std::cout << "T4 " << &(t4) << std::endl;
-    std::cout << "T3 " << &(t3) << std::endl;
-    std::cout << "T2 " << &(t2) << std::endl;
-    std::cout << "T1 " << &(t1) << std::endl;
-    std::cout << "T4 " << t4.has_grad << std::endl;
-    std::cout << "T3 " << t3.has_grad << std::endl;
-    std::cout << "T2 " << t2.has_grad << std::endl;
-    std::cout << "T1 " << t1.has_grad << std::endl;
-    std::cout << "T2 " << *(double*)(t2.grad->data) << std::endl;
-
-
-    t1.free();
-    t2.free();
-    t3.free();
-    t4.free();
-
-    ASSERT_EQ(t1.data, NULL);
-    ASSERT_EQ(t2.data, NULL);
+    return 0;
 }
+
+// Demonstrate some basic assertions.
+// TEST(SailTest, FreeTest) {
+//   // Expect two strings not to be equal.
+//     std::vector<int> a = {1, 256};
+//     for (int z : a) {
+
+//         double x[z];
+//         double y[z];
+//         int ndim = 1;
+//         Dtype dt = Dtype::sFloat64;
+//         TensorSize st = {8};
+//         TensorSize sh = {z};
+
+//         sail::TensorShape sp = sail::TensorShape(sh, st);
+
+//         for (int i = 0; i < z; i++) {
+//             x[i] = 2.21;
+//             y[i] = 3.21;
+//         }
+
+//         void* xt = static_cast<void*>(x);
+//         void* yt = static_cast<void*>(y);
+
+//         sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, false);
+//         sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, false);
+
+//         sail::Tensor t3 = sail::ops::add(t1, t2);
+
+//     std::cout << sail::ops::tensor_repr(t3) << std::endl;
+    
+
+//     }
+
+// }
 
 // TEST(SailTest, CastFloat32ToInt32) {
 //     float x[MAX_VAL];
@@ -134,29 +164,29 @@ TEST(SailTest, FreeTest) {
 //     ASSERT_EQ(t2.data, NULL);
 // }
 
-TEST(SailTest, CBlas) {
-    double x[32];
-    double y[32];
-    int ndim = 1;
-    Dtype dt = Dtype::sFloat64;
-    TensorSize st = {8};
-    TensorSize sh = {32};
+// TEST(SailTest, CBlas) {
+//     double x[32];
+//     double y[32];
+//     int ndim = 1;
+//     Dtype dt = Dtype::sFloat64;
+//     TensorSize st = {8};
+//     TensorSize sh = {32};
 
-    sail::TensorShape sp = sail::TensorShape(sh, st);
+//     sail::TensorShape sp = sail::TensorShape(sh, st);
 
-    for (int i = 0; i < 32; i++) {
-        x[i] = 2.21;
-        y[i] = 3.21;
-    }
+//     for (int i = 0; i < 32; i++) {
+//         x[i] = 2.21;
+//         y[i] = 3.21;
+//     }
 
-    void* xt = static_cast<void*>(x);
-    void* yt = static_cast<void*>(y);
+//     void* xt = static_cast<void*>(x);
+//     void* yt = static_cast<void*>(y);
 
-    sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
-    sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
+//     sail::Tensor t1 = sail::Tensor(ndim, xt, dt, sp, true);
+//     sail::Tensor t2 = sail::Tensor(ndim, yt, dt, sp, true);
 
-    std::cout << sail::ops::tensor_repr(t1) << std::endl;
+//     std::cout << sail::ops::tensor_repr(t1) << std::endl;
 
-    t1.free();
-    t2.free();
-}
+//     t1.free();
+//     t2.free();
+// }

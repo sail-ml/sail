@@ -13,8 +13,8 @@ namespace sail {
 class CopyTTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, Tensor& out_tensor) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
-            launch_arithmetic(out_tensor.dtype, [&](auto xt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+            launch_arithmetic(out_tensor.get_dtype(), [&](auto xt) {
                 using T_in = typename decltype(pt)::type;
                 using T_out = typename decltype(xt)::type;
 

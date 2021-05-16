@@ -21,6 +21,9 @@
 
 //     return new_tensor;
 // }
+// new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
+            // new_tensor.free();                                 \
+            // new_tensor.set_data(PyLong_AsVoidPtr(number));     \
 
 #define GET_NUMERIC(number, new_tensor)                        \
     {                                                          \
@@ -28,11 +31,9 @@
             new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
             double val = PyFloat_AsDouble(number);             \
             double *ptr = &val;                                \
-            memcpy(new_tensor.data, ptr, sizeof(val));         \
+            memcpy(new_tensor.get_data(), ptr, sizeof(val));   \
         } else if (PyObject_TypeCheck(number, &PyLong_Type)) { \
-            new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
-            new_tensor.free();                                 \
-            new_tensor.data = PyLong_AsVoidPtr(number);        \
+            PyErr_SetString(PyExc_TypeError, "Nah.");          \
         }                                                      \
     }
 
@@ -49,13 +50,18 @@
         }                                            \
     }
 
-#define COPY(src, dest)                   \
-    {                                     \
-        dest->tensor = src->tensor;       \
-        dest->ndim = src->ndim;           \
-        dest->dtype = src->dtype;         \
-        dest->ob_base = *(PyObject *)src; \
-        Py_INCREF(src);                   \
+#define COPY(src, dest)                      \
+    {                                        \
+        dest->tensor = src->tensor;          \
+        dest->ndim = src->ndim;              \
+        dest->dtype = src->dtype;            \
+        dest->base_object = (PyObject *)src; \
+        Py_INCREF(src);                      \
+    }
+#define SET_BASE(src, dest)                  \
+    {                                        \
+        Py_INCREF(src);                      \
+        dest->base_object = (PyObject *)src; \
     }
 
 #define NUMERIC_PROCESS(t1, t2)                              \

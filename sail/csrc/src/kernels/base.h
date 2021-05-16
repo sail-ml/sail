@@ -6,12 +6,9 @@
 
 #include <immintrin.h>
 #include <omp.h>
-#include <chrono>
 
 #include "../Tensor.h"
 #include "../utils.h"
-
-using namespace std::chrono;
 
 using Tensor = sail::Tensor;
 namespace sail {
@@ -19,14 +16,14 @@ namespace sail {
 template <typename T, typename Op, typename avx_name>
 void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
                    const Tensor &arr3) {
-    T __restrict__ *p1 = static_cast<T *>(arr1.data);
-    T __restrict__ *p2 = static_cast<T *>(arr2.data);
-    T __restrict__ *p3 = static_cast<T *>(arr3.data);
+    T __restrict__ *p1 = static_cast<T *>(arr1.get_data());
+    T __restrict__ *p2 = static_cast<T *>(arr2.get_data());
+    T __restrict__ *p3 = static_cast<T *>(arr3.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment) &&
-                   isAlignedAs(p2, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment) &&
+                   isAlignedAs(p2, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
@@ -59,13 +56,11 @@ void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     if (omp) {
 #pragma omp parallel for
         for (i = 0; i < numel; i += 1) {
-            std::cout << p1[i] << std::endl;
             op.call_base(p1[i], p2[i], p3[i]);
         }
 
     } else {
         for (i = 0; i < numel; i += 1) {
-            std::cout << p1[i] << std::endl;
             op.call_base(p1[i], p2[i], p3[i]);
         }
     }
@@ -78,13 +73,13 @@ void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
 template <typename T, typename Op, typename avx_name>
 void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
                          const Tensor &arr3) {
-    T __restrict__ *p1 = static_cast<T *>(arr1.data);
-    T __restrict__ *p2 = static_cast<T *>(arr2.data);
-    T __restrict__ *p3 = static_cast<T *>(arr3.data);
+    T __restrict__ *p1 = static_cast<T *>(arr1.get_data());
+    T __restrict__ *p2 = static_cast<T *>(arr2.get_data());
+    T __restrict__ *p3 = static_cast<T *>(arr3.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     // if (omp)
@@ -144,13 +139,13 @@ void ElemetwiseScalarAVX(Op op, const Tensor &arr1, const Tensor &arr2,
 
 template <typename T, typename T_out, typename Op>
 void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2) {
-    T *p1 = static_cast<T *>(arr1.data);
-    T_out *p2 = static_cast<T_out *>(arr2.data);
+    T *p1 = static_cast<T *>(arr1.get_data());
+    T_out *p2 = static_cast<T_out *>(arr2.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment) &&
-                   isAlignedAs(p2, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment) &&
+                   isAlignedAs(p2, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
@@ -169,12 +164,12 @@ void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2) {
 
 template <typename T, typename Op, typename avx_name>
 void UnaryAVX(Op op, const Tensor &arr1, const Tensor &arr_out) {
-    T __restrict__ *p1 = static_cast<T *>(arr1.data);
-    T __restrict__ *p_out = static_cast<T *>(arr_out.data);
+    T __restrict__ *p1 = static_cast<T *>(arr1.get_data());
+    T __restrict__ *p_out = static_cast<T *>(arr_out.get_data());
 
     int numel = arr1.numel();
-    bool aligned = isAlignedAs(p1, arr1.info.alignment);
-    int jump = arr1.info.jump;
+    bool aligned = isAlignedAs(p1, arr1.get_info().alignment);
+    int jump = arr1.get_info().jump;
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
     T sum = 0;
@@ -229,9 +224,9 @@ void UnaryAVX(Op op, const Tensor &arr1, const Tensor &arr_out) {
 // // template <typename T, typename Op>
 // // void Elemetwise(Op op, const Tensor &arr1, const Tensor &arr2, const
 // Tensor &arr3) {
-// //     T *p1 = static_cast<T*>(arr1.storage.data);
-// //     T *p2 = static_cast<T*>(arr2.storage.data);
-// //     T *p3 = static_cast<T*>(arr3.storage.data);
+// //     T *p1 = static_cast<T*>(arr1.storage.get_data());
+// //     T *p2 = static_cast<T*>(arr2.storage.get_data());
+// //     T *p3 = static_cast<T*>(arr3.storage.get_data());
 
 // //     int numel = arr1.storage.numel();
 // //     int i;

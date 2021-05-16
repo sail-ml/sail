@@ -2,12 +2,16 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <vector>
+#include "TensorBody.h"
 
 #include "dtypes.h"
 #include "error.h"
 #include "tensor_shape.h"
 #include "types.h"
+
+#define MAKE_PTR(value) std::shared_ptr<TensorBody>(new TensorBody(value));
 
 namespace sail {
 namespace autograd {
@@ -18,40 +22,53 @@ class Tensor {
    public:
     explicit Tensor(){};
 
-    void* data;
-    int ndim;
-    int arr_numel;
+    TensorBody::pointer body;
+
     bool requires_grad;
     bool has_grad = false;
-    std::shared_ptr<Tensor> grad;
-    // Tensor* grad;
-    Dtype dtype;
-    TensorSize shape;
-    TensorSize strides;
-    alignemnt_information info;
-    TensorShape shape_details;
+    // std::shared_ptr<Tensor> grad;
+    // std::unique_ptr<Tensor> grad;
+    Tensor* grad = nullptr;
+    autograd::Function* fcn = nullptr;
 
-    autograd::Function* fcn;
+    bool is_grad = false;
 
-    bool broadcasted = false;
-    TensorShape old_shape;
+    Tensor(Tensor& old, bool _requires_grad)
+        : body(old.body.get(), false), requires_grad(_requires_grad){};
+    Tensor(TensorBody::pointer data, bool _requires_grad)
+        : body(std::move(data)), requires_grad(_requires_grad){};
 
-    //     explicit Tensor(TensorStorage storage);
+    Tensor(const Tensor&) = default;
+    Tensor(Tensor&&) = default;
 
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data);
-    Tensor(int& ndims, void*& data, Dtype& dt, TensorShape shape_data,
-           bool requires_grad);
+    Tensor& operator=(const Tensor& x) & {
+        body = x.body;
+        requires_grad = x.requires_grad;
+        return *this;
+    }
+    Tensor& operator=(Tensor&& x) & {
+        body = std::move(x.body);
+        requires_grad = std::move(x.requires_grad);
+        return *this;
+    }
 
-    static Tensor move(int& ndims, void*& data, Dtype& dt,
-                       TensorShape shape_data);
-    //     Tensor(int ndims, void* data, Dtype dt, TensorSize strides,
-    //            TensorSize shape);
+    long numel() const { return body.get()->get_shape().numel(); }
+
+    Dtype get_dtype() const { return body.get()->get_dtype(); }
+
+    TensorShape get_shape() const { return body.get()->get_shape(); }
+
+    void* get_data() const { return body.get()->get_data(); }
+    alignemnt_information get_info() const { return body.get()->get_info(); }
+    bool is_view() const { return body.get()->is_view(); }
 
     Tensor cast(const Dtype dt);
-    Tensor reshape(const TensorShape new_shape);
+    Tensor reshape(const TensorShape& new_shape) const;
     Tensor expand_dims(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();
+
+    int get_body_ref_count() { return body.get()->get_ref_count(); }
 
     void free();
 
@@ -59,44 +76,30 @@ class Tensor {
     bool is_scalar();
     int get_np_type_num();
 
-    int numel() const;
-    int get_ndim();
+    void set_shape(TensorShape& s) { body.get()->set_shape(s); }
+
+    int get_ndim() const { return get_shape().ndim(); }
 
     void backward();
-    void backward(Tensor grad);
+    void backward(Tensor& grad);
 
-    Tensor operator+(Tensor& t);
-    Tensor operator-(Tensor& t);
-    Tensor operator*(Tensor& t);
-    Tensor operator/(Tensor& t);
-    Tensor operator[](const int t);
+    Tensor operator+(const Tensor& t);
+    Tensor operator-(const Tensor& t);
+    Tensor operator-();
+    Tensor operator*(const Tensor& t);
+    Tensor operator/(const Tensor& t);
+    Tensor operator[](const int t) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Tensor& dt);
 
     Tensor sum();
 
     void register_op(autograd::Function* new_func);
 
-    //     Tensor cast(const Dtype dt);
-    //     void inplace_cast(const Dtype dt);
-
-    //     void reshape(const TensorSize s);
-
-    //     Tensor expand_dims(const int dim);
-
-    //     static Tensor createEmptyScalar(Dtype dt);
-
-    //     void* data();
-
-    //     bool is_scalar();
-
-    //     Dtype dtype();
-
-    //     void free();
-
-    //     long int* get_shape_ptr();
-    //     int get_np_type_num();
-
-    //     TensorStorage storage;
+    //    private:
 };
+
+std::ostream& operator<<(std::ostream& os, Tensor& tensor);
 
 inline int _numel(TensorSize _shape) {
     auto size = 1;

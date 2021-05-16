@@ -9,15 +9,16 @@
 
 namespace sail {
 namespace ops {
+using RefTensorVector = std::vector<Tensor*>;
 
 Tensor sum(const Tensor& tensor1, int axis) {
-    // Tensor empty_tensor = empty_scalar(tensor1.dtype);
-    TensorSize old_shape = tensor1.shape;
+    // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
+    TensorSize old_shape = tensor1.get_shape().shape;
     TensorSize new_strides;
     TensorSize new_shape;
-    long dt_size = GetDtypeSize(tensor1.dtype);
+    long dt_size = GetDtypeSize(tensor1.get_dtype());
     int c = 0;
-    for (long s : tensor1.shape) {
+    for (long s : tensor1.get_shape().shape) {
         if (c != axis) {
             new_shape.push_back(s);
         }
@@ -37,31 +38,33 @@ Tensor sum(const Tensor& tensor1, int axis) {
     std::reverse(new_strides.begin(), new_strides.end());
     new_strides.push_back(dt_size);
 
-    Tensor empty_tensor = empty(tensor1.ndim - 1, tensor1.dtype,
+    Tensor empty_tensor = empty(tensor1.get_ndim() - 1, tensor1.get_dtype(),
                                 TensorShape(new_shape, new_strides));
 
     SumTKernel().execute(tensor1, empty_tensor, axis);
     return empty_tensor;
 }
 
-Tensor sum(Tensor& tensor1) {
+Tensor sum(const Tensor& tensor1) {
     Tensor empty_tensor;
     if (tensor1.requires_grad) {
+        RefTensorVector vec;
+        vec.emplace_back(&tensor1);
         empty_tensor =
             (new autograd::Sum())
-                ->apply({&tensor1});  //{std::make_shared<Tensor>(tensor1)});
+                ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
         return empty_tensor;
     }
-    empty_tensor = empty_scalar(tensor1.dtype);
+    empty_tensor = empty_scalar(tensor1.get_dtype());
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;
 }
 Tensor mean(const Tensor& tensor1) {
-    Tensor empty_tensor = empty_scalar(tensor1.dtype);
+    Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
     int numel = empty_tensor.numel();
     int* ptr = &numel;
-    MeanTKernel().execute(tensor1, empty_tensor);
+    SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;
 }
 

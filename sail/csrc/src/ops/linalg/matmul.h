@@ -10,7 +10,7 @@ namespace sail {
 
 namespace ops {
 
-Tensor matmul(Tensor& t1, Tensor& t2);
+Tensor matmul(const Tensor& t1, const Tensor& t2);
 
 }  // namespace ops
 

@@ -4,6 +4,25 @@
 #include <vector>
 #include "../Tensor.h"
 
+#define DISABLE_GRAD(inputs)                      \
+    {                                             \
+        for (int i = 0; i < inputs.size(); i++) { \
+            inputs[i]->requires_grad = false;     \
+        }                                         \
+    }
+#define ENABLE_GRAD(inputs)                       \
+    {                                             \
+        for (int i = 0; i < inputs.size(); i++) { \
+            inputs[i]->requires_grad = true;      \
+        }                                         \
+    }
+#define COPY_INPUTS(inputs, storage)              \
+    {                                             \
+        for (int i = 0; i < inputs.size(); i++) { \
+            storage.push_back(inputs[i]);         \
+        }                                         \
+    }
+
 namespace sail {
 // class Tensor {
 //     bool requires_grad;
@@ -12,21 +31,9 @@ namespace sail {
 
 namespace autograd {
 
-#define DISABLE_GRAD(inputs)         \
-    {                                \
-        for (Tensor t : inputs) {    \
-            t.requires_grad = false; \
-        }                            \
-    }
-#define ENABLE_GRAD(inputs)         \
-    {                               \
-        for (Tensor t : inputs) {   \
-            t.requires_grad = true; \
-        }                           \
-    }
-
 using TensorVector = std::vector<Tensor>;
 using RefTensorVector = std::vector<Tensor*>;
+// using RefTensorVector = std::vector<Tensor*>;
 
 class Function {
    public:
@@ -34,9 +41,9 @@ class Function {
     explicit Function(){};
     std::string name = "NONE";
     virtual std::string getName();
-    virtual inline Tensor forward(RefTensorVector inputs);
-    virtual inline Tensor apply(RefTensorVector inputs);
-    virtual inline TensorVector backward(Tensor grad);
+    virtual Tensor forward(RefTensorVector inputs);
+    virtual Tensor apply(RefTensorVector& inputs);
+    virtual TensorVector backward(Tensor& grad);
 };
 
 }  // namespace autograd

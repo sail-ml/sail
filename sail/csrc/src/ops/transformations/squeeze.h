@@ -18,8 +18,8 @@ inline Tensor squeeze(const Tensor& tensor1, const int dim) {
     //     throw SailCError("squeeze dimension shape must be 1");
     // }
     // s.erase(s.begin() + dim);
-    tensor1.shape_details.remove_one(dim);
-    tensor1.reshape(tensor1.shape_details);
+    tensor1.get_shape().remove_one(dim);
+    tensor1.reshape(tensor1.get_shape());
     return tensor1;
 }
 

@@ -4,32 +4,20 @@
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
+#include "../error.h"
+#include "../factories.h"
 
 namespace sail {
 
 namespace autograd {
 
-#define DISABLE_GRAD(inputs)                      \
-    {                                             \
-        for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i]->requires_grad = false;     \
-        }                                         \
-    }
-#define ENABLE_GRAD(inputs)                       \
-    {                                             \
-        for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i]->requires_grad = true;      \
-        }                                         \
-    }
-
 using TensorVector = std::vector<Tensor>;
 
 std::string Function::getName() { return "NONE"; }
-inline Tensor Function::apply(RefTensorVector inputs) {
+Tensor Function::apply(RefTensorVector& inputs) {
     // arg_storage = inputs;
-    for (Tensor* i : inputs) {
-        arg_storage.push_back(i);
-    }
+    COPY_INPUTS(inputs, arg_storage);
+    // arg_storage(inputs);
     DISABLE_GRAD(inputs);
     Tensor o = forward(inputs);
     ENABLE_GRAD(inputs);
@@ -37,11 +25,11 @@ inline Tensor Function::apply(RefTensorVector inputs) {
     o.register_op(this);
     return o;
 }
-inline Tensor Function::forward(RefTensorVector inputs) {
-    throw "not implemented yet.";
+Tensor Function::forward(RefTensorVector inputs) {
+    throw SailCError("not implemented yet.");
 }
-inline TensorVector Function::backward(Tensor inputs) {
-    throw "not implemented yet.";
+TensorVector Function::backward(Tensor& inputs) {
+    throw SailCError("not implemented yet.");
 }
 
 }  // namespace autograd

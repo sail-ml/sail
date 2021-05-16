@@ -2,9 +2,9 @@
 
 #include <immintrin.h>
 #include <cassert>  // needed for xsimd
-#include "../Tensor.h"
-#include "base.h"
-#include "elementwise.h"
+#include "../../Tensor.h"
+#include "../base.h"
+#include "../elementwise.h"
 #include "xsimd/xsimd.hpp"
 namespace sail {
 
@@ -25,7 +25,7 @@ class $name$TTKernel : public Kernel {
             using avx_type = xsimd::simd_type<T>;
 
             struct Impl {
-                inline void call_base(T x1, T x2, T& out) {
+                inline void call_base(T& x1, T& x2, T& out) {
                     out = x1 $baseOp$ x2;
                 }
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {
@@ -42,6 +42,7 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_unaligned(out, c);
                 }
             };
+
             BinaryElementwise<T, T, T>(Impl{}, broadcast, t1, t2, out_tensor);
         });
     }

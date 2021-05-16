@@ -19,12 +19,14 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     PyObject* py_tuple;
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &py_tuple)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        PyErr_SetString(PyExc_TypeError, "must pass a tensor and a shape");
     }
 
     // BINARY_TENSOR_TYPE_CHECK(t1, t2);
     int len = PyTuple_Size(py_tuple);
+    if (len == -1) {
+        PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+    }
     TensorSize size;
     while (len--) {
         size.push_back(PyLong_AsLong(PyTuple_GetItem(py_tuple, len)));
@@ -37,11 +39,11 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
 
     sail::TensorShape new_ = sail::TensorShape(size);
 
-    COPY(t1, ret_class);
-
-    ret_class->tensor.reshape(new_);
-
-    ret_class->ndim = ret_class->tensor.ndim;
+    ret_class->tensor = t1->tensor.reshape(new_);
+    ret_class->ndim = t1->tensor.get_ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->base_object = (PyObject*)t1;
+    Py_INCREF(t1);
 
     return (PyObject*)ret_class;
 }
@@ -56,7 +58,7 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    if (dim < -1 || dim > t1->tensor.ndim) {
+    if (dim < -1 || dim > t1->tensor.get_ndim()) {
         PyErr_SetString(PyExc_ValueError,
                         ("dim must be in the range of [-1, ndim]"));
         return NULL;
@@ -65,10 +67,11 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    COPY(t1, ret_class);
-
-    ret_class->tensor.expand_dims(dim);
-    ret_class->ndim = ret_class->ndim + 1;
+    ret_class->tensor = t1->tensor.expand_dims(dim);
+    ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->base_object = (PyObject*)t1;
+    Py_INCREF(t1);
 
     return (PyObject*)ret_class;
 }
@@ -83,7 +86,7 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    if (dim < -1 || dim > t1->tensor.ndim) {
+    if (dim < -1 || dim > t1->tensor.get_ndim()) {
         PyErr_SetString(PyExc_ValueError,
                         ("dim must be in the range of [-1, ndim]"));
         return NULL;
@@ -92,10 +95,11 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    COPY(t1, ret_class);
-
-    ret_class->tensor.squeeze(dim);
-    ret_class->ndim = ret_class->ndim + 1;
+    ret_class->tensor = t1->tensor.squeeze(dim);
+    ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->base_object = (PyObject*)t1;
+    Py_INCREF(t1);
 
     return (PyObject*)ret_class;
 }

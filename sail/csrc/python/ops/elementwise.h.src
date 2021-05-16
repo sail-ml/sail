@@ -40,8 +40,9 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
         sail::ops::$fname$(((PyTensor*)t1)->tensor, ((PyTensor*)t2)->tensor);
     // std::cout << (ret_class->tensor.fcn)->getName() << std::endl;
 
-    ret_class->ndim = ret_class->tensor.ndim;
+    ret_class->ndim = ret_class->tensor.get_ndim();
     ret_class->dtype = ((PyTensor*)t1)->dtype;
+    // SET_BASE(t1, ret_class);
 
     return (PyObject*)ret_class;
 }
@@ -64,7 +65,7 @@ RETURN_OBJECT cast_int32(PyObject* unused, PyObject* args) {
 
     ret_class->tensor = tensor1;
 
-    ret_class->ndim = ret_class->tensor.ndim;
+    ret_class->ndim = ret_class->tensor.get_ndim();
     ret_class->dtype = 5;
 
     return (PyObject*)ret_class;

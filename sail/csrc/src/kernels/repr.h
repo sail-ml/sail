@@ -55,12 +55,13 @@ class FloatFormatter {
                 digits_after_e_ = e_digits;
             }
         }
-        if (value <= 0.0001) {
-            int e_digits = GetNDigits(static_cast<int64_t>(std::log10(value)));
-            if (digits_after_e_ < e_digits) {
-                digits_after_e_ = e_digits;
-            }
-        }
+        // if (value <= 0.0001) {
+        //     int e_digits =
+        //     GetNDigits(static_cast<int64_t>(std::log10(value))); if
+        //     (digits_after_e_ < e_digits) {
+        //         digits_after_e_ = e_digits;
+        //     }
+        // }
         if (digits_after_e_ > 0) {
             return;
         }
@@ -156,30 +157,45 @@ using Formatter =
 class ReprKernel : public Kernel {
    public:
     void execute(Tensor& t1, std::ostream& os) {
-        launch_arithmetic(t1.dtype, [&](auto pt) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             Formatter<T> formatter;
 
-            T* data = (T*)t1.data;
+            T* data = (T*)t1.get_data();
 
             // scan all elements
-            TensorShape shape = t1.shape_details;
-            for (int i = 0; i < t1.shape_details.numel(); i++) {
-                T value = (T)data[shape.d_ptr];
-                formatter.Scan(value);
-                shape.next();
-            }
-            shape.reset();
-
-            os << "array(";
-            if (t1.shape_details.numel() == 0) {
-                os << "[]";
+            TensorShape shape = t1.get_shape();
+            shape.recompute();
+            long numel = shape.numel();
+            if (t1.is_view()) {
+                for (int i = 0; i < numel; i++) {
+                    T value = data[shape.d_ptr];
+                    formatter.Scan(value);
+                    shape.next();
+                }
+                shape.reset();
             } else {
-                bool should_abbreviate = t1.shape_details.numel() > kThreshold;
-                ArrayReprRecursive<T>(t1, formatter, 7, os, should_abbreviate);
+                for (int i = 0; i < numel; i++) {
+                    T value = data[i];
+                    formatter.Scan(value);
+                }
             }
-            os << ", shape=" << t1.shape_details.get_string();
-            os << ")";
+            if (!t1.is_scalar()) {
+                os << "tensor(";
+                if (t1.get_shape().numel() == 0) {
+                    os << "[]";
+                } else {
+                    bool should_abbreviate =
+                        t1.get_shape().numel() > kThreshold;
+                    ArrayReprRecursive<T>(t1, formatter, 8, os,
+                                          should_abbreviate);
+                }
+                os << ", shape=" << t1.get_shape().get_string();
+                os << ")";
+
+            } else {
+                ArrayReprRecursive<T>(t1, formatter, 8, os, false);
+            }
         });
     }
 
@@ -192,9 +208,9 @@ class ReprKernel : public Kernel {
     void ArrayReprRecursive(Tensor& tensor, Formatter<T>& formatter,
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
-        long ndim = tensor.shape_details.ndim();
+        long ndim = tensor.get_shape().ndim();
         if (ndim == 0) {
-            formatter.Print(os, static_cast<T>(((T*)tensor.data)[0]));
+            formatter.Print(os, *(T*)tensor.get_data());
             return;
         }
         auto print_indent = [ndim, indent, &os](int64_t i) {
@@ -214,10 +230,10 @@ class ReprKernel : public Kernel {
         };
         os << "[";
 
-        long size = tensor.shape_details.shape[0];
-        T* data = (T*)tensor.data;
+        long size = tensor.get_shape().shape[0];
+        T* data = (T*)tensor.get_data();
         // if (tensor.broadcasted) {
-        TensorShape shape = tensor.shape_details;
+        TensorShape shape = tensor.get_shape();
 
         if (abbreviate && size > kEdgeItems * 2) {
             for (int64_t i = 0; i < kEdgeItems; ++i) {

@@ -39,7 +39,7 @@ dic = {"a": np.random.uniform(0, 1, (10)),
        }
 
 def forward(a, b):
-    c = sail.multiply(a, b)
+    c = sail.add(a, b)
     d = sail.sum(c)
     return d
 
@@ -50,7 +50,9 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     output.backward()
     grads_dic = {}
     for i, p in enumerate(param_dictionary):
-        grads_dic[p] = params[i].get_grad() 
+        grads_dic[p] = params[i].grad.numpy() 
+
+    print ("ok")
 
     parameters = dictionary_to_vector(param_dictionary)
     grads = dictionary_to_vector(grads_dic)
@@ -61,8 +63,9 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     grad_approx = np.zeros(num_params)
 
     eps = 1e-7
-
+    print (len(parameters))
     for i in range(len(parameters)):
+        print (i)
         # pass
 
         params_plus = np.copy(parameters)

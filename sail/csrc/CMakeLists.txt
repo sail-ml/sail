@@ -11,6 +11,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
+FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -march=native -fpermissive -fopenmp -ffast-math -mavx2 -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
@@ -26,7 +28,10 @@ include(FindBLAS)
 add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
 target_link_libraries(sail_c PRIVATE src)
 target_link_libraries(sail_c PUBLIC Python3::NumPy)
+TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
+
+
 # if (BLAS_FOUND)
 #     target_compile_options(sail_c PRIVATE ${BLAS_LINKER_FLAGS})
 #     target_link_libraries(sail_c ${BLAS_LIBRARIES})
@@ -50,11 +55,12 @@ target_link_libraries(test src)
 target_link_libraries(test gtest_main)
 target_include_directories(test PRIVATE "libs/xsimd/include")
 
+
 # if (BLAS_FOUND)
 #     target_compile_options(test PRIVATE ${BLAS_LINKER_FLAGS})
 #     target_link_libraries(test ${BLAS_LIBRARIES})
 # endif ()
 
 
-include(GoogleTest)
-gtest_discover_tests(test)
+# include(GoogleTest)
+# gtest_discover_tests(test)
