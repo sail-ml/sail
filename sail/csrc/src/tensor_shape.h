@@ -22,6 +22,11 @@ class TensorShape {
     TensorShape(LongVec& shape_, LongVec& size_);
     TensorShape(LongVec& shape_);
 
+    TensorShape reverse();
+
+    // template <class T>
+    TensorShape reorder(LongVec& order);
+
     void insert_one(const int dim);
     void remove_one(const int dim);
     void recompute_strides();

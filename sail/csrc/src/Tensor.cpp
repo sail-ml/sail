@@ -38,17 +38,7 @@ long Tensor::getTotalSize() {
 }
 
 Tensor Tensor::reshape(const TensorShape& new_shape) const {
-    int s = new_shape.numel();
-    if (s != numel()) {
-        throw DimensionError{"Cannot reshape tensor of shape ",
-                             get_shape().get_string(), " to ",
-                             new_shape.get_string()};
-    }
-    TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
-        body->get_data(), body->get_dtype(), new_shape, /*is_view*/ true));
-    Tensor new_tensor = Tensor(new_body, requires_grad);
-
-    return new_tensor;
+    return ops::reshape(*this, new_shape);
 }
 
 Tensor Tensor::expand_dims(const int dim) {

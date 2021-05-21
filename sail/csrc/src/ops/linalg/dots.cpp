@@ -47,7 +47,7 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
     Tensor empty_tensor =
         empty(t1.get_ndim(), t1.get_dtype(), TensorShape(new_shape));
 
-    MatmulTTKernel().execute(t1, t2, empty_tensor);
+    DotTTKernel().execute(t1, t2, empty_tensor);
 
     return empty_tensor;
 }

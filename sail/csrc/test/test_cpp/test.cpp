@@ -15,7 +15,7 @@
 #define MAX_VAL 320000
 
 int main() {
-    std::vector<int> g = {11};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
+    std::vector<int> g = {4};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
     // int a = 1000;
     // void* b = &a;
@@ -24,16 +24,17 @@ int main() {
     // int e = *(int*)(d);
     // std::cout << e << ", " << a << std::endl;
     for (int z : g) {
-            double x[z];
-            double y[z];
+            int z_ = z * 3 * 2;
+            double x[z_];
+            double y[z_];
             int ndim = 1;
             Dtype dt = Dtype::sFloat64;
             TensorSize st = {1};
-            TensorSize sh = {z};
+            TensorSize sh = {z, 3, 2};
 
-            sail::TensorShape sp = sail::TensorShape(sh, st);
+            sail::TensorShape sp = sail::TensorShape(sh);
 
-            for (int i = 0; i < z; i++) {
+            for (int i = 0; i < z_; i++) {
                 x[i] = 2.21;
                 y[i] = 3.21;
             }
@@ -47,18 +48,22 @@ int main() {
             // std::cout << xt << ", " << yt << std::endl;
 
             sail::Tensor t1 = sail::from_data(xt, dt, sp);
-            sail::Tensor t2 = sail::from_data(yt, dt, sp);
-            t1.requires_grad = true;
-            t2.requires_grad = true;
+            std::cout << t1 << std::endl;
+            std::cout << sail::ops::transpose(t1) << std::endl;
+            std::cout << t1 << std::endl;
 
-            sail::Tensor t3 = sail::ops::multiply(t1, t2);
-            sail::Tensor t4 = sail::ops::sum(t3);
-            t4.backward();
+            // sail::Tensor t2 = sail::from_data(yt, dt, sp);
+            // t1.requires_grad = true;
+            // t2.requires_grad = true;
 
-            std::cout << t1.get_body_ref_count() << std::endl;
-            std::cout << t2.get_body_ref_count() << std::endl;
+            // sail::Tensor t3 = sail::ops::multiply(t1, t2);
+            // sail::Tensor t4 = sail::ops::sum(t3);
+            // t4.backward();
 
-            std::cout << t1.get_grad() << std::endl;
+            // std::cout << t1.get_body_ref_count() << std::endl;
+            // std::cout << t2.get_body_ref_count() << std::endl;
+
+            // std::cout << t1.get_grad() << std::endl;
             // std::cout << t2.get_grad() << std::endl;
             // std::cout << t3.get_grad() << std::endl;
             // std::cout << t4.get_grad() << std::endl;

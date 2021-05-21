@@ -5,6 +5,7 @@
 #include "elementwise.h"
 #include "linalg/linalg.h"
 #include "reduction.h"
+#include "transformations/transpose.h"
 
 static PyMethodDef OpsMethods[] = {
     {"add", (PyCFunction)ops_add, METH_VARARGS, NULL},
@@ -25,4 +26,7 @@ static PyMethodDef OpsMethods[] = {
     {"add_docstring", (PyCFunction)add_docstring, METH_VARARGS, NULL},
 
     {"broadcast_to", (PyCFunction)ops_broadcast_to, METH_VARARGS, NULL},
+
+    {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
+     NULL},
     {NULL}};

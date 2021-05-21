@@ -3,15 +3,14 @@
 #include <iostream>
 
 #include "../../Tensor.h"
-#include "../../dtypes.h"
-#include "../../kernels/kernel.h"
+#include "../../tensor_shape.h"
 
 namespace sail {
 
 namespace ops {
 
-Tensor matmul(const Tensor& t1, const Tensor& t2);
-
+Tensor transpose(const Tensor& tensor1);
+Tensor transpose(const Tensor& tensor1, LongVec& dims);
 }  // namespace ops
 
 }  // namespace sail

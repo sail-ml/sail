@@ -2,14 +2,14 @@
 
 #include <iostream>
 
-#include "../Tensor.h"
-#include "../types.h"
+#include "../../Tensor.h"
+#include "../../tensor_shape.h"
 
 namespace sail {
 
-inline Tensor reshape(const Tensor& tensor1, const TensorSize new_shape) {
-    tensor1.reshape(new_shape);
-    return tensor1;
+namespace ops {
+
+Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape);
 }
 
 }  // namespace sail

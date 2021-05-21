@@ -65,12 +65,19 @@ TensorVector Multiply::backward(Tensor& grad) {
     Tensor a = Function::arg_storage[0];
     Tensor b = Function::arg_storage[1];
     TensorVector o = {b, a};
-    // o.emplace_back(b);
-    // o.emplace_back(a);
     return o;
 }
 
-/** end block **/
+std::string Matmul::getName() { return "MatmulOp"; }
+Tensor Matmul::forward(TensorVector inputs) {
+    return ops::matmul(inputs[0], inputs[1]);
+}
+TensorVector Matmul::backward(Tensor& grad) {
+    Tensor a = Function::arg_storage[0];
+    Tensor b = Function::arg_storage[1];
+    TensorVector o = {b, a};
+    return o;
+}
 
 }  // namespace autograd
 }  // namespace sail
