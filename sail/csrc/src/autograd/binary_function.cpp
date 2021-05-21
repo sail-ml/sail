@@ -49,14 +49,9 @@ TensorVector Divide::backward(Tensor& grad) {
     Tensor a = Function::arg_storage[0];
     Tensor b = Function::arg_storage[1];
 
-    // std::cout << "a.get_shape().get_string()" << std::endl;
-    // std::cout << a.get_shape().get_string() << std::endl;
-
-    // a.requires_grad = false;
-
     Tensor gx0 = grad / b;
 
-    Tensor gx1 = -grad * a / b;  // * a;  //((a / b) / b);
+    Tensor gx1 = -gx0 * a / b;  // * a;  //((a / b) / b);
 
     TensorVector o = {gx0, gx1};
     return o;
