@@ -128,6 +128,29 @@ void TensorShape::recompute(bool strides_too = false) {
     coordinates = co;
 }
 
+TensorShape TensorShape::reverse() {
+    std::reverse(shape.begin(), shape.end());
+    recompute(true);
+    return *this;
+}
+
+// template <class T>
+TensorShape TensorShape::reorder(LongVec& order) {
+    // assert(vA.size() == vOrder.size());
+    // for all elements to put in place
+    for (int i = 0; i < shape.size() - 1; ++i) {
+        // while the element i is not yet in place
+        while (i != order[i]) {
+            // swap it with the element at its final place
+            int alt = order[i];
+            std::swap(shape[i], shape[alt]);
+            std::swap(order[i], order[alt]);
+        }
+    }
+    recompute(true);
+    return *this;
+}
+
 void TensorShape::reset() {
     std::vector<long> coordinates(shape.size(), 0);
     d_ptr = 0;

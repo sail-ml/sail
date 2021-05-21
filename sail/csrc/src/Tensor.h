@@ -24,12 +24,11 @@ class Tensor {
 
     TensorBody::pointer body;
 
-    bool requires_grad;
-    bool has_grad = false;
+    bool requires_grad = false;
     // std::shared_ptr<Tensor> grad;
     // std::unique_ptr<Tensor> grad;
-    Tensor* grad = nullptr;
-    autograd::Function* fcn = nullptr;
+    // Tensor* grad = nullptr;
+    std::shared_ptr<autograd::Function> fcn = nullptr;
 
     bool is_grad = false;
 
@@ -44,11 +43,13 @@ class Tensor {
     Tensor& operator=(const Tensor& x) & {
         body = x.body;
         requires_grad = x.requires_grad;
+        fcn = x.fcn;
         return *this;
     }
     Tensor& operator=(Tensor&& x) & {
         body = std::move(x.body);
         requires_grad = std::move(x.requires_grad);
+        fcn = std::move(x.fcn);
         return *this;
     }
 
@@ -71,14 +72,20 @@ class Tensor {
     int get_body_ref_count() { return body.get()->get_ref_count(); }
 
     void free();
+    void Tensor::swap_body(Tensor& t);
+
+    TensorBody::pointer get_body() { return body; }
 
     long int* get_shape_ptr();
-    bool is_scalar();
+    bool is_scalar() const;
+    inline bool has_grad() { return body.get()->has_grad(); }
     int get_np_type_num();
 
-    void set_shape(TensorShape& s) { body.get()->set_shape(s); }
+    void set_shape(const TensorShape& s) { body.get()->set_shape(s); }
 
     int get_ndim() const { return get_shape().ndim(); }
+    Tensor get_grad() const { return body.get()->get_grad(); }
+    void set_grad(Tensor& g) { body.get()->set_grad(g); }
 
     void backward();
     void backward(Tensor& grad);
@@ -99,7 +106,7 @@ class Tensor {
     //    private:
 };
 
-std::ostream& operator<<(std::ostream& os, Tensor& tensor);
+std::ostream& operator<<(std::ostream& os, const Tensor& tensor);
 
 inline int _numel(TensorSize _shape) {
     auto size = 1;

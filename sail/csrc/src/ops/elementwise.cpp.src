@@ -12,7 +12,7 @@
 namespace sail {
 
 namespace ops {
-using RefTensorVector = std::vector<Tensor*>;
+using TensorVector = std::vector<Tensor>;
 
 bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     TensorSize shape1 = t1.get_shape().shape;
@@ -77,21 +77,23 @@ std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     // std::cout << &tensor1 << std::endl;
-    Tensor empty_tensor = empty_like(tensor1);
     // TensorShape s = tensor1.get_shape();
     // Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
 
     if (tensor1.requires_grad || tensor2.requires_grad) {
         // empty_tensor = (new autograd::$agName$())->apply({&tensor1,
         // &tensor2});
-        RefTensorVector vec;
-        vec.emplace_back(&tensor1);
-        vec.emplace_back(&tensor2);
-        empty_tensor = (new autograd::$agName$())->apply(vec);
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        vec.emplace_back(tensor2);
+        Tensor empty_tensor = (new autograd::$agName$())->apply(vec);
+
         // std::endl;
 
         return empty_tensor;
     }
+
+    Tensor empty_tensor = empty_like(tensor1);
 
     bool broadcast = must_broadcast(tensor1, tensor2);
     if (broadcast) {

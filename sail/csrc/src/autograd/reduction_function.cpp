@@ -17,10 +17,10 @@ namespace autograd {
 using TensorVector = std::vector<Tensor>;
 
 std::string Sum::getName() { return "SumOp"; }
-Tensor Sum::forward(RefTensorVector inputs) { return ops::sum(*inputs[0]); }
+Tensor Sum::forward(TensorVector inputs) { return ops::sum(inputs[0]); }
 TensorVector Sum::backward(Tensor& grad) {
     Tensor full_size =
-        ops::broadcast_to(grad, Function::arg_storage[0]->get_shape());
+        ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
     return {clone(full_size)};
 }
 

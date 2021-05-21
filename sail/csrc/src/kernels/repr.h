@@ -156,7 +156,7 @@ using Formatter =
 
 class ReprKernel : public Kernel {
    public:
-    void execute(Tensor& t1, std::ostream& os) {
+    void execute(const Tensor& t1, std::ostream& os) {
         launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             Formatter<T> formatter;
@@ -205,7 +205,7 @@ class ReprKernel : public Kernel {
     static constexpr int64_t kEdgeItems = 3;
 
     template <typename T>
-    void ArrayReprRecursive(Tensor& tensor, Formatter<T>& formatter,
+    void ArrayReprRecursive(const Tensor& tensor, Formatter<T>& formatter,
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
         long ndim = tensor.get_shape().ndim();

@@ -11,7 +11,7 @@
 
 namespace sail {
 
-class MatmulTTKernel : public Kernel {
+class DotTTKernel : public Kernel {
    public:
     void execute(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor) {
         launch_arithmetic(t1.get_dtype(), [&](auto pt) {

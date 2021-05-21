@@ -9,7 +9,7 @@
 
 namespace sail {
 namespace ops {
-using RefTensorVector = std::vector<Tensor*>;
+using TensorVector = std::vector<Tensor>;
 
 Tensor sum(const Tensor& tensor1, int axis) {
     // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
@@ -48,14 +48,14 @@ Tensor sum(const Tensor& tensor1, int axis) {
 Tensor sum(const Tensor& tensor1) {
     Tensor empty_tensor;
     if (tensor1.requires_grad) {
-        RefTensorVector vec;
-        vec.emplace_back(&tensor1);
+        TensorVector vec;
+        vec.emplace_back(tensor1);
         empty_tensor =
             (new autograd::Sum())
                 ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
         return empty_tensor;
     }
-    empty_tensor = empty_scalar(tensor1.get_dtype());
+    empty_tensor = zero_scalar(tensor1.get_dtype());
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;

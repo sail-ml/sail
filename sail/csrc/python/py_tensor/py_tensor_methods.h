@@ -63,6 +63,7 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     //     new sail::TensorBody(data, dt, sail::TensorShape(shape, strides));
     // self->tensor = SCTensor(b, requires_grad);
     self->tensor = sail::from_data(data, dt, sail::TensorShape(shape));
+    self->tensor.requires_grad = requires_grad;
     self->ndim = ndim;
     self->requires_grad = requires_grad;
     self->dtype = dtype;
@@ -153,15 +154,15 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
 }
 
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
-    if (self->tensor.has_grad == false) {
+    if (self->tensor.has_grad() == false) {
         Py_INCREF(Py_None);
         return Py_None;
     } else {
         // Py_INCREF(self);
         PyTensor *grad;
         grad = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-        SCTensor gr = clone(*(self->tensor.grad));
+        SCTensor grad_ = self->tensor.get_grad();
+        SCTensor gr = clone(grad_);
         // self->tensor.grad->owner = false;
         grad->tensor = std::move(gr);
         grad->ndim = grad->tensor.get_ndim();

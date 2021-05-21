@@ -41,10 +41,8 @@ Tensor view(Tensor& t1) {
     // new_.set_data(t1.get_data());
     // new_.get_dtype() = t1.get_dtype();
     new_.fcn = t1.fcn;
-    new_.grad = t1.grad;
     new_.requires_grad = t1.requires_grad;
     // new_.get_shape() = t1.get_shape();
-    new_.has_grad = t1.has_grad;
     // new_.is_view()_base_shape = t1.get_shape();
     return new_;
 }

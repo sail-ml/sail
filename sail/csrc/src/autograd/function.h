@@ -7,13 +7,13 @@
 #define DISABLE_GRAD(inputs)                      \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i]->requires_grad = false;     \
+            inputs[i].requires_grad = false;      \
         }                                         \
     }
 #define ENABLE_GRAD(inputs)                       \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i]->requires_grad = true;      \
+            inputs[i].requires_grad = true;       \
         }                                         \
     }
 #define COPY_INPUTS(inputs, storage)              \
@@ -37,12 +37,12 @@ using RefTensorVector = std::vector<Tensor*>;
 
 class Function {
    public:
-    RefTensorVector arg_storage;
+    TensorVector arg_storage;
     explicit Function(){};
     std::string name = "NONE";
     virtual std::string getName();
-    virtual Tensor forward(RefTensorVector inputs);
-    virtual Tensor apply(RefTensorVector& inputs);
+    virtual Tensor forward(TensorVector inputs);
+    virtual Tensor apply(TensorVector& inputs);
     virtual TensorVector backward(Tensor& grad);
 };
 
