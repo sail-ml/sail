@@ -50,7 +50,7 @@ class Sum : public Function {
     explicit Sum(){};
     // RefTensorVector arg_storage;
     std::string getName();
-    Tensor forward(RefTensorVector inputs);
+    Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
 

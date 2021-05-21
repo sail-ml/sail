@@ -30,12 +30,33 @@ Tensor empty_like(const Tensor& tensor) {
         new TensorBody(tensor.get_dtype(), tensor.get_shape()));
 
     Tensor _empty = Tensor(body, tensor.requires_grad);
+    _empty.requires_grad = tensor.requires_grad;
+    return _empty;
+}
+
+Tensor* create_grad(Dtype dt) {
+    alignemnt_information info = getAlignment(dt);
+    void* data = _malloc_align(1, info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+        // T data2 = (T)1;
+        // memcpy(data, (void*)(&data2), sizeof(T));
+        T x = (T)1;
+        *(T*)data = x;
+    });
+    // memset(data, 1, info.get_dtype()_size);
+    int zero = 0;
+    TensorSize shape = {1};
+    TensorShape ts = TensorShape(shape);
+    TensorBody::pointer b = new TensorBody(data, dt, ts);
+
+    Tensor* _empty = new Tensor(b, false);
+
     return _empty;
 }
 
 Tensor clone(Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
-    std::cout << "ALLOC SIZE " << size << std::endl;
     void* data;
     TensorShape s = t.get_shape();
     alignemnt_information info = getAlignment(t.get_dtype());
@@ -63,10 +84,17 @@ Tensor clone(Tensor& t) {
     return _empty;
 }
 
-Tensor make_view(int ndims, void* data, Dtype dt, TensorShape shape) {
+Tensor make_view(void* data, Dtype dt, TensorShape shape) {
     TensorBody::pointer b =
         TensorBody::pointer((new TensorBody(data, dt, shape, true)));
     Tensor _empty = Tensor(b, false);
+    return _empty;
+}
+
+Tensor make_view(const Tensor& t) {
+    TensorBody::pointer b = TensorBody::pointer(
+        (new TensorBody(t.get_data(), t.get_dtype(), t.get_shape(), true)));
+    Tensor _empty = Tensor(b, t.requires_grad);
     return _empty;
 }
 
@@ -94,7 +122,6 @@ Tensor empty_scalar(Dtype dt) {
 
 Tensor one_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
-    std::cout << "one scalar" << std::endl;
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
     launch_arithmetic(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;

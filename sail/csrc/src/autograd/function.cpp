@@ -14,7 +14,7 @@ namespace autograd {
 using TensorVector = std::vector<Tensor>;
 
 std::string Function::getName() { return "NONE"; }
-Tensor Function::apply(RefTensorVector& inputs) {
+Tensor Function::apply(TensorVector& inputs) {
     // arg_storage = inputs;
     COPY_INPUTS(inputs, arg_storage);
     // arg_storage(inputs);
@@ -25,7 +25,7 @@ Tensor Function::apply(RefTensorVector& inputs) {
     o.register_op(this);
     return o;
 }
-Tensor Function::forward(RefTensorVector inputs) {
+Tensor Function::forward(TensorVector inputs) {
     throw SailCError("not implemented yet.");
 }
 TensorVector Function::backward(Tensor& inputs) {

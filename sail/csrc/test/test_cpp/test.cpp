@@ -48,15 +48,23 @@ int main() {
 
             sail::Tensor t1 = sail::from_data(xt, dt, sp);
             sail::Tensor t2 = sail::from_data(yt, dt, sp);
-        for (int i = 0; i < 10; i++) {
-            sail::Tensor t3 = sail::ops::add(t1, t2);
+            t1.requires_grad = true;
+            t2.requires_grad = true;
 
-            // std::cout << t1 << std::endl;
-            // std::cout << t2 << std::endl;
-            // std::cout << t3 << std::endl;
+            sail::Tensor t3 = sail::ops::multiply(t1, t2);
+            sail::Tensor t4 = sail::ops::sum(t3);
+            t4.backward();
+
+            std::cout << t1.get_body_ref_count() << std::endl;
+            std::cout << t2.get_body_ref_count() << std::endl;
+
+            std::cout << t1.get_grad() << std::endl;
+            // std::cout << t2.get_grad() << std::endl;
+            // std::cout << t3.get_grad() << std::endl;
+            // std::cout << t4.get_grad() << std::endl;
     
 
-        }
+        
     }
     return 0;
 }

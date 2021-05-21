@@ -13,6 +13,8 @@ namespace sail {
 
 // namespace ptr
 
+class Tensor;
+
 class TensorBody {
    public:
     typedef boost::intrusive_ptr<TensorBody> pointer;
@@ -31,11 +33,14 @@ class TensorBody {
     }
 
    private:
-    void* data;
+    void* data = NULL;
     Dtype dtype;
-    TensorShape* shape;
+    TensorShape* shape = NULL;
     alignemnt_information info;
-    bool view;
+    bool view = false;
+    bool _has_grad = false;
+    Tensor* grad = NULL;
+    ;
 
    public:
     explicit TensorBody(){};
@@ -47,27 +52,27 @@ class TensorBody {
 
     TensorBody(void* _data, Dtype _dtype, TensorShape _shape,
                bool view = false);
+    TensorBody(void*& _data, Dtype& _dtype, TensorShape& _shape, bool& view);
+
     TensorBody(Dtype _dtype, TensorShape _shape, bool view = false);
 
-    ~TensorBody() {
-        if (data != 0) {
-            if (!view) {
-                std::free(data);
-            }
-            delete shape;
+    ~TensorBody();
 
-            data = 0;
-            shape = nullptr;
-        }
-    }
+    TensorBody::pointer create_owner();
 
     inline void* get_data() { return data; }
     inline Dtype get_dtype() { return dtype; }
     inline TensorShape get_shape() { return *shape; }
     inline alignemnt_information get_info() { return info; }
     inline bool is_view() { return view; }
+    inline bool has_grad() { return _has_grad; }
+
+    Tensor get_grad();
+    void set_grad(Tensor& t);
 
     inline int get_ref_count() { return (int)refcount_; }
+
+    void force_incref() { refcount_.fetch_add(1, boost::memory_order_relaxed); }
 
     void set_shape(const TensorShape& s) {
         delete shape;
