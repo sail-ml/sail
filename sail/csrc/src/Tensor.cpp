@@ -142,9 +142,7 @@ Tensor Tensor::sum() { return ops::sum(*this); }
 void Tensor::backward() {
     // if (requires_grad) {
     Tensor t = one_scalar(get_dtype());
-    std::cout << t << std::endl;
     backward(t);
-    std::cout << get_grad() << std::endl;
 }
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {

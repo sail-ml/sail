@@ -55,7 +55,7 @@ Tensor sum(const Tensor& tensor1) {
                 ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
         return empty_tensor;
     }
-    empty_tensor = empty_scalar(tensor1.get_dtype());
+    empty_tensor = zero_scalar(tensor1.get_dtype());
 
     SumTKernel().execute(tensor1, empty_tensor, -1);
     return empty_tensor;

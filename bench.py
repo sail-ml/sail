@@ -149,7 +149,6 @@ x4.backward()
 print (" ")
 
 print (x4.grad)
-print (x4.grad)
 print (x3.grad)
 print (x2.grad)
 print (x1.grad)

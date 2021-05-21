@@ -22,6 +22,7 @@ Tensor clone(Tensor& t);
 
 Tensor empty_scalar(Dtype dt);
 Tensor one_scalar(Dtype dt);
+Tensor zero_scalar(Dtype dt);
 Tensor* create_grad(Dtype dt);
 
 Tensor from_data(void* data, Dtype dt, TensorShape s);

@@ -33,17 +33,17 @@ void launch_reduction(Op op, const Tensor& input, const Tensor& out) {
     p1 = static_cast<decltype(p1)>(input.get_data());
     p2 = static_cast<decltype(p2)>(out.get_data());
 
-    if (omp) {
-#pragma omp parallel for
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[0]);
-        }
+    //     if (omp) {
+    // #pragma omp parallel for
+    //         for (i = 0; i < numel; i += 1) {
+    //             op.call_base(p1[i], p2[0]);
+    //         }
 
-    } else {
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[0]);
-        }
+    //     } else {
+    for (i = 0; i < numel; i += 1) {
+        op.call_base(p1[i], p2[0]);
     }
+    // }
 }
 
 }  // namespace inner_reduction

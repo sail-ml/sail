@@ -41,7 +41,6 @@ dic = {"a": np.random.uniform(1, 2, (3)),
 def forward(a, b):
     c = sail.multiply(a, b)
     d = sail.sum(c)
-    print (c, d)
     return d
 
 
@@ -73,7 +72,6 @@ def check_gradients_vector(forward_fcn, param_dictionary):
         params_plus_ = [sail.Tensor(params_plus_dict[a]) for a in params_plus_dict]
         
         z = forward_fcn(*params_plus_)
-        print (z)
         j_plus[i] = z.numpy()
 
         params_minus = np.copy(parameters)
@@ -84,13 +82,7 @@ def check_gradients_vector(forward_fcn, param_dictionary):
         z = forward_fcn(*params_minus_)
         j_minus[i] = z.numpy()
 
-        print (j_plus[i], j_minus[i])
         grad_approx[i] = (j_plus[i] - j_minus[i])/(2 * eps)
-
-    print (grad_approx.shape)
-    print (grads.shape)
-
-    print (grad_approx, grads)
 
     num = np.linalg.norm(grad_approx - grads)
     denom = np.linalg.norm(grad_approx) + np.linalg.norm(grads)
