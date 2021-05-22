@@ -131,19 +131,37 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 
 # for z in range(256, 256*4, 8):
 #     print (z)
-arr1 = np.random.uniform(0, 1, (4, 2, 3)).astype(np.float64)#, 32))
-arr2 = np.random.uniform(0, 1, (3, 4, 2)).astype(np.float64)#, 32))
+arr1 = np.random.uniform(0, 1, (3, 4, 5)).astype(np.float64)#, 32))
+arr2 = np.random.uniform(0, 1, (4, 3, 2)).astype(np.float64)#, 32))
 
-# for i in range(1000000000):
-# x1 = sail.Tensor(arr1, requires_grad=True)
-# x2 = sail.Tensor(arr1, requires_grad=True)
+# # for i in range(1000000000):
+x1 = sail.Tensor(arr1, requires_grad=False)
+x2 = sail.Tensor(arr2, requires_grad=False)
 
 # print (x1)
 # print (sail.transpose(x1))
 # print (x1)
 # print (sail.transpose(x1, (1, 0, 2)))
-print (np.tensordot(arr1, arr2, ((1), (2))))
-print (np.tensordot(arr1, arr2, ((1), (2))).shape)
+print (np.tensordot(arr1, arr2, axes=([1,0],[0,1])))
+print (np.tensordot(arr1, arr2, axes=([1,0],[0,1])).shape)
+
+print (sail.tensordot(x1, x2, ((1, 0), (0, 1))))
+# print (x1)
+arr1 = np.random.uniform(0, 1, (3, 4)).astype(np.float64)#, 32))
+arr2 = np.random.uniform(0, 1, (4, 3)).astype(np.float64)#, 32))
+
+# for i in range(1000000000):
+x1 = sail.Tensor(arr1, requires_grad=False)
+x2 = sail.Tensor(arr2, requires_grad=False)
+
+# print (x1)
+# print (sail.transpose(x1))
+# print (x1)
+# print (sail.transpose(x1, (1, 0, 2)))
+print (np.dot(arr1, arr2))
+print (np.dot(arr1, arr2).shape)
+
+print (sail.matmul(x1, x2))
 # print (x1)
 # print (x2)
 

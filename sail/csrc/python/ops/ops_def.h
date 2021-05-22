@@ -13,8 +13,12 @@ static PyMethodDef OpsMethods[] = {
     {"divide", (PyCFunction)ops_div, METH_VARARGS, NULL},
     {"multiply", (PyCFunction)ops_mul, METH_VARARGS, NULL},
     {"matmul", (PyCFunction)ops_matmul, METH_VARARGS, NULL},
+    {"tensordot", (PyCFunction)ops_tensordot, METH_VARARGS | METH_KEYWORDS,
+     NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
+    {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
+     NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
     {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 
@@ -27,6 +31,4 @@ static PyMethodDef OpsMethods[] = {
 
     {"broadcast_to", (PyCFunction)ops_broadcast_to, METH_VARARGS, NULL},
 
-    {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
-     NULL},
     {NULL}};

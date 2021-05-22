@@ -72,9 +72,9 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
     TensorShape a_shape = TensorShape({a_remain_total_size, axis_total_size});
     TensorShape b_shape = TensorShape({axis_total_size, b_remain_total_size});
 
-    if (a_shape.numel() != b_shape.numel()) {
-        throw SailCError("Shape mismatch for tensordot");
-    }
+    // if (a_shape.numel() != b_shape.numel()) {
+    //     throw SailCError("Shape mismatch for tensordot");
+    // }
 
     TensorShape dot_shape =
         TensorShape({a_remain_total_size, b_remain_total_size});

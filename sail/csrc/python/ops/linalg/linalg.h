@@ -14,92 +14,77 @@
 
 #include "../../macros.h"
 
-RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
-    PyTensor* t1;
-    PyObject* py_tuple;
+RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyObject* t1;
+    PyObject* t2;
+    PyObject* tuple;
+    int v = 2;
 
-    if (!PyArg_ParseTuple(args, "OO", &t1, &py_tuple)) {
-        PyErr_SetString(PyExc_TypeError, "must pass a tensor and a shape");
+    sail::Tensor tensor1;
+    sail::Tensor tensor2;
+
+    static char* kwlist[] = {"a", "b", "axes", NULL};
+
+    std::cout << "ici" << std::endl;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
+                                     &tuple)) {
+        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+    }
+    std::cout << "aci" << std::endl;
+
+    tensor1 = ((PyTensor*)t1)->tensor;
+    std::cout << "aci" << std::endl;
+    tensor2 = ((PyTensor*)t2)->tensor;
+    std::cout << "aci" << std::endl;
+
+    std::vector<long> axes_1;
+    std::vector<long> axes_2;
+
+    std::cout << "moving in" << std::endl;
+
+    if (PyTuple_Check(tuple)) {
+        PyObject* tuple1 = PyTuple_GetItem(tuple, 0);
+        PyObject* tuple2 = PyTuple_GetItem(tuple, 1);
+        int len = PyTuple_Size(tuple1);
+        if (len == -1) {
+            axes_1 = {PyLong_AsLong(tuple1)};
+        } else {
+            while (len--) {
+                axes_1.push_back(PyLong_AsLong(PyTuple_GetItem(tuple1, len)));
+            }
+            std::reverse(axes_1.begin(), axes_1.end());
+        }
+        len = PyTuple_Size(tuple2);
+        if (len == -1) {
+            axes_2 = {PyLong_AsLong(tuple2)};
+        } else {
+            while (len--) {
+                axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
+            }
+            std::reverse(axes_2.begin(), axes_2.end());
+        }
+    } else if (PyLong_Check(tuple)) {
+        v = PyLong_AsLong(tuple);
+        axes_1.assign(tensor1.get_shape().shape.end() - v,
+                      tensor1.get_shape().shape.end());
+        axes_2.assign(tensor2.get_shape().shape.begin(),
+                      tensor2.get_shape().shape.begin() + v);
+    } else {
+        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
 
-    // BINARY_TENSOR_TYPE_CHECK(t1, t2);
-    int len = PyTuple_Size(py_tuple);
-    if (len == -1) {
-        PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
-    }
-    TensorSize size;
-    while (len--) {
-        size.push_back(PyLong_AsLong(PyTuple_GetItem(py_tuple, len)));
-    }
+    std::cout << getVectorString(axes_1) << std::endl;
+    std::cout << getVectorString(axes_2) << std::endl;
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    std::reverse(size.begin(), size.end());
+    sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
 
-    sail::TensorShape new_ = sail::TensorShape(size);
-
-    ret_class->tensor = t1->tensor.reshape(new_);
-    ret_class->ndim = t1->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
-    ret_class->base_object = (PyObject*)t1;
-    Py_INCREF(t1);
-
-    return (PyObject*)ret_class;
-}
-
-RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
-    PyTensor* t1;
-    int dim;
-
-    if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "Inputs should be a sail tensor and an integer");
-        return NULL;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
-        return NULL;
-    }
-
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-    ret_class->tensor = t1->tensor.expand_dims(dim);
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
-    ret_class->base_object = (PyObject*)t1;
-    Py_INCREF(t1);
-
-    return (PyObject*)ret_class;
-}
-
-RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
-    PyTensor* t1;
-    int dim;
-
-    if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "Inputs should be a sail tensor and an integer");
-        return NULL;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
-        return NULL;
-    }
-
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-    ret_class->tensor = t1->tensor.squeeze(dim);
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
-    ret_class->base_object = (PyObject*)t1;
-    Py_INCREF(t1);
+    ret_class->tensor = res;
+    ret_class->ndim = ((PyTensor*)t1)->ndim;
+    ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
 }

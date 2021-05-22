@@ -51,6 +51,7 @@ class DotTTKernel : public Kernel {
                     T sum = 0.0;
                     for (int k = 0; k < K; k++)
                         sum = sum + matA[i * K + k] * matB[k * N + j];
+                    std::cout << sum << std::endl;
                     matC[i * N + j] = sum;
                 }
             }
