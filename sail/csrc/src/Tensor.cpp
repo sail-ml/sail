@@ -41,6 +41,11 @@ Tensor Tensor::reshape(const TensorShape& new_shape) const {
     return ops::reshape(*this, new_shape);
 }
 
+Tensor Tensor::transpose() { return ops::transpose(*this); }
+Tensor Tensor::transpose(const LongVec& axes) {
+    return ops::transpose(*this, axes);
+}
+
 Tensor Tensor::expand_dims(const int dim) {
     TensorShape s = body->get_shape();
     s.insert_one(dim);

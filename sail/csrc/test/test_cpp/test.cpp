@@ -33,6 +33,7 @@ int main() {
             TensorSize sh = {z, 3, 2};
 
             sail::TensorShape sp = sail::TensorShape(sh);
+            sail::TensorShape sp2 = sail::TensorShape({3, z, 2});
 
             for (int i = 0; i < z_; i++) {
                 x[i] = 2.21;
@@ -48,11 +49,13 @@ int main() {
             // std::cout << xt << ", " << yt << std::endl;
 
             sail::Tensor t1 = sail::from_data(xt, dt, sp);
-            std::cout << t1 << std::endl;
-            std::cout << sail::ops::transpose(t1) << std::endl;
-            std::cout << t1 << std::endl;
+            sail::Tensor t2 = sail::from_data(yt, dt, sp2);
 
-            // sail::Tensor t2 = sail::from_data(yt, dt, sp);
+            std::cout << sail::ops::tensordot(t1, t2, {0}, {1}) << std::endl;
+            // std::cout << t1 << std::endl;
+            // std::cout << sail::ops::transpose(t1) << std::endl;
+            // std::cout << t1 << std::endl;
+
             // t1.requires_grad = true;
             // t2.requires_grad = true;
 

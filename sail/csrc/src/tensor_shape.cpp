@@ -13,7 +13,7 @@ namespace sail {
 
 bool is_one(LongVec& shape, int dim) { return shape[dim] == 1; }
 
-TensorShape::TensorShape(LongVec& shape_, LongVec& strides_) {
+TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     shape = shape_;
     strides = strides_;
     // if (shape.size() != 0) {
@@ -34,7 +34,7 @@ TensorShape::TensorShape(LongVec& shape_, LongVec& strides_) {
     }
     std::reverse(strides.begin(), strides.end());
 }
-TensorShape::TensorShape(LongVec& shape_) {
+TensorShape::TensorShape(LongVec shape_) {
     shape = shape_;
     strides = shape_;
     if (shape.size() != 0) {
@@ -135,16 +135,17 @@ TensorShape TensorShape::reverse() {
 }
 
 // template <class T>
-TensorShape TensorShape::reorder(LongVec& order) {
+TensorShape TensorShape::reorder(const LongVec& order) {
+    LongVec Order = order;
     // assert(vA.size() == vOrder.size());
     // for all elements to put in place
     for (int i = 0; i < shape.size() - 1; ++i) {
         // while the element i is not yet in place
-        while (i != order[i]) {
+        while (i != Order[i]) {
             // swap it with the element at its final place
-            int alt = order[i];
+            int alt = Order[i];
             std::swap(shape[i], shape[alt]);
-            std::swap(order[i], order[alt]);
+            std::swap(Order[i], Order[alt]);
         }
     }
     recompute(true);

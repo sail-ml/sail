@@ -97,6 +97,9 @@ class Tensor {
     Tensor operator/(const Tensor& t);
     Tensor operator[](const int t) const;
 
+    Tensor transpose();
+    Tensor transpose(const LongVec& axes);
+
     friend std::ostream& operator<<(std::ostream& os, const Tensor& dt);
 
     Tensor sum();

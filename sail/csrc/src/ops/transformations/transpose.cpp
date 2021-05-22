@@ -19,7 +19,7 @@ Tensor transpose(const Tensor& tensor1) {
     return new_tensor;
 }
 
-Tensor transpose(const Tensor& tensor1, LongVec& dims) {
+Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
     if (tensor1.get_ndim() != dims.size()) {
         throw SailCError("Transpose axes must have same length as tensor");
     }
