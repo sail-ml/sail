@@ -42,8 +42,6 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
         }
         std::reverse(shape.begin(), shape.end());
 
-        std::cout << getVectorString(shape) << std::endl;
-
         ret_class->tensor = sail::ops::transpose(t1->tensor, shape);
     }
 

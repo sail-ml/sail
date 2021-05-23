@@ -137,19 +137,18 @@ TensorShape TensorShape::reverse() {
 // template <class T>
 TensorShape TensorShape::reorder(const LongVec& order) {
     LongVec Order = order;
-    // assert(vA.size() == vOrder.size());
-    // for all elements to put in place
-    for (int i = 0; i < shape.size() - 1; ++i) {
-        // while the element i is not yet in place
-        while (i != Order[i]) {
-            // swap it with the element at its final place
-            int alt = Order[i];
-            std::swap(shape[i], shape[alt]);
-            std::swap(strides[i], strides[alt]);
-            std::swap(Order[i], Order[alt]);
-        }
+
+    LongVec new_shape;
+    LongVec new_strides;
+
+    for (long i : order) {
+        new_shape.push_back(shape[i]);
+        new_strides.push_back(strides[i]);
     }
-    std::cout << "transpose_shape " << get_string() << std::endl;
+
+    strides = new_strides;
+    shape = new_shape;
+
     recompute();
     return *this;
 }

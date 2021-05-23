@@ -11,6 +11,19 @@ def assert_eq_np_sail(np_arr, sail_arr):
 def assert_eq_np(np_arr, np_sail_arr):
     assert np.array_equal(np_arr, np_sail_arr) == True
 
+def to_significant(a, significant=7):
+    mult = 10 ** significant
+    div = 1/mult 
+
+    a = np.floor(a * mult) * div 
+    return a 
+
+def assert_approx_equal(a, b, significant=7):
+    mult = 10 ** significant
+    a = np.floor(a * mult)
+    b = np.floor(b * mult)
+    assert a == b
+
 def assert_eq(a, b):
     assert a == b
 

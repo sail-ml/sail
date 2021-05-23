@@ -45,14 +45,12 @@ class DotTTKernel : public Kernel {
             T* matA = (T*)t1.get_data();
             T* matB = (T*)t2.get_data();
             T* matC = (T*)out_tensor.get_data();
-            std::cout << M << ", " << N << ", " << K << std::endl;
 
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {
                     T sum = 0.0;
                     for (int k = 0; k < K; k++)
                         sum = sum + matA[i * K + k] * matB[k * N + j];
-                    std::cout << sum << std::endl;
                     matC[i * N + j] = sum;
                 }
             }

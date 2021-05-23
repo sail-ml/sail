@@ -25,27 +25,24 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     static char* kwlist[] = {"a", "b", "axes", NULL};
 
-    std::cout << "ici" << std::endl;
-
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
                                      &tuple)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
-    std::cout << "aci" << std::endl;
 
     tensor1 = ((PyTensor*)t1)->tensor;
-    std::cout << "aci" << std::endl;
     tensor2 = ((PyTensor*)t2)->tensor;
-    std::cout << "aci" << std::endl;
 
     std::vector<long> axes_1;
     std::vector<long> axes_2;
 
-    std::cout << "moving in" << std::endl;
-
     if (PyTuple_Check(tuple)) {
         PyObject* tuple1 = PyTuple_GetItem(tuple, 0);
         PyObject* tuple2 = PyTuple_GetItem(tuple, 1);
+
+        tuple1 = PySequence_Tuple(tuple1);
+        tuple2 = PySequence_Tuple(tuple2);
+
         int len = PyTuple_Size(tuple1);
         if (len == -1) {
             axes_1 = {PyLong_AsLong(tuple1)};
@@ -63,13 +60,12 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
                 axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
             }
             std::reverse(axes_2.begin(), axes_2.end());
-            std::cout << "ja" << std::endl;
         }
     } else {
         if (PyLong_Check(tuple)) {
             v = PyLong_AsLong(tuple);
         }
-        for (int i = tensor1.get_ndim() - 1; i > (v - tensor1.get_ndim() + 1);
+        for (int i = tensor1.get_ndim() - 1; i > (tensor1.get_ndim() - v - 1);
              i--) {
             axes_1.insert(axes_1.begin(), i);
         }
@@ -78,9 +74,6 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
             axes_2.push_back(i);
         }
     }
-
-    std::cout << getVectorString(axes_1) << std::endl;
-    std::cout << getVectorString(axes_2) << std::endl;
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);

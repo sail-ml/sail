@@ -45,34 +45,6 @@ std::tuple<LongVec, TensorShape> GetTensorDotRollAxes(
                           reduce_axes.end());
     }
 
-    // std::cout << getVectorString(remain_dims2) << std::endl;
-    // std::cout << getVectorString(roll_axes2) << std::endl;
-
-    // // There are two steps:
-    // // A. Insert axes to be reduced to roll_axes.
-    // // B. Insert non-reduced axes to roll_axes.
-    // // The order of these steps depends on reduced_axes_first.
-    // for (int step = 0; step < 2; ++step) {
-    //     if ((step == 0) == reduced_axes_first) {
-    //         // Step A.
-    //         for (int8_t i = 0; i < shape.ndim(); ++i) {
-    //             if (to_reduce[i]) {  // gsl::at(to_reduce, i)) {
-    //                 roll_axes.emplace_back(i);
-    //             }
-    //         }
-    //     } else {
-    //         // Step B.
-    //         for (int8_t i = 0; i < shape.ndim(); ++i) {
-    //             if (!to_reduce[i]) {
-    //                 roll_axes.emplace_back(i);
-    //                 remain_dims.emplace_back(shape.shape[i]);
-    //             }
-    //         }
-    //     }
-    // }
-    // std::cout << getVectorString(remain_dims) << std::endl;
-    // std::cout << getVectorString(roll_axes) << std::endl;
-    // std::cout << "D" << std::endl;
     return std::make_tuple(roll_axes2, TensorShape(remain_dims2));
 }
 Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
@@ -106,24 +78,8 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
         TensorShape({a_remain_total_size, b_remain_total_size});
     Tensor dot_out = empty(dot_shape.ndim(), t1.get_dtype(), dot_shape);
 
-    std::cout << a_shape.get_string() << std::endl;
-    std::cout << b_shape.get_string() << std::endl;
-    std::cout << getVectorString(a_roll_axes) << std::endl;
-    std::cout << getVectorString(b_roll_axes) << std::endl;
-
-    Tensor t1_a = t1.transpose(a_roll_axes);
-    std::cout << "A" << std::endl;
-    t1_a = t1_a.reshape(a_shape);
-    std::cout << t1_a << std::endl;
-
-    Tensor t2_b = t2.transpose(b_roll_axes);
-    std::cout << "B" << std::endl;
-    // std::cout << t2_b << std::endl;
-    t2_b = t2_b.reshape(b_shape);
-    // std::cout << t2_b << std::endl;
-
-    DotTTKernel().execute(t1_a, t2_b, dot_out);
-    std::cout << "execute success" << std::endl;
+    DotTTKernel().execute(t1.transpose(a_roll_axes).reshape(a_shape),
+                          t2.transpose(b_roll_axes).reshape(b_shape), dot_out);
     LongVec out_shape = a_remain_dims.shape;
     std::copy(b_remain_dims.shape.begin(), b_remain_dims.shape.end(),
               std::back_inserter(out_shape));

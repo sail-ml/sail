@@ -54,10 +54,9 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     j_minus = np.zeros(num_params)
     grad_approx = np.zeros(num_params)
 
-    eps = 1e-6
+    eps = 1e-7
     for i in range(len(parameters)):
         # pass
-
         params_plus = np.copy(parameters)
         params_plus[i] += eps 
         params_plus_dict = vector_to_dictionary(params_plus, param_dictionary)
@@ -75,6 +74,9 @@ def check_gradients_vector(forward_fcn, param_dictionary):
         j_minus[i] = z.numpy()
 
         grad_approx[i] = (j_plus[i] - j_minus[i])/(2 * eps)
+        grad_approx[i] = to_significant(grad_approx[i], significant=7)
+
+    grads = to_significant(grads, significant=7)
 
     num = np.linalg.norm(grad_approx - grads)
     denom = np.linalg.norm(grad_approx) + np.linalg.norm(grads)
@@ -82,7 +84,7 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     return diff 
 
 # diff = check_gradients_vector(forward, dic)
-# if diff < 1e-7:
+# if diff < 1e-6:
 #     print ("gradient is correct, %s" % diff)
 # else:
 #     print ("gradient is incorrect, %s" % diff)
@@ -99,6 +101,7 @@ def test_add_grad():
         return d
 
     choices = list(range(32, 512, 32))
+    # choices = list(range(32, 512, 32))
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -110,11 +113,9 @@ def test_add_grad():
         }
 
         diff = check_gradients_vector(forward, dic)
-
-        assert diff < 5e-6
+        assert diff < 1e-6
 
     log_complete("ADD GRAD")
-
     return True
     
 def test_sub_grad():
@@ -137,7 +138,7 @@ def test_sub_grad():
 
         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 5e-6
+        assert diff < 1e-6
 
     log_complete("SUBTRACT GRAD")
 
@@ -163,7 +164,7 @@ def test_mult_grad():
 
         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 5e-6
+        assert diff < 1e-6
 
     log_complete("MULTIPLY GRAD")
 
@@ -189,7 +190,7 @@ def test_divide_grad():
 
         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 5e-6
+        assert diff < 1e-6
 
     log_complete("DIVIDE GRAD")
 
