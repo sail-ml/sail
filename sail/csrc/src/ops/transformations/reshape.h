@@ -10,6 +10,6 @@ namespace sail {
 namespace ops {
 
 Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape);
-}
+}  // namespace ops
 
 }  // namespace sail

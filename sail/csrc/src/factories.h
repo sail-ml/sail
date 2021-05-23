@@ -16,7 +16,7 @@ Tensor empty_like(const Tensor& tensor);
 Tensor make_view(void* data, Dtype dt, TensorShape shape);
 Tensor make_view(const Tensor& t);
 Tensor copy(Tensor t);
-Tensor clone(Tensor& t);
+Tensor clone(const Tensor& t);
 // Tensor empty_like(int ndims, void* data, Dtype dt, TensorSize strides,
 // TensorSize shape);
 

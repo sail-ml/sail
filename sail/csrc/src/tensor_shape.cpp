@@ -94,7 +94,7 @@ int TensorShape::next() {
 }
 
 void TensorShape::recompute_strides() {
-    LongVec strides = shape;
+    strides = shape;
     if (shape.size() != 0) {
         strides.erase(strides.begin());
     }
@@ -145,10 +145,12 @@ TensorShape TensorShape::reorder(const LongVec& order) {
             // swap it with the element at its final place
             int alt = Order[i];
             std::swap(shape[i], shape[alt]);
+            std::swap(strides[i], strides[alt]);
             std::swap(Order[i], Order[alt]);
         }
     }
-    recompute(true);
+    std::cout << "transpose_shape " << get_string() << std::endl;
+    recompute();
     return *this;
 }
 

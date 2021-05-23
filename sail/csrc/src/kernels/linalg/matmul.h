@@ -19,8 +19,8 @@ class DotTTKernel : public Kernel {
             auto name = decltype(pt)::GetName();
 
             int M = t1.get_shape().shape[0];  // ROWS IN A
-            int N = t2.get_shape().shape[1];  // COLS IN B
             int K = t1.get_shape().shape[1];  // COLS IN A AND ROWS IN B
+            int N = t2.get_shape().shape[1];  // COLS IN B
 
             // std::cout << (decltype(pt)::GetName() == "float64") << std::endl;
 
@@ -46,6 +46,7 @@ class DotTTKernel : public Kernel {
             T* matB = (T*)t2.get_data();
             T* matC = (T*)out_tensor.get_data();
             std::cout << M << ", " << N << ", " << K << std::endl;
+
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {
                     T sum = 0.0;

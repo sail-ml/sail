@@ -17,7 +17,7 @@
 RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyObject* t1;
     PyObject* t2;
-    PyObject* tuple;
+    PyObject* tuple = Py_None;
     int v = 2;
 
     sail::Tensor tensor1;
@@ -63,15 +63,20 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
                 axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
             }
             std::reverse(axes_2.begin(), axes_2.end());
+            std::cout << "ja" << std::endl;
         }
-    } else if (PyLong_Check(tuple)) {
-        v = PyLong_AsLong(tuple);
-        axes_1.assign(tensor1.get_shape().shape.end() - v,
-                      tensor1.get_shape().shape.end());
-        axes_2.assign(tensor2.get_shape().shape.begin(),
-                      tensor2.get_shape().shape.begin() + v);
     } else {
-        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        if (PyLong_Check(tuple)) {
+            v = PyLong_AsLong(tuple);
+        }
+        for (int i = tensor1.get_ndim() - 1; i > (v - tensor1.get_ndim() + 1);
+             i--) {
+            axes_1.insert(axes_1.begin(), i);
+        }
+
+        for (int i = 0; i < v; i++) {
+            axes_2.push_back(i);
+        }
     }
 
     std::cout << getVectorString(axes_1) << std::endl;

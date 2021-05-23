@@ -25,7 +25,7 @@ Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
     }
 
     TensorShape new_shape = TensorShape(tensor1.get_shape());
-    new_shape.reorder(dims);
+    new_shape = new_shape.reorder(dims);
     TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
         tensor1.get_body()->get_data(), tensor1.get_body()->get_dtype(),
         new_shape, /*is_view*/ true));
