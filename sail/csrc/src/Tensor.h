@@ -65,6 +65,7 @@ class Tensor {
 
     Tensor cast(const Dtype dt);
     Tensor reshape(const TensorShape& new_shape) const;
+    Tensor _inplace_reshape(const TensorShape& new_shape) const;
     Tensor expand_dims(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();

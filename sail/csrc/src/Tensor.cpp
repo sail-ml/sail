@@ -40,6 +40,16 @@ long Tensor::getTotalSize() {
 Tensor Tensor::reshape(const TensorShape& new_shape) const {
     return ops::reshape(*this, new_shape);
 }
+Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) const {
+    int s = new_shape.numel();
+    if (s != numel()) {
+        throw DimensionError{"Cannot reshape tensor of shape ",
+                             get_shape().get_string(), " to ",
+                             new_shape.get_string()};
+    }
+    set_shape(new_shape);
+    return *this;
+}
 
 Tensor Tensor::transpose() { return ops::transpose(*this); }
 Tensor Tensor::transpose(const LongVec& axes) {
