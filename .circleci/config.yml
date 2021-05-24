@@ -46,6 +46,9 @@ jobs:
       - run: 
             name: Set g++ option
             command: 'sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 100'
+      - run: 
+            name: Install boost
+            command: 'sudo apt-get install libboost-all-dev'
 
       - run: 
             name: Python deps 
