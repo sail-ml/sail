@@ -1,9 +1,9 @@
-import unittest
+
 import sail, sys, random, os, gc, time
-import psutil
+
 import numpy as np
 
-from test_utils import *
+from ..test_utils import *
 
 def test_create():
 

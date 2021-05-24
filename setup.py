@@ -16,6 +16,8 @@ from distutils.version import LooseVersion
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
+build_path = ""
+
 class CMakeExtension(Extension):
 
     def __init__(self, name):
@@ -39,6 +41,8 @@ class CMakeBuild(build_ext):
         build_temp.mkdir(parents=True, exist_ok=True)
         extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
         extdir.mkdir(parents=True, exist_ok=True)
+        global build_path
+        build_path = extdir.parent.absolute()
 
         # example of cmake args
         config = 'Debug' if self.debug else 'Release'
@@ -111,4 +115,4 @@ for f in created_names:
     print (f)
 
 
-copyfile("build/lib.linux-x86_64-3.7/sail/csrc/libsail_c.so", "sail/csrc/libsail_c.so")
+copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
