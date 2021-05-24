@@ -50,6 +50,9 @@ jobs:
             name: Install boost
             command: 'sudo apt-get install libboost-all-dev'
       - run: 
+            name: Install blas
+            command: 'sudo apt-get install libblas-dev liblapack-dev'
+      - run: 
             name: Install submodules
             command: 'git submodule update --init --recursive'
 
