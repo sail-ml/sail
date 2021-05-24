@@ -21,6 +21,7 @@ def test_add():
     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
+        print (c)
         arr1 = np.random.uniform(0, 1, (c))
         arr2 = np.random.uniform(0, 1, (c))
         
