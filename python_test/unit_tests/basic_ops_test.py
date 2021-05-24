@@ -23,6 +23,7 @@ def test_add():
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
         arr2 = np.random.uniform(0, 1, (c))
+        
 
         x1 = sail.Tensor(arr1, requires_grad=False)
         x2 = sail.Tensor(arr2, requires_grad=False)
