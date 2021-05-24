@@ -1,7 +1,7 @@
 # set(CMAKE_CXX_COMPILER "gcc")
 cmake_minimum_required(VERSION 2.8.12)
-project(sail_c LANGUAGES CUDA CXX C)
-enable_language(CUDA)
+project(sail_c LANGUAGES CXX C) # CUDA
+# enable_language(CUDA)
 
 file(GLOB_RECURSE SRC_FILES [*.csrc])
 file(GLOB_RECURSE PYTHON_BIND_HEADERS "python/*.h")
