@@ -7,6 +7,7 @@ import sys
 import sysconfig
 import platform
 import setuptools
+import cpufeature
 import subprocess
 import glob, pathlib
 from shutil import copyfile
@@ -50,7 +51,9 @@ class CMakeBuild(build_ext):
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
             '-DCMAKE_BUILD_TYPE=' + config
         ]
-
+        if (cpufeature.CPUFeature["AVX2"]):
+            print ("Compiling Sail with AVX2 Support")
+            cmake_args.append("-DUSE_AVX2=ON")
         # example of build args
         build_args = [
             '--config', config,
