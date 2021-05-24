@@ -7,7 +7,7 @@ from ..test_utils import *
 
 def test_create():
 
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = list(range(4, 128)) + list(range(256, 256**2, 256))
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
         x1 = sail.Tensor(arr1, requires_grad=False)
@@ -18,7 +18,7 @@ def test_create():
     return True
 
 def test_add():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = list(range(4, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
         print (c)
@@ -40,7 +40,7 @@ def test_add():
     return True
 
 def test_sub():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = list(range(4, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -61,7 +61,7 @@ def test_sub():
     return True
 
 def test_mult():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = list(range(4, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -82,7 +82,7 @@ def test_mult():
     return True
 
 def test_divide():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = list(range(4, 128)) + list(range(256, 256**2, 256))
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
