@@ -3,7 +3,7 @@ import sail, sys, random, os, gc, time
 import psutil
 import numpy as np
 
-from test_utils import *
+from ..test_utils import *
 
 def test_matmul():
     choices_1 = [(10, 20), (300, 500), (1, 2), (2, 1), (8, 8)]

@@ -3,7 +3,7 @@ import numpy as np
 import cupy as cp
 import torch
 import resource
-from test_utils import *
+from ..test_utils import *
 
 
 def numel(x):
@@ -196,71 +196,4 @@ def test_divide_grad():
 
     return True
 
-# def test_sub_grad():
-#     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
-#     times = []
-#     for c in choices:
-#         arr1 = np.random.uniform(0, 1, (c))
-#         arr2 = np.random.uniform(0, 1, (c))
 
-#         x1 = sail.Tensor(arr1, requires_grad=False)
-#         x2 = sail.Tensor(arr2, requires_grad=False)
-        
-#         t = time.time()
-#         x3 = x1 - x2 
-#         times.append(time.time() - t)
-#         arr3 = arr1 - arr2 
-
-#         assert_eq_np_sail(arr3, x3)
-
-#     log_time(np.mean(times), "SUBTRACT")
-
-#     return True
-
-# def test_mult_grad():
-#     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
-#     times = []
-#     for c in choices:
-#         arr1 = np.random.uniform(0, 1, (c))
-#         arr2 = np.random.uniform(0, 1, (c))
-
-#         x1 = sail.Tensor(arr1, requires_grad=False)
-#         x2 = sail.Tensor(arr2, requires_grad=False)
-        
-#         t = time.time()
-#         x3 = x1 * x2 
-#         times.append(time.time() - t)
-#         arr3 = arr1 * arr2 
-
-#         assert_eq_np_sail(arr3, x3)
-
-#     log_time(np.mean(times), "MULTIPLY")
-
-#     return True
-
-# def test_divide_grad():
-#     choices = list(range(1, 128)) + list(range(256, 256**2, 256))
-#     times = []
-#     for c in choices:
-#         arr1 = np.random.uniform(0, 1, (c))
-#         arr2 = np.random.uniform(0, 1, (c))
-
-#         x1 = sail.Tensor(arr1, requires_grad=False)
-#         x2 = sail.Tensor(arr2, requires_grad=False)
-        
-#         t = time.time()
-#         x3 = x1 / x2 
-#         times.append(time.time() - t)
-#         arr3 = arr1 / arr2 
-
-#         assert_eq_np_sail(arr3, x3)
-
-#     log_time(np.mean(times), "DIVIDE")
-
-#     return True
-
-    
-
-
-# # print (a.grad)
-# # print (b.grad)
