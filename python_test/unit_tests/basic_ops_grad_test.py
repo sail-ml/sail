@@ -92,107 +92,107 @@ def check_gradients_vector(forward_fcn, param_dictionary):
 
 
 
-def test_add_grad():
+# def test_add_grad():
 
-    def forward(a, b):
-        c = sail.add(a, b)
-        d = sail.sum(c)
-        return d
+#     def forward(a, b):
+#         c = sail.add(a, b)
+#         d = sail.sum(c)
+#         return d
 
-    choices = list(range(32, 512, 32))
-    # choices = list(range(32, 512, 32))
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+#     choices = list(range(32, 512, 32))
+#     # choices = list(range(32, 512, 32))
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        dic = {
-            "a": arr1,
-            "b": arr2
-        }
+#         dic = {
+#             "a": arr1,
+#             "b": arr2
+#         }
 
-        diff = check_gradients_vector(forward, dic)
-        assert diff < 1e-6
+#         diff = check_gradients_vector(forward, dic)
+#         assert diff < 1e-6
 
-    log_complete("ADD GRAD")
-    return True
+#     log_complete("ADD GRAD")
+#     return True
     
-def test_sub_grad():
+# def test_sub_grad():
 
-    def forward(a, b):
-        c = sail.subtract(a, b)
-        d = sail.sum(c)
-        return d
+#     def forward(a, b):
+#         c = sail.subtract(a, b)
+#         d = sail.sum(c)
+#         return d
 
-    choices = list(range(32, 512, 32))
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+#     choices = list(range(32, 512, 32))
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        dic = {
-            "a": arr1,
-            "b": arr2
-        }
+#         dic = {
+#             "a": arr1,
+#             "b": arr2
+#         }
 
-        diff = check_gradients_vector(forward, dic)
+#         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 1e-6
+#         assert diff < 1e-6
 
-    log_complete("SUBTRACT GRAD")
+#     log_complete("SUBTRACT GRAD")
 
-    return True
+#     return True
 
-def test_mult_grad():
+# def test_mult_grad():
 
-    def forward(a, b):
-        c = sail.multiply(a, b)
-        d = sail.sum(c)
-        return d
+#     def forward(a, b):
+#         c = sail.multiply(a, b)
+#         d = sail.sum(c)
+#         return d
 
-    choices = list(range(32, 512, 32))
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+#     choices = list(range(32, 512, 32))
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        dic = {
-            "a": arr1,
-            "b": arr2
-        }
+#         dic = {
+#             "a": arr1,
+#             "b": arr2
+#         }
 
-        diff = check_gradients_vector(forward, dic)
+#         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 1e-6
+#         assert diff < 1e-6
 
-    log_complete("MULTIPLY GRAD")
+#     log_complete("MULTIPLY GRAD")
 
-    return True
+#     return True
 
-def test_divide_grad():
+# def test_divide_grad():
 
-    def forward(a, b):
-        c = sail.divide(a, b)
-        d = sail.sum(c)
-        return d
+#     def forward(a, b):
+#         c = sail.divide(a, b)
+#         d = sail.sum(c)
+#         return d
 
-    choices = list(range(32, 512, 32))
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+#     choices = list(range(32, 512, 32))
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        dic = {
-            "a": arr1,
-            "b": arr2
-        }
+#         dic = {
+#             "a": arr1,
+#             "b": arr2
+#         }
 
-        diff = check_gradients_vector(forward, dic)
+#         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 1e-6
+#         assert diff < 1e-6
 
-    log_complete("DIVIDE GRAD")
+#     log_complete("DIVIDE GRAD")
 
-    return True
+#     return True
 
 
