@@ -51,7 +51,7 @@ class CMakeBuild(build_ext):
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
             '-DCMAKE_BUILD_TYPE=' + config
         ]
-        print (cpufeature.CPUFeature["AVX2"])
+        print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"]):
             print ("Compiling Sail with AVX2 Support")
             cmake_args.append("-DUSE_AVX2=ON")
