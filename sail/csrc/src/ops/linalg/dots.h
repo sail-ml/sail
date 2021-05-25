@@ -13,8 +13,7 @@ namespace ops {
 Tensor matmul(const Tensor& t1, const Tensor& t2);
 Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
                  LongVec t2_dim);
-Tensor tensordot(const Tensor& t1, const Tensor& t2, int axes) {
-
+inline Tensor tensordot(const Tensor& t1, const Tensor& t2, int axes) {
     LongVec t1_dim, t2_dim;
 
     while (axes--) {
@@ -25,7 +24,6 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, int axes) {
     std::reverse(t2_dim.begin(), t2_dim.end());
 
     return tensordot(t1, t2, t1_dim, t2_dim);
-
 }
 
 }  // namespace ops
