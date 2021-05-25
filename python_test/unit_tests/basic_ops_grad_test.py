@@ -195,4 +195,31 @@ def test_divide_grad():
 
     return True
 
+def test_matmul_grad():
+
+    def forward(a, b):
+        c = sail.matmul(a, b)
+        d = sail.sum(c)
+        return d
+
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    choices_b = [(12, 3), (4, 18), (12, 5), (30, 25)]
+    times = []
+    for ca, cb in zip(choices_a, choices_b):
+        arr1 = np.random.uniform(0, 1, (ca))
+        arr2 = np.random.uniform(0, 1, (cb))
+
+        dic = {
+            "a": arr1,
+            "b": arr2
+        }
+
+        diff = check_gradients_vector(forward, dic)
+
+        assert diff < 1e-6
+
+    log_complete("MATMUL GRAD")
+
+    return True
+
 
