@@ -5,6 +5,7 @@
 #include "elementwise.h"
 #include "linalg/linalg.h"
 #include "reduction.h"
+#include "transformations/rollaxis.h"
 #include "transformations/transpose.h"
 
 static PyMethodDef OpsMethods[] = {
@@ -19,6 +20,7 @@ static PyMethodDef OpsMethods[] = {
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
      NULL},
+    {"rollaxis", (PyCFunction)ops_rollaxis, METH_VARARGS | METH_KEYWORDS, NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
     {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 

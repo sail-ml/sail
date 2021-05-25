@@ -7,5 +7,6 @@
 #include "repr.h"
 #include "transformations/expand_dims.h"
 #include "transformations/reshape.h"
+#include "transformations/roll_axis.h"
 #include "transformations/squeeze.h"
 #include "transformations/transpose.h"

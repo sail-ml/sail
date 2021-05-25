@@ -135,14 +135,25 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 arr1 = np.random.uniform(1, 2, (2,4,3)).astype(np.float64)#, 32))
 arr2 = np.random.uniform(1, 2, (5,3,2)).astype(np.float64)#, 32))
 
-# # for i in range(1000000000):
-x1 = sail.Tensor(arr1, requires_grad=False)
-x2 = sail.Tensor(arr2, requires_grad=False)
+arr1 = np.arange(60).astype(np.float64)
+arr1 = np.reshape(arr1, (3, 4, 5))
 
-print (x1)
+x1 = sail.Tensor(arr1, requires_grad=False)
+
+x2 = sail.rollaxis(x1, 0, 1)
+print (x2.shape)
 print (x2)
 
-print (np.tensordot(arr1, arr2, axes=([2, 0], [1, 2])))
-print (sail.tensordot(x1, x2, axes=([2, 0], [1, 2])))
+print (np.rollaxis(arr1, 0, 1))
+print (np.rollaxis(arr1, 0, 1).shape)
+# # for i in range(1000000000):
+# x1 = sail.Tensor(arr1, requires_grad=False)
+# x2 = sail.Tensor(arr2, requires_grad=False)
 
-exit()
+# print (x1)
+# print (x2)
+
+# print (np.tensordot(arr1, arr2, axes=([2, 0], [1, 2])))
+# print (sail.tensordot(x1, x2, axes=([2, 0], [1, 2])))
+
+# exit()
