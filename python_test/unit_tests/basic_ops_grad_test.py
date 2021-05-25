@@ -189,7 +189,7 @@ def test_divide_grad():
 
         diff = check_gradients_vector(forward, dic)
 
-        assert diff < 1e-6
+        assert diff < 1e-5
 
     log_complete("DIVIDE GRAD")
 

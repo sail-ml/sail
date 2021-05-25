@@ -103,4 +103,26 @@ def test_divide():
 
     return True
 
+def test_matmul():
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    choices_b = [(12, 3), (4, 18), (12, 5), (30, 25)]
+    times = []
+    for ca, cb in zip(choices_a, choices_b):
+        arr1 = np.random.uniform(0, 1, (ca))
+        arr2 = np.random.uniform(0, 1, (cb))
+
+        x1 = sail.Tensor(arr1, requires_grad=False)
+        x2 = sail.Tensor(arr2, requires_grad=False)
+        
+        t = time.time()
+        x3 = sail.matmul(x1, x2)
+        times.append(time.time() - t)
+        arr3 = np.matmul(arr1, arr2)
+
+        assert_eq_np_sail_margin(arr3, x3)
+
+    log_time(np.mean(times), "MATMUL")
+
+    return True
+
     
