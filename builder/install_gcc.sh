@@ -7,7 +7,6 @@ GCC_VERSION=8
   add-apt-repository ppa:ubuntu-toolchain-r/test
   apt-get update
     apt-get install -y g++-$GCC_VERSION
-  fi
 
   update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-"$GCC_VERSION" 50
   update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-"$GCC_VERSION" 50
