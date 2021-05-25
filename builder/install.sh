@@ -2,7 +2,7 @@
 
 set -ex
 
-chmod +x ./install_avx2.sh
-chmod +x ./install_boost.sh
-chmod +x ./install_cmake.sh
-chmod +x ./install_gcc.sh
+chmod +x ./builder/install_avx2.sh
+chmod +x ./builder/install_boost.sh
+chmod +x ./builder/install_cmake.sh
+chmod +x ./builder/install_gcc.sh
