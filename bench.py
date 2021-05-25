@@ -140,6 +140,10 @@ x2 = sail.Tensor(arr2, requires_grad=True)
 x3 = sail.matmul(x1, x2)
 x4 = sail.sum(x3)
 x4.backward()
+
+
+a = sail.random.uniform((2, 5), 1, 2)
+print (a)
 # print (x4)
 
 # arr3 = np.matmul(arr1, arr2)
