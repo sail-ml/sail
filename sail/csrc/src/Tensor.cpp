@@ -7,7 +7,7 @@
 #include "TensorBody.h"
 
 #include "autograd/autograd.h"
-#include "cuda/cuda_math.h"
+// #include "cuda/cuda_math.h"
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/kernel.h"
@@ -39,6 +39,21 @@ long Tensor::getTotalSize() {
 
 Tensor Tensor::reshape(const TensorShape& new_shape) const {
     return ops::reshape(*this, new_shape);
+}
+Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) const {
+    int s = new_shape.numel();
+    if (s != numel()) {
+        throw DimensionError{"Cannot reshape tensor of shape ",
+                             get_shape().get_string(), " to ",
+                             new_shape.get_string()};
+    }
+    set_shape(new_shape);
+    return *this;
+}
+
+Tensor Tensor::transpose() { return ops::transpose(*this); }
+Tensor Tensor::transpose(const LongVec& axes) {
+    return ops::transpose(*this, axes);
 }
 
 Tensor Tensor::expand_dims(const int dim) {

@@ -11,7 +11,8 @@ namespace sail {
 namespace ops {
 
 Tensor matmul(const Tensor& t1, const Tensor& t2);
-Tensor tensordot(const Tensor& t1, const Tensor& t2, int t1_dim, int t2_dim);
+Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
+                 LongVec t2_dim);
 
 }  // namespace ops
 

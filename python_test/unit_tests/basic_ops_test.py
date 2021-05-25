@@ -1,9 +1,9 @@
-import unittest
+
 import sail, sys, random, os, gc, time
-import psutil
+
 import numpy as np
 
-from test_utils import *
+from ..test_utils import *
 
 def test_create():
 
@@ -23,12 +23,12 @@ def test_add():
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
         arr2 = np.random.uniform(0, 1, (c))
-
+        
         x1 = sail.Tensor(arr1, requires_grad=False)
         x2 = sail.Tensor(arr2, requires_grad=False)
         
         t = time.time()
-        x3 = x1 + x2 
+        x3 = sail.add(x1, x2) 
         times.append(time.time() - t)
         arr3 = arr1 + arr2 
 

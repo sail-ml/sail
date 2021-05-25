@@ -7,6 +7,7 @@ import sys
 import sysconfig
 import platform
 import setuptools
+import cpufeature
 import subprocess
 import glob, pathlib
 from shutil import copyfile
@@ -15,6 +16,8 @@ from shutil import copyfile
 from distutils.version import LooseVersion
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+
+build_path = ""
 
 class CMakeExtension(Extension):
 
@@ -39,6 +42,8 @@ class CMakeBuild(build_ext):
         build_temp.mkdir(parents=True, exist_ok=True)
         extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
         extdir.mkdir(parents=True, exist_ok=True)
+        global build_path
+        build_path = extdir.parent.absolute()
 
         # example of cmake args
         config = 'Debug' if self.debug else 'Release'
@@ -46,6 +51,13 @@ class CMakeBuild(build_ext):
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
             '-DCMAKE_BUILD_TYPE=' + config
         ]
+        print (cpufeature.CPUFeature)
+        if (cpufeature.CPUFeature["AVX2"]):
+            print ("Compiling Sail with AVX2 Support")
+            cmake_args.append("-DUSE_AVX2=ON")
+        else:
+            print ("Compiling Sail without AVX2 Support")
+            cmake_args.append("-DUSE_AVX2=OFF")
 
         # example of build args
         build_args = [
@@ -111,4 +123,4 @@ for f in created_names:
     print (f)
 
 
-copyfile("build/lib.linux-x86_64-3.7/sail/csrc/libsail_c.so", "sail/csrc/libsail_c.so")
+copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")

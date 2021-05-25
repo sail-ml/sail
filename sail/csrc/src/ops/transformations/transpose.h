@@ -10,7 +10,7 @@ namespace sail {
 namespace ops {
 
 Tensor transpose(const Tensor& tensor1);
-Tensor transpose(const Tensor& tensor1, LongVec& dims);
+Tensor transpose(const Tensor& tensor1, const LongVec& dims);
 }  // namespace ops
 
 }  // namespace sail

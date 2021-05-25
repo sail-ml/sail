@@ -55,7 +55,7 @@ Tensor* create_grad(Dtype dt) {
     return _empty;
 }
 
-Tensor clone(Tensor& t) {
+Tensor clone(const Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
     TensorShape s = t.get_shape();

@@ -19,13 +19,13 @@ Tensor transpose(const Tensor& tensor1) {
     return new_tensor;
 }
 
-Tensor transpose(const Tensor& tensor1, LongVec& dims) {
+Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
     if (tensor1.get_ndim() != dims.size()) {
         throw SailCError("Transpose axes must have same length as tensor");
     }
 
     TensorShape new_shape = TensorShape(tensor1.get_shape());
-    new_shape.reorder(dims);
+    new_shape = new_shape.reorder(dims);
     TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
         tensor1.get_body()->get_data(), tensor1.get_body()->get_dtype(),
         new_shape, /*is_view*/ true));

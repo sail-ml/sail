@@ -77,6 +77,7 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     # if faster["FAIL"] != []:
 #     #     print ("FAILED ON: %s" % faster["FAIL"])
 # print ("ADD")
+
 # benchmark_shapes(linear_test_shapes, add, grad=False)
 # exit()
 # # benchmark_shapes(nd_test_shape, add)
@@ -131,102 +132,17 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 
 # for z in range(256, 256*4, 8):
 #     print (z)
-arr1 = np.random.uniform(0, 1, (4, 2, 3)).astype(np.float64)#, 32))
-arr2 = np.random.uniform(0, 1, (4, 2, 3)).astype(np.float64)#, 32))
+arr1 = np.random.uniform(1, 2, (2,4,3)).astype(np.float64)#, 32))
+arr2 = np.random.uniform(1, 2, (5,3,2)).astype(np.float64)#, 32))
 
-# for i in range(1000000000):
-x1 = sail.Tensor(arr1, requires_grad=True)
+# # for i in range(1000000000):
+x1 = sail.Tensor(arr1, requires_grad=False)
+x2 = sail.Tensor(arr2, requires_grad=False)
 
 print (x1)
-print (sail.transpose(x1))
-print (x1)
-print (sail.transpose(x1, (1, 0, 2)))
+print (x2)
 
-# print (x1)
-# print (x2)
+print (np.tensordot(arr1, arr2, axes=([2, 0], [1, 2])))
+print (sail.tensordot(x1, x2, axes=([2, 0], [1, 2])))
 
-# x3 = sail.divide(x1, x2) 
-# x4 = sail.sum(x3)
-
-# x4.backward()
-
-# print (" ")
-
-# print (x4.grad)
-# print (x3.grad)
-# print (x2.grad)
-# print (x1.grad)
-# for i in range(100000000):
-#     x1 = sail.Tensor(arr1, requires_grad=False)
-#     x2 = sail.expand_dims(x1, 2)
-#     # print (x3)
-    # print (x4)
-    # print (x5)
-    # print (x1)
-    # print (x2.numpy())
-# print (x2.numpy())
-# # print (x1)
-# x2 = sail.Tensor(arr2, requires_grad=True)
-
-# # for i in range(100):
-# t = time.time()
-# for i in range(100000):
-#     x3 = sail.add(x1, x2)
-
-# print (x3)
-# print (arr1 + arr2)
-    # print (x3)
-    # print (x3)
-    # x4 = sail.sum(x3)
-    # x3.backward()
-    # print ("back complete")
-    # print (x4.grad)
-    # print (x3.grad)
-    # print (x2.grad)
-    # print (x1.grad)
-    # exit()
-# print (x3)
-# print (x3)
-# error when not added here. IDK why
-# print (x3.grad)
-# print (x3.grad)
-# print (x2.grad)
-# print (x1.grad)
-
-
-
-# print (sys.getrefcount(x3))
-# print (x3)
-# print (x3.grad)
-# # x4 = sail.sum(x3)
-# # print (x4)
-# # print (x4)
-
-# # print (x4)
-# print ("z")
-# x4.backward()
-# print (x4.grad)
-# print (x3.grad)
-# print (x2.grad)
-# print (x1.grad)
-# print ("\n\n\n ")
-# print (x4)
-# print (x3)
-# print (x2)
-# print (x1)
-# print (x4)
-# # # # # # print (x1.get_grad())
-# # # # # # print (x1)
-# # # # # # print (x4)
-# # # # # print (x3.grad)
-
-# print (x1.grad)
-# print (x1.grad.numpy())
-# print (x4)
-# print (x4.numpy())
-# import gc
-# for i in range(100000):
-#     arr1 = np.random.uniform(0, 1, (32000)).astype(np.float64)#, 32))
-#     # gc.collect()
-#     x1 = sail.Tensor(arr1, requires_grad=True)
-    
+exit()

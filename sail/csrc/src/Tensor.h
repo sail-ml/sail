@@ -65,6 +65,7 @@ class Tensor {
 
     Tensor cast(const Dtype dt);
     Tensor reshape(const TensorShape& new_shape) const;
+    Tensor _inplace_reshape(const TensorShape& new_shape) const;
     Tensor expand_dims(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();
@@ -96,6 +97,9 @@ class Tensor {
     Tensor operator*(const Tensor& t);
     Tensor operator/(const Tensor& t);
     Tensor operator[](const int t) const;
+
+    Tensor transpose();
+    Tensor transpose(const LongVec& axes);
 
     friend std::ostream& operator<<(std::ostream& os, const Tensor& dt);
 
