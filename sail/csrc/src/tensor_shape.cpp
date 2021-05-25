@@ -224,6 +224,18 @@ std::vector<long> TensorShape::generate_all_indexes() {
     return out;
 }
 
+TensorShape TensorShape::move_axis(long axis, long position) {
+    long val_shape = shape[axis];
+    shape.erase(shape.begin() + axis);
+    long val_stride = strides[axis];
+    strides.erase(strides.begin() + axis);
+
+    shape.insert(shape.begin()+position, val_shape);
+    strides.insert(strides.begin()+position, val_stride);
+    recompute();
+    return *this;
+}
+
 long int* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
 int TensorShape::ndim() { return shape.size(); }
 }  // namespace sail

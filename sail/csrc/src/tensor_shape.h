@@ -27,6 +27,8 @@ class TensorShape {
     // template <class T>
     TensorShape reorder(const LongVec& order);
 
+    TensorShape move_axis(long axis, long position);
+
     void insert_one(const int dim);
     void remove_one(const int dim);
     void recompute_strides();
