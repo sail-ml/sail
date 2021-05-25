@@ -2,5 +2,6 @@
 
 set -ex
 
-apt-get install -y libboost-all-dev
-
+add-apt-repository universe
+apt-get update
+apt-get install libboost-all-dev
