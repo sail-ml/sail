@@ -20,10 +20,10 @@ jobs:
         run: 'sudo apt-get update'
 
       - name: Setup install files
-        run: 'chmod +x builder/install_cmake.sh && chmod +x builder/install_gcc.sh && chmod +x builder/install_boost.sh'
+        run: 'chmod +x builder/install.sh'
 
       - name: Run install files
-        run: 'sudo ./builder/install_cmake.sh && sudo ./builder/install_gcc.sh && sudo ./builder/install_boost.sh'
+        run: 'sudo ./builder/install.sh'
 
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
