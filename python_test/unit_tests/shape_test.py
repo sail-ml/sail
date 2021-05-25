@@ -68,3 +68,24 @@ def test_squeeze():
 
     log_complete("SQUEEZE")
     return True
+
+
+def test_rollaxis():
+
+    choices = [(21, 34, 2, 5), (2, 1, 3), (8, 34, 12), (3, 4, 5)]
+    axes = [(0, 1, 2, 3, -3, -2, -1), (0, 1, 2, -2, -1), (0, 1, 2, -2, -1), (0, 1, 2, -2, -1)]
+    positions = [(0, 1, -3, -1), (-2, -1), (0, 1, 2), (0, 1, -2)]
+
+    for c, _a, _p in zip(choices, axes, positions):
+        for a in _a:
+            for p in _p:
+                arr1 = np.arange(np.prod(c)).reshape(c).astype(np.float64)
+                x1 = sail.Tensor(arr1, requires_grad=False)
+
+                arr2 = np.rollaxis(arr1, a, p)
+                x2 = sail.rollaxis(x1, a, p)
+
+                assert_eq_np_sail(arr2, x2)
+                assert_eq(arr2.shape, x2.shape)
+
+    log_complete("ROLLAXIS")
