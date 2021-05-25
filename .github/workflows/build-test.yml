@@ -5,7 +5,7 @@ name: CI
 on: [pull_request]
 
 jobs:
-  test:
+  build:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
 
@@ -36,6 +36,6 @@ jobs:
       - name: Build Package
         run: python setup.py install
       
-      - name: Test Package
-        run: ./test.sh python
+      # - name: Test Package
+      #   run: ./test.sh python
 
