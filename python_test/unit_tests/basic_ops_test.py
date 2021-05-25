@@ -5,9 +5,11 @@ import numpy as np
 
 from ..test_utils import *
 
+elementwise_options = [(12), (512, 128), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
+
 def test_create():
 
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = elementwise_options
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
         x1 = sail.Tensor(arr1, requires_grad=False)
@@ -18,7 +20,7 @@ def test_create():
     return True
 
 def test_add():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = elementwise_options
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -39,7 +41,7 @@ def test_add():
     return True
 
 def test_sub():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = elementwise_options
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -60,7 +62,7 @@ def test_sub():
     return True
 
 def test_mult():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = elementwise_options
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
@@ -81,7 +83,7 @@ def test_mult():
     return True
 
 def test_divide():
-    choices = list(range(1, 128)) + list(range(256, 256**2, 256))
+    choices = elementwise_options
     times = []
     for c in choices:
         arr1 = np.random.uniform(0, 1, (c))
