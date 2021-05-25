@@ -27,4 +27,12 @@ Tensor* create_grad(Dtype dt);
 
 Tensor from_data(void* data, Dtype dt, TensorShape s);
 
+namespace random {  // probably want to refactor factories to be in their own
+                    // namespace but rolling with this for now
+
+// need to be able to instantiate random tensors
+Tensor uniform(TensorShape size, int min = 0, int max = 1);
+Tensor uniform_like(Tensor tensor, int min = 0, int max = 1);
+}  // namespace random
+
 }  // namespace sail

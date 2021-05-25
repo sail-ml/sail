@@ -4,6 +4,7 @@
 #include "factories.h"
 
 #include <iostream>
+#include <random>
 #include <vector>
 
 #include "Tensor.h"
@@ -123,6 +124,7 @@ Tensor empty_scalar(Dtype dt) {
 Tensor one_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
+
     launch_arithmetic(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
         // T data2 = (T)1;
@@ -168,5 +170,37 @@ Tensor from_data(void* data, Dtype dt, TensorShape s) {
     TensorBody::pointer b = new TensorBody(new_data, dt, s);
     return Tensor(b, false);
 }
+
+namespace random {  // probably want to refactor factories to be in their own
+                    // namespace but rolling with this for now
+
+// need to be able to instantiate random tensors
+Tensor uniform(TensorShape size, Dtype dt, int min = 0, int max = 1) {
+    alignemnt_information info = getAlignment(dt);
+    void* data = _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* data_rand = static_cast<T*>(data);
+
+        std::uniform_real_distribution<> dis((T)min, (T)max);
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        for (int i = 0; i < size.numel(); i++) {
+            data_rand[i] = (T)dis(gen);
+        }
+    });
+
+    TensorBody::pointer b = new TensorBody(data, dt, size);
+    return Tensor(b, false);
+}
+Tensor uniform_like(Tensor tensor, int min = 0, int max = 1) {
+    TensorShape s = tensor.get_shape();
+    Tensor ret = uniform(s, tensor.get_dtype(), min, max);
+    ret.requires_grad = tensor.requires_grad;
+    return ret;
+}
+}  // namespace random
 
 }  // namespace sail
