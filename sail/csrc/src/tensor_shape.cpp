@@ -244,6 +244,9 @@ TensorShape TensorShape::move_axis(long axis, long position) {
     long val_stride = strides[axis];
     strides.erase(strides.begin() + axis);
 
+    if (position > axis) {
+        position = position - 1;
+    }
     shape.insert(shape.begin() + position, val_shape);
     strides.insert(strides.begin() + position, val_stride);
     recompute();
