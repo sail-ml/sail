@@ -49,9 +49,7 @@ class CMakeBuild(build_ext):
         config = 'Debug' if self.debug else 'Release'
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
-            '-DCMAKE_BUILD_TYPE=' + config,
-            '-DCMAKE_C_COMPILER=/usr/bin/gcc',
-            '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
+            '-DCMAKE_BUILD_TYPE=' + config
         ]
         print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"]):
