@@ -30,12 +30,10 @@ RETURN_OBJECT ops_rollaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     int axis_val = PyLong_AsLong(axis);
-    std::cout << axis_val << std::endl;
     if (position == NULL) {
         ret_class->tensor = sail::ops::rollaxis(t1->tensor, axis_val);
     } else {
         int position_val = PyLong_AsLong(position);
-        std::cout << position_val << std::endl;
         ret_class->tensor =
             sail::ops::rollaxis(t1->tensor, axis_val, position_val);
     }

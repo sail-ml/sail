@@ -14,8 +14,6 @@ namespace sail {
 namespace ops {
 
 Tensor rollaxis(const Tensor& tensor1, const int axis, const int position = 0) {
-    // NEED ERROR CHECKING
-    std::cout << "running" << std::endl;
     TensorShape new_shape = TensorShape(tensor1.get_shape());
     new_shape = new_shape.move_axis(axis, position);
     TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
