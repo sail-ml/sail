@@ -13,7 +13,7 @@ namespace sail {
 
 namespace ops {
 
-Tensor roll_axis(const Tensor& tensor1, const int axis, const int position) {
+Tensor rollaxis(const Tensor& tensor1, const int axis, const int position) {
     // NEED ERROR CHECKING 
 
     TensorShape new_shape = TensorShape(tensor1.get_shape());

@@ -12,7 +12,7 @@ namespace sail {
 
 namespace ops {
 
-Tensor roll_axis(const Tensor& tensor1, const int axis, const int position);
+Tensor rollaxis(const Tensor& tensor1, const int axis, const int position);
 
 }  // namespace ops
 
