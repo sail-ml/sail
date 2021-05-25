@@ -5,9 +5,9 @@ name: CI
 on: [pull_request]
 
 jobs:
-  test:
+  build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -20,10 +20,10 @@ jobs:
         run: 'sudo apt-get update'
 
       - name: Setup install files
-        run: 'chmod +x builder/install_cmake.sh && chmod +x builder/install_gcc.sh && chmod +x builder/install_boost.sh'
+        run: 'chmod +x builder/install.sh'
 
       - name: Run install files
-        run: 'sudo ./builder/install_cmake.sh && sudo ./builder/install_gcc.sh && sudo ./builder/install_boost.sh'
+        run: 'sudo ./builder/install.sh'
 
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
@@ -36,6 +36,6 @@ jobs:
       - name: Build Package
         run: python setup.py install
       
-      - name: Test Package
-        run: ./test.sh python
+      # - name: Test Package
+      #   run: ./test.sh python
 

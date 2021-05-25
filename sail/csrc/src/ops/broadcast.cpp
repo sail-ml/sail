@@ -41,8 +41,8 @@ Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
         indexer_2 -= 1;
     }
 
+    shape_new.recompute();
     new_.set_shape(shape_new);
-    new_.get_shape().recompute();
 
     return new_;
 }
