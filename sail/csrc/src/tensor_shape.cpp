@@ -225,6 +225,20 @@ std::vector<long> TensorShape::generate_all_indexes() {
 }
 
 TensorShape TensorShape::move_axis(long axis, long position) {
+    if (axis < 0) {
+        axis = ndim() + axis;
+    }
+    if (position < 0) {
+        position = ndim() + position;
+    }
+
+    if (position < 0 || position >= ndim()) {
+        throw SailCError("Invalid position");
+    }
+    if (axis < 0 || axis >= ndim()) {
+        throw SailCError("Invalid axis");
+    }
+
     long val_shape = shape[axis];
     shape.erase(shape.begin() + axis);
     long val_stride = strides[axis];
