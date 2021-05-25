@@ -38,4 +38,6 @@ static PyMethodDef OpsMethods[] = {
 
 static PyMethodDef RandomFactories[] = {
     {"uniform", (PyCFunction)ops_random_uniform, METH_VARARGS | METH_KEYWORDS},
+    {"uniform_like", (PyCFunction)ops_random_uniform_like,
+     METH_VARARGS | METH_KEYWORDS},
     {NULL}};

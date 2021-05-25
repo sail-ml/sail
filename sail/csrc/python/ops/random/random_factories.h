@@ -55,3 +55,27 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
 
     return (PyObject*)ret_class;
 }
+
+RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
+                                      PyObject* kwargs) {
+    PyTensor* t1 = NULL;
+    int min = 0;
+    int max = 1;
+    static char* kwlist[] = {"tensor", "min", "max", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|ii", kwlist, &t1, &min,
+                                     &max)) {
+        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+    }
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    ret_class->tensor = sail::random::uniform_like(t1->tensor, min, max);
+
+    ret_class->ndim = ret_class->tensor.get_shape().ndim();
+    ret_class->dtype = t1->dtype;
+    ret_class->requires_grad = t1->requires_grad;
+
+    return (PyObject*)ret_class;
+}
