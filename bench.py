@@ -141,12 +141,15 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # x4 = sail.sum(x3)
 # x4.backward()
 
+t = time.time()
+a = np.random.uniform(1, -2, (500, 500))
+print (time.time() - t)
 
-a = sail.random.uniform((20, 5), 1, -2)
-print (a)
-print (a[0])
-b = sail.random.uniform_like(a, 2, 5)
-print (b)
+t = time.time()
+a = sail.random.uniform(1, -2, (500, 500))
+print (time.time() - t)
+
+
 # print (x4)
 
 # arr3 = np.matmul(arr1, arr2)
