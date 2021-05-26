@@ -149,6 +149,8 @@ t = time.time()
 a = sail.random.uniform(1, -2, (500, 500))
 print (time.time() - t)
 
+a.requires_grad = True
+
 
 # print (x4)
 
