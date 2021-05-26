@@ -42,6 +42,17 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "sail_c",
                              "Example module that creates an extension type.",
                              -1, 0};
 
+PyMODINIT_FUNC PyInit_random(void) {
+    import_array();
+    PyObject* m;
+
+    m = PyModule_Create(&module);
+    if (m == NULL) return NULL;
+    PyModule_AddFunctions(m, RandomFactories);
+
+    return m;
+}
+
 PyMODINIT_FUNC PyInit_libsail_c(void) {
     import_array();
     PyObject* m;
@@ -67,11 +78,14 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
                                           exc_dict);
 
     PyModule_AddObject(m, "DimensionError", PyDimensionError);
+    PyModule_AddObject(m, "random", PyInit_random());
     PyModule_AddFunctions(m, OpsMethods);
 
     PyModule_AddObject(m, "int32", (PyObject*)&PyDtypeInt32);
     PyModule_AddObject(m, "float32", (PyObject*)&PyDtypeFloat32);
     PyModule_AddObject(m, "float64", (PyObject*)&PyDtypeFloat64);
+
+    /// RANDOM MODULE
 
     return m;
 }

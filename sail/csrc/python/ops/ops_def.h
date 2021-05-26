@@ -4,6 +4,7 @@
 #include "docstring.h"
 #include "elementwise.h"
 #include "linalg/linalg.h"
+#include "random/random_factories.h"
 #include "reduction.h"
 #include "transformations/rollaxis.h"
 #include "transformations/transpose.h"
@@ -33,4 +34,14 @@ static PyMethodDef OpsMethods[] = {
 
     {"broadcast_to", (PyCFunction)ops_broadcast_to, METH_VARARGS, NULL},
 
+    {NULL}};
+
+static PyMethodDef RandomFactories[] = {
+    {"uniform", (PyCFunction)ops_random_uniform, METH_VARARGS | METH_KEYWORDS},
+    {"uniform_like", (PyCFunction)ops_random_uniform_like,
+     METH_VARARGS | METH_KEYWORDS},
+
+    {"normal", (PyCFunction)ops_random_normal, METH_VARARGS | METH_KEYWORDS},
+    {"normal_like", (PyCFunction)ops_random_normal_like,
+     METH_VARARGS | METH_KEYWORDS},
     {NULL}};

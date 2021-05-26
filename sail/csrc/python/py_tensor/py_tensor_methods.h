@@ -177,6 +177,28 @@ static int PyTensor_set_grad(PyTensor *self, void *closure) {
     return -1;
 }
 
+RETURN_OBJECT PyTensor_get_requires_grad(PyTensor *self, void *closure) {
+    if (self->requires_grad) {
+        Py_RETURN_TRUE;
+    }
+    Py_RETURN_FALSE;
+}
+
+static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
+                                      void *closure) {
+    if (PyObject_IsTrue(value)) {
+        self->requires_grad = true;
+        self->tensor.requires_grad = true;
+    } else if (!PyObject_IsTrue(value)) {
+        self->requires_grad = false;
+        self->tensor.requires_grad = false;
+    } else {
+        PyErr_SetString(PyExc_AttributeError,
+                        "requires_grad must be a boolean");
+    }
+    return 0;
+}
+
 RETURN_OBJECT
 PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     PyDtype *type;
