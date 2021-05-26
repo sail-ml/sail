@@ -45,6 +45,9 @@ static int PyTensor_set_shape(PyTensor *self,
                               void *closure);  // DOES NOTHING
 RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
 static int PyTensor_set_grad(PyTensor *self, void *closure);
+RETURN_OBJECT PyTensor_get_requires_grad(PyTensor *self, void *closure);
+static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
+                                      void *closure);
 
 //////////// CLASS METHODS ////////////////
 RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
@@ -55,8 +58,8 @@ RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
     {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"},
-    {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
-     "requires_grad"},
+    // {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
+    //  "requires_grad"},
     {NULL}};
 
 static PyMethodDef PyTensor_methods[] = {
@@ -73,6 +76,8 @@ static PyMethodDef PyTensor_methods[] = {
 static PyGetSetDef PyTensor_get_setters[] = {
     {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, "shape"},
     {"grad", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, "grad"},
+    {"requires_grad", (getter)PyTensor_get_requires_grad,
+     (setter)PyTensor_set_requires_grad, "requires_grad"},
     {NULL} /* Sentinel */
 };
 
