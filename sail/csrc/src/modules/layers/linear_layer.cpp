@@ -14,7 +14,7 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = false)
           double variance = 1.0 / (output_features ** 0.5);
           weights = random::uniform(TensorShape({input_features, output_features}), Dtype::sFloat64, -variance, variance);
           if (use_bias) {
-              bias = zeros(TensorShape({output_features}), Dtype::sFloat64);
+              biases = zeros(TensorShape({output_features}), Dtype::sFloat64);
           }
       }
 }  // namespace modules
