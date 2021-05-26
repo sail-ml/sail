@@ -1,9 +1,9 @@
 #pragma once
 namespace sail {
 namespace modules {
-class Layer {
+class Module {
    public:
-    explicit Layer();
+    explicit Module();
     virtual void forward();
 };
 }  // namespace modules
