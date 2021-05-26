@@ -203,6 +203,35 @@ Tensor uniform_like(Tensor tensor, int min = 0, int max = 1) {
     ret.requires_grad = tensor.requires_grad;
     return ret;
 }
+
+Tensor normal(TensorShape size, Dtype dt, int mean = 0, int std = 1) {
+    if (std < 0) {
+        throw SailCError("Standard deviation cannot be less than 0");
+    }
+    alignemnt_information info = getAlignment(dt);
+    int numel = size.numel();
+    void* data = _malloc_align(numel, info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* data_rand = (T*)data;
+
+        std::normal_distribution<> dis((T)mean, (T)std);
+
+        for (int i = 0; i < numel; i++) {
+            data_rand[i] = dis(gen);
+        }
+    });
+
+    TensorBody::pointer b = new TensorBody(data, dt, size);
+    return Tensor(b, false);
+}
+Tensor normal_like(Tensor tensor, int mean = 0, int std = 1) {
+    TensorShape s = tensor.get_shape();
+    Tensor ret = normal(s, tensor.get_dtype(), mean, std);
+    ret.requires_grad = tensor.requires_grad;
+    return ret;
+}
 }  // namespace random
 
 }  // namespace sail

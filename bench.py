@@ -142,15 +142,14 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
 # x4.backward()
 
 t = time.time()
-a = np.random.uniform(1, -2, (500, 500))
+a = np.random.normal(1, 2, (500, 500))
 print (time.time() - t)
 
 t = time.time()
-a = sail.random.uniform(1, -2, (500, 500))
+a = sail.random.normal(1, 2, (500, 500))
 print (time.time() - t)
 
 a.requires_grad = True
-
 
 # print (x4)
 

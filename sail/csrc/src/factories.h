@@ -33,6 +33,8 @@ namespace random {  // probably want to refactor factories to be in their own
 // need to be able to instantiate random tensors
 Tensor uniform(TensorShape size, Dtype dt, int min = 0, int max = 1);
 Tensor uniform_like(Tensor tensor, int min = 0, int max = 1);
+Tensor normal(TensorShape size, Dtype dt, int mean = 0, int std = 1);
+Tensor normal_like(Tensor tensor, int mean = 0, int std = 1);
 }  // namespace random
 
 }  // namespace sail
