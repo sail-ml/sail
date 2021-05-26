@@ -17,6 +17,9 @@
 
 namespace sail {
 
+std::random_device rd;
+std::mt19937 gen(rd());
+
 Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape) {
     TensorBody::pointer body =
         TensorBody::pointer(new TensorBody(dt, shape), true);
@@ -177,18 +180,17 @@ namespace random {  // probably want to refactor factories to be in their own
 // need to be able to instantiate random tensors
 Tensor uniform(TensorShape size, Dtype dt, int min = 0, int max = 1) {
     alignemnt_information info = getAlignment(dt);
-    void* data = _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    int numel = size.numel();
+    void* data = _malloc_align(numel, info.alignment, info.dtype_size);
     launch_arithmetic(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
-        T* data_rand = static_cast<T*>(data);
+        T* data_rand = (T*)data;
 
         std::uniform_real_distribution<> dis((T)min, (T)max);
-        std::random_device rd;
-        std::mt19937 gen(rd());
 
-        for (int i = 0; i < size.numel(); i++) {
-            data_rand[i] = (T)dis(gen);
+        for (int i = 0; i < numel; i++) {
+            data_rand[i] = dis(gen);
         }
     });
 

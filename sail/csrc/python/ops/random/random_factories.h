@@ -22,10 +22,10 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     PyObject* shape = NULL;
     int min = 0;
     int max = 1;
-    static char* kwlist[] = {"shape", "min", "max", NULL};
+    static char* kwlist[] = {"min", "max", "shape", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|ii", kwlist, &shape, &min,
-                                     &max)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", kwlist, &min, &max,
+                                     &shape)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
 
