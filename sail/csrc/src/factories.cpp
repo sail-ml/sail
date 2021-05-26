@@ -174,6 +174,15 @@ Tensor from_data(void* data, Dtype dt, TensorShape s) {
     return Tensor(b, false);
 }
 
+Tensor zeros(TensorShape size, Dtype dt) {
+    alignemnt_information info = getAlignment(dt);
+    void* new_data =
+        _calloc_align(data, s.numel(), info.alignment, info.dtype_size);
+    TensorBody::pointer b = new TensorBody(new_data, dt, s);
+    return Tensor(b, false);
+}
+
+
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now
 

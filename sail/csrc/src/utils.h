@@ -37,6 +37,15 @@ inline void* _realloc_align(void* src, long numel, long alignment,
     memcpy(aligned, src, dtype_size * numel);
     return aligned;
 }
+inline void* _calloc_align(void* src, long numel, long alignment,
+                            long dtype_size) {
+    void* aligned = _malloc_align(numel, alignment, dtype_size);
+    if (aligned == NULL) {
+        std::cout << "ALLOC FAIL" << std::endl;
+    }
+    memset(aligned, 0, dtype_size * numel);
+    return aligned;
+}
 
 inline int prod_size_vector(const TensorSize size) {
     int s = 1;
