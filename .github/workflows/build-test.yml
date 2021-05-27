@@ -42,6 +42,7 @@ jobs:
       - name: push to website
         run: |
           cd docs
+          ls
           make html
           git init
           git commit -m "update documentation (CI)"
