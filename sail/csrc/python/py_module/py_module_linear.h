@@ -39,10 +39,24 @@ static int PyLinearModule_set_weights(PyModule *self, PyTensor *t,
     return 0;
 }
 
+RETURN_OBJECT
+PyLinearModule_get_bias(PyModule *self, void *closure) {
+    PyTensor *py_bias = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+    Linear a = *(Linear *)self->module;
+    GENERATE_FROM_TENSOR(py_bias, a.biases);
+    return (PyObject *)py_bias;
+}
+
+static int PyLinearModule_set_bias(PyModule *self, PyTensor *t, void *closure) {
+    ((Linear *)(self->module))->biases = t->tensor;
+    return 0;
+}
+
 static PyGetSetDef PyLinearModule_get_setters[] = {
     {"weights", (getter)PyLinearModule_get_weights,
      (setter)PyLinearModule_set_weights, "weights"},
-    // {"bias", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, "bias"},
+    {"bias", (getter)PyLinearModule_get_bias, (setter)PyLinearModule_set_bias,
+     "bias"},
     {NULL} /* Sentinel */
 };
 
