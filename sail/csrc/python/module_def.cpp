@@ -79,7 +79,6 @@ PyMODINIT_FUNC PyInit_modules(void) {
     return m;
 }
 
-
 PyMODINIT_FUNC PyInit_libsail_c(void) {
     import_array();
     PyObject* m;

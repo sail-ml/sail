@@ -2,3 +2,5 @@ wheel
 numpy
 pytest
 cpufeature
+sphinx
+karma_sphinx_theme
