@@ -6,6 +6,7 @@ namespace sail {
 namespace modules {
 
 class Linear : public Module {
+   public:
     Tensor weights;
     Tensor biases;
 
@@ -13,10 +14,9 @@ class Linear : public Module {
     long output_features;
     bool use_bias;
 
-   public:
     Linear(long _input_features, long _output_features, bool _bias = false);
 
-    forward(Tensor& input);
+    void forward(Tensor& input);
 };
 
 }  // namespace modules
