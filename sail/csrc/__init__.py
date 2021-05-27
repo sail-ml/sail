@@ -13,8 +13,6 @@ from .libsail_c import float64 as _float64
 from .libsail_c import random
 from .libsail_c import modules 
 
-print (dir(modules))
-
 
 # kinda hacky but whatever
 int32 = _int32()
@@ -25,6 +23,6 @@ __all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape
            "int32", "float32", "float64", "broadcast_to", "transpose", "tensordot", "rollaxis"]
 
 __all__.append("random")
-# __all__.append("modules")
+__all__.append("modules")
 
 
