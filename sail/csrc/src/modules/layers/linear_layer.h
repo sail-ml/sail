@@ -17,6 +17,7 @@ class Linear : public Module {
     Linear(long _input_features, long _output_features, bool _bias = false);
 
     Tensor forward(Tensor& input);
+
 };
 
 }  // namespace modules

@@ -21,7 +21,7 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
                                  PyObject* kwargs) {
     PyObject* shape = NULL;
     double min = 0;
-    int max = 1;
+    double max = 1;
     static char* kwlist[] = {"min", "max", "shape", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddO", kwlist, &min, &max,
