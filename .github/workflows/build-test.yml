@@ -46,7 +46,7 @@ jobs:
           source-directory: '.'
           destination-github-username: 'tgs266'
           destination-repository-name: 'sail.github.io'
-          user-email: ${{ secrets.MY_EMAIL }}
+          user-email: tgsiegel@umd.edu
           target-branch: master
       # - name: Test Package
       #   run: ./test.sh python
