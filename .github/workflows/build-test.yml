@@ -35,6 +35,16 @@ jobs:
 
       - name: Build Package
         run: python setup.py install
+        
+      - name: push to website
+        run: |
+          cd docs
+          make html
+          git init
+          git commit -m "update documentation (CI)"
+          git branch -M master
+          git remote add origin https://github.com/sail-ml/sail.github.io.git
+          git push -u origin master
       
       # - name: Test Package
       #   run: ./test.sh python
