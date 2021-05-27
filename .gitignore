@@ -189,5 +189,5 @@ cython_debug/
 
 
 
-bench.py
+test.py
 
