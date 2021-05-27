@@ -59,17 +59,17 @@ PyMODINIT_FUNC PyInit_modules(void) {
     import_array();
     PyObject* m;
 
-    // if (PyType_Ready(&PyModuleType) < 0) return NULL;
+    if (PyType_Ready(&PyModuleType) < 0) return NULL;
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
 
     m = PyModule_Create(&module);
     if (m == NULL) return NULL;
 
-    // if (PyModule_AddObject(m, "Module", (PyObject*)&PyModuleType) < 0) {
-    //     Py_DECREF(&PyModuleType);
-    //     Py_DECREF(m);
-    //     return NULL;
-    // }
+    if (PyModule_AddObject(m, "Module", (PyObject*)&PyModuleType) < 0) {
+        Py_DECREF(&PyModuleType);
+        Py_DECREF(m);
+        return NULL;
+    }
     if (PyModule_AddObject(m, "Linear", (PyObject*)&PyLinearModuleType) < 0) {
         Py_DECREF(&PyLinearModuleType);
         Py_DECREF(m);

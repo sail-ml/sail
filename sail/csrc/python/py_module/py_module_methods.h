@@ -25,7 +25,7 @@ static int PyModule_traverse(PyModule *self, visitproc visit, void *arg) {
 }
 
 static int PyModule_clear(PyModule *self) {
-    // std::cout << "PY FREE" << std::endl;
+    delete self->module;
     if (self->base_object != NULL) {
         Py_DECREF(self->base_object);
     }

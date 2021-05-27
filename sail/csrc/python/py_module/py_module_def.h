@@ -16,7 +16,7 @@ using Module = sail::modules::Module;
 
 typedef struct {
     PyObject_HEAD PyObject *base_object = NULL;
-    Module module;
+    Module *module = NULL;
 } PyModule;
 
 ///////////////////// DEFINITIONS ///////////////////////

@@ -1,7 +1,12 @@
 #pragma once
 #include "../../src/modules/modules.h"
+#include "../macros.h"
+#include "../py_tensor/py_tensor_def.h"
 
 #include "py_module_def.h"
+
+using Module = sail::modules::Module;
+using Linear = sail::modules::Linear;
 
 static int PyLinearModule_init(PyModule *self, PyObject *args,
                                PyObject *kwargs) {
@@ -15,10 +20,52 @@ static int PyLinearModule_init(PyModule *self, PyObject *args,
     }
 
     // self->module = sail::modules::Module();
-    // self->module = sail::modules::Linear(in_features, out_features,
-    // use_bias);
+    self->module = (Module *)(new sail::modules::Linear(
+        in_features, out_features, use_bias));
     return 0;
 }
+
+RETURN_OBJECT
+PyLinearModule_get_weights(PyModule *self, void *closure) {
+    PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+    Linear a = *(Linear *)self->module;
+    GENERATE_FROM_TENSOR(py_weights, a.weights);
+    return (PyObject *)py_weights;
+}
+
+static int PyLinearModule_set_weights(PyModule *self, PyTensor *t,
+                                      void *closure) {
+    ((Linear *)(self->module))->weights = t->tensor;
+    return 0;
+}
+
+static PyGetSetDef PyLinearModule_get_setters[] = {
+    {"weights", (getter)PyLinearModule_get_weights,
+     (setter)PyLinearModule_set_weights, "weights"},
+    // {"bias", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, "bias"},
+    {NULL} /* Sentinel */
+};
+
+RETURN_OBJECT
+PyLinearModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+    PyTensor *inputs = NULL;
+    static char *kwlist[] = {"inputs", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &inputs)) {
+        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+    }
+    PyTensor *py_output = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    sail::Tensor output = ((Linear *)(self->module))->forward(inputs->tensor);
+    GENERATE_FROM_TENSOR(py_output, output);
+    return (PyObject *)py_output;
+}
+
+static PyMethodDef PyLinearModule_methods[] = {
+    {"forward", (PyCFunction)PyLinearModule_forward,
+     METH_VARARGS | METH_KEYWORDS, "forward"},
+    {NULL} /* Sentinel */
+};
 
 static PyTypeObject PyLinearModuleType = {
     PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.Linear", /* tp_name */
@@ -34,7 +81,7 @@ static PyTypeObject PyLinearModuleType = {
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */
     0,                                                 /* tp_hash */
-    0,                                                 /* tp_call */
+    PyLinearModule_forward,                            /* tp_call */
     0,                                                 /* tp_str */
     0,                                                 /* tp_getattro */
     0,                                                 /* tp_setattro */
@@ -48,9 +95,9 @@ static PyTypeObject PyLinearModuleType = {
     0,                               /* tp_weaklistoffset */
     0,                               /* tp_iter */
     0,                               /* tp_iternext */
-    0,                               /* tp_methods */
+    PyLinearModule_methods,          /* tp_methods */
     0,                               /* tp_members */
-    0,                               // PyModule_getsetters, /* tp_getset */
+    PyLinearModule_get_setters,      // PyModule_getsetters, /* tp_getset */
     &PyModuleType,                   /* tp_base */
     0,                               /* tp_dict */
     0,                               /* tp_descr_get */
