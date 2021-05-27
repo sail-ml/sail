@@ -188,3 +188,6 @@ dmypy.json
 cython_debug/
 
 
+
+bench.py
+

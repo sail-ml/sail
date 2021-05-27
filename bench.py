@@ -76,6 +76,3 @@ def benchmark_shapes(shapes, op, verbose=False, grad=False):
     print (np.mean(sails), np.mean(numpys))
  
 
-a = sail.random.uniform(10, 20, (20, 5))
-
-lin = sail.modules.Linear(5, 10, use_bias=True)
