@@ -38,33 +38,51 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     p2 = static_cast<decltype(p2)>(t2.get_data());
     p3 = static_cast<decltype(p3)>(out.get_data());
 
-    TensorShape s1 = t1.get_shape();
-    TensorShape s2 = t2.get_shape();
-    TensorShape sOut = out.get_shape();
+    TensorShape vec0_shape = t1.get_shape();
+    TensorShape vec1_shape = t2.get_shape();
 
-    if (omp) {
-#pragma omp parallel for
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[sOut.d_ptr]);
-#pragma omp critical
-            {
-                s1.next();
-                s2.next();
-                sOut.next();
-            }
+    if (vec0_shape.ndim() < t2.get_shape().ndim()) {
+        while (vec0_shape.shape.size() < vec1_shape.ndim()) {
+            vec0_shape.shape.insert(vec0_shape.shape.begin(), 1);
+            vec0_shape.strides.insert(vec0_shape.strides.begin(), 0);
         }
-
     } else {
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[sOut.d_ptr]);
-            s1.next();
-            s2.next();
-            sOut.next();
+        while (vec1_shape.shape.size() < vec0_shape.ndim()) {
+            vec1_shape.shape.insert(vec1_shape.shape.begin(), 1);
+            vec1_shape.strides.insert(vec1_shape.strides.begin(), 0);
         }
     }
+
+    TensorSize shape1 = vec0_shape.shape;
+    TensorSize shape2 = vec1_shape.shape;
+    for (int i = 0; i < vec0_shape.ndim(); i++) {
+        if (shape1[i] != shape2[i]) {
+            if (shape1[i] == 1) {
+                vec0_shape.strides[i] = 0;
+                vec0_shape.shape[i] = shape2[i];
+
+            } else if (shape2[i] == 1) {
+                vec1_shape.strides[i] = 0;
+                vec1_shape.shape[i] = shape1[i];
+            }
+        }
+    }
+
+    vec0_shape.recompute();
+    vec1_shape.recompute();
+
+    TensorShape s1 = vec0_shape;
+    TensorShape s2 = vec1_shape;
+    TensorShape sOut = out.get_shape();
+
+    for (i = 0; i < numel; i += 1) {
+        op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[i]);
+        s1.next();
+        s2.next();
+    }
+
     s1.reset();
     s2.reset();
-    sOut.reset();
 }
 
 template <typename... Ts, typename Op>
@@ -287,11 +305,10 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
     //               "Data types must be specified for each Tensor. ");
 
     // // get dtype to cast to
-    // if (broadcast) {
-    //     inner_elementwise::launch_binary_elementwise_broadcast<Ts...>(op,
-    //                                                                   args...);
-    //     return;
-    // }
+    if (broadcast) {
+        inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
+        return;
+    }
 
 #ifdef USE_AVX2
 
