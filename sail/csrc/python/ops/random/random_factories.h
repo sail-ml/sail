@@ -20,11 +20,11 @@
 RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
                                  PyObject* kwargs) {
     PyObject* shape = NULL;
-    int min = 0;
-    int max = 1;
+    double min = 0;
+    double max = 1;
     static char* kwlist[] = {"min", "max", "shape", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", kwlist, &min, &max,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddO", kwlist, &min, &max,
                                      &shape)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
@@ -59,11 +59,11 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
 RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
                                       PyObject* kwargs) {
     PyTensor* t1 = NULL;
-    int min = 0;
-    int max = 1;
+    double min = 0;
+    double max = 1;
     static char* kwlist[] = {"tensor", "min", "max", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|ii", kwlist, &t1, &min,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|dd", kwlist, &t1, &min,
                                      &max)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
@@ -83,11 +83,11 @@ RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
 RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
                                 PyObject* kwargs) {
     PyObject* shape = NULL;
-    int mean = 0;
-    int std = 1;
+    double mean = 0;
+    double std = 1;
     static char* kwlist[] = {"mean", "std", "shape", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", kwlist, &mean, &std,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddO", kwlist, &mean, &std,
                                      &shape)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
@@ -122,11 +122,11 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
 RETURN_OBJECT ops_random_normal_like(PyObject* self, PyObject* args,
                                      PyObject* kwargs) {
     PyTensor* t1 = NULL;
-    int mean = 0;
-    int std = 1;
+    double mean = 0;
+    double std = 1;
     static char* kwlist[] = {"tensor", "mean", "std", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|ii", kwlist, &t1, &mean,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|dd", kwlist, &t1, &mean,
                                      &std)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }

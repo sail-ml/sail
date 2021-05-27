@@ -36,7 +36,7 @@ bool must_broadcast(const Tensor& t1, const Tensor& t2) {
         }
         if (larger_shape.shape[i] != smaller_shape.shape[idx_2]) {
             if (larger_shape.shape[i] != 1 && smaller_shape.shape[idx_2] != 1) {
-                throw "shapes cannot be broadcasted together";
+                throw SailCError("shapes cannot be broadcasted together");
             } else {
                 bc = true;
             }
@@ -49,7 +49,7 @@ bool must_broadcast(const Tensor& t1, const Tensor& t2) {
 std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
     std::vector<long> merged;
     std::vector<long> larger_shape = (s1.size() > s2.size()) ? s1 : s2;
-    std::vector<long> smaller_shape = (s1.size() < s2.size()) ? s1 : s2;
+    std::vector<long> smaller_shape = (s1.size() > s2.size()) ? s2 : s1;
     int idx_2 = smaller_shape.size() - 1;
     for (int i = larger_shape.size() - 1; i >= 0; i--) {
         if (idx_2 < 0) {

@@ -1,6 +1,7 @@
 #include "../../src/Tensor.h"
 #include "../../src/tensor_shape.h"
 #include "../../src/autograd/autograd.h"
+#include "../../src/modules/modules.h"
 #include "../../src/dtypes.h"
 #include "../../src/ops/ops.h"
 
@@ -15,65 +16,9 @@
 #define MAX_VAL 320000
 
 int main() {
-    std::vector<int> g = {4};//, 2000, 3000, 4000, 5000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000};//, 16, 32, 64, 128, 256, 512, 1024, 2048};
-
-    // int a = 1000;
-    // void* b = &a;
-    // unsigned char c = *(unsigned char*)(b);
-    // void* d = (unsigned char*)(b);
-    // int e = *(int*)(d);
-    // std::cout << e << ", " << a << std::endl;
-    for (int z : g) {
-            int z_ = z * 3 * 2;
-            double x[z_];
-            double y[z_];
-            int ndim = 1;
-            Dtype dt = Dtype::sFloat64;
-            TensorSize st = {1};
-            TensorSize sh = {z, 3, 2};
-
-            sail::TensorShape sp = sail::TensorShape(sh);
-            sail::TensorShape sp2 = sail::TensorShape({3, z, 2});
-
-            for (int i = 0; i < z_; i++) {
-                x[i] = 2.21;
-                y[i] = 3.21;
-            }
-
-            x[1] = 10.1;
-            y[1] = -23.3;
-
-            void* xt = static_cast<void*>(x);
-            void* yt = static_cast<void*>(y);
-
-            // std::cout << xt << ", " << yt << std::endl;
-
-            sail::Tensor t1 = sail::from_data(xt, dt, sp);
-            sail::Tensor t2 = sail::from_data(yt, dt, sp2);
-
-            std::cout << sail::ops::tensordot(t1, t2, {0}, {1}) << std::endl;
-            // std::cout << t1 << std::endl;
-            // std::cout << sail::ops::transpose(t1) << std::endl;
-            // std::cout << t1 << std::endl;
-
-            // t1.requires_grad = true;
-            // t2.requires_grad = true;
-
-            // sail::Tensor t3 = sail::ops::multiply(t1, t2);
-            // sail::Tensor t4 = sail::ops::sum(t3);
-            // t4.backward();
-
-            // std::cout << t1.get_body_ref_count() << std::endl;
-            // std::cout << t2.get_body_ref_count() << std::endl;
-
-            // std::cout << t1.get_grad() << std::endl;
-            // std::cout << t2.get_grad() << std::endl;
-            // std::cout << t3.get_grad() << std::endl;
-            // std::cout << t4.get_grad() << std::endl;
     
-
-        
-    }
+    sail::modules::Linear a = sail::modules::Linear(1, 2, false);
+    
     return 0;
 }
 
