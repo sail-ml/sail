@@ -3,6 +3,7 @@
 #include "../../Tensor.h"
 #include "../../dtypes.h"
 #include "../../factories.h"
+#include "../../ops/ops.h"
 #include "../../tensor_shape.h"
 
 namespace sail {
@@ -19,5 +20,14 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = false)
         biases = zeros(TensorShape({output_features}), Dtype::sFloat64);
     }
 }
+
+Tensor Linear::forward(Tensor& input) {
+    Tensor mm_res = ops::matmul(input, weights);
+    if (use_bias) {
+        mm_res = mm_res + biases;
+    }
+    return mm_res;
+}
+
 }  // namespace modules
 }  // namespace sail

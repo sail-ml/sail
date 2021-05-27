@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include "../src/Tensor.h"
+#include "../src/dtypes.h"
 #include "py_tensor/py_tensor.h"
 
 // sail::Tensor getNumeric(PyObject* number) {
@@ -85,4 +86,11 @@
         } else {                                             \
             return NULL;                                     \
         }                                                    \
+    }
+
+#define GENERATE_FROM_TENSOR(pyobj, t)                          \
+    {                                                           \
+        pyobj->tensor = t;                                      \
+        pyobj->ndim = t.get_ndim();                             \
+        pyobj->dtype = get_np_type_numFromDtype(t.get_dtype()); \
     }

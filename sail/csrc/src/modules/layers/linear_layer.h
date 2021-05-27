@@ -1,11 +1,12 @@
 #pragma once
 #include "../../Tensor.h"
-#include "layer.h"
+#include "../module.h"
 
 namespace sail {
 namespace modules {
 
-class Linear : public Layer {
+class Linear : public Module {
+   public:
     Tensor weights;
     Tensor biases;
 
@@ -13,10 +14,9 @@ class Linear : public Layer {
     long output_features;
     bool use_bias;
 
-   public:
     Linear(long _input_features, long _output_features, bool _bias = false);
 
-    forward(Tensor& input);
+    Tensor forward(Tensor& input);
 };
 
 }  // namespace modules
