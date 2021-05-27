@@ -1,8 +1,10 @@
-# This is a basic workflow to help you get started with Actions
 
 name: CI
 
-on: [pull_request]
+on: 
+  pull_request:
+      branches: [master]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -35,7 +37,17 @@ jobs:
 
       - name: Build Package
         run: python setup.py install
+        
+      - name: push to website
+        run: |
+          cd docs
+          ls
+          make html
+          git init
+          git commit -m "update documentation (CI)"
+          git branch -M master
+          git remote add origin https://github.com/sail-ml/sail.github.io.git
+          git push -u origin master
       
       # - name: Test Package
       #   run: ./test.sh python
-
