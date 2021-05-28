@@ -38,13 +38,18 @@ jobs:
       - name: Build Package
         run: python setup.py install
         
-      - name: Deploy
+      - name: Deploy 1
+        run: |
+            cd docs
+            make html
+            cd ../
+      - name: Deploy 2
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'output'
+          source-directory: 'docs'
           destination-github-username: 'sail-ml'
           destination-repository-name: 'sail-documentation'
           user-email: tgsiegel@umd.edu
