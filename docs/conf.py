@@ -22,7 +22,7 @@ copyright = '2021, Tucker Siegel'
 author = 'Tucker Siegel'
 
 import sail
-print (sail.add.__doc__)
+print (sail.transpose.__doc__)
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -107,7 +107,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_theme = 'insegel'
 html_logo = "sail-logo.png"
-html_favicon = 'sail-favicon.png'
+html_favicon = 'sail-favicon.ico'
 
 
 

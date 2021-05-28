@@ -210,7 +210,7 @@ add_docstring(sail.reshape, descr)
 # FIND EXPAND_DIMS
 descr = r"""
 sail.expand_dims(x, axis) -> Tensor
-Return a view or copy of x with a dimension inserted at index ``axis``.
+Return a view or copy of x with a dimension inserted at index ``axis``
 
 Args:
     a (Tensor): A tensor
@@ -234,7 +234,7 @@ add_docstring(sail.expand_dims, descr)
 # FIND SQUEEZE
 descr = r"""
 sail.squeeze(x, axis) -> Tensor
-Return a view or copy of x with a dimension removed at index ``axis``.
+Return a view or copy of x with a dimension removed at index ``axis``
 The dimension size at index ``axis`` must be 1.
 
 Args:
@@ -259,7 +259,7 @@ add_docstring(sail.squeeze, descr)
 # FIND ROLLAXIS
 descr = r"""
 sail.rollaxis(x, axis, position=0) -> Tensor
-Return a view or copy of x with a dimension rolled from index ``axis`` to index ``position``.
+Return a view or copy of x with a dimension rolled from index ``axis`` to index ``position``
 
 Args:
     a (Tensor): A tensor
@@ -277,6 +277,27 @@ Examples:
 """
 
 add_docstring(sail.rollaxis, descr)
+
+# FIND TRANSPOSE
+descr = r"""
+sail.transpose(x, axes=None) -> Tensor
+Return a view or copy of x with dimensions reordered to match ``axes``
+
+Args:
+    a (Tensor): A tensor
+    axis (tuple of ints): New order of axes
+
+Notes:
+    Please reference :ref:`view-or-copy` to understand the view and copy semantics of mutation ops.
+
+Examples:
+    >>> x = sail.random.uniform(2, 4, (2, 3, 4))
+    >>> y = sail.transpose(x, (2, 0, 1))
+    >>> y.shape
+    (4, 2, 3)
+"""
+
+add_docstring(sail.transpose, descr)
 
 
 

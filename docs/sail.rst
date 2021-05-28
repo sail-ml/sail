@@ -9,10 +9,11 @@ Mutation Ops
     :toctree: generated
     :nosignatures:
 
-    reshape
     expand_dims
-    squeeze
+    reshape
     rollaxis
+    squeeze
+    transpose
 
 
 Math Ops
@@ -26,9 +27,9 @@ Elementwise
     :nosignatures:
 
     add
-    subtract
     divide
     multiply
+    subtract
 
 Linear Algebra
 ~~~~~~~~~~~~~~~~~~~~~~
