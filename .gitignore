@@ -191,3 +191,5 @@ cython_debug/
 
 test.py
 
+docs/generated
+!docs/Makefile
