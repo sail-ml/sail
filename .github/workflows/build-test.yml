@@ -49,7 +49,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'docs'
+          source-directory: 'docs/_build/html'
           destination-github-username: 'sail-ml'
           destination-repository-name: 'sail-documentation'
           user-email: tgsiegel@umd.edu
