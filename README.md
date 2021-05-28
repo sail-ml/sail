@@ -9,6 +9,8 @@ SAIL's api is based on influences from [PyTorch](https://github.com/pytorch/pyto
 
 SAIL only works on linux for now.
 
+Click [here](https://sail-ml.github.io/) to view the documentation.
+
 <!-- toc -->
 - [Roadmap](#roadmap)
 - [Installation](#installation)
