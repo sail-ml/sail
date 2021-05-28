@@ -38,6 +38,11 @@ jobs:
       - name: Build Package
         run: python setup.py install
         
+      - name: build docs
+        run: |
+          cd docs
+          make html
+
       - name: Deploy
         uses: cpina/github-action-push-to-another-repository@main
         env:
