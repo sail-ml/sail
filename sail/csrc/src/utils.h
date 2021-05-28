@@ -1,6 +1,7 @@
 #pragma once
 
 #include <malloc.h>
+#include <stdlib.h>
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -25,7 +26,12 @@ inline void* _malloc_align(long numel, long alignment, long dtype_size) {
     if (size % alignment != 0) {
         size = roundUp(size, alignment);
     }
-    return aligned_alloc(alignment, size);
+    #if defined(_ISOC11_SOURCE)
+        return aligned_alloc(alignment, size);
+    #else
+        void* pv = memalign(alignment, size);
+        return pv;
+    #endif
 }
 
 inline void* _realloc_align(void* src, long numel, long alignment,

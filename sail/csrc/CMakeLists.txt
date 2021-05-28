@@ -20,14 +20,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -march=nativ
 
 add_subdirectory(src)
 find_package(PythonLibs REQUIRED)
-find_package (Python3 COMPONENTS Interpreter NumPy)
+# find_package(Python3 REQUIRED COMPONENTS NumPy)
 include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${PYTHON3_NumPy_INCLUDE_DIR})
+
+
 
 include(FindBLAS)
 
 add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
 target_link_libraries(sail_c PRIVATE src)
-target_link_libraries(sail_c PUBLIC Python3::NumPy)
+# target_link_libraries(sail_c PUBLIC Python3::NumPy)
 TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
 

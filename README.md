@@ -1,9 +1,7 @@
 SAIL - **S**imple **AI** **L**ibrary
 
 
-SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Currently in development, changes are being released daily with new features and bug fixes.
-
-SAIL is built on top of a c++ library, allowing for high speed computation, and eventually GPU support (coming at some point).
+SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.
 
 SAIL's api is based on influences from [PyTorch](https://github.com/pytorch/pytorch), [Tensorflow](https://github.com/tensorflow/tensorflow), and [NumPy](https://github.com/numpy/numpy). Implementation of different features and modules are influenced by [PyTorch](https://github.com/pytorch/pytorch), [NumPy](https://github.com/numpy/numpy), and [Chainer](https://github.com/chainer/chainer)
 

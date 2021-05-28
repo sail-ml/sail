@@ -46,7 +46,12 @@ TensorBody::pointer TensorBody::create_owner() {
 TensorBody::~TensorBody() {
     if (data != 0) {
         if (!view) {
-            std::free(data);
+            //  #if defined(_ISOC11_SOURCE)
+                std::free(data);
+            // #else
+                // _aligned_free(data);
+                // std::free(data);
+            // #endif
         }
         delete shape;
         if (_has_grad) {
