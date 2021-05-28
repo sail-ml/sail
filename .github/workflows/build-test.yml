@@ -42,7 +42,9 @@ jobs:
         run: |
             cd docs
             make html
-            cd ../
+            cd _build/html/
+            touch .nojekyll
+            cd ../../../
       - name: Deploy 2
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
