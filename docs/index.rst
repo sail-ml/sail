@@ -8,6 +8,13 @@ SAIL (Simple AI Library) is a tensor based deep learning library built for speed
 .. currentmodule:: sail
 
 .. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: Notes
+
+   details/*
+
+.. toctree::
    :maxdepth: 1
    :caption: Python:
    

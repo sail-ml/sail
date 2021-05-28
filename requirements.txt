@@ -4,3 +4,4 @@ pytest
 cpufeature
 sphinx
 karma_sphinx_theme
+insegel

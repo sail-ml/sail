@@ -22,7 +22,7 @@ copyright = '2021, Tucker Siegel'
 author = 'Tucker Siegel'
 
 import sail
-print (sail.add.__doc__)
+print (sail.transpose.__doc__)
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -105,7 +105,11 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'karma_sphinx_theme'
+html_theme = 'insegel'
+html_logo = "sail-logo.png"
+html_favicon = 'sail-favicon.ico'
+
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
