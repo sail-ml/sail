@@ -22,7 +22,9 @@ copyright = '2021, Tucker Siegel'
 author = 'Tucker Siegel'
 
 import sail
-print (sail.transpose.__doc__)
+from sail import modules
+print (modules)
+print (dir(modules))
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -53,10 +55,15 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage', 
               'sphinx.ext.doctest', 
               "sphinx.ext.viewcode",
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              'sphinx.ext.autosectionlabel',
+              ]
 
 autosummary_generate = True
 numpydoc_show_class_members = False
+
+autosectionlabel_prefix_document = True
+
 
 from sphinx.writers import html, html5
 
@@ -105,7 +112,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'insegel'
+html_theme = "pydata_sphinx_theme"
 html_logo = "sail-logo.png"
 html_favicon = 'sail-favicon.ico'
 

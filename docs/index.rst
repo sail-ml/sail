@@ -3,19 +3,13 @@
 SAIL Documentation
 ================================
 
-SAIL (Simple AI Library) is a tensor based deep learning library built for speed with an optimized C++ base.
-
-.. currentmodule:: sail
+SAIL is a python package designed for speed and simplicity when developing and running deep learning models. 
+Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.
 
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: Notes
-
-   details/*
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Python:
    
-   sail
+   details/index
+   api-reference
+

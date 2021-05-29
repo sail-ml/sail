@@ -12,8 +12,8 @@ on a view. That will return a copy of the tensor, which has been modified by the
 
 So to recap:
 
-source_tensor -> mutation -> returns view
-source_tensor -> mutation -> mutation -> returns copy 
-source_tensor (view) -> mutation -> returns copy
+* source_tensor -> mutation -> returns view
+* source_tensor -> mutation -> mutation -> returns copy 
+* source_tensor (view) -> mutation -> returns copy
 
 

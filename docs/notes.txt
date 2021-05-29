@@ -1,0 +1,15 @@
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: Notes
+   :hidden:
+
+   details/*
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Python:
+   :hidden:
+   
+   sail
+   tensor

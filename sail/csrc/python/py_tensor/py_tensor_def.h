@@ -57,27 +57,26 @@ RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 static PyMemberDef PyTensor_members[] = {
-    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, "dimensions"},
+    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, NULL},
     // {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
     //  "requires_grad"},
     {NULL}};
 
 static PyMethodDef PyTensor_methods[] = {
-    {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS,
-     "Return the name, combining the first and last name"},
-    {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, "Casts the tensor"},
+    {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS},
+    {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, NULL},
     {"get_grad", (PyCFunction)PyTensor_get_grad, METH_VARARGS,
-     "PyTensor_get_grad"},
+     NULL},
     {"backward", (PyCFunction)PyTensor_backward, METH_VARARGS,
-     "PyTensor_backward"},
+     NULL},
     {NULL} /* Sentinel */
 };
 
 static PyGetSetDef PyTensor_get_setters[] = {
-    {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, "shape"},
-    {"grad", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, "grad"},
+    {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, NULL},
+    {"grad", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, NULL},
     {"requires_grad", (getter)PyTensor_get_requires_grad,
-     (setter)PyTensor_set_requires_grad, "requires_grad"},
+     (setter)PyTensor_set_requires_grad, NULL},
     {NULL} /* Sentinel */
 };
 

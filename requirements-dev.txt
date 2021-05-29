@@ -2,5 +2,4 @@ wheel
 pytest
 cpufeature
 sphinx
-karma_sphinx_theme
-insegel
+pydata_sphinx_theme
