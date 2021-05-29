@@ -2,4 +2,5 @@
 
 set -ex
 
-yum -y install boost-devel
+apt-get install -y install libboost-all-dev
+# yum -y install boost-devel
