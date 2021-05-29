@@ -21,6 +21,9 @@ jobs:
       - name: Update apt
         run: 'sudo apt-get update'
 
+      - name: Install yum
+        run: 'sudo apt-get install yum'
+
       - name: Setup install files
         run: 'chmod +x builder/install.sh'
 
