@@ -44,7 +44,7 @@ jobs:
         run: |
             cd docs
             pip install bs4
-            ./make_html
+            ./make_html.sh
             cd _build/html/
             touch .nojekyll
             cd ../../../
