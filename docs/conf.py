@@ -53,10 +53,15 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage', 
               'sphinx.ext.doctest', 
               "sphinx.ext.viewcode",
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              'sphinx.ext.autosectionlabel',
+              ]
 
 autosummary_generate = True
 numpydoc_show_class_members = False
+
+autosectionlabel_prefix_document = True
+
 
 from sphinx.writers import html, html5
 
@@ -97,7 +102,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', "details/*"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -105,7 +110,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'insegel'
+html_theme = "pydata_sphinx_theme"
 html_logo = "sail-logo.png"
 html_favicon = 'sail-favicon.ico'
 

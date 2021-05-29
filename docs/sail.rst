@@ -1,4 +1,4 @@
-SAIL
+sail
 =======
 
 .. currentmodule:: sail
