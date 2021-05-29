@@ -1,5 +1,5 @@
 SAIL Reference
-===============
+====================
 
 .. toctree::
    :maxdepth: 1
@@ -7,3 +7,4 @@ SAIL Reference
    
    sail
    tensor
+   modules
