@@ -22,10 +22,10 @@ jobs:
         run: 'sudo apt-get update'
 
       - name: Setup install files
-        run: 'chmod +x builder/install.sh'
+        run: 'chmod +x .github/workflow_tools/install.sh'
 
       - name: Run install files
-        run: 'sudo ./builder/install.sh'
+        run: 'sudo ./.github/workflow_tools/install.sh'
 
       - name: Setup Python
         uses: actions/setup-python@v2.2.2

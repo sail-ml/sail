@@ -129,6 +129,8 @@ setup(
     author_email='tgsiegel@umd.edu',
     description='SAIL: Simple AI Library',
     long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
+    url="https://sailml.org",
+    keywords='sail sail-ml machine learning',
     packages = ["sail", "sail.csrc"],#setuptools.find_packages(),
     ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
     cmdclass={'build_ext': CMakeBuild},
