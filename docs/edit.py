@@ -10,3 +10,9 @@ try:
         f_output.write(soup.prettify("utf-8")) 
 except:
     pass
+
+from shutil import copyfile
+
+
+copyfile("sail-logo16.png", "_build/html/_static/img/favicon-16x16.png")
+copyfile("sail-logo32.png", "_build/html/_static/img/favicon-32x32.png")
