@@ -43,7 +43,8 @@ jobs:
       - name: Deploy 1
         run: |
             cd docs
-            make html
+            pip install bs4
+            ./make_html
             cd _build/html/
             touch .nojekyll
             cd ../../../
