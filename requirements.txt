@@ -1,7 +1,1 @@
-wheel
-numpy
-pytest
-cpufeature
-sphinx
-karma_sphinx_theme
-insegel
+numpy>=1.19.5

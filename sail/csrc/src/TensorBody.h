@@ -1,10 +1,11 @@
 #pragma once
 #include <immintrin.h>
-#include <boost/atomic.hpp>
+// #include <boost/atomic.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <atomic>
 #include "dtypes.h"
 #include "tensor_shape.h"
 #include "utils.h"
@@ -19,15 +20,16 @@ class TensorBody {
    public:
     typedef boost::intrusive_ptr<TensorBody> pointer;
     // TensorBody() : refcount_(0) {}
-    mutable boost::atomic<int> refcount_;
+    mutable std::atomic<int> refcount_;
+    // mutable boost::atomic<int> refcount_;
 
    private:
     friend void intrusive_ptr_add_ref(const TensorBody* x) {
-        auto res = x->refcount_.fetch_add(1, boost::memory_order_relaxed);
+        auto res = x->refcount_.fetch_add(1, std::memory_order_relaxed);
     }
     friend void intrusive_ptr_release(const TensorBody* x) {
-        if (x->refcount_.fetch_sub(1, boost::memory_order_release) == 1) {
-            boost::atomic_thread_fence(boost::memory_order_acquire);
+        if (x->refcount_.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
             delete x;
         }
     }
@@ -72,7 +74,7 @@ class TensorBody {
 
     inline int get_ref_count() { return (int)refcount_; }
 
-    void force_incref() { refcount_.fetch_add(1, boost::memory_order_relaxed); }
+    void force_incref() { refcount_.fetch_add(1, std::memory_order_relaxed); }
 
     void set_shape(const TensorShape& s) {
         delete shape;

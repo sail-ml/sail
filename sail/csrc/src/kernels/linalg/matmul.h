@@ -1,7 +1,7 @@
 #pragma once
 #define OMP_MIN_VALUE 512  // should probably find a real number ot use
 
-#include <cblas.h>
+// #include <cblas.h>
 #include <immintrin.h>
 #include <iostream>
 

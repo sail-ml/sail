@@ -11,11 +11,16 @@ import cpufeature
 import subprocess
 import glob, pathlib
 from shutil import copyfile
+import numpy as np 
 
 
 from distutils.version import LooseVersion
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+from distutils.sysconfig import get_python_inc
+import distutils.sysconfig as sysconfig
+
+REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
 build_path = ""
 
@@ -45,14 +50,22 @@ class CMakeBuild(build_ext):
         global build_path
         build_path = extdir.parent.absolute()
 
+
         # example of cmake args
         config = 'Debug' if self.debug else 'Release'
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
             '-DCMAKE_BUILD_TYPE=' + config,
-            '-DCMAKE_C_COMPILER=/usr/bin/gcc',
-            '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
+            '-DPYTHON_INCLUDE_DIR=' + get_python_inc(),
+            '-DPYTHON_LIBRARY=' + sysconfig.get_config_var('LIBDIR'),
+            '-DPYTHON_EXECUTABLE=' + sys.executable + "P",
+            '-DPYTHON_NUMPY_INCLUDE_DIR=' + np.get_include()
+            # '-DCMAKE_C_COMPILER=/usr/bin/gcc',
+            # '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
         ]
+
+        print (cmake_args)
+
         print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"]):
             print ("Compiling Sail with AVX2 Support")
@@ -68,19 +81,26 @@ class CMakeBuild(build_ext):
         ]
 
         os.chdir(str(build_temp))
+        print ("executing build")
         self.spawn(['cmake', str(cwd)] + cmake_args)
         if not self.dry_run:
             self.spawn(['cmake', '--build', '.'] + build_args)
         # Troubleshooting: if fail on line above then delete all possible 
         # temporary CMake files including "CMakeCache.txt" in top level dir.
         os.chdir(str(cwd))
+
+        copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
+
         
 files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
 files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
 files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
 files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
 
-os.system("clang-format -i " + " ".join(files))
+# try:
+#     os.system("clang-format -i " + " ".join(files))
+# except:
+#     pass
 src_files = glob.glob("**/*.src", recursive=True)
 print (src_files)
 os.system("python template_converter.py " + " ".join(src_files))
@@ -103,26 +123,20 @@ print (setuptools.find_packages())
 # exit()
 
 setup(
-    name='sail',
-    version='0.0.1a',
-    # author='Benjamin Jack',
-    # author_email='benjamin.r.jack@gmail.com',
-    # description='A hybrid Python/C++ test project',
-    # long_description='',
-    # add extension module
+    name='sail-ml',
+    version='0.0.1a1',
+    author='Tucker Siegel',
+    author_email='tgsiegel@umd.edu',
+    description='SAIL: Simple AI Library',
+    long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
     packages = ["sail", "sail.csrc"],#setuptools.find_packages(),
-    # ext_modules=[CMakeExtension('DolphinTrading/indicator_bindings')],
-    # packages=["sail", "sail.csrc"],
-    # package_data={"sail": [os.path.abspath("sail/csrc/libsail_c.so")]},
     ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-    # add custom build_ext command
-    cmdclass=dict(build_ext=CMakeBuild),
-    # zip_safe=False,
+    cmdclass={'build_ext': CMakeBuild},
+    install_requires=REQUIREMENTS
+    # cmdclass=dict(build_ext=CMakeBuild),
 )
 
 for f in created_names:
     os.remove(f)
     print (f)
 
-
-copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")

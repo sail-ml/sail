@@ -193,3 +193,4 @@ test.py
 
 docs/generated
 !docs/Makefile
+wheelhouse/

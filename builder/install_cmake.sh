@@ -2,7 +2,7 @@
 
 set -ex
 
-CMAKE_VERSION=3.14.0
+CMAKE_VERSION=3.19.8
 
 # Turn 3.6.3 into v3.6
 path=$(echo "${CMAKE_VERSION}" | sed -e 's/\([0-9].[0-9]\+\).*/v\1/')
