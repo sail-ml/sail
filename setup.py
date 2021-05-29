@@ -20,6 +20,8 @@ from setuptools.command.build_ext import build_ext
 from distutils.sysconfig import get_python_inc
 import distutils.sysconfig as sysconfig
 
+REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
+
 build_path = ""
 
 class CMakeExtension(Extension):
@@ -48,6 +50,7 @@ class CMakeBuild(build_ext):
         global build_path
         build_path = extdir.parent.absolute()
 
+
         # example of cmake args
         config = 'Debug' if self.debug else 'Release'
         cmake_args = [
@@ -55,12 +58,13 @@ class CMakeBuild(build_ext):
             '-DCMAKE_BUILD_TYPE=' + config,
             '-DPYTHON_INCLUDE_DIR=' + get_python_inc(),
             '-DPYTHON_LIBRARY=' + sysconfig.get_config_var('LIBDIR'),
-            '-DPYTHON_EXECUTABLE=' + sysconfig.get_config_var('LIBDIR').replace("lib", "bin/python"),
-            '-DPYTHON3_NumPy_INCLUDE_DIR=' + np.get_include()
+            '-DPYTHON_EXECUTABLE=' + sys.executable + "P",
+            '-DPYTHON_NUMPY_INCLUDE_DIR=' + np.get_include()
             # '-DCMAKE_C_COMPILER=/usr/bin/gcc',
             # '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
         ]
 
+        print (cmake_args)
 
         print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"]):
@@ -120,14 +124,15 @@ print (setuptools.find_packages())
 
 setup(
     name='sail-ml',
-    version='0.0.1a',
+    version='0.0.1a1',
     author='Tucker Siegel',
     author_email='tgsiegel@umd.edu',
     description='SAIL: Simple AI Library',
     long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
     packages = ["sail", "sail.csrc"],#setuptools.find_packages(),
     ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-    cmdclass={'build_ext': CMakeBuild}
+    cmdclass={'build_ext': CMakeBuild},
+    install_requires=REQUIREMENTS
     # cmdclass=dict(build_ext=CMakeBuild),
 )
 
