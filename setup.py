@@ -89,7 +89,12 @@ class CMakeBuild(build_ext):
         # temporary CMake files including "CMakeCache.txt" in top level dir.
         os.chdir(str(cwd))
 
+        print (build_path)
+
         copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
+        copyfile("%s/libmodules.so" % build_path, "sail/modules/libmodules.so")
+
+        copyfile("%s/libmodules.so" % build_path, "%s/../modules/libmodules.so" % build_path)
 
         
 files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
@@ -97,10 +102,6 @@ files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
 files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
 files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
 
-# try:
-#     os.system("clang-format -i " + " ".join(files))
-# except:
-#     pass
 src_files = glob.glob("**/*.src", recursive=True)
 print (src_files)
 os.system("python template_converter.py " + " ".join(src_files))
@@ -110,17 +111,6 @@ for n in src_files:
     newname = base
     created_names.append(newname)
 
-# print (setuptools.find_packages(
-#         where = './',
-#     ))
-
-print (setuptools.find_packages())
-print (setuptools.find_packages())
-print (setuptools.find_packages())
-print (setuptools.find_packages())
-print (setuptools.find_packages())
-
-# exit()
 
 setup(
     name='sail-ml',
@@ -131,7 +121,11 @@ setup(
     long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
     url="https://sailml.org",
     keywords='sail sail-ml machine learning',
-    packages = ["sail", "sail.csrc"],#setuptools.find_packages(),
+    packages = [
+        "sail", 
+        "sail.csrc",
+        "sail.modules"
+        ],#setuptools.find_packages(),
     ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
     cmdclass={'build_ext': CMakeBuild},
     install_requires=REQUIREMENTS

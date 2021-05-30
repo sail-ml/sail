@@ -44,3 +44,10 @@ PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     self = (PyModule *)type->tp_alloc(type, 0);
     return (PyObject *)self;
 }
+
+/////////////////////////////////////////
+
+RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds) {
+    PyErr_SetString(PyExc_NotImplementedError, "");     
+    return NULL;     
+}

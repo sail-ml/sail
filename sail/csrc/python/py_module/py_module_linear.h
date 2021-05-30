@@ -54,9 +54,9 @@ static int PyLinearModule_set_bias(PyModule *self, PyTensor *t, void *closure) {
 
 static PyGetSetDef PyLinearModule_get_setters[] = {
     {"weights", (getter)PyLinearModule_get_weights,
-     (setter)PyLinearModule_set_weights, "weights"},
+     (setter)PyLinearModule_set_weights, NULL},
     {"bias", (getter)PyLinearModule_get_bias, (setter)PyLinearModule_set_bias,
-     "bias"},
+     NULL},
     {NULL} /* Sentinel */
 };
 
@@ -77,7 +77,7 @@ PyLinearModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
 
 static PyMethodDef PyLinearModule_methods[] = {
     {"forward", (PyCFunction)PyLinearModule_forward,
-     METH_VARARGS | METH_KEYWORDS, "forward"},
+     METH_VARARGS | METH_KEYWORDS, NULL},
     {NULL} /* Sentinel */
 };
 
@@ -102,7 +102,7 @@ static PyTypeObject PyLinearModuleType = {
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
-    "Custom objects",                /* tp_doc */
+    NULL,                /* tp_doc */
     (traverseproc)PyModule_traverse, /* tp_traverse */
     (inquiry)PyModule_clear,         /* tp_clear */
     0,                               /* tp_richcompare */

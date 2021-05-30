@@ -109,7 +109,7 @@ RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure) {
     long x = static_cast<long>(self->ndim);
     return PyLong_FromLong(x);
 }
-PyObject *inner_numpy(sail::Tensor &tensor) {
+inline PyObject *inner_numpy(sail::Tensor &tensor) {
     int ndims = tensor.get_ndim();
     long int *shape = tensor.get_shape_ptr();
 

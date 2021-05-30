@@ -32,13 +32,20 @@ set(SAIL_PYTHON_INCLUDE_DIRS
 
 include(FindBLAS)
 
-add_library(sail_c MODULE ${PYTHON_BIND_HEADERS} ${PYTHON_BIND_FILES})
+
+# BASE SAIL PACKAGE
+add_library(sail_c MODULE "python/sail_def.cpp" ${PYTHON_BIND_HEADERS})
 target_link_libraries(sail_c PRIVATE src)
-# target_link_libraries(sail_c PUBLIC Python3::NumPy)
-# target_link_libraries(sail_c PUBLIC Python3::NumPy)
 target_include_directories(sail_c PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
+
+# MODULES
+add_library(modules MODULE "python/module_def.cpp" ${PYTHON_BIND_HEADERS})
+target_link_libraries(modules PRIVATE src)
+target_include_directories(modules PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES( modules LINK_PUBLIC ${Boost_LIBRARIES} )
+target_include_directories(modules PRIVATE "libs/xsimd/include")
 
 
 # if (BLAS_FOUND)
