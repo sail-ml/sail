@@ -134,8 +134,7 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
     new_shape.push_back(t1.get_shape().shape[0]);
     new_shape.push_back(t2.get_shape().shape[1]);
     TensorShape s = TensorShape(new_shape);
-    Tensor empty_tensor =
-        empty(t1.get_ndim(), t1.get_dtype(), s);
+    Tensor empty_tensor = empty(t1.get_ndim(), t1.get_dtype(), s);
 
     DotTTKernel().execute(t1, t2, empty_tensor);
 

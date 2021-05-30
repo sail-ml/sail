@@ -3,9 +3,9 @@
 #include <iostream>
 
 #include "../../Tensor.h"
+#include "../../autograd/autograd.h"
 #include "../../dtypes.h"
 #include "../../kernels/kernel.h"
-#include "../../autograd/autograd.h"
 #include "pow.h"
 #include "tools.h"
 

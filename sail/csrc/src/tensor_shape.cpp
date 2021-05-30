@@ -67,15 +67,15 @@ int TensorShape::next() {
     if (shape.size() == 1) {
         d_ptr += strides[0];
         coordinates[0]++;
-        } else if (shape.size() == 2) {
-            if (coordinates[1] < shape_m1[1]) {
-                coordinates[1]++;
-                d_ptr += strides[1];
-            } else {
-                coordinates[1] = 0;
-                coordinates[0]++;
-                d_ptr += strides[0] - back_strides[1];
-            }
+    } else if (shape.size() == 2) {
+        if (coordinates[1] < shape_m1[1]) {
+            coordinates[1]++;
+            d_ptr += strides[1];
+        } else {
+            coordinates[1] = 0;
+            coordinates[0]++;
+            d_ptr += strides[0] - back_strides[1];
+        }
     } else {
         for (i = shape.size() - 1; i >= 0; i--) {
             if (coordinates[i] < shape_m1[i]) {

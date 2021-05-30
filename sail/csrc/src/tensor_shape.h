@@ -8,6 +8,7 @@ namespace sail {
 using LongVec = std::vector<long>;
 class TensorShape {
    public:
+   int jump = 1;
     LongVec shape;
     LongVec strides;
     LongVec shape_m1;

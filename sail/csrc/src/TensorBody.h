@@ -1,11 +1,11 @@
 #pragma once
 #include <immintrin.h>
 // #include <boost/atomic.hpp>
+#include <atomic>
 #include <boost/intrusive_ptr.hpp>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <atomic>
 #include "dtypes.h"
 #include "tensor_shape.h"
 #include "utils.h"

@@ -102,7 +102,7 @@ static PyTypeObject PyLinearModuleType = {
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
-    NULL,                /* tp_doc */
+    NULL,                            /* tp_doc */
     (traverseproc)PyModule_traverse, /* tp_traverse */
     (inquiry)PyModule_clear,         /* tp_clear */
     0,                               /* tp_richcompare */

@@ -12,7 +12,13 @@ if (USE_AVX2)
     ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
 endif(USE_AVX2)
 
+List(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
+find_package(MKL)
+
+if (MKL_FOUND)
+ADD_DEFINITIONS(-DMKL_BLAS)
+endif()
 # find_package(Doxygen)
 
 # if (DOXYGEN_FOUND)

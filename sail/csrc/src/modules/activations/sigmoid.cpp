@@ -9,9 +9,7 @@
 namespace sail {
 namespace modules {
 
-Tensor Sigmoid::forward(Tensor& input) {
-    return ops::sigmoid(input);
-}
+Tensor Sigmoid::forward(Tensor& input) { return ops::sigmoid(input); }
 
 }  // namespace modules
 }  // namespace sail

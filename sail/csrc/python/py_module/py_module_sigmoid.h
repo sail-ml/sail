@@ -8,7 +8,7 @@
 using Sigmoid = sail::modules::Sigmoid;
 
 static int PySigmoidModule_init(PyModule *self, PyObject *args,
-                               PyObject *kwargs) {
+                                PyObject *kwargs) {
     self->module = (Module *)(new Sigmoid());
     return 0;
 }
@@ -48,29 +48,29 @@ static PyTypeObject PySigmoidModuleType = {
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */
     0,                                                 /* tp_hash */
-    PySigmoidModule_forward,                            /* tp_call */
+    PySigmoidModule_forward,                           /* tp_call */
     0,                                                 /* tp_str */
     0,                                                 /* tp_getattro */
     0,                                                 /* tp_setattro */
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
-    NULL,                /* tp_doc */
+    NULL,                            /* tp_doc */
     (traverseproc)PyModule_traverse, /* tp_traverse */
     (inquiry)PyModule_clear,         /* tp_clear */
     0,                               /* tp_richcompare */
     0,                               /* tp_weaklistoffset */
     0,                               /* tp_iter */
     0,                               /* tp_iternext */
-    0,          /* tp_methods */
+    0,                               /* tp_methods */
     0,                               /* tp_members */
-    0,      // PyModule_getsetters, /* tp_getset */
+    0,                               // PyModule_getsetters, /* tp_getset */
     &PyModuleType,                   /* tp_base */
     0,                               /* tp_dict */
     0,                               /* tp_descr_get */
     0,                               /* tp_descr_set */
     0,                               /* tp_dictoffset */
-    (initproc)PySigmoidModule_init,   /* tp_init */
+    (initproc)PySigmoidModule_init,  /* tp_init */
     0,                               /* tp_alloc */
     PyModule_new,                    /* tp_new */
     PyObject_GC_Del                  /* tp_free */

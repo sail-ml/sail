@@ -38,8 +38,8 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
 
         return empty_tensor;
     }
-    
-    Tensor empty_tensor; //= empty_like(tensor1);
+
+    Tensor empty_tensor;  //= empty_like(tensor1);
     Tensor t1, t2;
 
     Dtype dt = tensor1.get_dtype();

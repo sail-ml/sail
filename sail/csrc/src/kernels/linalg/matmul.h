@@ -9,6 +9,10 @@
 #include "../base.h"
 #include "../unary.h"
 
+// #ifdef USE_MKL
+#include <mkl.h>
+// #endif
+
 namespace sail {
 
 class DotTTKernel : public Kernel {
@@ -24,37 +28,31 @@ class DotTTKernel : public Kernel {
 
             // std::cout << (decltype(pt)::GetName() == "float64") << std::endl;
 
-            // if (name == "float64") {
-            //     using T = double;
-            //     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N,
-            //     K,
-            //                 1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
-            //                 (T*)out_tensor.get_data(), N);
-            //     // } else if (name == "float32") {
-            //     //     using T = float;
-            //     //     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-            //     // M,
-            //     //     N, K,
-            //     //                 1, (T*)t1.get_data(), K,
-            //     // (T*)t2.get_data(),
-            //     //                 N, 1, (T*)out_tensor.get_data(), N); //
-            //     // not
-            //     //                 sure why this doesnt work
-            // } else {
-            using T = typename decltype(pt)::type;
-            T* matA = (T*)t1.get_data();
-            T* matB = (T*)t2.get_data();
-            T* matC = (T*)out_tensor.get_data();
+            if (name == "float64") {
+                using T = double;
+                cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
+                            (T*)out_tensor.get_data(), N);
+            } else if (name == "float32") {
+                using T = float;
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
+                            (T*)out_tensor.get_data(), N);  //
+            } else {
+                using T = typename decltype(pt)::type;
+                T* matA = (T*)t1.get_data();
+                T* matB = (T*)t2.get_data();
+                T* matC = (T*)out_tensor.get_data();
 
-            for (int i = 0; i < M; i++) {
-                for (int j = 0; j < N; j++) {
-                    T sum = 0.0;
-                    for (int k = 0; k < K; k++)
-                        sum = sum + matA[i * K + k] * matB[k * N + j];
-                    matC[i * N + j] = sum;
+                for (int i = 0; i < M; i++) {
+                    for (int j = 0; j < N; j++) {
+                        T sum = 0.0;
+                        for (int k = 0; k < K; k++)
+                            sum = sum + matA[i * K + k] * matB[k * N + j];
+                        matC[i * N + j] = sum;
+                    }
                 }
             }
-            // }
         });
     }
 };  // namespace sail

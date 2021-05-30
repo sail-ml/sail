@@ -9,5 +9,5 @@
 #include "transformations/squeeze.h"
 #include "transformations/transpose.h"
 
-#include "math/math.h"
 #include "activation/sigmoid.h"
+#include "math/math.h"

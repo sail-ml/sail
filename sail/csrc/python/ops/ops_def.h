@@ -4,11 +4,11 @@
 #include "docstring.h"
 #include "elementwise.h"
 #include "linalg/linalg.h"
+#include "math/power.h"
 #include "random/random_factories.h"
 #include "reduction.h"
 #include "transformations/rollaxis.h"
 #include "transformations/transpose.h"
-#include "math/power.h"
 
 static PyMethodDef OpsMethods[] = {
     {"add", (PyCFunction)ops_add, METH_VARARGS, NULL},
@@ -18,10 +18,8 @@ static PyMethodDef OpsMethods[] = {
     {"matmul", (PyCFunction)ops_matmul, METH_VARARGS, NULL},
     {"tensordot", (PyCFunction)ops_tensordot, METH_VARARGS | METH_KEYWORDS,
      NULL},
-    {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS,
-     NULL},
-    {"exp", (PyCFunction)ops_exp, METH_VARARGS | METH_KEYWORDS,
-     NULL},
+    {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"exp", (PyCFunction)ops_exp, METH_VARARGS | METH_KEYWORDS, NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,

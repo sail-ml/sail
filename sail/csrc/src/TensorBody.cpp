@@ -47,10 +47,10 @@ TensorBody::~TensorBody() {
     if (data != 0) {
         if (!view) {
             //  #if defined(_ISOC11_SOURCE)
-                std::free(data);
+            std::free(data);
             // #else
-                // _aligned_free(data);
-                // std::free(data);
+            // _aligned_free(data);
+            // std::free(data);
             // #endif
         }
         delete shape;

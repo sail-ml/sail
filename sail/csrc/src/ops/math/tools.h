@@ -7,7 +7,6 @@
 
 namespace sail {
 
-
 inline bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     TensorSize shape1 = t1.get_shape().shape;
     TensorSize shape2 = t2.get_shape().shape;
@@ -40,7 +39,8 @@ inline bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     return bc;
 }
 
-inline std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2) {
+inline std::vector<long> merge_shapes(std::vector<long> s1,
+                                      std::vector<long> s2) {
     std::vector<long> merged;
     std::vector<long> larger_shape = (s1.size() > s2.size()) ? s1 : s2;
     std::vector<long> smaller_shape = (s1.size() > s2.size()) ? s2 : s1;
@@ -62,4 +62,4 @@ inline std::vector<long> merge_shapes(std::vector<long> s1, std::vector<long> s2
     std::reverse(merged.begin(), merged.end());
     return merged;
 }
-}
+}  // namespace sail

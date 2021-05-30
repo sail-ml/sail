@@ -16,7 +16,6 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "modules",
                              "Example module that creates an extension type.",
                              -1, 0};
 
-
 PyMODINIT_FUNC PyInit_libmodules(void) {
     import_array();
     PyObject* m;
@@ -25,7 +24,6 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
     if (PyType_Ready(&PySigmoidModuleType) < 0) return NULL;
     if (PyType_Ready(&PyTensorType) < 0) return NULL;
-
 
     m = PyModule_Create(&module);
     if (m == NULL) return NULL;

@@ -47,7 +47,6 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     s2.recompute();
 
     int numel = sOut.numel();
-    
 
     for (i = 0; i < numel; i += 1) {
         op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[i]);
@@ -299,7 +298,7 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
 
 template <typename... Ts, typename Op>
 void BinaryElementwiseNoAvx(Op op, bool broadcast, const Tensor &t1,
-                       const Tensor &t2, const Tensor &t3) {
+                            const Tensor &t2, const Tensor &t3) {
     bool allows_avx = false;
 
     // if (t1.is_view() || t2.is_view()) {

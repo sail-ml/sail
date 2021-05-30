@@ -7,7 +7,6 @@
 #include "../ops/ops.h"
 #include "function.h"
 
-
 namespace sail {
 
 namespace autograd {
