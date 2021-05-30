@@ -120,5 +120,11 @@ TensorVector Matmul::backward(Tensor& grad) {
     return {ga, gb};
 }
 
+std::string Pow::getName() { return "PowOp"; }
+Tensor Pow::forward(TensorVector inputs) { return ops::pow(inputs[0], inputs[1]); }
+TensorVector Pow::backward(Tensor& grad) {
+    throw SailCError("Not yet");
+}
+
 }  // namespace autograd
 }  // namespace sail
