@@ -13,7 +13,7 @@ namespace sail {
 namespace ops {
 using TensorVector = std::vector<Tensor>;
 
-Tensor pow(Tensor& tensor1, Tensor& tensor2) {
+Tensor power(Tensor& tensor1, Tensor& tensor2) {
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);

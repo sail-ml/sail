@@ -27,7 +27,7 @@ RETURN_OBJECT ops_pow(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = sail::ops::pow(t1->tensor, power->tensor);
+    ret_class->tensor = sail::ops::power(t1->tensor, power->tensor);
   
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;

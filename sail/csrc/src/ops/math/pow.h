@@ -10,7 +10,7 @@ namespace sail {
 
 namespace ops {
 
-Tensor pow(Tensor& tensor1, Tensor& power);
+Tensor power(Tensor& tensor1, Tensor& power);
 Tensor exp(Tensor& tensor1);
 
 }  // namespace ops

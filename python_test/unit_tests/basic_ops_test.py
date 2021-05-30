@@ -114,7 +114,7 @@ def test_pow():
         x2 = sail.Tensor(arr2, requires_grad=False)
         
         t = time.time()
-        x3 = sail.pow(x1, x2) 
+        x3 = sail.power(x1, x2) 
         times.append(time.time() - t)
         arr3 = np.power(arr1, arr2) 
 

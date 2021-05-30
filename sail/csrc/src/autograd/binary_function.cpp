@@ -121,7 +121,7 @@ TensorVector Matmul::backward(Tensor& grad) {
 }
 
 std::string Pow::getName() { return "PowOp"; }
-Tensor Pow::forward(TensorVector inputs) { return ops::pow(inputs[0], inputs[1]); }
+Tensor Pow::forward(TensorVector inputs) { return ops::power(inputs[0], inputs[1]); }
 TensorVector Pow::backward(Tensor& grad) {
     throw SailCError("Not yet");
 }

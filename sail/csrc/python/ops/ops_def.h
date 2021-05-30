@@ -18,7 +18,7 @@ static PyMethodDef OpsMethods[] = {
     {"matmul", (PyCFunction)ops_matmul, METH_VARARGS, NULL},
     {"tensordot", (PyCFunction)ops_tensordot, METH_VARARGS | METH_KEYWORDS,
      NULL},
-    {"pow", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS,
+    {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS,
      NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
