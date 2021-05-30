@@ -135,7 +135,6 @@ Examples:
 
 add_docstring(sail.exp, descr)
 
-
 ############## REDUCTIONS ####################
 
 # FIND SUM
