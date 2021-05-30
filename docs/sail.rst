@@ -29,6 +29,7 @@ Elementwise
     multiply
     subtract
     power
+    exp
 
 Linear Algebra
 ~~~~~~~~~~~~~~~~~~~~~~
