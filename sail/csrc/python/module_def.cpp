@@ -23,6 +23,8 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
 
     if (PyType_Ready(&PyModuleType) < 0) return NULL;
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
+    if (PyType_Ready(&PyTensorType) < 0) return NULL;
+
 
     m = PyModule_Create(&module);
     if (m == NULL) return NULL;
