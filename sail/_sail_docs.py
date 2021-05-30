@@ -111,11 +111,29 @@ Notes:
 Examples:
     >>> base = sail.random.uniform(0, 1, (20, 3))
     >>> power = sail.random.uniform(1, 2, (20, 3))
-    >>> c = sail.power(a, b)
+    >>> c = sail.power(base, power)
 """
 
 add_docstring(sail.power, descr)
 
+# FIND EXP
+descr = r"""
+sail.exp(power) -> Tensor
+Raises E to Tensor ``power``
+
+.. math::
+    \text{out} = \text{e}^{\text{power}}
+
+Args:
+    power (Tensor): Tensor power
+
+
+Examples:
+    >>> power = sail.random.uniform(1, 2, (20, 3))
+    >>> b = sail.exp(power)
+"""
+
+add_docstring(sail.exp, descr)
 
 ############## REDUCTIONS ####################
 
