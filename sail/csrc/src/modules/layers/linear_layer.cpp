@@ -13,7 +13,7 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = false)
     : input_features(_input_features),
       output_features(_output_features),
       use_bias(_bias) {
-    double variance = 1.0 / pow((double)output_features, 0.5);
+    double variance = 1.0 / ((double)output_features);
     weights = random::uniform(TensorShape({input_features, output_features}),
                               Dtype::sFloat64, -variance, variance);
     if (use_bias) {
