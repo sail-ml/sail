@@ -20,6 +20,8 @@ static PyMethodDef OpsMethods[] = {
      NULL},
     {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS,
      NULL},
+    {"exp", (PyCFunction)ops_exp, METH_VARARGS | METH_KEYWORDS,
+     NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,

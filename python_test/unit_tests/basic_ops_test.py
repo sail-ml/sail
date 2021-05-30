@@ -124,4 +124,23 @@ def test_pow():
 
     return True
 
+def test_exp():
+    choices = elementwise_options
+    times = []
+    for c in choices:
+        arr1 = np.random.uniform(0, 1, (c))
+
+        x1 = sail.Tensor(arr1, requires_grad=False)
+        
+        t = time.time()
+        x3 = sail.exp(x1) 
+        times.append(time.time() - t)
+        arr3 = np.exp(arr1) 
+
+        assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
+
+    log_time(np.mean(times), "EXP")
+
+    return True
+
     

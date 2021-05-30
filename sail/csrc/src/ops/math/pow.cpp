@@ -33,6 +33,12 @@ Tensor power(Tensor& tensor1, Tensor& tensor2) {
     return empty_tensor;
 }
 Tensor exp(Tensor& tensor1) {
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        Tensor empty_tensor = (new autograd::Exp())->apply(vec);
+        return empty_tensor;
+    }
     Tensor empty_tensor = empty_like(tensor1);
     PowerExpKernel().execute(tensor1, empty_tensor);
     return empty_tensor;
