@@ -7,7 +7,7 @@
 #include "../../src/Tensor.h"
 #include "../../src/dtypes.h"
 #include "../../src/factories.h"
-#include "../../src/ops/elementwise.h"
+#include "../../src/ops/ops.h"
 #include "../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 

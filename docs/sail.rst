@@ -28,6 +28,7 @@ Elementwise
     divide
     multiply
     subtract
+    power
 
 Linear Algebra
 ~~~~~~~~~~~~~~~~~~~~~~

@@ -222,4 +222,28 @@ def test_matmul_grad():
 
     return True
 
+def test_exp_grad():
+
+    def forward(a):
+        c = sail.exp(a)
+        d = sail.sum(c)
+        return d
+
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    times = []
+    for ca, cb in choices_a:
+        arr1 = np.random.uniform(0, 1, (ca))
+
+        dic = {
+            "a": arr1,
+        }
+
+        diff = check_gradients_vector(forward, dic)
+
+        assert diff < 1e-6
+
+    log_complete("MATMUL GRAD")
+
+    return True
+
 

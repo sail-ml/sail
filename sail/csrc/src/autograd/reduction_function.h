@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
-#include "../ops/elementwise.h"
+#include "../ops/ops.h"
 #include "function.h"
 
 #define EXECUTE_OP(a, b, o, op)  \

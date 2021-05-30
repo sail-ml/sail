@@ -93,6 +93,29 @@ Examples:
 
 add_docstring(sail.multiply, descr)
 
+# FIND POW
+descr = r"""
+sail.power(base, power) -> Tensor
+Raises Tensor ``base`` to Tensor ``power``
+
+.. math::
+    \text{out} = \text{base}^{\text{power}}
+
+Args:
+    base (Tensor): Tensor base for power
+    power (Tensor): Tensor power
+
+Notes:
+    If tensor shapes do not match, they must be broadcastable to a common shape. 
+
+Examples:
+    >>> base = sail.random.uniform(0, 1, (20, 3))
+    >>> power = sail.random.uniform(1, 2, (20, 3))
+    >>> c = sail.power(a, b)
+"""
+
+add_docstring(sail.power, descr)
+
 
 ############## REDUCTIONS ####################
 

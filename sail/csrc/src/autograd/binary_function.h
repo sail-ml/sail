@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
-#include "../ops/elementwise.h"
+#include "../ops/ops.h"
 #include "function.h"
 
 namespace sail {
@@ -53,6 +53,14 @@ class Matmul : public Function {
    public:
     explicit Matmul(){};
     // TensorVector arg_storage;
+    std::string getName();
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
+
+class Pow : public Function {
+   public:
+    explicit Pow(){};
     std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
