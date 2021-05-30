@@ -103,4 +103,25 @@ def test_divide():
 
     return True
 
+def test_pow():
+    choices = elementwise_options
+    times = []
+    for c in choices:
+        arr1 = np.random.uniform(0, 1, (c))
+        arr2 = np.random.uniform(0, 1, (c))
+
+        x1 = sail.Tensor(arr1, requires_grad=False)
+        x2 = sail.Tensor(arr2, requires_grad=False)
+        
+        t = time.time()
+        x3 = sail.pow(x1, x2) 
+        times.append(time.time() - t)
+        arr3 = np.power(arr1, arr2) 
+
+        assert_eq_np_sail(arr3, x3)
+
+    log_time(np.mean(times), "POWER")
+
+    return True
+
     
