@@ -9,7 +9,13 @@ namespace sail {
 
 namespace ops {
 
-Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
+Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
+    if (tensor.get_shape().shape == shape.shape) {
+        return make_view(tensor);
+    }
+    if (tensor.is_view()) {
+        tensor = clone(tensor);
+    }
     Tensor new_ = make_view(tensor);
 
     TensorShape shape_base = tensor.get_shape();
@@ -24,21 +30,24 @@ Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
         return new_;
     }
 
-    int indexer_2 = shape_base.ndim() - 1;
-    for (int i = shape_new.ndim() - 1; i >= 0; i--) {
-        if (indexer_2 < 0) {
-            shape_new.strides[i] = 0;
+    int i1 = shape_new.ndim() - 1;
+    int i2 = shape_base.ndim() - 1;
+
+    while (i1 >= 0) {
+        if (i2 < 0) {
+            shape_new.strides[i1] = 0;
         } else {
-            if (shape_base.shape[indexer_2] != shape_new.shape[i] &&
-                shape_base.shape[indexer_2] == 1) {
-                shape_new.strides[i] = 0;
-            } else if (shape_base.shape[indexer_2] == shape_new.shape[i]) {
-                shape_new.strides[i] = shape_base.strides[indexer_2];
+            if (shape_base.shape[i2] != shape_new.shape[i1] &&
+                shape_base.shape[i2] == 1) {
+                shape_new.strides[i1] = 0;
+            } else if (shape_base.shape[i2] == shape_new.shape[i1]) {
+                shape_new.strides[i1] = shape_base.strides[i2];
             } else {
                 throw SailCError("shapes cannot be broadcasted together");
             }
         }
-        indexer_2 -= 1;
+        i1--;
+        i2--;
     }
 
     shape_new.recompute();

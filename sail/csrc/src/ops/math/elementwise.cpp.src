@@ -38,29 +38,28 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
 
         return empty_tensor;
     }
+    
+    Tensor empty_tensor; //= empty_like(tensor1);
+    Tensor t1, t2;
 
-    Tensor empty_tensor = empty_like(tensor1);
+    Dtype dt = tensor1.get_dtype();
 
     bool broadcast = must_broadcast(tensor1, tensor2);
     if (broadcast) {
         std::vector<long> new_ =
             merge_shapes(tensor1.get_shape().shape, tensor2.get_shape().shape);
         TensorShape s = TensorShape(new_);
-        empty_tensor.set_shape(s);
-    }
-
-    bool t1_scalar = tensor1.is_scalar();
-    bool t2_scalar = tensor2.is_scalar();
-
-    if ((t1_scalar && t2_scalar) || (!t1_scalar && !t2_scalar)) {
-        $kName$TTKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
-    } else if (t1_scalar && !t2_scalar) {
-        // empty_tensor = empty(s.ndim(), tensor2.get_dtype(), s);
-        $kName$TSKernel().execute(tensor2, tensor1, empty_tensor, broadcast);
+        empty_tensor = empty(s.ndim(), dt, s);
+        empty_tensor.requires_grad = t1.requires_grad;
+        t1 = ops::broadcast_to(tensor1, s);
+        t2 = ops::broadcast_to(tensor2, s);
     } else {
-        // empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
-        $kName$TSKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
+        t1 = tensor1;
+        t2 = tensor2;
+        empty_tensor = empty_like(t1);
     }
+
+    $kName$TTKernel().execute(t1, t2, empty_tensor, broadcast);
 
     return empty_tensor;
 }

@@ -25,10 +25,8 @@ template <typename... Ts, typename Op>
 void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
                                const Tensor &out) {
     // using T = {Ts...}[0];
-    int numel = t1.get_shape().numel();
     int jump = t1.get_info().jump;
     int i = 0;
-    bool omp = numel >= OMP_MIN_VALUE;
 
     get<0, Ts...> __restrict__ *p1;
     get<1, Ts...> __restrict__ *p2;
@@ -41,39 +39,15 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape vec0_shape = t1.get_shape();
     TensorShape vec1_shape = t2.get_shape();
 
-    if (vec0_shape.ndim() < t2.get_shape().ndim()) {
-        while (vec0_shape.shape.size() < vec1_shape.ndim()) {
-            vec0_shape.shape.insert(vec0_shape.shape.begin(), 1);
-            vec0_shape.strides.insert(vec0_shape.strides.begin(), 0);
-        }
-    } else {
-        while (vec1_shape.shape.size() < vec0_shape.ndim()) {
-            vec1_shape.shape.insert(vec1_shape.shape.begin(), 1);
-            vec1_shape.strides.insert(vec1_shape.strides.begin(), 0);
-        }
-    }
-
-    TensorSize shape1 = vec0_shape.shape;
-    TensorSize shape2 = vec1_shape.shape;
-    for (int i = 0; i < vec0_shape.ndim(); i++) {
-        if (shape1[i] != shape2[i]) {
-            if (shape1[i] == 1) {
-                vec0_shape.strides[i] = 0;
-                vec0_shape.shape[i] = shape2[i];
-
-            } else if (shape2[i] == 1) {
-                vec1_shape.strides[i] = 0;
-                vec1_shape.shape[i] = shape1[i];
-            }
-        }
-    }
-
-    vec0_shape.recompute();
-    vec1_shape.recompute();
-
     TensorShape s1 = vec0_shape;
     TensorShape s2 = vec1_shape;
     TensorShape sOut = out.get_shape();
+
+    s1.recompute();
+    s2.recompute();
+
+    int numel = sOut.numel();
+    
 
     for (i = 0; i < numel; i += 1) {
         op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[i]);

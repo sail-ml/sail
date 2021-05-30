@@ -5,3 +5,7 @@
 
 /// Layers
 #include "py_module_linear.h"
+
+
+// Activations
+#include "py_module_sigmoid.h"

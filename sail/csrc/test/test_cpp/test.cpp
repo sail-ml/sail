@@ -1,5 +1,6 @@
 #include "../../src/Tensor.h"
 #include "../../src/tensor_shape.h"
+#include "../../src/factories.h"
 #include "../../src/autograd/autograd.h"
 #include "../../src/modules/modules.h"
 #include "../../src/dtypes.h"
@@ -16,8 +17,26 @@
 #define MAX_VAL 320000
 
 int main() {
-    
-    sail::modules::Linear a = sail::modules::Linear(1, 2, false);
+    int z = 10;
+    double x[z];
+    double y[z];
+    int ndim = 1;
+    Dtype dt = Dtype::sFloat64;
+    TensorSize st = {1};
+    TensorSize sh = {z};
+
+    sail::TensorShape sp = sail::TensorShape(sh);
+
+    for (int i = 0; i < z; i++) {
+        x[i] = 2.21;
+        y[i] = 3.21;
+    }
+
+    void* xt = static_cast<void*>(x);
+
+    sail::Tensor t1 = sail::from_data(xt, dt, sp);
+    sail::Tensor t2 = sail::ops::sigmoid(t1);
+    // std::cout << t2 << std::endl;
     
     return 0;
 }

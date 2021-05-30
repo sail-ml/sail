@@ -6,7 +6,7 @@ namespace sail {
 
 namespace ops {
 
-Tensor broadcast_to(Tensor& tensor, TensorShape shape);
+Tensor broadcast_to(const Tensor& tensor, TensorShape shape);
 }
 
 }  // namespace sail

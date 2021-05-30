@@ -10,3 +10,4 @@
 #include "transformations/transpose.h"
 
 #include "math/math.h"
+#include "activation/sigmoid.h"

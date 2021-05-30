@@ -61,21 +61,21 @@ int TensorShape::next() {
     int i;
     // if (contiguous) {
     //     d_ptr += 1;
-    if (shape.size() == 0 || shape.size() == 1 && shape[0] == 1) {
+    if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
         return d_ptr;
     }
     if (shape.size() == 1) {
         d_ptr += strides[0];
         coordinates[0]++;
-        // } else if (shape.size() == 2) {
-        //     if (coordinates[1] < shape_m1[1]) {
-        //         coordinates[1]++;
-        //         d_ptr += strides[1];
-        //     } else {
-        //         coordinates[1] = 0;
-        //         coordinates[0]++;
-        //         d_ptr += strides[0] - back_strides[1];
-        //     }
+        } else if (shape.size() == 2) {
+            if (coordinates[1] < shape_m1[1]) {
+                coordinates[1]++;
+                d_ptr += strides[1];
+            } else {
+                coordinates[1] = 0;
+                coordinates[0]++;
+                d_ptr += strides[0] - back_strides[1];
+            }
     } else {
         for (i = shape.size() - 1; i >= 0; i--) {
             if (coordinates[i] < shape_m1[i]) {
