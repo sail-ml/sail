@@ -95,8 +95,9 @@ add_docstring(sail.multiply, descr)
 
 # FIND POW
 descr = r"""
-sail.pow(base, power) -> Tensor
+sail.power(base, power) -> Tensor
 Raises Tensor ``base`` to Tensor ``power``
+
 .. math::
     \text{out} = \text{base}^{\text{power}}
 
