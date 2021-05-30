@@ -47,6 +47,8 @@ jobs:
             ./make_html.sh
             cd _build/html/
             touch .nojekyll
+            touch CNAME
+            echo "sailml.org" > CNAME
             cd ../../../
       - name: Deploy 2
         id: push_directory

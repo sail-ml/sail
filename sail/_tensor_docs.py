@@ -4,7 +4,6 @@ from sail import add_docstring
 def add_docstring_fcn(method, descr):
     add_docstring(getattr(sail.Tensor, method), descr)
 
-
 add_docstring_fcn("numpy", r"""
 sail.Tensor.numpy() -> Numpy Array
 Returns the numpy representation of the data
