@@ -91,8 +91,6 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
 }
 
 Tensor matmul(const Tensor& t1, const Tensor& t2) {
-    Tensor casted;
-    bool cast;
     // NEED TO CHECK NDIM, TYPE, AND SHAPES SO THAT IT WORKS
     // ALSO NO SCALARS
 
@@ -123,20 +121,13 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
         t2 = clone(t2);
     }
 
-    if (t1.get_dtype() != t2.get_dtype()) {
-        cast = true;
-        casted = t2.cast(t1.get_dtype());
-    } else {
-        casted = t2;
-    }
-
     TensorSize new_shape;
     new_shape.push_back(t1.get_shape().shape[0]);
     new_shape.push_back(t2.get_shape().shape[1]);
     TensorShape s = TensorShape(new_shape);
-    Tensor empty_tensor = zeros(s, t1.get_dtype());
+    Tensor empty_tensor = empty(0, t1.get_dtype(), s);
 
-    DotTTKernel().execute(t1, t2, empty_tensor);
+    DotTTKernel().execute(t1, t2, empty_tensor, true);
 
     return empty_tensor;
 }

@@ -6,3 +6,5 @@
 #include "copy.h"
 #include "linalg/matmul.h"
 #include "repr.h"
+
+#include "activations/sigmoid.h"

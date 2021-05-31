@@ -11,8 +11,8 @@
 
 #ifdef MKL
 #include <mkl.h>
-// #else
-// #include <cblas.h>
+#include <omp.h>
+
 #endif
 
 #include <chrono>
@@ -22,26 +22,35 @@ namespace sail {
 
 class DotTTKernel : public Kernel {
    public:
-    void execute(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor) {
+    void execute(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
+                 bool empty = false) {
         launch_arithmetic(t1.get_dtype(), [&](auto pt) {
-            // std::cout << decltype(pt)::type << std::endl;
             auto name = decltype(pt)::GetName();
 
-            int M = t1.get_shape().shape[0];  // ROWS IN A
-            int K = t1.get_shape().shape[1];  // COLS IN A AND ROWS IN B
-            int N = t2.get_shape().shape[1];  // COLS IN B
+            std::vector<long> t1_shape = t1.get_shape().shape;
+            std::vector<long> t2_shape = t2.get_shape().shape;
 
-            // std::cout << (decltype(pt)::GetName() == "float64") << std::endl;
+            int M = t1_shape[0];  // ROWS IN A
+            int K = t1_shape[1];  // COLS IN A AND ROWS IN B
+            int N = t2_shape[1];  // COLS IN B
+
+            int c;
+            if (empty) {
+                c = 0;
+            } else {
+                c = 1;
+            }
+
             if (name == "float64") {
                 using T = double;
                 cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
-                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, c,
                             (T*)out_tensor.get_data(), N);
 
             } else if (name == "float32") {
                 using T = float;
                 cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
-                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, c,
                             (T*)out_tensor.get_data(), N);
                 //
             } else {
