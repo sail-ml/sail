@@ -140,6 +140,56 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
 
     return empty_tensor;
 }
+
+Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
+    Tensor casted;
+    bool cast;
+    // NEED TO CHECK NDIM, TYPE, AND SHAPES SO THAT IT WORKS
+    // ALSO NO SCALARS
+
+    if (t1.requires_grad || t2.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(t1);
+        vec.emplace_back(t2);
+        Tensor empty_tensor = (new autograd::Matmul())->apply(vec);
+        return empty_tensor;
+    }
+
+    if (t1.is_scalar() || t2.is_scalar()) {
+        throw SailCError("Cannot pass scalars to matmul");
+    }
+
+    if (t1.get_ndim() != t2.get_ndim()) {
+        throw SailCError("Number of dimensions must match");
+    }
+
+    if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
+        throw SailCError("Inner dimensions must match");
+    }
+
+    if (t1.is_view() || t2.is_view()) {
+        t1 = clone(t1);
+        t2 = clone(t2);
+    }
+
+    // if (t1.get_dtype() != t2.get_dtype()) {
+    //     cast = true;
+    //     casted = t2.cast(t1.get_dtype());
+    // } else {
+    //     casted = t2;
+    // }
+
+    TensorSize new_shape;
+    new_shape.push_back(t1.get_shape().shape[0]);
+    new_shape.push_back(t2.get_shape().shape[1]);
+    TensorShape s = TensorShape(new_shape);
+    Tensor broadcasted_add = ops::broadcast_to(add, s);
+    Tensor empty_tensor = clone(broadcasted_add);
+
+    DotTTKernel().execute(t1, t2, empty_tensor);
+
+    return empty_tensor;
+}
 }  // namespace ops
 
 }  // namespace sail

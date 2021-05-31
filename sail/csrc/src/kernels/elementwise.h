@@ -36,17 +36,13 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     p2 = static_cast<decltype(p2)>(t2.get_data());
     p3 = static_cast<decltype(p3)>(out.get_data());
 
-    TensorShape vec0_shape = t1.get_shape();
-    TensorShape vec1_shape = t2.get_shape();
-
-    TensorShape s1 = vec0_shape;
-    TensorShape s2 = vec1_shape;
-    TensorShape sOut = out.get_shape();
+    TensorShape s1 = t1.get_shape();
+    TensorShape s2 = t2.get_shape();
 
     s1.recompute();
     s2.recompute();
 
-    int numel = sOut.numel();
+    int numel = out.numel();
 
     for (i = 0; i < numel; i += 1) {
         op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[i]);
@@ -65,7 +61,6 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     int numel = t1.get_shape().numel();
     int jump = t1.get_info().jump;
     int i = 0;
-    bool omp = numel >= OMP_MIN_VALUE;
 
     get<0, Ts...> __restrict__ *p1;
     get<1, Ts...> __restrict__ *p2;
@@ -74,100 +69,20 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     p1 = static_cast<decltype(p1)>(t1.get_data());
     p2 = static_cast<decltype(p2)>(t2.get_data());
     p3 = static_cast<decltype(p3)>(out.get_data());
-    // p1 = static_cast<decltype(p1)>(t1.get_data());
-    // p2 = static_cast<decltype(p2)>(t2.get_data());
-    // p3 = static_cast<decltype(p3)>(out.get_data());
 
     bool aligned = true;  // is_aligned_vec(vec);
-    // bool aligned = isAlignedAs(p1, t1.get_info().alignment) &&
-    //                isAlignedAs(p2, t1.get_info().alignment);
-    // std::cout << "aligned " << aligned << std::endl;
-    if (omp) {
-        if (aligned) {
-#pragma omp parallel for
-            for (int i = 0; i < numel; i += jump) {
-                op.call_avx_aligned(p1 + i, p2 + i, p3 + i);
-            }
-        } else {
-#pragma omp parallel for
-            for (int i = 0; i < numel; i += jump) {
-                op.call_avx_non_aligned(p1 + i, p2 + i, p3 + i);
-            }
+
+    if (aligned) {
+        for (int i = 0; i < numel; i += jump) {
+            op.call_avx_aligned(p1 + i, p2 + i, p3 + i);
         }
     } else {
-        if (aligned) {
-            for (int i = 0; i < numel; i += jump) {
-                op.call_avx_aligned(p1 + i, p2 + i, p3 + i);
-            }
-        } else {
-            for (int i = 0; i < numel; i += jump) {
-                op.call_avx_non_aligned(p1 + i, p2 + i, p3 + i);
-            }
+        for (int i = 0; i < numel; i += jump) {
+            op.call_avx_non_aligned(p1 + i, p2 + i, p3 + i);
         }
     }
 }
 
-template <typename... Ts, typename... TensorPack, typename Op>
-void launch_binary_elementwise_broadcast(Op op, const TensorPack &... args) {
-    std::vector<Tensor> vec = {args...};
-    // using T = {Ts...}[0];
-    int numel = vec[2].numel();
-    int jump = vec[2].get_info().jump;
-    int i = 0;
-    bool omp = numel >= OMP_MIN_VALUE;
-    get<0, Ts...> __restrict__ *p1;
-    get<1, Ts...> __restrict__ *p2;
-    get<2, Ts...> __restrict__ *p3;
-
-    p1 = static_cast<decltype(p1)>(vec[0].get_data());
-    p2 = static_cast<decltype(p2)>(vec[1].get_data());
-    p3 = static_cast<decltype(p3)>(vec[2].get_data());
-
-    TensorShape vec0_shape = vec[0].get_shape();
-    TensorShape vec1_shape = vec[1].get_shape();
-
-    if (vec0_shape.ndim() < vec[1].get_shape().ndim()) {
-        while (vec0_shape.shape.size() < vec1_shape.ndim()) {
-            vec0_shape.shape.insert(vec0_shape.shape.begin(), 1);
-            vec0_shape.strides.insert(vec0_shape.strides.begin(), 0);
-        }
-    } else {
-        while (vec1_shape.shape.size() < vec0_shape.ndim()) {
-            vec1_shape.shape.insert(vec1_shape.shape.begin(), 1);
-            vec1_shape.strides.insert(vec1_shape.strides.begin(), 0);
-        }
-    }
-
-    TensorSize shape1 = vec0_shape.shape;
-    TensorSize shape2 = vec1_shape.shape;
-    for (int i = 0; i < vec0_shape.ndim(); i++) {
-        if (shape1[i] != shape2[i]) {
-            if (shape1[i] == 1) {
-                vec0_shape.strides[i] = 0;
-                vec0_shape.shape[i] = shape2[i];
-
-            } else if (shape2[i] == 1) {
-                vec1_shape.strides[i] = 0;
-                vec1_shape.shape[i] = shape1[i];
-            }
-        }
-    }
-
-    vec0_shape.recompute();
-    vec1_shape.recompute();
-
-    TensorShape s0 = vec0_shape;
-    TensorShape s1 = vec1_shape;
-
-    for (i = 0; i < numel; i += 1) {
-        op.call_base(p1[s0.d_ptr], p2[s1.d_ptr], p3[i]);
-        s0.next();
-        s1.next();
-    }
-    s0.reset();
-    s1.reset();
-    // }
-}
 template <typename... Ts, typename... TensorPack, typename Op>
 void launch_binary_elementwise_scalar(Op op, const TensorPack &... args) {
     std::vector<Tensor> vec = {args...};
@@ -175,7 +90,7 @@ void launch_binary_elementwise_scalar(Op op, const TensorPack &... args) {
     int numel = vec[0].numel();
     int jump = vec[0].get_info().jump;
     int i = 0;
-    bool omp = numel >= OMP_MIN_VALUE;
+
     get<0, Ts...> __restrict__ *p1;
     get<1, Ts...> __restrict__ *p2;
     get<2, Ts...> __restrict__ *p3;
@@ -184,18 +99,9 @@ void launch_binary_elementwise_scalar(Op op, const TensorPack &... args) {
     p2 = static_cast<decltype(p2)>(vec[1].get_data());
     p3 = static_cast<decltype(p3)>(vec[2].get_data());
 
-    if (omp) {
-#pragma omp parallel for
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[0], p3[i]);
-            // small_idx = small_shape.next();
-        }
-
-    } else {
-        for (i = 0; i < numel; i += 1) {
-            op.call_base(p1[i], p2[0], p3[i]);
-            // small_idx = small_shape.next();
-        }
+    for (i = 0; i < numel; i += 1) {
+        op.call_base(p1[i], p2[0], p3[i]);
+        // small_idx = small_shape.next();
     }
 }
 

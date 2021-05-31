@@ -26,6 +26,8 @@ inline Tensor tensordot(const Tensor& t1, const Tensor& t2, int axes) {
     return tensordot(t1, t2, t1_dim, t2_dim);
 }
 
+Tensor addmm(const Tensor& m1, const Tensor& m2, const Tensor& add);
+
 }  // namespace ops
 
 }  // namespace sail

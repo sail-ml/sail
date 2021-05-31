@@ -1,3 +1,5 @@
+# BASED ON https://github.com/pytorch/pytorch/blob/master/cmake/Modules/FindMKL.cmake 
+
 # - Find INTEL MKL library
 #
 # This module sets the following variables:
@@ -29,19 +31,12 @@ SET(MKL_CDFT_LIBRARIES)
 INCLUDE(CheckTypeSize)
 INCLUDE(CheckFunctionExists)
 
-# Set default value of INTEL_COMPILER_DIR and INTEL_MKL_DIR
-IF (WIN32)
-  IF(DEFINED ENV{MKLProductDir})
-    SET(DEFAULT_INTEL_COMPILER_DIR $ENV{MKLProductDir})
-  ELSE()
-    SET(DEFAULT_INTEL_COMPILER_DIR
-     "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows")
-  ENDIF()
-  SET(DEFAULT_INTEL_MKL_DIR "${INTEL_COMPILER_DIR}/mkl")
-ELSE (WIN32)
-  SET(DEFAULT_INTEL_COMPILER_DIR "/opt/intel")
-  SET(DEFAULT_INTEL_MKL_DIR "/opt/intel/mkl")
-ENDIF (WIN32)
+IF (EXISTS "/opt/intel/oneapi/mkl/latest/")
+SET(INTEL_MKL_DIR "/opt/intel/oneapi/mkl/latest")
+SET(INTEL_MKL_DIR_NOT_FOUND FALSE)
+ELSE()
+SET(INTEL_MKL_DIR_NOT_FOUND TRUE)
+ENDIF()
 
 # Intel Compiler Suite
 SET(INTEL_COMPILER_DIR "${DEFAULT_INTEL_COMPILER_DIR}" CACHE STRING
@@ -105,13 +100,7 @@ SET(mklseq)
 # Paths
 SET(saved_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 SET(saved_CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH})
-IF(WIN32)
-  # Change mklvers and iccvers when we are using MSVC instead of ICC
-  IF(MSVC AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    SET(mklvers "${mklvers}_win")
-    SET(iccvers "${iccvers}_win")
-  ENDIF()
-ENDIF(WIN32)
+
 IF (EXISTS ${INTEL_COMPILER_DIR})
   # TODO: diagnostic if dir does not exist
   SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
@@ -119,10 +108,6 @@ IF (EXISTS ${INTEL_COMPILER_DIR})
   IF(MSVC)
     SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
       "${INTEL_COMPILER_DIR}/compiler/lib/${iccvers}")
-  ENDIF()
-  IF (APPLE)
-    SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
-      "${INTEL_COMPILER_DIR}/lib")
   ENDIF()
   IF (NOT EXISTS ${INTEL_MKL_DIR})
     SET(INTEL_MKL_DIR "${INTEL_COMPILER_DIR}/mkl")
@@ -142,10 +127,6 @@ IF (EXISTS ${INTEL_MKL_DIR})
         "${INTEL_MKL_DIR}/win-x64")
     ENDIF ()
   ENDIF()
-  IF (APPLE)
-    SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
-      "${INTEL_MKL_DIR}/lib")
-  ENDIF()
 ENDIF()
 
 IF (EXISTS ${INTEL_OMP_DIR})
@@ -161,10 +142,6 @@ IF (EXISTS ${INTEL_OMP_DIR})
       SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
         "${INTEL_OMP_DIR}/win-x64")
     ENDIF ()
-  ENDIF()
-  IF (APPLE)
-    SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
-      "${INTEL_OMP_DIR}/lib")
   ENDIF()
 ENDIF()
 
@@ -278,19 +255,11 @@ MACRO(CHECK_ALL_LIBRARIES LIBRARIES OPENMP_TYPE OPENMP_LIBRARY _name _list _flag
   ENDIF(_libraries_work)
 ENDMACRO(CHECK_ALL_LIBRARIES)
 
-IF(WIN32)
-  SET(mkl_m "")
-  SET(mkl_pthread "")
-ELSE(WIN32)
-  SET(mkl_m "m")
-  SET(mkl_pthread "pthread")
-ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
-  SET(mkl_dl "${CMAKE_DL_LIBS}")
-ELSE(UNIX AND NOT APPLE)
-  SET(mkl_dl "")
-ENDIF(UNIX AND NOT APPLE)
+SET(mkl_m "m")
+SET(mkl_pthread "pthread")
+
+SET(mkl_dl "${CMAKE_DL_LIBS}")
 
 # Check for version 10/11
 IF (NOT MKL_LIBRARIES)

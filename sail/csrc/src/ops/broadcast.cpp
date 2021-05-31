@@ -51,6 +51,7 @@ Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
     }
 
     shape_new.recompute();
+    // shape_new.contiguous = false;
     new_.set_shape(shape_new);
 
     return new_;

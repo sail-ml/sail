@@ -61,6 +61,8 @@ int TensorShape::next() {
     int i;
     // if (contiguous) {
     //     d_ptr += 1;
+    //     return d_ptr;
+    // }
     if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
         return d_ptr;
     }

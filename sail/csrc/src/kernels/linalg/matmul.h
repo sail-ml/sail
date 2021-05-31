@@ -9,9 +9,14 @@
 #include "../base.h"
 #include "../unary.h"
 
-// #ifdef USE_MKL
+#ifdef MKL
 #include <mkl.h>
-// #endif
+// #else
+// #include <cblas.h>
+#endif
+
+#include <chrono>
+using namespace std::chrono;
 
 namespace sail {
 
@@ -27,17 +32,18 @@ class DotTTKernel : public Kernel {
             int N = t2.get_shape().shape[1];  // COLS IN B
 
             // std::cout << (decltype(pt)::GetName() == "float64") << std::endl;
-
             if (name == "float64") {
                 using T = double;
                 cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
                             1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
                             (T*)out_tensor.get_data(), N);
+
             } else if (name == "float32") {
                 using T = float;
                 cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
                             1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, 1,
-                            (T*)out_tensor.get_data(), N);  //
+                            (T*)out_tensor.get_data(), N);
+                //
             } else {
                 using T = typename decltype(pt)::type;
                 T* matA = (T*)t1.get_data();

@@ -65,12 +65,14 @@ Tensor clone(const Tensor& t) {
     TensorShape s = t.get_shape();
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
-        data = _malloc_align(s.numel(), info.alignment, info.dtype_size);
+        int numel = s.numel();
+        data = _malloc_align(numel, info.alignment, info.dtype_size);
         launch_arithmetic(t.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             T* base_data = (T*)(t.get_data());
             T* set_data = (T*)data;
-            for (int i = 0; i < s.numel(); i++) {
+            s.recompute();
+            for (int i = 0; i < numel; i++) {
                 set_data[i] = base_data[s.d_ptr];
                 s.next();
             }

@@ -1,5 +1,4 @@
 #pragma once
-#define OMP_MIN_VALUE 51200000000  // Turns out omp really isnt that helpful
 
 #include <immintrin.h>
 #include <omp.h>

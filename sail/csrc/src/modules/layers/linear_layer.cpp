@@ -5,6 +5,7 @@
 #include "../../factories.h"
 #include "../../ops/ops.h"
 #include "../../tensor_shape.h"
+// #include "../module.h"
 
 namespace sail {
 namespace modules {
@@ -15,18 +16,24 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = false)
       use_bias(_bias) {
     double variance = 1.0 / ((double)output_features);
     weights = random::uniform(TensorShape({input_features, output_features}),
-                              Dtype::sFloat64, -variance, variance);
+                              default_dtype, -variance, variance);
     if (use_bias) {
-        biases = zeros(TensorShape({output_features}), Dtype::sFloat64);
+        biases = zeros(TensorShape({output_features}), default_dtype);
     }
 }
 
 Tensor Linear::forward(Tensor& input) {
-    Tensor mm_res = ops::matmul(input, weights);
+    // Tensor mm_res = ops::matmul(input, weights);
+    // if (use_bias) {
+    //     mm_res = mm_res + biases;
+    // }
+    // return mm_res;
+
     if (use_bias) {
-        mm_res = mm_res + biases;
+        return ops::addmm(input, weights, biases);
+    } else {
+        return ops::matmul(input, weights);
     }
-    return mm_res;
 }
 
 }  // namespace modules

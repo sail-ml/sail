@@ -14,10 +14,14 @@ endif(USE_AVX2)
 
 List(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
+find_package(Atlas)
 find_package(MKL)
 
+if (Atlas_FOUND)
+ADD_DEFINITIONS(-DAtlas_BLAS)
+endif()
 if (MKL_FOUND)
-ADD_DEFINITIONS(-DMKL_BLAS)
+ADD_DEFINITIONS(-DMKL)
 endif()
 # find_package(Doxygen)
 
