@@ -20,6 +20,8 @@ enum class Dtype {
     sFloat64,
 };
 
+inline Dtype default_dtype = Dtype::sFloat32;
+
 enum class Dtypekind {
     sBool = 0,
     sInt,

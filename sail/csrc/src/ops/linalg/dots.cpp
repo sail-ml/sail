@@ -151,7 +151,8 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
         TensorVector vec;
         vec.emplace_back(t1);
         vec.emplace_back(t2);
-        Tensor empty_tensor = (new autograd::Matmul())->apply(vec);
+        vec.emplace_back(add);
+        Tensor empty_tensor = (new autograd::AddMM())->apply(vec);
         return empty_tensor;
     }
 

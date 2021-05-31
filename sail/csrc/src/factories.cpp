@@ -207,6 +207,9 @@ Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
+Tensor uniform(TensorShape size, double min = 0, double max = 1) {
+    return uniform(size, default_dtype, min, max);
+}
 Tensor uniform_like(Tensor tensor, double min = 0, double max = 1) {
     TensorShape s = tensor.get_shape();
     Tensor ret = uniform(s, tensor.get_dtype(), min, max);
@@ -235,6 +238,9 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
 
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
+}
+Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
+    return normal(size, default_dtype, mean, std);
 }
 Tensor normal_like(Tensor tensor, double mean = 0, double std = 1) {
     TensorShape s = tensor.get_shape();
