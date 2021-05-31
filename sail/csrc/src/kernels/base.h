@@ -27,7 +27,7 @@ void ElemetwiseAVX(Op op, const Tensor &arr1, const Tensor &arr2,
     int i = 0;
     bool omp = numel >= OMP_MIN_VALUE;
 
-#ifdef USE_AVX2
+#ifdef S_USE_AVX2
     if (omp) {
         if (aligned) {
 #pragma omp parallel for

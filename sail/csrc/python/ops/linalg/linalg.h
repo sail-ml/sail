@@ -113,3 +113,33 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
 
     return (PyObject*)ret_class;
 }
+
+RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
+    PyObject* t1;
+    PyObject* t2;
+    PyObject* t3;
+
+    sail::Tensor tensor1;
+    sail::Tensor tensor2;
+    sail::Tensor tensor3;
+
+    if (!PyArg_ParseTuple(args, "OOO", &t1, &t2, &t3)) {
+        PyErr_SetString(PyExc_TypeError, "Incorrect arguments");
+        return NULL;
+    }
+
+    tensor1 = ((PyTensor*)t1)->tensor;
+    tensor2 = ((PyTensor*)t2)->tensor;
+    tensor3 = ((PyTensor*)t3)->tensor;
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    sail::Tensor res = sail::ops::addmm(tensor1, tensor2, tensor3);
+
+    ret_class->tensor = res;
+    ret_class->ndim = ((PyTensor*)t1)->ndim;
+    ret_class->dtype = ((PyTensor*)t1)->dtype;
+
+    return (PyObject*)ret_class;
+}

@@ -239,7 +239,7 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
-Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
+Tensor normal(TensorShape size, double mean = 0, double std = 1) {
     return normal(size, default_dtype, mean, std);
 }
 Tensor normal_like(Tensor tensor, double mean = 0, double std = 1) {

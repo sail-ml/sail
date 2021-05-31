@@ -16,6 +16,7 @@ static PyMethodDef OpsMethods[] = {
     {"divide", (PyCFunction)ops_div, METH_VARARGS, NULL},
     {"multiply", (PyCFunction)ops_mul, METH_VARARGS, NULL},
     {"matmul", (PyCFunction)ops_matmul, METH_VARARGS, NULL},
+    {"addmm", (PyCFunction)ops_addmm, METH_VARARGS, NULL},
     {"tensordot", (PyCFunction)ops_tensordot, METH_VARARGS | METH_KEYWORDS,
      NULL},
     {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS, NULL},

@@ -78,7 +78,7 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
 
     TensorShape dot_shape =
         TensorShape({a_remain_total_size, b_remain_total_size});
-    Tensor dot_out = empty(dot_shape.ndim(), t1.get_dtype(), dot_shape);
+    Tensor dot_out = zeros(dot_shape, t1.get_dtype());
 
     DotTTKernel().execute(t1.transpose(a_roll_axes).reshape(a_shape),
                           t2.transpose(b_roll_axes).reshape(b_shape), dot_out);
@@ -134,7 +134,7 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
     new_shape.push_back(t1.get_shape().shape[0]);
     new_shape.push_back(t2.get_shape().shape[1]);
     TensorShape s = TensorShape(new_shape);
-    Tensor empty_tensor = empty(t1.get_ndim(), t1.get_dtype(), s);
+    Tensor empty_tensor = zeros(s, t1.get_dtype());
 
     DotTTKernel().execute(t1, t2, empty_tensor);
 

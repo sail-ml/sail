@@ -47,6 +47,8 @@ SET(INTEL_OMP_DIR "${DEFAULT_INTEL_MKL_DIR}" CACHE STRING
   "Root directory of the Intel OpenMP (standalone)")
 SET(MKL_THREADING "OMP" CACHE STRING "MKL flavor: SEQ, TBB or OMP (default)")
 
+message(WARNING ${INTEL_MKL_DIR})
+
 IF (NOT "${MKL_THREADING}" STREQUAL "SEQ" AND
     NOT "${MKL_THREADING}" STREQUAL "TBB" AND
     NOT "${MKL_THREADING}" STREQUAL "OMP")
@@ -93,6 +95,8 @@ ELSE(CMAKE_COMPILER_IS_GNUCC)
   SET(mklifaces  "intel")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
+set(mklavx2 "mkl_avx2")
+
 # Kernel libraries dynamically loaded
 SET(mklkerlibs "mc" "mc3" "nc" "p4n" "p4m" "p4m3" "p4p" "def")
 SET(mklseq)
@@ -100,6 +104,7 @@ SET(mklseq)
 # Paths
 SET(saved_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 SET(saved_CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH})
+
 
 IF (EXISTS ${INTEL_COMPILER_DIR})
   # TODO: diagnostic if dir does not exist
@@ -274,7 +279,7 @@ IF (NOT "${MKL_THREADING}" STREQUAL "SEQ")
         FOREACH(mklthread ${mklthreads})
           IF (NOT MKL_LIBRARIES)
             CHECK_ALL_LIBRARIES(MKL_LIBRARIES MKL_OPENMP_TYPE MKL_OPENMP_LIBRARY cblas_sgemm
-              "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};${mkl_pthread};${mkl_m};${mkl_dl}" "")
+              "mkl_cdft_core;mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};${mkl_pthread};${mkl_m};${mkl_dl}" "")
           ENDIF (NOT MKL_LIBRARIES)
         ENDFOREACH(mklthread)
       ENDFOREACH(mkl64)
@@ -287,7 +292,7 @@ FOREACH(mkliface ${mklifaces})
   FOREACH(mkl64 ${mkl64s} "")
     IF (NOT MKL_LIBRARIES)
       CHECK_ALL_LIBRARIES(MKL_LIBRARIES MKL_OPENMP_TYPE MKL_OPENMP_LIBRARY cblas_sgemm
-        "mkl_${mkliface}${mkl64};mkl_sequential;mkl_core;${mkl_m};${mkl_dl}" "")
+        "mkl_cdft_core;mkl_${mkliface}${mkl64};mkl_sequential;mkl_core;${mkl_m};${mkl_dl}" "")
       IF (MKL_LIBRARIES)
         SET(mklseq "_sequential")
       ENDIF (MKL_LIBRARIES)
@@ -301,7 +306,7 @@ FOREACH(mklrtl ${mklrtls} "")
     FOREACH(mkl64 ${mkl64s} "")
       IF (NOT MKL_LIBRARIES)
         CHECK_ALL_LIBRARIES(MKL_LIBRARIES MKL_OPENMP_TYPE MKL_OPENMP_LIBRARY cblas_sgemm
-          "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m};${mkl_dl}" "")
+          "mkl_cdft_core;mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m};${mkl_dl}" "")
       ENDIF (NOT MKL_LIBRARIES)
     ENDFOREACH(mkl64)
   ENDFOREACH(mkliface)
@@ -362,6 +367,13 @@ ELSE (MKL_LIBRARIES AND MKL_INCLUDE_DIR)
   SET(MKL_VERSION)  # clear MKL_VERSION
 ENDIF (MKL_LIBRARIES AND MKL_INCLUDE_DIR)
 
+# list(APPEND MKL_LIBRARIES )
+FIND_LIBRARY(avx_library NAMES "mkl_avx${mkl64}${mkls}")
+FIND_LIBRARY(avx2_library NAMES "mkl_avx2${mkl64}${mkls}")
+FIND_LIBRARY(def_library NAMES "mkl_def${mkl64}${mkls}")
+FIND_LIBRARY(rt_library NAMES "mkl_rt${mkl64}${mkls}")
+set(MKL_AVX_LIBRARIES "${avx_library};${avx2_library};${def_library};${rt_library}")
+MARK_AS_ADVANCED(MKL_AVX_LIBRARIES)
 # Standard termination
 IF(NOT MKL_FOUND AND MKL_FIND_REQUIRED)
   MESSAGE(FATAL_ERROR "MKL library not found. Please specify library location \
