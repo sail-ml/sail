@@ -7,7 +7,7 @@ import numpy as np
 batch_size = 256 
 inner_size = 32
 
-lin = sail.modules.Linear(inner_size, 64)
+lin = sail.modules.Linear(inner_size, 64, use_bias=True)
 lin2 = sail.modules.Linear(64, 1)
 sig = sail.modules.Sigmoid()
 
@@ -17,7 +17,8 @@ y = sail.Tensor(inputs.T)
 
 times = []
 z = sail.matmul(x, y)
-for i in range(100000):
+y = lin(x)
+for i in range(1000):
     t = time.time()
     
     y = lin(x)
@@ -33,7 +34,7 @@ for i in range(100000):
 sail_time = np.mean(times)
 ## torch
 
-lin = torch.nn.Linear(inner_size, 64)
+lin = torch.nn.Linear(inner_size, 64, bias=True)
 lin2 = torch.nn.Linear(64, 1)
 sig = torch.nn.Sigmoid()
 
@@ -42,7 +43,8 @@ x = torch.from_numpy(inputs.astype(np.float32))
 y = torch.from_numpy(inputs.T.astype(np.float32))
 times = []
 z = torch.matmul(x, y)
-for i in range(100000):
+y = lin(x)
+for i in range(1000):
     t = time.time()
     y = lin(x)
     y = sig(y)

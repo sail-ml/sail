@@ -133,12 +133,10 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
 }
 
 Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
-    Tensor casted;
-    bool cast;
     // NEED TO CHECK NDIM, TYPE, AND SHAPES SO THAT IT WORKS
     // ALSO NO SCALARS
 
-    if (t1.requires_grad || t2.requires_grad) {
+    if (t1.requires_grad || t2.requires_grad || add.requires_grad) {
         TensorVector vec;
         vec.emplace_back(t1);
         vec.emplace_back(t2);
@@ -164,19 +162,9 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
         t2 = clone(t2);
     }
 
-    // if (t1.get_dtype() != t2.get_dtype()) {
-    //     cast = true;
-    //     casted = t2.cast(t1.get_dtype());
-    // } else {
-    //     casted = t2;
-    // }
-
-    TensorSize new_shape;
-    new_shape.push_back(t1.get_shape().shape[0]);
-    new_shape.push_back(t2.get_shape().shape[1]);
+    TensorSize new_shape = {t1.get_shape().shape[0], t2.get_shape().shape[1]};
     TensorShape s = TensorShape(new_shape);
-    Tensor broadcasted_add = ops::broadcast_to(add, s);
-    Tensor empty_tensor = clone(broadcasted_add);
+    Tensor empty_tensor = clone(ops::broadcast_to(add, s));
 
     DotTTKernel().execute(t1, t2, empty_tensor);
 

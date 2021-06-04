@@ -76,7 +76,6 @@ static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg) {
 }
 
 static int PyTensor_clear(PyTensor *self) {
-    // std::cout << "PY FREE" << std::endl;
     if (self->base_object != NULL) {
         Py_DECREF(self->base_object);
     }
@@ -102,6 +101,7 @@ PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 }
 
 RETURN_OBJECT PyTensor_repr(PyTensor *self) {
+    std::cout << "ok" << std::endl;
     return PyUnicode_FromString(sail::ops::tensor_repr(self->tensor).c_str());
 }
 
@@ -164,10 +164,10 @@ RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
         SCTensor grad_ = self->tensor.get_grad();
         SCTensor gr = clone(grad_);
         // self->tensor.grad->owner = false;
-        grad->tensor = std::move(gr);
+        grad->tensor = gr;
         grad->ndim = grad->tensor.get_ndim();
-        grad->dtype = self->dtype;
-        // SET_BASE(self, grad);
+        grad->dtype = grad->tensor.get_np_type_num();
+        SET_BASE(self, grad);
         return (PyObject *)grad;
     }
 }

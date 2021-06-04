@@ -10,24 +10,25 @@
 #include <ostream>
 // #include <cblas.h>
 
-#include <gtest/gtest.h>
+// #include <gtest/gtest.h>
 
 #define GTEST_COUT std::cerr << "[          ] [ INFO ] "
 
 #define MAX_VAL 320000
 
 int main() {
-    int z = 10;
-    double x[z];
-    double y[z];
+    int z = 32;
+    int b = 32;
+    double x[z * b];
+    double y[z * b];
     int ndim = 1;
-    Dtype dt = Dtype::sFloat64;
+    Dtype dt = Dtype::sFloat32;
     TensorSize st = {1};
-    TensorSize sh = {z};
+    TensorSize sh = {z, b};
 
     sail::TensorShape sp = sail::TensorShape(sh);
 
-    for (int i = 0; i < z; i++) {
+    for (int i = 0; i < z * b; i++) {
         x[i] = 2.21;
         y[i] = 3.21;
     }
@@ -35,9 +36,15 @@ int main() {
     void* xt = static_cast<void*>(x);
 
     sail::Tensor t1 = sail::from_data(xt, dt, sp);
-    sail::Tensor t2 = sail::ops::sigmoid(t1);
-    // std::cout << t2 << std::endl;
+
+    sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
+    std::cout << lay.weights << std::endl;
+    lay.forward(t1);
     
+
+    std::cout << lay.weights << std::endl;
+    std::cout << lay.weights << std::endl;
+
     return 0;
 }
 

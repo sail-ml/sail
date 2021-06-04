@@ -1,6 +1,11 @@
 #pragma once
 #include "../../Tensor.h"
+#include "../../tensor_shape.h"
 #include "../module.h"
+
+#ifdef MKLDNN
+#include "../../onednn/linear.h"
+#endif
 
 namespace sail {
 namespace modules {
@@ -12,9 +17,18 @@ class Linear : public Module {
 
     long input_features;
     long output_features;
+    long batch_size = 0;
     bool use_bias;
 
-    Linear(long _input_features, long _output_features, bool _bias = false);
+#ifdef MKLDNN
+    std::shared_ptr<onednn::OneDNNLinearParams> params = nullptr;
+    std::shared_ptr<onednn::OneDNNLinear> layer = nullptr;
+    TensorShape output_shape;
+#endif
+
+    Linear(long _input_features, long _output_features, bool _bias = true);
+
+    // ~Linear();
 
     Tensor forward(Tensor& input);
 };

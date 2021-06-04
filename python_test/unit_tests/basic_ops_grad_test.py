@@ -202,8 +202,8 @@ def test_matmul_grad():
         d = sail.sum(c)
         return d
 
-    choices_a = [(12, 12)]#, (3, 4), (5, 12), (100, 30)]
-    choices_b = [(12, 3)]#, (4, 18), (12, 5), (30, 25)]
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    choices_b = [(12, 3), (4, 18), (12, 5), (30, 25)]
     times = []
     for ca, cb in zip(choices_a, choices_b):
         arr1 = np.random.uniform(0, 1, (ca))

@@ -68,9 +68,10 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(test test/test_cpp/test.cpp)
-target_link_libraries(test src)
-target_link_libraries(test gtest_main)
+target_link_libraries(test PUBLIC src)
+# target_link_libraries(test PUBLIC gtest_main)
 target_include_directories(test PRIVATE "libs/xsimd/include")
+
 
 
 # if (BLAS_FOUND)

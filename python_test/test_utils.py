@@ -13,6 +13,11 @@ def assert_eq_np_sail_margin(np_arr, sail_arr, margin=1e-5):
     diff = abs(sail_np - np_arr)
     # print (np.array_equal(np_arr, sail_np))
     assert np.max(diff) < margin
+def assert_eq_margin(np_arr, sail_arr, margin=1e-5):
+
+    diff = abs(sail_arr - np_arr)
+    # print (np.array_equal(np_arr, sail_np))
+    assert np.max(diff) < margin
 
 def assert_eq_np(np_arr, np_sail_arr):
     assert np.array_equal(np_arr, np_sail_arr) == True

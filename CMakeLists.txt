@@ -16,12 +16,16 @@ List(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
 find_package(Atlas)
 find_package(MKL)
+find_package(MKLDNN)
 
 if (Atlas_FOUND)
 ADD_DEFINITIONS(-DAtlas_BLAS)
 endif()
 if (MKL_FOUND)
 ADD_DEFINITIONS(-DMKL)
+endif()
+if (MKLDNN_FOUND)
+ADD_DEFINITIONS(-DMKLDNN)
 endif()
 # find_package(Doxygen)
 

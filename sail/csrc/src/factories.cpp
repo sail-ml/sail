@@ -86,6 +86,11 @@ Tensor clone(const Tensor& t) {
 
     TensorBody::pointer body = new TensorBody(data, t.get_dtype(), s);
 
+    // if (t.has_grad()) {
+    //     Tensor grad = t.get_grad();
+    //     body->set_grad(grad);
+    // }
+
     Tensor _empty = Tensor(body, t.requires_grad);
     return _empty;
 }
@@ -180,6 +185,24 @@ Tensor zeros(TensorShape size, Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* new_data =
         _calloc_align(size.numel(), info.alignment, info.dtype_size);
+    TensorBody::pointer b = new TensorBody(new_data, dt, size);
+    return Tensor(b, false);
+}
+Tensor ones(TensorShape size, Dtype dt) {
+    alignemnt_information info = getAlignment(dt);
+    int numel = size.numel();
+    void* new_data =
+        _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* data_fill = (T*)new_data;
+
+        for (int i = 0; i < numel; i++) {
+            data_fill[i] = (T)1;
+        }
+    });
+
     TensorBody::pointer b = new TensorBody(new_data, dt, size);
     return Tensor(b, false);
 }

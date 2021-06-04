@@ -28,6 +28,7 @@ Tensor* create_grad(Dtype dt);
 Tensor from_data(void* data, Dtype dt, TensorShape s);
 
 Tensor zeros(TensorShape size, Dtype dt);
+Tensor ones(TensorShape size, Dtype dt);
 
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now

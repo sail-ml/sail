@@ -34,23 +34,23 @@ class DotTTKernel : public Kernel {
             int K = t1_shape[1];  // COLS IN A AND ROWS IN B
             int N = t2_shape[1];  // COLS IN B
 
-            int c;
+            int beta;
             if (empty) {
-                c = 0;
+                beta = 0.0;
             } else {
-                c = 1;
+                beta = 1.0;
             }
 
             if (name == "float64") {
                 using T = double;
                 cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
-                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, c,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, beta,
                             (T*)out_tensor.get_data(), N);
 
             } else if (name == "float32") {
                 using T = float;
                 cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K,
-                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, c,
+                            1, (T*)t1.get_data(), K, (T*)t2.get_data(), N, beta,
                             (T*)out_tensor.get_data(), N);
                 //
             } else {

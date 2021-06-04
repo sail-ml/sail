@@ -28,8 +28,10 @@ static int PyLinearModule_init(PyModule *self, PyObject *args,
 RETURN_OBJECT
 PyLinearModule_get_weights(PyModule *self, void *closure) {
     PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
-    Linear a = *(Linear *)self->module;
-    GENERATE_FROM_TENSOR(py_weights, a.weights);
+    // Linear a = *(Linear *)self->module;
+    Tensor weights = (*(Linear *)self->module).weights;
+    GENERATE_FROM_TENSOR(py_weights, weights);
+
     return (PyObject *)py_weights;
 }
 
