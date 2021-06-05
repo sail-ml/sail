@@ -30,6 +30,7 @@ static PyMethodDef OpsMethods[] = {
     {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 
     {"sum", (PyCFunction)ops_sum, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"max", (PyCFunction)ops_max, METH_VARARGS | METH_KEYWORDS, NULL},
     {"mean", (PyCFunction)ops_mean, METH_VARARGS, NULL},
 
     {"cast_int32", (PyCFunction)cast_int32, METH_VARARGS, NULL},
