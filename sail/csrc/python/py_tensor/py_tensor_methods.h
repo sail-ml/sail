@@ -101,7 +101,6 @@ PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 }
 
 RETURN_OBJECT PyTensor_repr(PyTensor *self) {
-    std::cout << "ok" << std::endl;
     return PyUnicode_FromString(sail::ops::tensor_repr(self->tensor).c_str());
 }
 

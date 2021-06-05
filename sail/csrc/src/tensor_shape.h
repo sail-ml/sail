@@ -17,6 +17,7 @@ class TensorShape {
     long d_ptr = 0;
     long at = 0;
     bool contiguous = true;
+    int enforced = -1;
 
     explicit TensorShape(){};
 
@@ -32,8 +33,10 @@ class TensorShape {
 
     void insert_one(const int dim);
     void remove_one(const int dim);
+    void remove(const int dim);
     void recompute_strides();
     void recompute(bool strides_too = false);
+    void enforce_axis(int axis);
     std::vector<long> generate_all_indexes();
 
     int next();
@@ -42,6 +45,7 @@ class TensorShape {
     long int* get_shape_ptr();
 
     long numel() const;
+    long numel_avoid(int dim) const;
     long getTotalSize(int mod);
     int ndim();
 

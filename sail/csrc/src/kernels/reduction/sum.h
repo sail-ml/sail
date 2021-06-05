@@ -24,37 +24,7 @@ class SumTKernel : public Kernel {
             T* output_data = (T*)out_tensor.get_data();
 
             if (axis != -1) {
-                int ms = t1.get_shape().shape[axis];
-                int red_jump = 1;
-                int c = 0;
-                for (int s : t1.get_shape().shape) {
-                    if (c > axis) {
-                        red_jump *= s;  //(s * GetDtypeSize(t1.get_dtype()));
-                    }
-                    c += 1;
-                }
-
-                int idx = 0;
-                int insert_idx = 0;
-                int inner_count = 0;
-                T inner_sum = 0;
-                // size_t size = getTotalSize(t1);
-                // std::cout << size << std::endl;
-                while (idx < t1.numel()) {
-                    inner_sum = 0;
-                    for (int i = 0; i < ms; i++) {
-                        inner_sum += input_data[idx + (red_jump * i)];
-                    }
-                    output_data[insert_idx] = inner_sum;
-                    inner_count += 1;
-                    insert_idx += 1;
-                    idx += 1;
-
-                    if (inner_count == red_jump) {
-                        idx += (red_jump * (ms - 1));
-                        inner_count = 0;
-                    }
-                }
+                Reduction<T, T>(Impl{}, t1, out_tensor, axis);
             } else {
                 Reduction<T, T>(Impl{}, t1, out_tensor);
             }
