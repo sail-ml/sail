@@ -11,6 +11,9 @@
 #include "tensor_shape.h"
 #include "types.h"
 
+#define MAXDIMS 25
+#define NULLDIM MAXDIMS + 1
+
 #define MAKE_PTR(value) std::shared_ptr<TensorBody>(new TensorBody(value));
 
 namespace sail {
@@ -67,6 +70,7 @@ class Tensor {
     Tensor reshape(const TensorShape& new_shape) const;
     Tensor _inplace_reshape(const TensorShape& new_shape) const;
     Tensor expand_dims(const int dim);
+    Tensor _expand_dims_inplace(const int dim);
     Tensor squeeze(const int dim);
     long getTotalSize();
 

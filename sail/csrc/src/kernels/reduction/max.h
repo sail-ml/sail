@@ -27,7 +27,7 @@ class MaxKernel : public Kernel {
             T* input_data = (T*)t1.get_data();
             T* output_data = (T*)out_tensor.get_data();
 
-            if (axis != -1) {
+            if (axis != NULLDIM) {
                 Reduction<T, T>(Impl{}, t1, out_tensor, axis);
             } else {
                 Reduction<T, T>(Impl{}, t1, out_tensor);

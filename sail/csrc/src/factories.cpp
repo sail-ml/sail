@@ -102,6 +102,35 @@ Tensor make_view(void* data, Dtype dt, TensorShape shape) {
     return _empty;
 }
 
+Tensor one_hot(const Tensor& t, const int size) {
+    // if (t.get_ndim() != 1) {
+    //     throw SailCError("Inputs to one_hot must 1d");
+    // }
+    long total_data = size * t.numel();
+    alignemnt_information info = getAlignment(t.get_dtype());
+    void* data = _calloc_align(total_data, info.alignment, info.dtype_size);
+    launch_arithmetic(t.get_dtype(), [&](auto pt) {
+        if (decltype(pt)::sKind != Dtypekind::sInt) {
+            throw SailCError("Inputs to one_hot must be integers");
+        }
+        using T = typename decltype(pt)::type;
+        T* t_data = (T*)data;
+        int start = 0;
+        for (int i = 0; i < t.numel(); i++) {
+            T jump = ((T*)t[i].get_data())[0];
+            T leftover = size - jump;
+            start += jump;
+            t_data[start] = 1;
+            start += leftover;
+        }
+    });
+    TensorShape shape = TensorShape({t.numel(), size});
+    TensorBody::pointer b = TensorBody::pointer(
+        (new TensorBody(data, t.get_dtype(), shape, false)));
+    Tensor _empty = Tensor(b, t.requires_grad);
+    return _empty;
+}
+
 Tensor make_view(const Tensor& t) {
     TensorBody::pointer b = TensorBody::pointer(
         (new TensorBody(t.get_data(), t.get_dtype(), t.get_shape(), true)));

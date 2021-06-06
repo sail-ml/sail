@@ -9,9 +9,7 @@
 namespace sail {
 namespace ops {
 
-Tensor sum(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
-Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
-Tensor mean(const Tensor& tensor1);
+Tensor elementwise_equal(const Tensor& tensor1, const Tensor& tensor2);
 
 }  // namespace ops
 }  // namespace sail

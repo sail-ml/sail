@@ -13,18 +13,11 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-class Exp : public Function {
+class SoftmaxCrossEntropyLoss : public Function {
    public:
-    explicit Exp(){};
-    std::string getName();
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-};
-
-class Log : public Function {
-   public:
-    Tensor stored_log;
-    explicit Log(){};
+    Tensor stored_output;
+    explicit SoftmaxCrossEntropyLoss(){};
+    // RefTensorVector arg_storage;
     std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);

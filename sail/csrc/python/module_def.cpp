@@ -23,6 +23,7 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
     if (PyType_Ready(&PyModuleType) < 0) return NULL;
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
     if (PyType_Ready(&PySigmoidModuleType) < 0) return NULL;
+    if (PyType_Ready(&PySoftmaxModuleType) < 0) return NULL;
     if (PyType_Ready(&PyTensorType) < 0) return NULL;
 
     m = PyModule_Create(&module);
@@ -41,6 +42,11 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
 
     if (PyModule_AddObject(m, "Sigmoid", (PyObject*)&PySigmoidModuleType) < 0) {
         Py_DECREF(&PySigmoidModuleType);
+        Py_DECREF(m);
+        return NULL;
+    }
+    if (PyModule_AddObject(m, "Softmax", (PyObject*)&PySoftmaxModuleType) < 0) {
+        Py_DECREF(&PySoftmaxModuleType);
         Py_DECREF(m);
         return NULL;
     }

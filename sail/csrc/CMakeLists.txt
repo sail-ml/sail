@@ -48,6 +48,13 @@ target_include_directories(modules PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( modules LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(modules PRIVATE "libs/xsimd/include")
 
+# loss
+add_library(loss MODULE "python/loss_def.cpp" ${PYTHON_BIND_HEADERS})
+target_link_libraries(loss PRIVATE src)
+target_include_directories(loss PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES( loss LINK_PUBLIC ${Boost_LIBRARIES} )
+target_include_directories(loss PRIVATE "libs/xsimd/include")
+
 
 # if (BLAS_FOUND)
 #     target_compile_options(sail_c PRIVATE ${BLAS_LINKER_FLAGS})

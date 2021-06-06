@@ -3,17 +3,13 @@
 #include <iostream>
 
 #include "../../Tensor.h"
-#include "../../dtypes.h"
+#include "../../factories.h"
 #include "../../kernels/kernel.h"
 
 namespace sail {
-
 namespace ops {
 
-Tensor power(Tensor& tensor1, Tensor& power);
-Tensor exp(Tensor& tensor1);
-Tensor log(Tensor& tensor1);
+Tensor softmax(Tensor& input, int axis = 1);
 
 }  // namespace ops
-
 }  // namespace sail

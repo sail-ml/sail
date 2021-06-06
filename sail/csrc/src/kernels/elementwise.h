@@ -205,16 +205,6 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
 template <typename... Ts, typename Op>
 void BinaryElementwiseNoAvx(Op op, bool broadcast, const Tensor &t1,
                             const Tensor &t2, const Tensor &t3) {
-    bool allows_avx = false;
-
-    // if (t1.is_view() || t2.is_view()) {
-    //     inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
-    //     return;
-    // }
-    // static_assert(sizeof...(Ts) == sizeof...(args),
-    //               "Data types must be specified for each Tensor. ");
-
-    // // get dtype to cast to
     if (broadcast) {
         inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
         return;

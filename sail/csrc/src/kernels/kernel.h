@@ -4,6 +4,7 @@
 #include "reduction/reduction.h"
 
 #include "copy.h"
+#include "equality.h"
 #include "linalg/matmul.h"
 #include "repr.h"
 

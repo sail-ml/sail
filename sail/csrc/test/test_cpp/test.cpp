@@ -1,4 +1,5 @@
 #include "../../src/Tensor.h"
+#include "../../src/loss/cross_entropy_loss.h"
 #include "../../src/tensor_shape.h"
 #include "../../src/factories.h"
 #include "../../src/autograd/autograd.h"
@@ -17,36 +18,84 @@
 #define MAX_VAL 320000
 
 int main() {
-    int z = 32;
-    int b = 32;
-    double x[z * b];
-    double y[z * b];
+    int z = 4;
+    int b = 4;
+    int32_t x[z];
+    int32_t y[z];
     int ndim = 1;
-    Dtype dt = Dtype::sFloat32;
+    Dtype dt = Dtype::sInt32;
     TensorSize st = {1};
-    TensorSize sh = {z, b};
+    TensorSize sh = {z};
 
     sail::TensorShape sp = sail::TensorShape(sh);
+    sail::TensorShape sp2 = sail::TensorShape({4, 10});
 
-    for (int i = 0; i < z * b; i++) {
-        x[i] = 2.21;
-        y[i] = 3.21;
+    for (int i = 0; i < z; i++) {
+        x[i] = 2;
     }
+    x[2] = 0;
 
     void* xt = static_cast<void*>(x);
 
     sail::Tensor t1 = sail::from_data(xt, dt, sp);
+    sail::Tensor t2 = sail::random::uniform(sp2, 1, 2);
 
-    sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
-    std::cout << lay.weights << std::endl;
-    lay.forward(t1);
+    sail::loss::SoftmaxCrossEntropyLoss loss = sail::loss::SoftmaxCrossEntropyLoss();
+    sail::Tensor value = loss.forward(t2, t1);
+    std::cout << value << std::endl;
+    // std::cout << sail::ops::sum(t1, 1, true) << std::endl;
+    // sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
+    // std::cout << lay.weights << std::endl;
+    // lay.forward(t1);
+
+    
+    // std::cout << t1[0] << std::endl;
+    // sail::Tensor d = sail::one_hot(t1, 15);
+    // std::cout << d << std::endl;
+
     
 
-    std::cout << lay.weights << std::endl;
-    std::cout << lay.weights << std::endl;
+    // std::cout << lay.weights << std::endl;
+    // std::cout << lay.weights << std::endl;
+    // std::cout << t1 << std::endl;
+    // std::cout << sail::ops::softmax(t1) << std::endl;
 
     return 0;
 }
+// int main() {
+//     int z = 4;
+//     int b = 4;
+//     double x[z * b];
+//     double y[z * b];
+//     int ndim = 1;
+//     Dtype dt = Dtype::sFloat32;
+//     TensorSize st = {1};
+//     TensorSize sh = {z, b};
+
+//     sail::TensorShape sp = sail::TensorShape(sh);
+
+//     for (int i = 0; i < z * b; i++) {
+//         x[i] = 2.21;
+//         y[i] = 3.21;
+//     }
+
+//     void* xt = static_cast<void*>(x);
+
+//     // sail::Tensor t1 = sail::from_data(xt, dt, sp);
+//     sail::Tensor t1 = sail::random::uniform(sp);
+//     // std::cout << sail::ops::sum(t1, 1, true) << std::endl;
+//     // sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
+//     // std::cout << lay.weights << std::endl;
+//     // lay.forward(t1);
+    
+
+//     // std::cout << lay.weights << std::endl;
+//     // std::cout << lay.weights << std::endl;
+//     std::cout << t1 << std::endl;
+//     std::cout << sail::ops::softmax(t1) << std::endl;
+
+//     return 0;
+// }
 
 // Demonstrate some basic assertions.
 // TEST(SailTest, FreeTest) {

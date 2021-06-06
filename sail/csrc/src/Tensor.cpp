@@ -66,6 +66,12 @@ Tensor Tensor::expand_dims(const int dim) {
     Tensor new_tensor = Tensor(new_body, requires_grad);
     return new_tensor;
 }
+Tensor Tensor::_expand_dims_inplace(const int dim) {
+    TensorShape s = body->get_shape();
+    s.insert_one(dim);
+    set_shape(s);
+    return *this;
+}
 
 Tensor Tensor::squeeze(const int dim) {
     TensorShape s = body->get_shape();
@@ -115,9 +121,7 @@ Tensor Tensor::operator[](const int index) const {
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    int new_ndim = (get_ndim()) - 1;
-    Tensor e =
-        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+    Tensor e = make_view(new_ptr, get_dtype(), TensorShape(new_shape));
 
     return e;
 }

@@ -45,9 +45,31 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-class Sum : public Function {
+class Reduction : public Function {
    public:
-    explicit Sum(){};
+    int axis;
+    bool keepdims;
+    Reduction(int _axis, bool _keepdims) {
+        axis = _axis;
+        keepdims = _keepdims;
+    };
+};
+
+class Sum : public Reduction {
+   public:
+    using Reduction::Reduction;
+
+    // RefTensorVector arg_storage;
+    std::string getName();
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
+
+class Max : public Reduction {
+   public:
+    using Reduction::Reduction;
+    Tensor stored_output;
+
     // RefTensorVector arg_storage;
     std::string getName();
     Tensor forward(TensorVector inputs);

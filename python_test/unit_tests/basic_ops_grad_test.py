@@ -45,6 +45,7 @@ def check_gradients_vector(forward_fcn, param_dictionary):
     for i, p in enumerate(param_dictionary):
         grads_dic[p] = params[i].grad.numpy() 
 
+
     parameters = dictionary_to_vector(param_dictionary)
     grads = dictionary_to_vector(grads_dic)
     num_params = len(parameters)
@@ -243,6 +244,48 @@ def test_exp_grad():
         assert diff < 1e-6
 
     log_complete("MATMUL GRAD")
+
+    return True
+
+
+def test_max_grad():
+
+    def forward(a):
+        c = sail.max(a)
+        d = sail.sum(c)
+        return d
+
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    times = []
+    for ca, cb in choices_a:
+        arr1 = np.random.uniform(0, 1, (ca))
+
+        dic = {
+            "a": arr1,
+        }
+
+        diff = check_gradients_vector(forward, dic)
+
+        assert diff < 1e-6
+
+    def forward(a):
+        c = sail.max(a, 1, keepdims=True)
+        d = sail.sum(c)
+        return d
+
+    choices_a = [(12, 12), (3, 4), (5, 12), (100, 30)]
+    times = []
+    for ca in choices_a:
+        arr1 = np.random.uniform(0, 1, ca)
+        dic = {
+            "a": arr1,
+        }
+
+        diff = check_gradients_vector(forward, dic)
+
+        assert diff < 1e-6
+
+    log_complete("MAX GRAD")
 
     return True
 

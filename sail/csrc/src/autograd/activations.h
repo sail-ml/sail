@@ -22,6 +22,15 @@ class Sigmoid : public Function {
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
+class Softmax : public Function {
+   public:
+    Tensor softmax_stored;
+    int axis;
+    Softmax(int _axis = 1) { axis = _axis; };
+    std::string getName();
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
 
 }  // namespace autograd
 }  // namespace sail

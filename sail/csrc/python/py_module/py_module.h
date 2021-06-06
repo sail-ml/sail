@@ -8,3 +8,4 @@
 
 // Activations
 #include "py_module_sigmoid.h"
+#include "py_module_softmax.h"

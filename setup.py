@@ -93,8 +93,10 @@ class CMakeBuild(build_ext):
 
         copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
         copyfile("%s/libmodules.so" % build_path, "sail/modules/libmodules.so")
+        copyfile("%s/libloss.so" % build_path, "sail/loss/libloss.so")
 
         copyfile("%s/libmodules.so" % build_path, "%s/../modules/libmodules.so" % build_path)
+        copyfile("%s/libloss.so" % build_path, "%s/../loss/libloss.so" % build_path)
 
         
 files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
@@ -125,7 +127,8 @@ setup(
     packages = [
         "sail", 
         "sail.csrc",
-        "sail.modules"
+        "sail.modules",
+        "sail.loss"
         ],#setuptools.find_packages(),
     ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
     cmdclass={'build_ext': CMakeBuild},
