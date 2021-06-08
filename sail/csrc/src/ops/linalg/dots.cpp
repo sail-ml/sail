@@ -90,7 +90,8 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
     return dot_out._inplace_reshape(ret_shape);
 }
 
-Tensor matmul(const Tensor& t1, const Tensor& t2) {
+Tensor matmul(const Tensor& t1, const Tensor& t2,
+              std::string trans_a = NO_TRANS, std::string trans_b = NO_TRANS) {
     // NEED TO CHECK NDIM, TYPE, AND SHAPES SO THAT IT WORKS
     // ALSO NO SCALARS
 
@@ -98,7 +99,8 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
         TensorVector vec;
         vec.emplace_back(t1);
         vec.emplace_back(t2);
-        Tensor empty_tensor = (new autograd::Matmul())->apply(vec);
+        Tensor empty_tensor =
+            (new autograd::Matmul(trans_a, trans_b))->apply(vec);
         return empty_tensor;
     }
 
@@ -110,8 +112,22 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
         throw SailCError("Number of dimensions must match");
     }
 
-    if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
-        throw SailCError("Inner dimensions must match");
+    if (trans_a == NO_TRANS && trans_b == NO_TRANS) {
+        if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
+            throw SailCError("Inner dimensions must match");
+        }
+    } else if (trans_a == TRANS && trans_b == NO_TRANS) {
+        if (t1.get_shape().shape[0] != t2.get_shape().shape[0]) {
+            throw SailCError("Inner dimensions must match");
+        }
+    } else if (trans_a == NO_TRANS && trans_b == TRANS) {
+        if (t1.get_shape().shape[1] != t2.get_shape().shape[1]) {
+            throw SailCError("Inner dimensions must match");
+        }
+    } else {
+        if (t1.get_shape().shape[0] != t2.get_shape().shape[1]) {
+            throw SailCError("Inner dimensions must match");
+        }
     }
 
     if (t1.is_view() || t2.is_view()) {
@@ -122,12 +138,23 @@ Tensor matmul(const Tensor& t1, const Tensor& t2) {
     }
 
     TensorSize new_shape;
-    new_shape.push_back(t1.get_shape().shape[0]);
-    new_shape.push_back(t2.get_shape().shape[1]);
+    TensorSize s1 = t1.get_shape().shape;
+    TensorSize s2 = t2.get_shape().shape;
+
+    int r = s1[0];
+    if (trans_a == TRANS) {
+        r = s1[1];
+    }
+    int c = s2[1];
+    if (trans_b == TRANS) {
+        c = s2[0];
+    }
+    new_shape.push_back(r);
+    new_shape.push_back(c);
     TensorShape s = TensorShape(new_shape);
     Tensor empty_tensor = empty(0, t1.get_dtype(), s);
 
-    DotTTKernel().execute(t1, t2, empty_tensor, true);
+    DotTTKernel().execute(t1, t2, empty_tensor, true, trans_a, trans_b);
 
     return empty_tensor;
 }

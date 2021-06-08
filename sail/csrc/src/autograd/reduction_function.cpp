@@ -27,7 +27,21 @@ TensorVector Sum::backward(Tensor& grad) {
     // }
     Tensor full_size =
         ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
-    return {clone(full_size)};
+    return {full_size};
+}
+
+std::string Mean::getName() { return "MeanOp"; }
+Tensor Mean::forward(TensorVector inputs) {
+    return ops::mean(inputs[0], Reduction::axis, Reduction::keepdims);
+}
+TensorVector Mean::backward(Tensor& grad) {
+    // if  (!(Function::arg_storage[0].get_ndim() == 0 || axis == -1 || keepdims
+    // == true)) {
+    //     grad = grad.expand_dims(axis);
+    // }
+    Tensor full_size =
+        ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
+    return {full_size};
 }
 
 std::string Max::getName() { return "MaxOp"; }
@@ -42,9 +56,9 @@ TensorVector Max::backward(Tensor& grad) {
     // == true)) {
     //     grad = grad.expand_dims(axis);
     // }
-    Tensor full_size =
-        ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
-    return {clone(full_size) * cond};
+    // Tensor full_size =
+    //     ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
+    return {grad * cond};
 }
 
 }  // namespace autograd

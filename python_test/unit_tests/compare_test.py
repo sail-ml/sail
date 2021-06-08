@@ -8,8 +8,8 @@ from ..test_utils import *
 
 def test_linear_torch():
 
-    linear_sail = sail.modules.Linear(32, 64)
-    linear_torch = torch.nn.Linear(32, 64)
+    linear_sail = sail.modules.Linear(32, 2)
+    linear_torch = torch.nn.Linear(32, 2)
 
     weights = linear_sail.weights.numpy()
     biases = linear_sail.bias.numpy()
@@ -25,13 +25,17 @@ def test_linear_torch():
 
     inputs_sail = sail.Tensor(inputs, requires_grad=True)
     inputs_torch = torch.from_numpy(inputs)
+    inputs_torch.requires_grad = True
 
     out_sail = linear_sail(inputs_sail)
     out_torch = linear_torch(inputs_torch)
 
-    assert_eq_np(out_sail.numpy(), out_torch.detach().numpy())
+    assert_eq_margin(out_sail.numpy(), out_torch.detach().numpy())
 
     torch.sum(out_torch).backward()
     sail.sum(out_sail).backward()
 
+    print (linear_sail.weights.grad)
+
     assert_eq_margin(linear_sail.weights.grad.numpy().T, linear_torch.weight.grad.numpy(), 1e-4)
+    # assert_eq_margin(inputs_sail.grad.numpy(), inputs_torch.grad.numpy(), 1e-4)

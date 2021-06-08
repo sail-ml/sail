@@ -74,6 +74,11 @@ void TensorBody::set_grad(Tensor& t) {
     _has_grad = true;
 }
 Tensor TensorBody::get_grad() { return *grad; }
+void TensorBody::clear_grad() {
+    delete grad;
+    grad = nullptr;
+    _has_grad = false;
+}
 
 // void* TensorBody::get_data() { return data; }
 // Dtype TensorBody::get_dtype() { return dtype; }

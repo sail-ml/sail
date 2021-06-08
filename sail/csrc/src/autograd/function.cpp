@@ -16,8 +16,8 @@ using TensorVector = std::vector<Tensor>;
 std::string Function::getName() { return "NONE"; }
 Tensor Function::apply(TensorVector& inputs) {
     // arg_storage = inputs;
-    COPY_INPUTS(inputs, arg_storage);
     // arg_storage(inputs);
+    COPY_INPUTS(inputs, arg_storage);
     DISABLE_GRAD(inputs);
     Tensor o = forward(inputs);
     ENABLE_GRAD(inputs);

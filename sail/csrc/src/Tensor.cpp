@@ -133,6 +133,9 @@ void Tensor::swap_body(Tensor& t) {
 }
 
 Tensor Tensor::operator+(const Tensor& other) { return ops::add(*this, other); }
+Tensor Tensor::operator+=(const Tensor& other) {
+    return ops::iadd(*this, other);
+}
 Tensor Tensor::operator-(const Tensor& other) {
     return ops::subtract(*this, other);
 }
@@ -156,19 +159,20 @@ void Tensor::backward() {
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {
         if (has_grad()) {
-            set_grad(_grad);
+            std::cout << "we have grad?" << std::endl;
+            Tensor ng = _grad + get_grad();
+            set_grad(ng);
         } else {
             set_grad(_grad);
         }
         if (fcn != nullptr) {  ////// THIS NEEDS TO CHANGE
-
             TensorVector grad_arglist = fcn->arg_storage;
             std::vector<Tensor> new_grads = fcn->backward(_grad);
 
             for (int i = 0; i < new_grads.size(); i++) {
                 if (grad_arglist[i].requires_grad) {
-                    Tensor grad_tensor = new_grads[i];
-                    grad_arglist[i].backward(grad_tensor);
+                    // Tensor grad_tensor = new_grads[i];
+                    grad_arglist[i].backward(new_grads[i]);
                 }
             }
         }

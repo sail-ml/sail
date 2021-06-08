@@ -74,22 +74,27 @@ RETURN_OBJECT ops_max(PyObject* self, PyObject* args, PyObject* kwargs) {
     return (PyObject*)ret_class;
 }
 
-RETURN_OBJECT ops_mean(PyObject* self, PyObject* args) {
+RETURN_OBJECT ops_mean(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyTensor* t1;
+    PyObject* axis = Py_None;
+    int keepdims = 0;
+    static char* kwlist[] = {"tensor", "axis", "keepdims", NULL};
 
-    if (!PyArg_ParseTuple(args, "O", &t1)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
-    }
+    REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims);
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-    ret_class->tensor = sail::ops::mean(((PyTensor*)t1)->tensor);
+    if (axis == Py_None) {
+        ret_class->tensor =
+            sail::ops::mean(((PyTensor*)t1)->tensor, NULLDIM, (bool)keepdims);
+    } else {
+        ret_class->tensor = sail::ops::mean(
+            ((PyTensor*)t1)->tensor, PyLong_AsLong(axis), (bool)keepdims);
+    }
 
     ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->requires_grad = ret_class->tensor.requires_grad;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
-
     return (PyObject*)ret_class;
 }
 

@@ -55,6 +55,13 @@ target_include_directories(loss PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( loss LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(loss PRIVATE "libs/xsimd/include")
 
+# optimizers
+add_library(optimizers MODULE "python/optimizer_def.cpp" ${PYTHON_BIND_HEADERS})
+target_link_libraries(optimizers PRIVATE src)
+target_include_directories(optimizers PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES( optimizers LINK_PUBLIC ${Boost_LIBRARIES} )
+target_include_directories(optimizers PRIVATE "libs/xsimd/include")
+
 
 # if (BLAS_FOUND)
 #     target_compile_options(sail_c PRIVATE ${BLAS_LINKER_FLAGS})

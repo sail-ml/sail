@@ -21,14 +21,16 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = true)
     : input_features(_input_features),
       output_features(_output_features),
       use_bias(_bias) {
-    double variance = 1.0;  /// (double)output_features;
+    double variance = 1.0 / (double)output_features;
     // double variance = 1.0 / pow(((double)output_features), 2.0);
     weights = random::uniform(TensorShape({input_features, output_features}),
                               default_dtype, -variance, variance);
     weights.requires_grad = true;
+    register_param(weights);
     if (use_bias) {
         biases = zeros(TensorShape({output_features}), default_dtype);
         biases.requires_grad = true;
+        register_param(biases);
     }
 }
 
@@ -59,7 +61,6 @@ Tensor Linear::forward(Tensor& input) {
             layer.reset(new onednn::OneDNNLinear(params));
 
             layer->initialize();
-            layer->add_base_data(weights.get_data(), biases.get_data());
             // layer->add_base_data(weights.get_data(), biases.get_data());
         }
 
@@ -75,6 +76,7 @@ Tensor Linear::forward(Tensor& input) {
 
         fcn->set_fcn(Tdest);
 
+        layer->add_base_data(weights.get_data(), biases.get_data());
         layer->add_src_dest_data(input.get_data(), Tdest.get_data());
 
         layer->forward();

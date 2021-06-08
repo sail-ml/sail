@@ -28,12 +28,31 @@ class Tensor {
     TensorBody::pointer body;
 
     bool requires_grad = false;
+    bool was_requires_grad = false;
     // std::shared_ptr<Tensor> grad;
     // std::unique_ptr<Tensor> grad;
     // Tensor* grad = nullptr;
     std::shared_ptr<autograd::Function> fcn = nullptr;
 
     bool is_grad = false;
+
+    void swap(Tensor& t) {
+        bool t_rq = requires_grad;
+        bool t_is_grad = is_grad;
+        std::shared_ptr<autograd::Function> t_fcn = fcn;
+        TensorBody::pointer t_body = body;
+
+        body = t.body;
+        fcn = t.fcn;
+        requires_grad = t.requires_grad;
+        is_grad = t.is_grad;
+
+        t.body = t_body;
+        t.fcn = t_fcn;
+        t.requires_grad = t_rq;
+        t.is_grad = t_is_grad;
+        return t;
+    }
 
     Tensor(Tensor& old, bool _requires_grad)
         : body(old.body.get(), false), requires_grad(_requires_grad){};
@@ -55,6 +74,9 @@ class Tensor {
         fcn = std::move(x.fcn);
         return *this;
     }
+
+    void clear_grad() { body.get()->clear_grad(); }
+    void clear_function() { fcn = nullptr; }
 
     long numel() const { return body.get()->get_shape().numel(); }
 
@@ -96,6 +118,7 @@ class Tensor {
     void backward(Tensor& grad);
 
     Tensor operator+(const Tensor& t);
+    Tensor operator+=(const Tensor& t);
     Tensor operator-(const Tensor& t);
     Tensor operator-();
     Tensor operator*(const Tensor& t);

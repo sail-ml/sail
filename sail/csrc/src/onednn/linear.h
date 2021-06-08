@@ -113,6 +113,10 @@ class OneDNNLinear {
     void forward() {
         inner_product_prim->execute(engine_stream, inner_product_args);
         engine_stream.wait();
+        src_mem->set_data_handle(nullptr);
+        weight_mem->set_data_handle(nullptr);
+        bias_mem->set_data_handle(nullptr);
+        dest_mem->set_data_handle(nullptr);
     }
 };
 

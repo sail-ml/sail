@@ -8,6 +8,11 @@
 #include "../elementwise.h"
 #include "../unary.h"
 #include "xsimd/xsimd.hpp"
+#ifdef MKL
+#include <mkl.h>
+#include <omp.h>
+
+#endif
 namespace sail {
 
 class PowerKernel : public Kernel {
@@ -38,7 +43,15 @@ class PowerExpKernel : public Kernel {
         launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
-
+            // #ifdef MKL
+            //             if (DtypeType::GetName() == "float64") {
+            //                 vdExp(t1.numel(), t1.get_data(),
+            //                 out_tensor.get_data()); return;
+            //             } else if (DtypeType::GetName() == "float32") {
+            //                 vsExp(t1.numel(), t1.get_data(),
+            //                 out_tensor.get_data()); return;
+            //             }
+            // #endif
             struct Impl {
                 inline void call_base(T x1, T& out) {
                     out = (T)std::exp((double)x1);
@@ -55,6 +68,15 @@ class LogKernel : public Kernel {
         launch_arithmetic(t1.get_dtype(), [&](auto pt) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
+            // #ifdef MKL
+            //             if (DtypeType::GetName() == "float64") {
+            //                 vdLn(t1.numel(), t1.get_data(),
+            //                 out_tensor.get_data()); return;
+            //             } else if (DtypeType::GetName() == "float32") {
+            //                 vsLn(t1.numel(), t1.get_data(),
+            //                 out_tensor.get_data()); return;
+            //             }
+            // #endif
 
             struct Impl {
                 inline void call_base(T x1, T& out) {

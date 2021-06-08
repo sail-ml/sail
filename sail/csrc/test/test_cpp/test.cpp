@@ -1,5 +1,6 @@
 #include "../../src/Tensor.h"
 #include "../../src/loss/cross_entropy_loss.h"
+#include "../../src/optimizers/optimizers.h"
 #include "../../src/tensor_shape.h"
 #include "../../src/factories.h"
 #include "../../src/autograd/autograd.h"
@@ -41,13 +42,19 @@ int main() {
     sail::Tensor t2 = sail::random::uniform(sp2, 1, 2);
 
     sail::loss::SoftmaxCrossEntropyLoss loss = sail::loss::SoftmaxCrossEntropyLoss();
-    sail::Tensor value = loss.forward(t2, t1);
-    std::cout << value << std::endl;
     // std::cout << sail::ops::sum(t1, 1, true) << std::endl;
-    // sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
+    sail::modules::Linear lay = sail::modules::Linear(10, 32, true);
+    sail::modules::Linear lay2 = sail::modules::Linear(32, 4, true);
+    sail::modules::Sigmoid sig = sail::modules::Sigmoid();
     // std::cout << lay.weights << std::endl;
-    // lay.forward(t1);
+    // for (int i = 0; i < 3; i++) {
 
+    sail::Tensor r = lay.forward(t2);
+    sail::Tensor s = sig.forward(r);
+    sail::Tensor k = lay2.forward(s);
+    sail::Tensor l = loss.forward(k, t1);
+    // l.backward();
+    // }
     
     // std::cout << t1[0] << std::endl;
     // sail::Tensor d = sail::one_hot(t1, 15);
@@ -64,35 +71,53 @@ int main() {
 }
 // int main() {
 //     int z = 4;
-//     int b = 4;
+//     int b = 2;
 //     double x[z * b];
-//     double y[z * b];
+//     int32_t y[z];
 //     int ndim = 1;
-//     Dtype dt = Dtype::sFloat32;
+//     Dtype dt = Dtype::sInt32;
 //     TensorSize st = {1};
 //     TensorSize sh = {z, b};
 
 //     sail::TensorShape sp = sail::TensorShape(sh);
+//     sail::TensorShape sp2 = sail::TensorShape({z});
 
-//     for (int i = 0; i < z * b; i++) {
+//     for (int i = 0; i < z; i++) {
 //         x[i] = 2.21;
-//         y[i] = 3.21;
+//         y[i] = 3;
 //     }
 
-//     void* xt = static_cast<void*>(x);
+//     void* yt = static_cast<void*>(y);
+
+//     sail::optimizers::SGD opt = sail::optimizers::SGD((float)0.001);
 
 //     // sail::Tensor t1 = sail::from_data(xt, dt, sp);
 //     sail::Tensor t1 = sail::random::uniform(sp);
+//     sail::Tensor t2 = sail::from_data(yt, dt, sp2);
+//     t1.requires_grad = true;
 //     // std::cout << sail::ops::sum(t1, 1, true) << std::endl;
-//     // sail::modules::Linear lay = sail::modules::Linear(b, 16, true);
+//     sail::modules::Sigmoid lay = sail::modules::Sigmoid();
+
+//     sail::Tensor result = lay.forward(t1);
+//     result = lay.forward(t1);
+//     sail::Tensor
+//     // result = lay.forward(t1);
+//     // result = lay.forward(t1);
+//     // sail::Tensor loss_value = loss.forward(result, t2);
+//     // std::cout << loss_value << std::endl;
+//     // std::cout << lay.weights << std::endl;
+//     // loss_value.backward();
+//     // opt.update();
+//     // std::cout << lay.weights << std::endl;
+
 //     // std::cout << lay.weights << std::endl;
 //     // lay.forward(t1);
     
 
 //     // std::cout << lay.weights << std::endl;
 //     // std::cout << lay.weights << std::endl;
-//     std::cout << t1 << std::endl;
-//     std::cout << sail::ops::softmax(t1) << std::endl;
+//     // std::cout << t1 << std::endl;
+//     // std::cout << sail::ops::softmax(t1) << std::endl;
 
 //     return 0;
 // }

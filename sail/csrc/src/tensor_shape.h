@@ -40,6 +40,7 @@ class TensorShape {
     std::vector<long> generate_all_indexes();
 
     int next();
+    int next(int n);
     void reset();
 
     long int* get_shape_ptr();

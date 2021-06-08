@@ -66,6 +66,40 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
 
 /** end block **/
 
+/** begin block
+ * name = [iadd]
+ * kName = [Add]
+ * agName = [Add]
+ */
+
+Tensor $name$(Tensor& tensor1, const Tensor& tensor2) {
+    // std::cout << &tensor1 << std::endl;
+    // TensorShape s = tensor1.get_shape();
+    // Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
+
+    Tensor t1, t2;
+
+    Dtype dt = tensor1.get_dtype();
+
+    bool broadcast = must_broadcast(tensor1, tensor2);
+    if (broadcast) {
+        std::vector<long> new_ =
+            merge_shapes(tensor1.get_shape().shape, tensor2.get_shape().shape);
+        TensorShape s = TensorShape(new_);
+        t1 = ops::broadcast_to(tensor1, s);
+        t2 = ops::broadcast_to(tensor2, s);
+    } else {
+        t1 = tensor1;
+        t2 = tensor2;
+    }
+
+    $kName$TTKernel().execute(t1, t2, t1, broadcast);
+
+    return t1;
+}
+
+/** end block **/
+
 }  // namespace ops
 
 }  // namespace sail

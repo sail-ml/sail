@@ -2,12 +2,14 @@
 
 #include <iostream>
 
+#include <chrono>
 #include "../../Tensor.h"
 #include "../../autograd/autograd.h"
 #include "../../factories.h"
 #include "../../kernels/kernel.h"
 #include "../ops.h"
 #include "cross_entropy.h"
+using namespace std::chrono;
 
 namespace sail {
 namespace ops {
@@ -26,12 +28,22 @@ Tensor softmax_cross_entropy(Tensor& logits, Tensor& targets) {
     Tensor softmax = ops::softmax(logits);
     Tensor log_y = ops::log(softmax);
 
-    Tensor one_hot_tensor = one_hot(targets, logits.get_shape().shape[1]);
-    Tensor casted_one_hot_tensor = ops::cast(one_hot_tensor, log_y.get_dtype());
+    // Tensor log_y = ops::log_softmax(logits);
 
-    result = ops::sum(-(log_y * casted_one_hot_tensor));
+    Dtype dt = log_y.get_dtype();
+    TensorShape shape = log_y.get_shape();
+
+    float coeff = -1.0 / (shape.shape[0]);
+    Tensor t_coeff = from_data(&coeff, dt, TensorShape({1}));
+
+    Tensor temp_res = zeros(TensorShape({1}),
+                            dt);  // ops::sum(log_y * casted_one_hot_tensor);
+    SoftmaxMulSumKernel().execute(log_y, targets, temp_res);
+    result = temp_res * t_coeff;
+
     return result;
 }
 
 }  // namespace ops
+// namespace ops
 }  // namespace sail

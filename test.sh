@@ -8,7 +8,7 @@
 
 if [ $1 = "valgrind" ]; then
     cd build/temp.linux-x86_64-3.7/sail/csrc
-     valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full ./test
+     valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full --show-leak-kinds=all ./test
 elif [ $1 = "gdb" ]; then
     cd build/temp.linux-x86_64-3.7/sail/csrc
     gdb ./test

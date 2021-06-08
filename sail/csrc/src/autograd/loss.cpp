@@ -7,6 +7,7 @@
 #include <vector>
 #include "../Tensor.h"
 #include "../factories.h"
+#include "../kernels/kernel.h"
 #include "../ops/ops.h"
 #include "function.h"
 
@@ -18,17 +19,15 @@ using TensorVector = std::vector<Tensor>;
 
 std::string SoftmaxCrossEntropyLoss::getName() { return "MaxOp"; }
 Tensor SoftmaxCrossEntropyLoss::forward(TensorVector inputs) {
-    stored_output = ops::softmax_cross_entropy(inputs[0], inputs[1]);
-    return stored_output;
+    // stored_output = ops::softmax_cross_entropy(inputs[0], inputs[1]);
+    return ops::softmax_cross_entropy(inputs[0], inputs[1]);
 }
 TensorVector SoftmaxCrossEntropyLoss::backward(Tensor& grad) {
     Tensor y = ops::softmax(Function::arg_storage[0]);
-    Tensor one_hot_tensor =
-        one_hot(Function::arg_storage[1],
-                Function::arg_storage[0].get_shape().shape[1]);
-    Tensor casted_one_hot_tensor =
-        ops::cast(one_hot_tensor, Function::arg_storage[0].get_dtype());
-    return {y - casted_one_hot_tensor};
+    Tensor z = empty(0, y.get_dtype(), y.get_shape());
+    SoftmaxBackwardSubtractKernel().execute(y, Function::arg_storage[1], z);
+    // std::cout << z << std::endl;
+    return {z};
 }
 
 }  // namespace autograd

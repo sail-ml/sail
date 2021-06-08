@@ -57,6 +57,7 @@ TensorShape::TensorShape(LongVec shape_) {
         }
         std::reverse(strides.begin(), strides.end());
     }
+    recompute();
 }
 int TensorShape::next() {
     int i;
@@ -111,6 +112,13 @@ int TensorShape::next() {
         }
     }
 
+    return d_ptr;
+}
+
+int TensorShape::next(int n) {
+    for (int i = 0; i < n; i++) {
+        next();
+    }
     return d_ptr;
 }
 

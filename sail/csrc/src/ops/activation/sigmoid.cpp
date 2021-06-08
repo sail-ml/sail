@@ -18,7 +18,8 @@ Tensor sigmoid(Tensor& input) {
     if (input.requires_grad) {
         TensorVector vec;
         vec.emplace_back(input);
-        return (new autograd::Sigmoid())->apply(vec);
+        Tensor e = (new autograd::Sigmoid())->apply(vec);
+        return e;
     }
     Tensor empty_tensor = empty_like(input);
     SigmoidKernel().execute(input, empty_tensor);

@@ -42,7 +42,6 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_unaligned(out, c);
                 }
             };
-
             BinaryElementwise<T, T, T>(Impl{}, broadcast, t1, t2, out_tensor);
         });
     }

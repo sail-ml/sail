@@ -5,7 +5,7 @@ import numpy as np
 
 from ..test_utils import *
 
-elementwise_options = [(12), (512, 128), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
+elementwise_options = [(12,), (512, 128), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
 
 def test_create():
 
@@ -136,6 +136,25 @@ def test_exp():
         x3 = sail.exp(x1) 
         times.append(time.time() - t)
         arr3 = np.exp(arr1) 
+
+        assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
+
+    log_time(np.mean(times), "EXP")
+
+    return True
+
+def test_max():
+    choices = elementwise_options
+    times = []
+    for c in choices:
+        arr1 = np.random.uniform(0, 1, (c))
+
+        x1 = sail.Tensor(arr1, requires_grad=False)
+        
+        t = time.time()
+        x3 = sail.max(x1, len(c) - 1) 
+        times.append(time.time() - t)
+        arr3 = np.max(arr1, len(c) - 1) 
 
         assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
 

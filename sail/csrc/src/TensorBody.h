@@ -70,6 +70,7 @@ class TensorBody {
     inline bool has_grad() { return _has_grad; }
 
     Tensor get_grad();
+    void clear_grad();
     void set_grad(Tensor& t);
 
     inline int get_ref_count() { return (int)refcount_; }

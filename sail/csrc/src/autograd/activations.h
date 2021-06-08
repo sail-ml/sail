@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "../Tensor.h"
+#include "../TensorBody.h"
 #include "../ops/ops.h"
 #include "function.h"
 
@@ -16,7 +17,7 @@ using TensorVector = std::vector<Tensor>;
 
 class Sigmoid : public Function {
    public:
-    Tensor sigmoid_stored;
+    TensorBody::pointer sigmoid_stored;
     explicit Sigmoid(){};
     std::string getName();
     Tensor forward(TensorVector inputs);

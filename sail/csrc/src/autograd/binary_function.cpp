@@ -70,11 +70,14 @@ TensorVector Multiply::backward(Tensor& grad) {
 
 std::string Matmul::getName() { return "MatmulOp"; }
 Tensor Matmul::forward(TensorVector inputs) {
-    return ops::matmul(inputs[0], inputs[1]);
+    return ops::matmul(inputs[0], inputs[1], trans_a, trans_b);
 }
 TensorVector Matmul::backward(Tensor& grad) {
     Tensor a = Function::arg_storage[0];
     Tensor b = Function::arg_storage[1];
+
+    DISABLE_GRAD_IND(a)
+    DISABLE_GRAD_IND(b)
 
     bool a_is_vector = a.get_ndim() == 1;
     bool b_is_vector = b.get_ndim() == 1;
@@ -116,6 +119,9 @@ TensorVector Matmul::backward(Tensor& grad) {
         gb = ops::matmul(a.transpose({1, 0}), grad);
         gb = clone(ops::broadcast_to(gb, b.get_shape()));
     }
+
+    ENABLE_GRAD_IND(a)
+    ENABLE_GRAD_IND(b)
 
     return {ga, gb};
 }

@@ -4,16 +4,23 @@
 #include <vector>
 #include "../Tensor.h"
 
+#define DISABLE_GRAD_IND(i)                    \
+    {                                          \
+        i.was_requires_grad = i.requires_grad; \
+        i.requires_grad = false;               \
+    }
 #define DISABLE_GRAD(inputs)                      \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i].requires_grad = false;      \
+            DISABLE_GRAD_IND(inputs[i])           \
         }                                         \
     }
+#define ENABLE_GRAD_IND(i) \
+    { i.requires_grad = i.was_requires_grad; }
 #define ENABLE_GRAD(inputs)                       \
     {                                             \
         for (int i = 0; i < inputs.size(); i++) { \
-            inputs[i].requires_grad = true;       \
+            ENABLE_GRAD_IND(inputs[i]);           \
         }                                         \
     }
 #define COPY_INPUTS(inputs, storage)              \
@@ -38,6 +45,7 @@ using RefTensorVector = std::vector<Tensor*>;
 class Function {
    public:
     TensorVector arg_storage;
+    TensorVector result_storage;
     explicit Function(){};
     std::string name = "NONE";
     virtual std::string getName();

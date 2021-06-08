@@ -25,7 +25,6 @@ template <typename... Ts, typename Op>
 void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
                                const Tensor &out) {
     // using T = {Ts...}[0];
-    int jump = t1.get_info().jump;
     int i = 0;
 
     get<0, Ts...> __restrict__ *p1;
@@ -38,20 +37,61 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
 
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
+    TensorShape s3 = out.get_shape();
 
     s1.recompute();
     s2.recompute();
+    s3.recompute();
 
-    int numel = out.numel();
+    int numel = t1.numel() > t2.numel() ? t1.numel() : t2.numel();
 
     for (i = 0; i < numel; i += 1) {
-        op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[i]);
+        op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[s3.d_ptr]);
         s1.next();
         s2.next();
+        s3.next();
     }
 
     s1.reset();
     s2.reset();
+    s3.reset();
+}
+template <typename... Ts, typename Op>
+void launch_parallel_binary_elementwise(Op op, const Tensor &t1,
+                                        const Tensor &t2, const Tensor &out) {
+    // using T = {Ts...}[0];
+
+    get<0, Ts...> __restrict__ *p1;
+    get<1, Ts...> __restrict__ *p2;
+    get<2, Ts...> __restrict__ *p3;
+
+    p1 = static_cast<decltype(p1)>(t1.get_data());
+    p2 = static_cast<decltype(p2)>(t2.get_data());
+    p3 = static_cast<decltype(p3)>(out.get_data());
+
+    TensorShape s1 = t1.get_shape();
+    TensorShape s2 = t2.get_shape();
+    TensorShape s3 = out.get_shape();
+
+    s1.recompute();
+    s2.recompute();
+    s3.recompute();
+
+    int numel = out.numel();
+    // #pragma omp parallel for firstprivate(s1, s2, s3) num_threads(1)
+    for (int i = 0; i < numel; i += 1) {
+        op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[s3.d_ptr]);
+        s1.next(1);
+        // s1.next(omp_get_thread_num() + 1);
+        s2.next(1);
+        // s2.next(omp_get_thread_num() + 1);
+        s3.next(1);
+        // s3.next(omp_get_thread_num() + 1);
+    }
+
+    s1.reset();
+    s2.reset();
+    s3.reset();
 }
 
 template <typename... Ts, typename Op>
@@ -203,12 +243,14 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
 }
 
 template <typename... Ts, typename Op>
-void BinaryElementwiseNoAvx(Op op, bool broadcast, const Tensor &t1,
+void BinaryElementwiseNoAvx(Op op, bool parallel, const Tensor &t1,
                             const Tensor &t2, const Tensor &t3) {
-    if (broadcast) {
-        inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
-        return;
-    }
+    // if (broad) {
+    //     inner_elementwise::launch_parallel_binary_elementwise<Ts...>(op, t1,
+    //     t2,
+    //                                                                  t3);
+    //     return;
+    // }
 
     inner_elementwise::launch_binary_elementwise<Ts...>(op, t1, t2, t3);
 }

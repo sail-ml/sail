@@ -42,7 +42,7 @@ void launch_reduction_axis(Op op, const Tensor& input, const Tensor& out,
                            int axis) {
     TensorShape s = TensorShape(input.get_shape());
     int numel = out.get_shape().numel();
-
+    s.recompute();
     s.move_axis(axis, -1);
 
     get<0, Ts...> __restrict__* p1;

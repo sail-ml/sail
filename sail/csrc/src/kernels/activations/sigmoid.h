@@ -31,4 +31,20 @@ class SigmoidKernel : public Kernel {
     }
 };
 
+class SigmoidBackwardKernel : public Kernel {
+   public:
+    void execute(const Tensor& t1, const Tensor& out_tensor) {
+        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+            using DtypeType = decltype(pt);
+            using T = typename DtypeType::type;
+
+            struct Impl {
+                T one = (T)1;
+                inline void call_base(T x1, T& out) { out = x1 * (one - x1); }
+            };
+            Unary<T, T>(Impl{}, t1, out_tensor);
+        });
+    }
+};
+
 }  // namespace sail

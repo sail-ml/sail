@@ -83,18 +83,19 @@ def check_gradients_vector(forward_fcn, param_dictionary, eps=1e-3):
 def test_linear_grad():
     global lin
     def forward(a):
+        a.requires_grad = True
         global lin
         b = lin(a)
         c = sail.sum(b)
         return c
 
-    choices = [(32, 64), (12, 32), (13, 15)]
+    choices = [(32, 4)]#, (12, 32), (13, 15)]
     times = []
     eps = 1e-2
     for c in choices:
 
         arr1 = np.random.uniform(0, 1, (c)).astype(np.float32)
-        lin = sail.modules.Linear(arr1.shape[1], 32, use_bias=True)
+        lin = sail.modules.Linear(arr1.shape[1], 2, use_bias=True)
 
         dic = {
             "a": arr1,
