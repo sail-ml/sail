@@ -35,7 +35,6 @@ def test_linear_torch():
     torch.sum(out_torch).backward()
     sail.sum(out_sail).backward()
 
-    print (linear_sail.weights.grad)
 
     assert_eq_margin(linear_sail.weights.grad.numpy().T, linear_torch.weight.grad.numpy(), 1e-4)
     # assert_eq_margin(inputs_sail.grad.numpy(), inputs_torch.grad.numpy(), 1e-4)

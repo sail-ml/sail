@@ -56,7 +56,19 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     } else {
         t1 = tensor1;
         t2 = tensor2;
-        empty_tensor = empty_like(t1);
+        if (!t1.is_view()) {
+            empty_tensor = empty_like(t1);
+        } else if (!t2.is_view()) {
+            empty_tensor = empty_like(t2);
+        } else {
+            empty_tensor = empty_like(t1);
+            TensorShape ns = TensorShape(t1.get_shape().shape);
+            empty_tensor.set_shape(ns);
+        }
+    }
+
+    if (t1.is_view() || t2.is_view()) {
+        broadcast = true;
     }
 
     $kName$TTKernel().execute(t1, t2, empty_tensor, broadcast);

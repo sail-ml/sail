@@ -128,12 +128,12 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
             sail::TensorShape s0 = tensor.get_shape();
-            s0.recompute();
+            // s0.recompute();
             for (int i = 0; i < numel; i++) {
                 data2[i] = data[s0.d_ptr];
                 s0.next();
             }
-            s0.reset();
+            // s0.reset();
         });
         shape = tensor.get_shape_ptr();
         ndims = tensor.get_ndim();
@@ -161,7 +161,7 @@ RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
         PyTensor *grad;
         grad = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
         SCTensor grad_ = self->tensor.get_grad();
-        SCTensor gr = clone(grad_);
+        SCTensor gr = grad_;
         // self->tensor.grad->owner = false;
         grad->tensor = gr;
         grad->ndim = grad->tensor.get_ndim();

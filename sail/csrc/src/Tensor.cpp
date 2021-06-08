@@ -121,7 +121,10 @@ Tensor Tensor::operator[](const int index) const {
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    Tensor e = make_view(new_ptr, get_dtype(), TensorShape(new_shape));
+    // std::cout << getVectorString(new_shape) << std::endl;
+
+    Tensor e =
+        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
 
     return e;
 }
@@ -159,7 +162,6 @@ void Tensor::backward() {
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {
         if (has_grad()) {
-            std::cout << "we have grad?" << std::endl;
             Tensor ng = _grad + get_grad();
             set_grad(ng);
         } else {
@@ -171,8 +173,8 @@ void Tensor::backward(Tensor& _grad) {
 
             for (int i = 0; i < new_grads.size(); i++) {
                 if (grad_arglist[i].requires_grad) {
-                    // Tensor grad_tensor = new_grads[i];
-                    grad_arglist[i].backward(new_grads[i]);
+                    Tensor grad_tensor = new_grads[i];
+                    grad_arglist[i].backward(grad_tensor);
                 }
             }
         }

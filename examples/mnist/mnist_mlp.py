@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 # parameters
-epochs = 1000
+epochs = 100
 batch_size = 64
 learning_rate = 1e-4
 
@@ -90,6 +90,6 @@ for i in range(epochs):
     pred_test = forward(sail.Tensor(x_test))
     acc = accuracy(pred_test, y_test)
 
-    print ("E: %s | L: %s | ACC: %s | Time: %s" % ((i + 1), total_loss / steps, acc, t))
+    print ("E: %s | L: %s | ACC: %s" % ((i + 1), total_loss / steps, acc))
 
     

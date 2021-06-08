@@ -25,6 +25,7 @@ Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
         LongVec t(shape_new.shape.size(), 0);
         shape_new.strides = t;
         shape_new.recompute();
+        shape_new.is_single = true;
 
         new_.set_shape(shape_new);
         return new_;
@@ -87,8 +88,8 @@ Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
     // }
 
     // std::cout << getVectorString(shape_new.shape) << std::endl;
-    // std::cout << getVectorString(shape_new.shape) << std::endl;
     shape_new = TensorShape(expand_shape, expand_strides);
+
     // shape_new.recompute();
     // shape_new.contiguous = false;
     new_.set_shape(shape_new);

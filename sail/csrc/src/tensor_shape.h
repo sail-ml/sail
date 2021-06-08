@@ -18,6 +18,7 @@ class TensorShape {
     long at = 0;
     bool contiguous = true;
     int enforced = -1;
+    bool is_single = false;
 
     explicit TensorShape(){};
 
