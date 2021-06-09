@@ -100,46 +100,54 @@ class CMakeBuild(build_ext):
         copyfile("%s/libloss.so" % build_path, "%s/../loss/libloss.so" % build_path)
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
 
-        
-files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
-files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
-files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
-files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
-os.system("clang-format -i " + " ".join(files))
+def s():
+    save_gen = False
+    if "save-gen" in sys.argv:
+        save_gen = True
+        sys.argv.remove("save-gen")
 
-src_files = glob.glob("**/*.src", recursive=True)
-print (src_files)
-os.system("python template_converter.py " + " ".join(src_files))
-created_names = []
-for n in src_files:
-    (base, ext) = os.path.splitext(n)
-    newname = base
-    created_names.append(newname)
+    files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
+    files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
+    files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
+    files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
+    os.system("clang-format -i " + " ".join(files))
+
+    src_files = glob.glob("**/*.src", recursive=True)
+    print (src_files)
+    os.system("python template_converter.py " + " ".join(src_files))
+    created_names = []
+    for n in src_files:
+        (base, ext) = os.path.splitext(n)
+        newname = base
+        created_names.append(newname)
 
 
-setup(
-    name='sail-ml',
-    version='0.0.1a1',
-    author='Tucker Siegel',
-    author_email='tgsiegel@umd.edu',
-    description='SAIL: Simple AI Library',
-    long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
-    url="https://sailml.org",
-    keywords='sail sail-ml machine learning',
-    packages = [
-        "sail", 
-        "sail.csrc",
-        "sail.modules",
-        "sail.loss",
-        "sail.optimizers",
-        ],#setuptools.find_packages(),
-    ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-    cmdclass={'build_ext': CMakeBuild},
-    install_requires=REQUIREMENTS
-    # cmdclass=dict(build_ext=CMakeBuild),
-)
+    setup(
+        name='sail-ml',
+        version='0.0.1a1',
+        author='Tucker Siegel',
+        author_email='tgsiegel@umd.edu',
+        description='SAIL: Simple AI Library',
+        long_description='SAIL is a python package designed for speed and simplicity when developing and running deep learning models. Built on top of a c++ library with python bindings, SAIL is currently in development, changes are being released daily with new features and bug fixes.',
+        url="https://sailml.org",
+        keywords='sail sail-ml machine learning',
+        packages = [
+            "sail", 
+            "sail.csrc",
+            "sail.modules",
+            "sail.loss",
+            "sail.optimizers",
+            ],#setuptools.find_packages(),
+        ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
+        cmdclass={'build_ext': CMakeBuild},
+        install_requires=REQUIREMENTS
+        # cmdclass=dict(build_ext=CMakeBuild),
+    )
 
-for f in created_names:
-    os.remove(f)
-    print (f)
+    if (not save_gen):
+        for f in created_names:
+            os.remove(f)
+            print (f)
+
+s()
 
