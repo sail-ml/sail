@@ -59,7 +59,7 @@ class AddTest(UnitTest):
         times = []
 
         def forward(a, b):
-            c = a + b 
+            c = sail.add(a, b)
             d = sail.sum(c)
             return d
 
