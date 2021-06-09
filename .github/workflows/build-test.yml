@@ -46,7 +46,6 @@ jobs:
       - name: generate coverage
         run: gcovr -r . --xml coverage.xml
 
-      - name: upload coverage
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
