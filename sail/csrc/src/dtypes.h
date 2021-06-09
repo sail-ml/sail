@@ -20,6 +20,8 @@ enum class Dtype {
     sFloat64,
 };
 
+inline Dtype default_dtype = Dtype::sFloat32;
+
 enum class Dtypekind {
     sBool = 0,
     sInt,
@@ -58,8 +60,8 @@ struct NonPrimitveType;
 //                       int16_t, __m256i, int16_avx{});
 DEFINE_PRIMITIVE_TYPE("int32", 'i', Dtype::sInt32, Dtypekind::sInt, int32_t,
                       int32_t, __m256i);
-// DEFINE_PRIMITIVE_TYPE("int64", 'l', Dtype::sInt64, Dtypekind::sInt, int64_t,
-//                       int64_t, __m256i, int64_avx{});
+DEFINE_PRIMITIVE_TYPE("int64", 'l', Dtype::sInt64, Dtypekind::sInt, int64_t,
+                      int64_t, __m256i);
 // DEFINE_PRIMITIVE_TYPE("uint8", 'B', Dtype::sUInt8, Dtypekind::sUInt, uint8_t,
 //                       uint8_t, __m256i, int_avx{});
 // CHAINERX_DEFINE_PRIMITIVE_TYPE("float16", 'e', Dtype::sFloat16,
@@ -86,9 +88,9 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
         case Dtype::sInt32:
             return std::forward<F>(f)(PrimitiveType<int32_t>{},
                                       std::forward<Args>(args)...);
-        // case Dtype::sInt64:
-        //     return std::forward<F>(f)(PrimitiveType<int64_t>{},
-        //     std::forward<Args>(args)...);
+        case Dtype::sInt64:
+            return std::forward<F>(f)(PrimitiveType<int64_t>{},
+                                      std::forward<Args>(args)...);
         // case Dtype::sUInt8:
         //     return std::forward<F>(f)(PrimitiveType<uint8_t>{},
         //     std::forward<Args>(args)...);
@@ -154,6 +156,8 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
     switch (npdtype) {
         case 5:
             return Dtype::sInt32;
+        case 7:
+            return Dtype::sInt64;
         case 11:
             return Dtype::sFloat32;
         case 12:
@@ -168,6 +172,8 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
     switch (dtype) {
         case Dtype::sInt32:
             return 5;
+        case Dtype::sInt64:
+            return 7;
         case Dtype::sFloat32:
             return 11;
         case Dtype::sFloat64:
@@ -234,6 +240,9 @@ inline alignemnt_information getAlignment(Dtype dtype) {
         //     std::forward<Args>(args)...);
         case Dtype::sInt32:
             info = {32, 4, 8};
+            return info;
+        case Dtype::sInt64:
+            info = {32, 8, 4};
             return info;
         case Dtype::sFloat32:
             info = {32, 4, 8};

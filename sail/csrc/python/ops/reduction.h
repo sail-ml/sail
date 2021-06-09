@@ -11,6 +11,15 @@
 
 #include "../macros.h"
 
+#define REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims)           \
+    {                                                                       \
+        if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|Op", kwlist, &t1, \
+                                         &axis, &keepdims)) {               \
+            PyErr_SetString(PyExc_TypeError,                                \
+                            "must pass a tensor and an integer for axis");  \
+        }                                                                   \
+    }
+
 /** begin block
  * name = [add, sub, mul, div]
  * op = [+, -, *, /]
@@ -18,21 +27,45 @@
 
 RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyTensor* t1;
-    int axis = -1;
-    static char* kwlist[] = {"tensor", "axis", NULL};
+    PyObject* axis = Py_None;
+    int keepdims = 0;
+    static char* kwlist[] = {"tensor", "axis", "keepdims", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i", kwlist, &t1, &axis)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "must pass a tensor and an integer for axis");
-    }
+    REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims);
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    if (axis == -1) {
-        ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor);
+    if (axis == Py_None) {
+        ret_class->tensor =
+            sail::ops::sum(((PyTensor*)t1)->tensor, NULLDIM, (bool)keepdims);
     } else {
-        ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor, axis);
+        ret_class->tensor = sail::ops::sum(((PyTensor*)t1)->tensor,
+                                           PyLong_AsLong(axis), (bool)keepdims);
+    }
+
+    ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->requires_grad = ret_class->tensor.requires_grad;
+    ret_class->dtype = ((PyTensor*)t1)->dtype;
+    return (PyObject*)ret_class;
+}
+RETURN_OBJECT ops_max(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyTensor* t1;
+    PyObject* axis = Py_None;
+    int keepdims = 0;
+    static char* kwlist[] = {"tensor", "axis", "keepdims", NULL};
+
+    REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims);
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    if (axis == Py_None) {
+        ret_class->tensor =
+            sail::ops::max(((PyTensor*)t1)->tensor, NULLDIM, (bool)keepdims);
+    } else {
+        ret_class->tensor = sail::ops::max(((PyTensor*)t1)->tensor,
+                                           PyLong_AsLong(axis), (bool)keepdims);
     }
 
     ret_class->ndim = ret_class->tensor.get_ndim();
@@ -41,22 +74,27 @@ RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
     return (PyObject*)ret_class;
 }
 
-RETURN_OBJECT ops_mean(PyObject* self, PyObject* args) {
+RETURN_OBJECT ops_mean(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyTensor* t1;
+    PyObject* axis = Py_None;
+    int keepdims = 0;
+    static char* kwlist[] = {"tensor", "axis", "keepdims", NULL};
 
-    if (!PyArg_ParseTuple(args, "O", &t1)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
-    }
+    REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims);
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-    ret_class->tensor = sail::ops::mean(((PyTensor*)t1)->tensor);
+    if (axis == Py_None) {
+        ret_class->tensor =
+            sail::ops::mean(((PyTensor*)t1)->tensor, NULLDIM, (bool)keepdims);
+    } else {
+        ret_class->tensor = sail::ops::mean(
+            ((PyTensor*)t1)->tensor, PyLong_AsLong(axis), (bool)keepdims);
+    }
 
     ret_class->ndim = ret_class->tensor.get_ndim();
+    ret_class->requires_grad = ret_class->tensor.requires_grad;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
-
     return (PyObject*)ret_class;
 }
 

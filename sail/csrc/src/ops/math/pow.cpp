@@ -3,9 +3,10 @@
 #include <iostream>
 
 #include "../../Tensor.h"
+#include "../../autograd/autograd.h"
 #include "../../dtypes.h"
 #include "../../kernels/kernel.h"
-#include "../../autograd/autograd.h"
+#include "pow.h"
 #include "tools.h"
 
 namespace sail {
@@ -41,6 +42,17 @@ Tensor exp(Tensor& tensor1) {
     }
     Tensor empty_tensor = empty_like(tensor1);
     PowerExpKernel().execute(tensor1, empty_tensor);
+    return empty_tensor;
+}
+Tensor log(Tensor& tensor1) {
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        Tensor empty_tensor = (new autograd::Exp())->apply(vec);
+        return empty_tensor;
+    }
+    Tensor empty_tensor = empty_like(tensor1);
+    LogKernel().execute(tensor1, empty_tensor);
     return empty_tensor;
 }
 

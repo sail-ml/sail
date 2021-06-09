@@ -66,6 +66,12 @@ Tensor Tensor::expand_dims(const int dim) {
     Tensor new_tensor = Tensor(new_body, requires_grad);
     return new_tensor;
 }
+Tensor Tensor::_expand_dims_inplace(const int dim) {
+    TensorShape s = body->get_shape();
+    s.insert_one(dim);
+    set_shape(s);
+    return *this;
+}
 
 Tensor Tensor::squeeze(const int dim) {
     TensorShape s = body->get_shape();
@@ -115,7 +121,8 @@ Tensor Tensor::operator[](const int index) const {
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    int new_ndim = (get_ndim()) - 1;
+    // std::cout << getVectorString(new_shape) << std::endl;
+
     Tensor e =
         make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
 
@@ -129,6 +136,9 @@ void Tensor::swap_body(Tensor& t) {
 }
 
 Tensor Tensor::operator+(const Tensor& other) { return ops::add(*this, other); }
+Tensor Tensor::operator+=(const Tensor& other) {
+    return ops::iadd(*this, other);
+}
 Tensor Tensor::operator-(const Tensor& other) {
     return ops::subtract(*this, other);
 }
@@ -152,12 +162,12 @@ void Tensor::backward() {
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {
         if (has_grad()) {
-            set_grad(_grad);
+            Tensor ng = _grad + get_grad();
+            set_grad(ng);
         } else {
             set_grad(_grad);
         }
         if (fcn != nullptr) {  ////// THIS NEEDS TO CHANGE
-
             TensorVector grad_arglist = fcn->arg_storage;
             std::vector<Tensor> new_grads = fcn->backward(_grad);
 

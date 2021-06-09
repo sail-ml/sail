@@ -28,6 +28,32 @@ def test_matmul():
 
     return True
 
+def test_addmm():
+    choices_1 = [(10, 20), (300, 500), (1, 2), (2, 1), (8, 8)]
+    choices_2 = [[(20, 10), (20, 3)], [(500, 150)], [(2, 2), (2, 1)], [(1, 2)], [(8, 1), (8, 4)]]
+    choices_3 = [[(10, 10), (10, 3)], [(300, 150)], [(1, 2), (1, 1)], [(2, 2)], [(8, 1), (8, 4)]]
+    times = []
+    for a, ba, ca in zip(choices_1, choices_2, choices_3):
+        for b, c in zip(ba, ca):
+            arr1 = np.random.uniform(0, 1, a)
+            arr2 = np.random.uniform(0, 1, b)
+            arr3 = np.random.uniform(0, 1, c)
+
+            x1 = sail.Tensor(arr1, requires_grad=False)
+            x2 = sail.Tensor(arr2, requires_grad=False)
+            x3 = sail.Tensor(arr3, requires_grad=False)
+            
+            t = time.time()
+            x4 = sail.addmm(x1, x2, x3)
+            times.append(time.time() - t)
+            arr4 = np.matmul(arr1, arr2) + arr3
+
+            assert_approx_equal(np.sum(arr4), np.sum(x4.numpy()), significant=8)
+
+    log_time(np.mean(times), "ADDMM")
+
+    return True
+
 def test_tensordot():
     choices = [
         {'a_shape': (4, 3, 2), 'b_shape': (3, 2, 5), 'axes': 2, 'gc_shape': (4, 5)},  # NOQA

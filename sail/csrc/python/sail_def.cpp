@@ -44,8 +44,8 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "sail_c",
                              "Example module that creates an extension type.",
                              -1, 0};
 static PyModuleDef Mmodule = {PyModuleDef_HEAD_INIT, "modules",
-                             "Example module that creates an extension type.",
-                             -1, 0};
+                              "Example module that creates an extension type.",
+                              -1, 0};
 
 PyMODINIT_FUNC PyInit_random(void) {
     import_array();
@@ -73,7 +73,8 @@ PyMODINIT_FUNC PyInit_random(void) {
 //         Py_DECREF(m);
 //         return NULL;
 //     }
-//     if (PyModule_AddObject(m, "Linear", (PyObject*)&PyLinearModuleType) < 0) {
+//     if (PyModule_AddObject(m, "Linear", (PyObject*)&PyLinearModuleType) < 0)
+//     {
 //         Py_DECREF(&PyLinearModuleType);
 //         Py_DECREF(m);
 //         return NULL;

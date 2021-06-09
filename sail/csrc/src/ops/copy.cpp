@@ -23,13 +23,12 @@ Tensor copy(Tensor& tensor1) {
 }
 
 Tensor cast(Tensor& tensor1, Dtype dt) {
-    Tensor empty_tensor;
     TensorSize new_strides;
     long dt_size = GetDtypeSize(dt);
     // for (long s : tensor1.get_shape().shape) {
     //     new_strides.push_back(dt_size * s);
     // }
-    empty_tensor = empty(tensor1.get_ndim(), dt, tensor1.get_shape());
+    Tensor empty_tensor = empty(tensor1.get_ndim(), dt, tensor1.get_shape());
 
     CopyTTKernel().execute(tensor1, empty_tensor);
 

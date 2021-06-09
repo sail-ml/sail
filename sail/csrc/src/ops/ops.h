@@ -1,5 +1,6 @@
 #include "broadcast.h"
 #include "copy.h"
+#include "equality.h"
 #include "linalg/dots.h"
 #include "reduction.h"
 #include "repr.h"
@@ -9,4 +10,7 @@
 #include "transformations/squeeze.h"
 #include "transformations/transpose.h"
 
+#include "activation/sigmoid.h"
+#include "activation/softmax.h"
+#include "loss/loss.h"
 #include "math/math.h"

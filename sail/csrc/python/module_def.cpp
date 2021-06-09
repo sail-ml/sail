@@ -16,15 +16,15 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "modules",
                              "Example module that creates an extension type.",
                              -1, 0};
 
-
 PyMODINIT_FUNC PyInit_libmodules(void) {
     import_array();
     PyObject* m;
 
     if (PyType_Ready(&PyModuleType) < 0) return NULL;
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
+    if (PyType_Ready(&PySigmoidModuleType) < 0) return NULL;
+    if (PyType_Ready(&PySoftmaxModuleType) < 0) return NULL;
     if (PyType_Ready(&PyTensorType) < 0) return NULL;
-
 
     m = PyModule_Create(&module);
     if (m == NULL) return NULL;
@@ -36,6 +36,17 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
     }
     if (PyModule_AddObject(m, "Linear", (PyObject*)&PyLinearModuleType) < 0) {
         Py_DECREF(&PyLinearModuleType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    if (PyModule_AddObject(m, "Sigmoid", (PyObject*)&PySigmoidModuleType) < 0) {
+        Py_DECREF(&PySigmoidModuleType);
+        Py_DECREF(m);
+        return NULL;
+    }
+    if (PyModule_AddObject(m, "Softmax", (PyObject*)&PySoftmaxModuleType) < 0) {
+        Py_DECREF(&PySoftmaxModuleType);
         Py_DECREF(m);
         return NULL;
     }

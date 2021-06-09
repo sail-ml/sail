@@ -9,7 +9,13 @@ namespace sail {
 
 namespace ops {
 
-Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
+Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
+    if (tensor.get_shape().shape == shape.shape) {
+        return make_view(tensor);
+    }
+    if (tensor.is_view()) {
+        tensor = clone(tensor);
+    }
     Tensor new_ = make_view(tensor);
 
     TensorShape shape_base = tensor.get_shape();
@@ -19,29 +25,73 @@ Tensor broadcast_to(Tensor &tensor, TensorShape shape) {
         LongVec t(shape_new.shape.size(), 0);
         shape_new.strides = t;
         shape_new.recompute();
+        shape_new.is_single = true;
 
         new_.set_shape(shape_new);
         return new_;
     }
 
-    int indexer_2 = shape_base.ndim() - 1;
-    for (int i = shape_new.ndim() - 1; i >= 0; i--) {
-        if (indexer_2 < 0) {
-            shape_new.strides[i] = 0;
-        } else {
-            if (shape_base.shape[indexer_2] != shape_new.shape[i] &&
-                shape_base.shape[indexer_2] == 1) {
-                shape_new.strides[i] = 0;
-            } else if (shape_base.shape[indexer_2] == shape_new.shape[i]) {
-                shape_new.strides[i] = shape_base.strides[indexer_2];
-            } else {
-                throw SailCError("shapes cannot be broadcasted together");
-            }
-        }
-        indexer_2 -= 1;
-    }
+    Tensor t2 = tensor;
+    // while (t2.get_ndim() < shape.ndim()) {
+    //     t2 = t2.expand_dims(0);
+    // }
 
-    shape_new.recompute();
+    TensorSize expand_shape, expand_strides;
+    expand_shape = shape.shape;
+    expand_strides = shape.strides;
+    TensorSize tensor_strides = t2.get_shape().strides;
+    TensorSize tensor_sizes = t2.get_shape().shape;
+    TensorSize sizes = shape.shape;
+    int ndim = shape.ndim();
+    int tensor_dim = t2.get_ndim();
+
+    for (int64_t i = ndim - 1; i >= 0; --i) {
+        int64_t offset = ndim - 1 - i;
+        int64_t dim = tensor_dim - 1 - offset;
+        int64_t size = (dim >= 0) ? tensor_sizes[dim] : 1;
+        int64_t stride = (dim >= 0)
+                             ? tensor_strides[dim]
+                             : expand_shape[i + 1] * expand_strides[i + 1];
+        int64_t targetSize = sizes[i];
+        if (targetSize == -1) {
+            targetSize = size;
+        }
+        if (size != targetSize) {
+            size = targetSize;
+            stride = 0;
+        }
+        expand_shape[i] = size;
+        expand_strides[i] = stride;
+    }
+    // std::cout << "D" << std::endl;
+
+    // std::cout << getVectorString(expand_shape) << std::endl;
+
+    // int i1 = shape_new.ndim() - 1;
+    // int i2 = shape_base.ndim() - 1;
+
+    // while (i1 >= 0) {
+    //     if (i2 < 0) {
+    //         shape_new.strides[i1] = 0;
+    //     } else {
+    //         if (shape_base.shape[i2] != shape_new.shape[i1] &&
+    //             shape_base.shape[i2] == 1) {
+    //             shape_new.strides[i1] = 0;
+    //         } else if (shape_base.shape[i2] == shape_new.shape[i1]) {
+    //             shape_new.strides[i1] = shape_base.strides[i2];
+    //         } else {
+    //             throw SailCError("shapes cannot be broadcasted together");
+    //         }
+    //     }
+    //     i1--;
+    //     i2--;
+    // }
+
+    // std::cout << getVectorString(shape_new.shape) << std::endl;
+    shape_new = TensorShape(expand_shape, expand_strides);
+
+    // shape_new.recompute();
+    // shape_new.contiguous = false;
     new_.set_shape(shape_new);
 
     return new_;

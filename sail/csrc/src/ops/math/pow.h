@@ -12,6 +12,7 @@ namespace ops {
 
 Tensor power(Tensor& tensor1, Tensor& power);
 Tensor exp(Tensor& tensor1);
+Tensor log(Tensor& tensor1);
 
 }  // namespace ops
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -56,28 +57,48 @@ TensorShape::TensorShape(LongVec shape_) {
         }
         std::reverse(strides.begin(), strides.end());
     }
+    recompute();
 }
 int TensorShape::next() {
     int i;
     // if (contiguous) {
     //     d_ptr += 1;
-    if (shape.size() == 0 || shape.size() == 1 && shape[0] == 1) {
+    //     return d_ptr;
+    // }
+    if (enforced == -1) {
+        if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
+            return d_ptr;
+        }
+        if (shape.size() == 1) {
+            d_ptr += strides[0];
+            coordinates[0]++;
+        } else if (shape.size() == 2) {
+            if (coordinates[1] < shape_m1[1]) {
+                coordinates[1]++;
+                d_ptr += strides[1];
+            } else {
+                coordinates[1] = 0;
+                coordinates[0]++;
+                d_ptr += strides[0] - back_strides[1];
+            }
+        } else {
+            for (i = shape.size() - 1; i >= 0; i--) {
+                if (coordinates[i] < shape_m1[i]) {
+                    coordinates[i] += 1;
+                    d_ptr += strides[i];
+                    at = i;
+                    break;
+                } else {
+                    coordinates[i] = 0;
+                    d_ptr -= back_strides[i];
+                    at = i;
+                }
+            }
+        }
         return d_ptr;
     }
-    if (shape.size() == 1) {
-        d_ptr += strides[0];
-        coordinates[0]++;
-        // } else if (shape.size() == 2) {
-        //     if (coordinates[1] < shape_m1[1]) {
-        //         coordinates[1]++;
-        //         d_ptr += strides[1];
-        //     } else {
-        //         coordinates[1] = 0;
-        //         coordinates[0]++;
-        //         d_ptr += strides[0] - back_strides[1];
-        //     }
-    } else {
-        for (i = shape.size() - 1; i >= 0; i--) {
+    for (i = shape.size() - 1; i >= 0; i--) {
+        if (i == enforced) {
             if (coordinates[i] < shape_m1[i]) {
                 coordinates[i] += 1;
                 d_ptr += strides[i];
@@ -89,6 +110,14 @@ int TensorShape::next() {
                 at = i;
             }
         }
+    }
+
+    return d_ptr;
+}
+
+int TensorShape::next(int n) {
+    for (int i = 0; i < n; i++) {
+        next();
     }
     return d_ptr;
 }
@@ -159,6 +188,13 @@ void TensorShape::reset() {
     at = -1;
 }
 
+void TensorShape::enforce_axis(int axis) {
+    if (axis < 0) {
+        axis = ndim() + axis;
+    }
+    enforced = axis;
+}
+
 void TensorShape::insert_one(const int dim) {
     if (dim == -1) {
         shape.push_back(1);
@@ -187,11 +223,34 @@ void TensorShape::remove_one(const int dim) {
     }
     recompute(true);
 }
+void TensorShape::remove(const int dim) {
+    if (dim == -1) {
+        int new_dim = shape.size() - 1;
+        shape.erase(shape.begin() + new_dim);
+    } else {
+        if (dim > shape.size()) {
+            throw DimensionError("Dimension value is too large for squeeze");
+        }
+        shape.erase(shape.begin() + dim);
+    }
+    recompute(true);
+}
 
 long TensorShape::numel() const {
     long s = 1;
     for (long a : shape) {
         s *= a;
+    }
+    return s;
+}
+long TensorShape::numel_avoid(int dim) const {
+    long s = 1;
+    int c = 0;
+    for (long a : shape) {
+        if (c != dim) {
+            s *= a;
+        }
+        c += 1;
     }
     return s;
 }
@@ -239,17 +298,26 @@ TensorShape TensorShape::move_axis(long axis, long position) {
         throw SailCError("Invalid axis");
     }
 
-    long val_shape = shape[axis];
-    shape.erase(shape.begin() + axis);
-    long val_stride = strides[axis];
-    strides.erase(strides.begin() + axis);
+    std::vector<long> axes(ndim());
+    std::iota(axes.begin(), axes.end(), 0);
 
-    if (position > axis) {
-        position = position - 1;
+    if (axis < position) {
+        position -= 1;
     }
-    shape.insert(shape.begin() + position, val_shape);
-    strides.insert(strides.begin() + position, val_stride);
-    recompute();
+
+    axes.erase(axes.begin() + axis);
+    axes.insert(axes.begin() + position, axis);
+
+    this->reorder(axes);
+
+    // long val_shape = shape[axis];
+    // shape.erase(shape.begin() + axis);
+    // long val_stride = strides[axis];
+    // strides.erase(strides.begin() + axis);
+
+    // shape.insert(shape.begin() + position, val_shape);
+    // strides.insert(strides.begin() + position, val_stride);
+    // recompute();
     return *this;
 }
 

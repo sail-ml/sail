@@ -1,6 +1,7 @@
 #include "TensorBody.h"
 #include "Tensor.h"
 #include "dtypes.h"
+#include "factories.h"
 #include "tensor_shape.h"
 #include "utils.h"
 
@@ -47,10 +48,10 @@ TensorBody::~TensorBody() {
     if (data != 0) {
         if (!view) {
             //  #if defined(_ISOC11_SOURCE)
-                std::free(data);
+            std::free(data);
             // #else
-                // _aligned_free(data);
-                // std::free(data);
+            // _aligned_free(data);
+            // std::free(data);
             // #endif
         }
         delete shape;
@@ -66,14 +67,25 @@ TensorBody::~TensorBody() {
 
 void TensorBody::set_grad(Tensor& t) {
     // Tensor b = clone
-    void* _data =
-        _realloc_align(t.get_data(), t.numel(), t.get_info().alignment,
-                       t.get_info().dtype_size);
-    TensorBody::pointer a = new TensorBody(_data, dtype, get_shape(), false);
-    grad = new Tensor(a, t.requires_grad);
+    if (t.is_view()) {
+        t = clone(t);
+        grad = new Tensor(t.get_body(), t.requires_grad);
+    } else {
+        // void* _data =
+        //     _realloc_align(t.get_data(), t.numel(), t.get_info().alignment,
+        //                 t.get_info().dtype_size);
+        // TensorBody::pointer a =
+        //     new TensorBody(t.get_data(), dtype, t.get_shape(), t.is_view());
+        grad = new Tensor(t.get_body(), t.requires_grad);
+    }
     _has_grad = true;
 }
 Tensor TensorBody::get_grad() { return *grad; }
+void TensorBody::clear_grad() {
+    delete grad;
+    grad = nullptr;
+    _has_grad = false;
+}
 
 // void* TensorBody::get_data() { return data; }
 // Dtype TensorBody::get_dtype() { return dtype; }

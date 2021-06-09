@@ -51,7 +51,9 @@ class Multiply : public Function {
 
 class Matmul : public Function {
    public:
-    explicit Matmul(){};
+    std::string trans_a, trans_b;
+    Matmul(std::string _trans_a, std::string _trans_b)
+        : trans_a(_trans_a), trans_b(_trans_b){};
     // TensorVector arg_storage;
     std::string getName();
     Tensor forward(TensorVector inputs);

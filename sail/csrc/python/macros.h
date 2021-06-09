@@ -93,4 +93,5 @@
         pyobj->tensor = t;                                      \
         pyobj->ndim = t.get_ndim();                             \
         pyobj->dtype = get_np_type_numFromDtype(t.get_dtype()); \
+        pyobj->requires_grad = t.requires_grad;                 \
     }

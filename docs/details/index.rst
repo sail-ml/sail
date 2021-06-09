@@ -11,7 +11,8 @@ What is SAIL
 
 As long time users of PyTorch and Tensorflow, we decided to venture out and design our own
 library that could work just as well as those two, however with some api modifications. The 
-result of that is SAIL, which, in early testing, has been shown to be faster than PyTorch.
+result of that is SAIL, which, in early testing, has been shown to be faster than PyTorch in 
+certain cases.
 
 What makes it so fast
 ~~~~~~~~~~~~~~~~~~~~~~~~

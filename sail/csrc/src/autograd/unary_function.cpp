@@ -21,5 +21,12 @@ TensorVector Exp::backward(Tensor& grad) {
     return {b};
 }
 
+std::string Log::getName() { return "LogOp"; }
+Tensor Log::forward(TensorVector inputs) {
+    stored_log = ops::log(inputs[0]);
+    return stored_log;
+}
+TensorVector Log::backward(Tensor& grad) { return {grad / stored_log}; }
+
 }  // namespace autograd
 }  // namespace sail

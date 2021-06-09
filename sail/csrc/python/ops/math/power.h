@@ -28,7 +28,7 @@ RETURN_OBJECT ops_pow(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = sail::ops::power(t1->tensor, power->tensor);
-  
+
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;
     ret_class->requires_grad = t1->requires_grad;
@@ -49,7 +49,7 @@ RETURN_OBJECT ops_exp(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = sail::ops::exp(t1->tensor);
-  
+
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;
     ret_class->requires_grad = t1->requires_grad;

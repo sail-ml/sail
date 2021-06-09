@@ -29,7 +29,7 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
 
-    Dtype dt = Dtype::sFloat64;
+    Dtype dt = default_dtype;
 
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
@@ -92,10 +92,10 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
     }
 
-    Dtype dt = Dtype::sFloat64;
-
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    Dtype dt = default_dtype;
 
     shape = PySequence_Tuple(shape);
     std::vector<long> t_shape;
@@ -110,7 +110,7 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
     }
 
     ret_class->tensor =
-        sail::random::normal(sail::TensorShape(t_shape), dt, mean, std);
+        sail::random::normal(sail::TensorShape(t_shape), mean, std);
 
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = get_np_type_numFromDtype(dt);

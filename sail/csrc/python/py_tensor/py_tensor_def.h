@@ -65,10 +65,8 @@ static PyMemberDef PyTensor_members[] = {
 static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS},
     {"astype", (PyCFunction)PyTensor_astype, METH_VARARGS, NULL},
-    {"get_grad", (PyCFunction)PyTensor_get_grad, METH_VARARGS,
-     NULL},
-    {"backward", (PyCFunction)PyTensor_backward, METH_VARARGS,
-     NULL},
+    {"get_grad", (PyCFunction)PyTensor_get_grad, METH_VARARGS, NULL},
+    {"backward", (PyCFunction)PyTensor_backward, METH_VARARGS, NULL},
     {NULL} /* Sentinel */
 };
 

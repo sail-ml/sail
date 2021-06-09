@@ -194,3 +194,4 @@ test.py
 docs/generated
 !docs/Makefile
 wheelhouse/
+examples/mnist/time_mnist_mlp.py

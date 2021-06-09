@@ -62,19 +62,19 @@ Tensor* create_grad(Dtype dt) {
 Tensor clone(const Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
-    TensorShape s = t.get_shape();
+    TensorShape s = TensorShape(t.get_shape());
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
-        data = _malloc_align(s.numel(), info.alignment, info.dtype_size);
+        int numel = s.numel();
+        data = _malloc_align(numel, info.alignment, info.dtype_size);
         launch_arithmetic(t.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             T* base_data = (T*)(t.get_data());
             T* set_data = (T*)data;
-            for (int i = 0; i < s.numel(); i++) {
+            for (int i = 0; i < numel; i++) {
                 set_data[i] = base_data[s.d_ptr];
                 s.next();
             }
-            s.reset();
             s = TensorShape(s.shape);
         });
     } else {
@@ -84,6 +84,11 @@ Tensor clone(const Tensor& t) {
 
     TensorBody::pointer body = new TensorBody(data, t.get_dtype(), s);
 
+    // if (t.has_grad()) {
+    //     Tensor grad = t.get_grad();
+    //     body->set_grad(grad);
+    // }
+
     Tensor _empty = Tensor(body, t.requires_grad);
     return _empty;
 }
@@ -92,6 +97,37 @@ Tensor make_view(void* data, Dtype dt, TensorShape shape) {
     TensorBody::pointer b =
         TensorBody::pointer((new TensorBody(data, dt, shape, true)));
     Tensor _empty = Tensor(b, false);
+    return _empty;
+}
+
+Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32) {
+    // if (t.get_ndim() != 1) {
+    //     throw SailCError("Inputs to one_hot must 1d");
+    // }
+    if (t.get_dtype() != Dtype::sInt16 && t.get_dtype() != Dtype::sInt32 &&
+        t.get_dtype() != Dtype::sInt64) {
+        throw SailCError("inputs must be integers");
+    }
+    long total_data = size * t.numel();
+    alignemnt_information info = getAlignment(dt);
+    void* data = _calloc_align(total_data, info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* t_data = (T*)data;
+        int start = 0;
+        for (int i = 0; i < t.numel(); i++) {
+            int jump = ((int*)t[i].get_data())[0];
+            int leftover = size - jump;
+            start += jump;
+            t_data[start] = 1;
+            start += leftover;
+        }
+    });
+    TensorShape shape = TensorShape({t.numel(), size});
+    TensorBody::pointer b =
+        TensorBody::pointer((new TensorBody(data, dt, shape, false)));
+    Tensor _empty = Tensor(b, t.requires_grad);
     return _empty;
 }
 
@@ -173,11 +209,46 @@ Tensor from_data(void* data, Dtype dt, TensorShape s) {
     TensorBody::pointer b = new TensorBody(new_data, dt, s);
     return Tensor(b, false);
 }
+Tensor from_data(double data) {
+    alignemnt_information info = getAlignment(Dtype::sFloat64);
+    double* new_data =
+        (double*)_malloc_align(1, info.alignment, info.dtype_size);
+    new_data[0] = data;
+    TensorBody::pointer b =
+        new TensorBody((void*)new_data, Dtype::sFloat64, TensorShape({1}));
+    return Tensor(b, false);
+}
+Tensor from_data(float data) {
+    alignemnt_information info = getAlignment(Dtype::sFloat32);
+    float* new_data = _malloc_align(1, info.alignment, info.dtype_size);
+    new_data[0] = data;
+    TensorBody::pointer b =
+        new TensorBody((void*)new_data, Dtype::sFloat32, TensorShape({1}));
+    return Tensor(b, false);
+}
 
 Tensor zeros(TensorShape size, Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* new_data =
         _calloc_align(size.numel(), info.alignment, info.dtype_size);
+    TensorBody::pointer b = new TensorBody(new_data, dt, size);
+    return Tensor(b, false);
+}
+Tensor ones(TensorShape size, Dtype dt) {
+    alignemnt_information info = getAlignment(dt);
+    int numel = size.numel();
+    void* new_data =
+        _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* data_fill = (T*)new_data;
+
+        for (int i = 0; i < numel; i++) {
+            data_fill[i] = (T)1;
+        }
+    });
+
     TensorBody::pointer b = new TensorBody(new_data, dt, size);
     return Tensor(b, false);
 }
@@ -204,6 +275,9 @@ Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
 
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
+}
+Tensor uniform(TensorShape size, double min = 0, double max = 1) {
+    return uniform(size, default_dtype, min, max);
 }
 Tensor uniform_like(Tensor tensor, double min = 0, double max = 1) {
     TensorShape s = tensor.get_shape();
@@ -233,6 +307,9 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
 
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
+}
+Tensor normal(TensorShape size, double mean = 0, double std = 1) {
+    return normal(size, default_dtype, mean, std);
 }
 Tensor normal_like(Tensor tensor, double mean = 0, double std = 1) {
     TensorShape s = tensor.get_shape();

@@ -28,8 +28,10 @@ static int PyLinearModule_init(PyModule *self, PyObject *args,
 RETURN_OBJECT
 PyLinearModule_get_weights(PyModule *self, void *closure) {
     PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
-    Linear a = *(Linear *)self->module;
-    GENERATE_FROM_TENSOR(py_weights, a.weights);
+    // Linear a = *(Linear *)self->module;
+    Tensor weights = (*(Linear *)self->module).weights;
+    GENERATE_FROM_TENSOR(py_weights, weights);
+
     return (PyObject *)py_weights;
 }
 
@@ -102,7 +104,7 @@ static PyTypeObject PyLinearModuleType = {
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
-    NULL,                /* tp_doc */
+    NULL,                            /* tp_doc */
     (traverseproc)PyModule_traverse, /* tp_traverse */
     (inquiry)PyModule_clear,         /* tp_clear */
     0,                               /* tp_richcompare */
