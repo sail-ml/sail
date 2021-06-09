@@ -15,7 +15,8 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -fopenmp -march=native -fpermissive -ffast-math -mavx2 -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -Ofast -pthread -fopenmp -march=native -fpermissive -ffast-math -mavx2 -Wno-unused-variable -Wno-pointer-arith --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 
 
 add_subdirectory(src)

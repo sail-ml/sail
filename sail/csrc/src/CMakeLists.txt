@@ -19,6 +19,7 @@ add_library(src STATIC ${headers} ${files} )#"cuda/cuda_math.h" "cuda/cuda_math.
 if (MKL_FOUND) 
 target_include_directories(src PUBLIC ${MKL_INCLUDE_DIR})
 target_link_libraries(src PUBLIC ${MKL_LIBRARIES})
+target_link_libraries(src PUBLIC "-lgcov")
 else()
 message(WARNING "MKL not found")
 endif()
