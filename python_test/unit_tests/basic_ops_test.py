@@ -40,126 +40,126 @@ def test_add():
 
     return True
 
-def test_sub():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+# def test_sub():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
-        x2 = sail.Tensor(arr2, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
+#         x2 = sail.Tensor(arr2, requires_grad=False)
         
-        t = time.time()
-        x3 = x1 - x2 
-        times.append(time.time() - t)
-        arr3 = arr1 - arr2 
+#         t = time.time()
+#         x3 = x1 - x2 
+#         times.append(time.time() - t)
+#         arr3 = arr1 - arr2 
 
-        assert_eq_np_sail(arr3, x3)
+#         assert_eq_np_sail(arr3, x3)
 
-    log_time(np.mean(times), "SUBTRACT")
+#     log_time(np.mean(times), "SUBTRACT")
 
-    return True
+#     return True
 
-def test_mult():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+# def test_mult():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
-        x2 = sail.Tensor(arr2, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
+#         x2 = sail.Tensor(arr2, requires_grad=False)
         
-        t = time.time()
-        x3 = x1 * x2 
-        times.append(time.time() - t)
-        arr3 = arr1 * arr2 
+#         t = time.time()
+#         x3 = x1 * x2 
+#         times.append(time.time() - t)
+#         arr3 = arr1 * arr2 
 
-        assert_eq_np_sail(arr3, x3)
+#         assert_eq_np_sail(arr3, x3)
 
-    log_time(np.mean(times), "MULTIPLY")
+#     log_time(np.mean(times), "MULTIPLY")
 
-    return True
+#     return True
 
-def test_divide():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+# def test_divide():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
-        x2 = sail.Tensor(arr2, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
+#         x2 = sail.Tensor(arr2, requires_grad=False)
         
-        t = time.time()
-        x3 = x1 / x2 
-        times.append(time.time() - t)
-        arr3 = arr1 / arr2 
+#         t = time.time()
+#         x3 = x1 / x2 
+#         times.append(time.time() - t)
+#         arr3 = arr1 / arr2 
 
-        assert_eq_np_sail(arr3, x3)
+#         assert_eq_np_sail(arr3, x3)
 
-    log_time(np.mean(times), "DIVIDE")
+#     log_time(np.mean(times), "DIVIDE")
 
-    return True
+#     return True
 
-def test_pow():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
-        arr2 = np.random.uniform(0, 1, (c))
+# def test_pow():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
+#         arr2 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
-        x2 = sail.Tensor(arr2, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
+#         x2 = sail.Tensor(arr2, requires_grad=False)
         
-        t = time.time()
-        x3 = sail.power(x1, x2) 
-        times.append(time.time() - t)
-        arr3 = np.power(arr1, arr2) 
+#         t = time.time()
+#         x3 = sail.power(x1, x2) 
+#         times.append(time.time() - t)
+#         arr3 = np.power(arr1, arr2) 
 
-        assert_eq_np_sail(arr3, x3)
+#         assert_eq_np_sail(arr3, x3)
 
-    log_time(np.mean(times), "POWER")
+#     log_time(np.mean(times), "POWER")
 
-    return True
+#     return True
 
-def test_exp():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
+# def test_exp():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
         
-        t = time.time()
-        x3 = sail.exp(x1) 
-        times.append(time.time() - t)
-        arr3 = np.exp(arr1) 
+#         t = time.time()
+#         x3 = sail.exp(x1) 
+#         times.append(time.time() - t)
+#         arr3 = np.exp(arr1) 
 
-        assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
+#         assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
 
-    log_time(np.mean(times), "EXP")
+#     log_time(np.mean(times), "EXP")
 
-    return True
+#     return True
 
-def test_max():
-    choices = elementwise_options
-    times = []
-    for c in choices:
-        arr1 = np.random.uniform(0, 1, (c))
+# def test_max():
+#     choices = elementwise_options
+#     times = []
+#     for c in choices:
+#         arr1 = np.random.uniform(0, 1, (c))
 
-        x1 = sail.Tensor(arr1, requires_grad=False)
+#         x1 = sail.Tensor(arr1, requires_grad=False)
         
-        t = time.time()
-        x3 = sail.max(x1, len(c) - 1) 
-        times.append(time.time() - t)
-        arr3 = np.max(arr1, len(c) - 1) 
+#         t = time.time()
+#         x3 = sail.max(x1, len(c) - 1) 
+#         times.append(time.time() - t)
+#         arr3 = np.max(arr1, len(c) - 1) 
 
-        assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
+#         assert_eq_np_sail_margin(arr3, x3, margin=1e-6)
 
-    log_time(np.mean(times), "EXP")
+#     log_time(np.mean(times), "EXP")
 
-    return True
+#     return True
 
     

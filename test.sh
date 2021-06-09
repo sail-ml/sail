@@ -13,7 +13,7 @@ elif [ $1 = "gdb" ]; then
     cd build/temp.linux-x86_64-3.7/sail/csrc
     gdb ./test
 elif [ $1 = "python" ]; then
-    python -m pytest --cov=sail
+    python -m pytest
 else
     cd build/temp.linux-x86_64-3.7/sail/csrc
     ./test
