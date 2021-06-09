@@ -75,7 +75,6 @@ class DotTTKernel : public Kernel {
             } else {
                 cblas_transb = CblasConjTrans;
             }
-#endif
 
             if (name == "float64") {
                 using T = double;
@@ -90,7 +89,16 @@ class DotTTKernel : public Kernel {
                             beta, (T*)out_tensor.get_data(), N);
                 //
             } else {
+#endif
                 using T = typename decltype(pt)::type;
+
+                if (trans_a == TRANS) {
+                    t1 = clone(t1.transpose({1, 0}));
+                }
+                if (trans_b == TRANS) {
+                    t2 = clone(t2.transpose({1, 0}));
+                }
+
                 T* matA = (T*)t1.get_data();
                 T* matB = (T*)t2.get_data();
                 T* matC = (T*)out_tensor.get_data();
@@ -105,7 +113,9 @@ class DotTTKernel : public Kernel {
                         matC[i * N + j] = sum;
                     }
                 }
+#ifdef MKL
             }
+#endif 
         });
     }
 };  // namespace sail

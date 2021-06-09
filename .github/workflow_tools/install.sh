@@ -10,7 +10,10 @@ rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
 
 echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
-apt install intel-basekit
+apt install intel-oneapi-dnnl
+apt install intel-oneapi-dnnl-devel
+
+apt install intel-oneapi-mkl-common-2021.2.0 intel-oneapi-mkl-common-devel-2021.2.0 intel-oneapi-mkl-devel intel-oneapi-mkl-devel-2021.2.0 intel-oneapi-mpi-2021.2.0 intel-oneapi-mpi-devel-2021.2.0
 
 
 chmod +x ./.github/workflow_tools/install_avx2.sh
