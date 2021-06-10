@@ -54,7 +54,7 @@ class DotTTKernel : public Kernel {
             int lda = t1_shape[1];
             int ldb = t2_shape[1];
             int ldc = t2_shape[1];
-#ifdef MKL
+
             CBLAS_TRANSPOSE cblas_transa;
             CBLAS_TRANSPOSE cblas_transb;
 
@@ -91,7 +91,6 @@ class DotTTKernel : public Kernel {
                             beta, (T*)out_tensor.get_data(), N);
                 //
             } else {
-#endif
                 using T = typename decltype(pt)::type;
 
                 // if (trans_a == TRANS) {
