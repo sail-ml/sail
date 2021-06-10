@@ -129,7 +129,7 @@ class UnitTest():
         else:
             print ("No Errors!")
 
-        print ("Test Pass Percentage: %s%%" % (int(RunCounter.global_pass/RunCounter.global_runs) * 100))
+        print ("Test Pass Percentage: %s%%" % (int(RunCounter.global_pass/RunCounter.global_runs * 100)))
         exit(e_code)
 
     def __init__(self):
@@ -146,9 +146,23 @@ class UnitTest():
             return 
         self.runner.log_run(False)
 
-    def assert_eq_np_sail(self, np_arr, sail_arr):
+    def assert_lt(self, a, b):
+        try:
+            assert a < b, (a, b)
+        except AssertionError as e:
+            self.runner.log_run(True, self.__class__.__name__, failure_message=traceback.format_exc())
+            return 
+        self.runner.log_run(False)
+
+    def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
         sail_np = sail_arr.numpy()
         # print (np.array_equal(np_arr, sail_np))
+        if (eps):
+            diff = abs(np_arr - sail_np)
+            md = np.max(diff)
+            self.assert_lt(md, eps)
+            return
+        
         self.assert_eq(np.array_equal(np_arr, sail_np))
 
     def run(self):
