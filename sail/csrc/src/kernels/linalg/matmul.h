@@ -114,9 +114,7 @@ class DotTTKernel : public Kernel {
                         matC[i * N + j] = sum;
                     }
                 }
-#ifdef MKL
             }
-#endif
         });
     }
 };  // namespace sail
