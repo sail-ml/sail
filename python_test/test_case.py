@@ -139,20 +139,10 @@ class UnitTest():
         self.snapshots = []
 
     def assert_eq(self, a, b=True):
-        try:
-            assert a == b, (a, b)
-        except AssertionError as e:
-            self.runner.log_run(True, self.__class__.__name__, failure_message=traceback.format_exc())
-            return 
-        self.runner.log_run(False)
+        assert a == b, (a, b)
 
     def assert_lt(self, a, b):
-        try:
-            assert a < b, (a, b)
-        except AssertionError as e:
-            self.runner.log_run(True, self.__class__.__name__, failure_message=traceback.format_exc())
-            return 
-        self.runner.log_run(False)
+        assert a < b, (a, b)
 
     def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
         sail_np = sail_arr.numpy()
@@ -163,18 +153,18 @@ class UnitTest():
             self.assert_lt(md, eps)
             return
         
-        self.assert_eq(np.array_equal(np_arr, sail_np))
+        assert (np.array_equal(np_arr, sail_np)), (np_arr, sail_np)
 
     def run(self):
         for t in self.tests:
             # self.snapshots.append(tracemalloc.take_snapshot())
-            # try:
-            getattr(self, t)()
-            # except AssertionError as e:
-            #     self.runner.log_run(True, t, failure_message=traceback.format_exc())
-            #     continue
+            try:
+                getattr(self, t)()
+            except AssertionError as e:
+                self.runner.log_run(True, t, failure_message=traceback.format_exc())
+                continue
             
-            # self.runner.log_run(False)
+            self.runner.log_run(False)
         # stats = self.snapshots[-1].compare_to(self.snapshots[-2], 'filename')    
 
         # for stat in stats[:10]:                
