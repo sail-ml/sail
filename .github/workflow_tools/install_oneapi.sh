@@ -16,5 +16,5 @@ apt install -y intel-oneapi-dnnl-devel intel-oneapi-mkl-devel intel-oneapi-mpi-d
 apt-get install libatlas-base-dev liblapack-dev libblas-dev
 
 # Cleanup package manager
-apt-get autoclean && apt-get clean
-rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# apt-get autoclean && apt-get clean
+# rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

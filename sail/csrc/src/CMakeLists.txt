@@ -19,7 +19,7 @@ if (Atlas_FOUND)
 include_directories(${Atlas_INCLUDE_DIRS})
 target_include_directories(src PUBLIC ${Atlas_INCLUDE_DIRS})
 target_link_libraries(src PUBLIC ${Atlas_LIBRARIES})
-
+message(status "atlas found")
 else()
 message(WARNING "Atlas not found")
 endif()
