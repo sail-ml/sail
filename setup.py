@@ -67,7 +67,7 @@ class CMakeBuild(build_ext):
         print (cmake_args)
 
         print (cpufeature.CPUFeature)
-        if (cpufeature.CPUFeature["AVX2"]):
+        if (cpufeature.CPUFeature["AVX2"] and False):
             print ("Compiling Sail with AVX2 Support")
             cmake_args.append("-DUSE_AVX2=ON")
         else:
