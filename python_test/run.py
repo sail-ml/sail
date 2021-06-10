@@ -5,7 +5,7 @@ import time
 import unittest
 import faulthandler
 
-import basic_ops_test
+import basic_ops_test, shape_test
 
 if __name__ == "__main__":
     faulthandler.enable()

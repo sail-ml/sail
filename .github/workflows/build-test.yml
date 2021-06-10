@@ -30,7 +30,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Package
-        run: python setup.py install save-gen
+        run: python setup.py install 
 
       - name: Test
         run: ./test.sh python
