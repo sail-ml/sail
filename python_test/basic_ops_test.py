@@ -55,29 +55,29 @@ class AddTest(UnitTest):
 
         return
 
-    def test_add_grad(self):
-        choices = broadcasted_options
-        times = []
+    # def test_add_grad(self):
+    #     choices = broadcasted_options
+    #     times = []
 
-        def forward(a, b):
-            c = sail.add(a, b)
-            d = sail.sum(c)
-            return d
+    #     def forward(a, b):
+    #         c = sail.add(a, b)
+    #         d = sail.sum(c)
+    #         return d
 
-        for c in grad_options:
+    #     for c in grad_options:
             
-            arr1 = np.random.uniform(0, 1, (c))
-            arr2 = np.random.uniform(0, 1, (c))
+    #         arr1 = np.random.uniform(0, 1, (c))
+    #         arr2 = np.random.uniform(0, 1, (c))
             
-            dic = {
-                "a": arr1,
-                "b": arr2
-            }
+    #         dic = {
+    #             "a": arr1,
+    #             "b": arr2
+    #         }
 
-            diff = check_gradients_vector(forward, dic)
-            assert diff < 1e-6
+    #         diff = check_gradients_vector(forward, dic)
+    #         assert diff < 1e-6
 
-        return
+    #     return
 
 class SubtractTest(UnitTest):
 
@@ -124,29 +124,29 @@ class SubtractTest(UnitTest):
 
         return
 
-        def test_grad(self):
-            choices = broadcasted_options
-            times = []
+        # def test_grad(self):
+        #     choices = broadcasted_options
+        #     times = []
 
-            def forward(a, b):
-                c = a - b 
-                d = sail.sum(c)
-                return d
+        #     def forward(a, b):
+        #         c = a - b 
+        #         d = sail.sum(c)
+        #         return d
 
-            for c in grad_options:
+        #     for c in grad_options:
                 
-                arr1 = np.random.uniform(0, 1, (c))
-                arr2 = np.random.uniform(0, 1, (c))
+        #         arr1 = np.random.uniform(0, 1, (c))
+        #         arr2 = np.random.uniform(0, 1, (c))
                 
-                dic = {
-                    "a": arr1,
-                    "b": arr2
-                }
+        #         dic = {
+        #             "a": arr1,
+        #             "b": arr2
+        #         }
 
-                diff = check_gradients_vector(forward, dic)
-                assert diff < 1e-6
+        #         diff = check_gradients_vector(forward, dic)
+        #         assert diff < 1e-6
 
-            return
+        #     return
 
 class MultiplyTest(UnitTest):
 
@@ -193,29 +193,29 @@ class MultiplyTest(UnitTest):
 
         return
 
-    def test_grad(self):
-        choices = broadcasted_options
-        times = []
+    # def test_grad(self):
+    #     choices = broadcasted_options
+    #     times = []
 
-        def forward(a, b):
-            c = a * b 
-            d = sail.sum(c)
-            return d
+    #     def forward(a, b):
+    #         c = a * b 
+    #         d = sail.sum(c)
+    #         return d
 
-        for c in grad_options:
+    #     for c in grad_options:
             
-            arr1 = np.random.uniform(0, 1, (c))
-            arr2 = np.random.uniform(0, 1, (c))
+    #         arr1 = np.random.uniform(0, 1, (c))
+    #         arr2 = np.random.uniform(0, 1, (c))
             
-            dic = {
-                "a": arr1,
-                "b": arr2
-            }
+    #         dic = {
+    #             "a": arr1,
+    #             "b": arr2
+    #         }
 
-            diff = check_gradients_vector(forward, dic)
-            assert diff < 1e-6
+    #         diff = check_gradients_vector(forward, dic)
+    #         assert diff < 1e-6
 
-        return
+    #     return
 
 class DivideTest(UnitTest):
 
@@ -262,29 +262,29 @@ class DivideTest(UnitTest):
 
         return
 
-    def test_grad(self):
-        choices = broadcasted_options
-        times = []
+    # def test_grad(self):
+    #     choices = broadcasted_options
+    #     times = []
 
-        def forward(a, b):
-            c = a / b 
-            d = sail.sum(c)
-            return d
+    #     def forward(a, b):
+    #         c = a / b 
+    #         d = sail.sum(c)
+    #         return d
 
-        for c in grad_options:
+    #     for c in grad_options:
             
-            arr1 = np.random.uniform(1, 2, (c))
-            arr2 = np.random.uniform(1, 2, (c))
+    #         arr1 = np.random.uniform(1, 2, (c))
+    #         arr2 = np.random.uniform(1, 2, (c))
             
-            dic = {
-                "a": arr1,
-                "b": arr2
-            }
+    #         dic = {
+    #             "a": arr1,
+    #             "b": arr2
+    #         }
 
-            diff = check_gradients_vector(forward, dic)
-            assert diff < 1e-5, (diff, 1e-5)
+    #         diff = check_gradients_vector(forward, dic)
+    #         assert diff < 1e-5, (diff, 1e-5)
 
-        return
+    #     return
 
 class PowerTest(UnitTest):
 
