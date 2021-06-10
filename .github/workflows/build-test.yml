@@ -35,7 +35,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Package
-        run: python setup.py install 
+        run: python setup.py install ci
 
       - name: Test
         run: ./test.sh python

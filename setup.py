@@ -24,6 +24,8 @@ REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
 build_path = ""
 
+allow_avx = True
+
 class CMakeExtension(Extension):
 
     def __init__(self, name):
@@ -39,6 +41,7 @@ class CMakeBuild(build_ext):
         super().run()
 
     def build_cmake(self, ext):
+        global allow_avx
         cwd = pathlib.Path().absolute()
 
         # these dirs will be created in build_py, so if you don't have
@@ -67,7 +70,7 @@ class CMakeBuild(build_ext):
         print (cmake_args)
 
         print (cpufeature.CPUFeature)
-        if (cpufeature.CPUFeature["AVX2"] and False):
+        if (cpufeature.CPUFeature["AVX2"] and allow_avx):
             print ("Compiling Sail with AVX2 Support")
             cmake_args.append("-DUSE_AVX2=ON")
         else:
@@ -101,10 +104,13 @@ class CMakeBuild(build_ext):
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
 
 def s():
+    global allow_avx
     save_gen = False
     if "save-gen" in sys.argv:
         save_gen = True
         sys.argv.remove("save-gen")
+    if "ci" in sys.argv:
+        allow_avx = False
 
     files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
     files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
