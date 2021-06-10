@@ -24,6 +24,11 @@ jobs:
           chmod +x .github/workflow_tools/install.sh
           sudo ./.github/workflow_tools/install.sh
 
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
+
       - name: Install Python Dependencies
         run: |
           pip install -r requirements.txt
@@ -44,4 +49,4 @@ jobs:
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
         
-        
+      
