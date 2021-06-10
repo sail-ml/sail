@@ -130,8 +130,8 @@ def s():
         save_gen = True
         sys.argv.remove("save-gen")
 
-    files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
-    files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
+    files = glob.glob("sail/csrc/core/**/*.cpp*", recursive=True)
+    files = list(files) + list(glob.glob("sail/csrc/core/**/*.h*", recursive=True))
     files = list(files) + list(glob.glob("sail/csrc/python/**/*.cpp*", recursive=True))
     files = list(files) + list(glob.glob("sail/csrc/python/**/*.h*", recursive=True))
     os.system("clang-format -i " + " ".join(files))

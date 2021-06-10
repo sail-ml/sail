@@ -4,7 +4,7 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/dtypes.h"
+#include "../../core/dtypes.h"
 #include "numpy/arrayobject.h"
 #include "py_dtype_def.h"
 

@@ -5,10 +5,10 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include "../../../src/Tensor.h"
-#include "../../../src/ops/ops.h"
-#include "../../../src/tensor_shape.h"
-#include "../../../src/types.h"
+#include "../../../core/Tensor.h"
+#include "../../../core/ops/ops.h"
+#include "../../../core/tensor_shape.h"
+#include "../../../core/types.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 

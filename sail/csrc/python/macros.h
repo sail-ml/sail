@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Python.h>
-#include "../src/Tensor.h"
-#include "../src/dtypes.h"
+#include "../core/Tensor.h"
+#include "../core/dtypes.h"
 #include "py_tensor/py_tensor.h"
 
 // sail::Tensor getNumeric(PyObject* number) {

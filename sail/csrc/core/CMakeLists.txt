@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 2.8)
+project(sail_c LANGUAGES CXX) # CUDA
+# find_package(CUDA REQUIRED)
+
+file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h")
+file(GLOB_RECURSE files CONFIGURE_DEPENDS "*.cpp")
+
+include(FindBLAS)
+
+add_library(core STATIC ${headers} ${files} )#"cuda/cuda_math.h" "cuda/cuda_math.cu")
+target_include_directories(core PUBLIC ${SAIL_INCLUDE_DIRS})
+target_link_libraries(core PUBLIC "-lgcov")
+target_link_libraries(core PUBLIC ${SAIL_LIBRARIES})
+
+target_include_directories(core PRIVATE "../libs/xsimd/include")

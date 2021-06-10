@@ -97,14 +97,14 @@
 #    setup_target_for_coverage_*().
 #    Example:
 #      set(COVERAGE_EXCLUDES
-#          '${PROJECT_SOURCE_DIR}/src/dir1/*'
-#          '/path/to/my/src/dir2/*')
+#          '${PROJECT_SOURCE_DIR}/core/dir1/*'
+#          '/path/to/my/core/dir2/*')
 #    Or, use the EXCLUDE argument to setup_target_for_coverage_*().
 #    Example:
 #      setup_target_for_coverage_lcov(
 #          NAME coverage
 #          EXECUTABLE testrunner
-#          EXCLUDE "${PROJECT_SOURCE_DIR}/src/dir1/*" "/path/to/my/src/dir2/*")
+#          EXCLUDE "${PROJECT_SOURCE_DIR}/core/dir1/*" "/path/to/my/core/dir2/*")
 #
 # 4.a NOTE: With CMake 3.4+, COVERAGE_EXCLUDES or EXCLUDE can also be set
 #     relative to the BASE_DIRECTORY (default: PROJECT_SOURCE_DIR)

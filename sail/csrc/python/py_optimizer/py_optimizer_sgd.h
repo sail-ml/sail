@@ -1,7 +1,7 @@
 #pragma once
-#include "../../src/loss/cross_entropy_loss.h"
-#include "../../src/modules/modules.h"
-#include "../../src/optimizers/optimizers.h"
+#include "../../core/loss/cross_entropy_loss.h"
+#include "../../core/modules/modules.h"
+#include "../../core/optimizers/optimizers.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
 

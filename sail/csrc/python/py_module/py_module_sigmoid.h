@@ -1,5 +1,5 @@
 #pragma once
-#include "../../src/modules/modules.h"
+#include "../../core/modules/modules.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
 

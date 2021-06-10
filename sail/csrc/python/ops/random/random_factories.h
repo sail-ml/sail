@@ -6,12 +6,12 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "../../../src/Tensor.h"
-#include "../../../src/dtypes.h"
-#include "../../../src/factories.h"
-#include "../../../src/ops/ops.h"
-#include "../../../src/ops/reduction.h"
-#include "../../../src/tensor_shape.h"
+#include "../../../core/Tensor.h"
+#include "../../../core/dtypes.h"
+#include "../../../core/factories.h"
+#include "../../../core/ops/ops.h"
+#include "../../../core/ops/reduction.h"
+#include "../../../core/tensor_shape.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 

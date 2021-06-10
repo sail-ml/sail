@@ -4,9 +4,9 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/dtypes.h"
-#include "../../src/error.h"
+#include "../../core/Tensor.h"
+#include "../../core/dtypes.h"
+#include "../../core/error.h"
 #include "../macros.h"
 #include "../ops/elementwise.h"
 #include "numpy/arrayobject.h"

@@ -22,7 +22,7 @@ if (USE_MKL)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 endif()
 
-add_subdirectory(src)
+add_subdirectory(core)
 # find_package(PythonLibs REQUIRED)
 # find_package(Python3 REQUIRED COMPONENTS NumPy)
 # include_directories(${PYTHON_INCLUDE_DIRS})
@@ -39,7 +39,7 @@ include(FindBLAS)
 
 # BASE SAIL PACKAGE
 add_library(sail_c MODULE "python/sail_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(sail_c PRIVATE src)
+target_link_libraries(sail_c PRIVATE core)
 target_include_directories(sail_c PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
@@ -47,21 +47,21 @@ target_include_directories(sail_c PRIVATE "libs/xsimd/include")
 
 # MODULES
 add_library(modules MODULE "python/module_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(modules PRIVATE src)
+target_link_libraries(modules PRIVATE core)
 target_include_directories(modules PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( modules LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(modules PRIVATE "libs/xsimd/include")
 
 # loss
 add_library(loss MODULE "python/loss_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(loss PRIVATE src)
+target_link_libraries(loss PRIVATE core)
 target_include_directories(loss PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( loss LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(loss PRIVATE "libs/xsimd/include")
 
 # optimizers
 add_library(optimizers MODULE "python/optimizer_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(optimizers PRIVATE src)
+target_link_libraries(optimizers PRIVATE core)
 target_include_directories(optimizers PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES( optimizers LINK_PUBLIC ${Boost_LIBRARIES} )
 target_include_directories(optimizers PRIVATE "libs/xsimd/include")
@@ -86,7 +86,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(test test/test_cpp/test.cpp)
-target_link_libraries(test PUBLIC src)
+target_link_libraries(test PUBLIC core)
 # target_link_libraries(test PUBLIC gtest_main)
 target_include_directories(test PRIVATE "libs/xsimd/include")
 

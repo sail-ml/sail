@@ -4,8 +4,8 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/dtypes.h"
+#include "../../core/Tensor.h"
+#include "../../core/dtypes.h"
 #include "numpy/arrayobject.h"
 
 #include "../macros.h"

@@ -1,12 +1,12 @@
-#include "../../src/Tensor.h"
-#include "../../src/loss/cross_entropy_loss.h"
-#include "../../src/optimizers/optimizers.h"
-#include "../../src/tensor_shape.h"
-#include "../../src/factories.h"
-#include "../../src/autograd/autograd.h"
-#include "../../src/modules/modules.h"
-#include "../../src/dtypes.h"
-#include "../../src/ops/ops.h"
+#include "../../core/Tensor.h"
+#include "../../core/loss/cross_entropy_loss.h"
+#include "../../core/optimizers/optimizers.h"
+#include "../../core/tensor_shape.h"
+#include "../../core/factories.h"
+#include "../../core/autograd/autograd.h"
+#include "../../core/modules/modules.h"
+#include "../../core/dtypes.h"
+#include "../../core/ops/ops.h"
 
 #include <iostream>
 #include <ostream>

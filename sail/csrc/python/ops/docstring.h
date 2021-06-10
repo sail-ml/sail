@@ -4,8 +4,8 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/ops/reduction.h"
+#include "../../core/Tensor.h"
+#include "../../core/ops/reduction.h"
 #include "../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 
