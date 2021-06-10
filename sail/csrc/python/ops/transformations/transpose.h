@@ -31,6 +31,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (tuple == NULL) {
         ret_class->tensor = sail::ops::transpose(t1->tensor);
     } else {
+        tuple = PySequence_Tuple(tuple);
         int len = PyTuple_Size(tuple);
         if (len == -1) {
             PyErr_SetString(PyExc_TypeError,
@@ -63,6 +64,7 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     }
 
     // BINARY_TENSOR_TYPE_CHECK(t1, t2);
+    py_tuple = PySequence_Tuple(py_tuple);
     int len = PyTuple_Size(py_tuple);
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
@@ -95,12 +97,6 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return NULL;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
         return NULL;
     }
 

@@ -100,7 +100,10 @@ class RunCounter():
         if (failure):
             self.failures += 1
             RunCounter.global_failures += 1
-            RunCounter.global_errors[fcn] = failure_message
+            if fcn in RunCounter.global_errors:
+                RunCounter.global_errors[fcn] += [failure_message]
+            else:
+                RunCounter.global_errors[fcn] = [failure_message]
         else:
             self.pass_ += 1
             RunCounter.global_pass += 1
@@ -109,19 +112,25 @@ class UnitTest():
 
     @staticmethod
     def execute():
+        e_code = 0
         for C in UnitTest.__subclasses__():
             c = C()
             c.run()
         
         if RunCounter.global_failures != 0:
+            e_code = 1
             print ("Errors: ")
             for r in RunCounter.global_errors:
                 print (r)
                 print ("="*80)
-                print (RunCounter.global_errors[r])
+                for i in RunCounter.global_errors[r]:
+                    print (i)
+                    print ("-"*80)
         else:
             print ("No Errors!")
 
+        print ("Test Pass Percentage: %s%%" % (int(RunCounter.global_pass/RunCounter.global_runs) * 100))
+        exit(e_code)
 
     def __init__(self):
         self.runner = RunCounter()
@@ -129,21 +138,29 @@ class UnitTest():
         self.num_tests = len(self.tests)
         self.snapshots = []
 
+    def assert_eq(self, a, b=True):
+        try:
+            assert a == b, (a, b)
+        except AssertionError as e:
+            self.runner.log_run(True, self.__class__.__name__, failure_message=traceback.format_exc())
+            return 
+        self.runner.log_run(False)
+
     def assert_eq_np_sail(self, np_arr, sail_arr):
         sail_np = sail_arr.numpy()
         # print (np.array_equal(np_arr, sail_np))
-        assert np.array_equal(np_arr, sail_np)
+        self.assert_eq(np.array_equal(np_arr, sail_np))
 
     def run(self):
         for t in self.tests:
             # self.snapshots.append(tracemalloc.take_snapshot())
-            try:
-                getattr(self, t)()
-            except AssertionError as e:
-                self.runner.log_run(True, t, failure_message=traceback.format_exc())
-                continue
+            # try:
+            getattr(self, t)()
+            # except AssertionError as e:
+            #     self.runner.log_run(True, t, failure_message=traceback.format_exc())
+            #     continue
             
-            self.runner.log_run(False)
+            # self.runner.log_run(False)
         # stats = self.snapshots[-1].compare_to(self.snapshots[-2], 'filename')    
 
         # for stat in stats[:10]:                
