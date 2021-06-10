@@ -2,7 +2,7 @@
 #define OMP_MIN_VALUE 512  // should probably find a real number ot use
 
 // #include <cblas.h>
-#include <immintrin.h>
+// #include <immintrin.h>
 #include <iostream>
 
 #include "../../Tensor.h"
@@ -13,9 +13,8 @@
 #include <mkl.h>
 #include <omp.h>
 #else
-extern "C"
-{
-   #include <cblas.h>
+extern "C" {
+#include <cblas.h>
 }
 #include <omp.h>
 #endif
