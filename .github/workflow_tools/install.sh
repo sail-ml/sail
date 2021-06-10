@@ -2,19 +2,19 @@
 
 set -ex
 
-chmod +x ./docker/common/install_tools.sh
-chmod +x ./docker/common/install_python.sh
-chmod +x ./docker/common/install_boost.sh
-chmod +x ./docker/common/install_cmake.sh
-chmod +x ./docker/common/install_gcc.sh
-chmod +x ./docker/common/install_oneapi.sh
+chmod +x ./.github/workflow_tools/install_tools.sh
+chmod +x ./.github/workflow_tools/install_python.sh
+chmod +x ./.github/workflow_tools/install_boost.sh
+chmod +x ./.github/workflow_tools/install_cmake.sh
+chmod +x ./.github/workflow_tools/install_gcc.sh
+chmod +x ./.github/workflow_tools/install_oneapi.sh
 
-./docker/common/install_tools.sh
-./docker/common/install_python.sh
-./docker/common/install_boost.sh
-./docker/common/install_cmake.sh
-./docker/common/install_gcc.sh
-./docker/common/install_oneapi.sh
+./.github/workflow_tools/install_tools.sh
+./.github/workflow_tools/install_python.sh
+./.github/workflow_tools/install_boost.sh
+./.github/workflow_tools/install_cmake.sh
+./.github/workflow_tools/install_gcc.sh
+./.github/workflow_tools/install_oneapi.sh
 
 # Cleanup package manager
 apt-get autoclean && apt-get clean
