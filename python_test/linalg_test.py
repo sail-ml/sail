@@ -25,7 +25,7 @@ class MatmulTest(UnitTest):
                 arr3 = np.matmul(arr1, arr2)
 
                 self.assert_eq(x3.shape, verif_shape)
-                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq_np_sail(arr3, x3, eps=1e-7)
         return
 
 class AddmmTest(UnitTest):
@@ -51,7 +51,7 @@ class AddmmTest(UnitTest):
                 arr4 = np.matmul(arr1, arr2) + arr3
 
                 self.assert_eq(x4.shape, verif_shape)
-                self.assert_eq_np_sail(arr4, x4)
+                self.assert_eq_np_sail(arr4, x4, eps=1e-7)
         return
 
 class TensordotTest(UnitTest):
