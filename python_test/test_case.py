@@ -2,6 +2,9 @@ import unittest
 import numpy as np
 import sail
 import time, traceback
+# import tracemalloc
+# tracemalloc.start(10)
+
 
 def numel(x):
     s = x.shape 
@@ -124,6 +127,7 @@ class UnitTest():
         self.runner = RunCounter()
         self.tests = [a for a in dir(self) if a.startswith("test")]
         self.num_tests = len(self.tests)
+        self.snapshots = []
 
     def assert_eq_np_sail(self, np_arr, sail_arr):
         sail_np = sail_arr.numpy()
@@ -132,6 +136,7 @@ class UnitTest():
 
     def run(self):
         for t in self.tests:
+            # self.snapshots.append(tracemalloc.take_snapshot())
             try:
                 getattr(self, t)()
             except AssertionError as e:
@@ -139,6 +144,13 @@ class UnitTest():
                 continue
             
             self.runner.log_run(False)
+        # stats = self.snapshots[-1].compare_to(self.snapshots[-2], 'filename')    
+
+        # for stat in stats[:10]:                
+            # print("{} new KiB {} total KiB {} new {} total memory blocks: ".format(stat.size_diff/1024, stat.size / 1024, stat.count_diff ,stat.count))                
+            # for line in stat.traceback.format():                    
+            #     print(line)
+        
         self.log_complete()
 
 

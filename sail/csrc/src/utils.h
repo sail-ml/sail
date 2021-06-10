@@ -6,6 +6,7 @@
 #include <iterator>
 #include <vector>
 
+#include "error.h"
 #include "types.h"
 
 inline bool isAlignedAs(const void* p, const int8_t alignment) {
@@ -26,19 +27,25 @@ inline void* _malloc_align(long numel, long alignment, long dtype_size) {
     if (size % alignment != 0) {
         size = roundUp(size, alignment);
     }
+    void* pv;
 #if defined(_ISOC11_SOURCE)
-    return aligned_alloc(alignment, size);
+    pv = aligned_alloc(alignment, size);
 #else
-    void* pv = memalign(alignment, size);
-    return pv;
+    pv = memalign(alignment, size);
 #endif
+
+    if (pv == NULL) {
+        throw SailCError("Allocation failed");
+    }
+
+    return pv;
 }
 
 inline void* _realloc_align(void* src, long numel, long alignment,
                             long dtype_size) {
     void* aligned = _malloc_align(numel, alignment, dtype_size);
     if (aligned == NULL) {
-        std::cout << "ALLOC FAIL" << std::endl;
+        throw SailCError("Allocation failed");
     }
     memcpy(aligned, src, dtype_size * numel);
     return aligned;
