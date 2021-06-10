@@ -13,7 +13,7 @@ import glob, pathlib
 from shutil import copyfile
 import numpy as np 
 
-
+import distutils
 from distutils.version import LooseVersion
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
@@ -25,6 +25,24 @@ REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 build_path = ""
 
 allow_avx = True
+
+class CICommand(distutils.cmd.Command):
+
+    description = 'build for ci (as in no avx)'
+    user_options = [
+    ]
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+
+    def run(self):
+        global allow_avx
+        allow_avx = False
+
 
 class CMakeExtension(Extension):
 
@@ -104,13 +122,11 @@ class CMakeBuild(build_ext):
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
 
 def s():
-    global allow_avx
+   
     save_gen = False
     if "save-gen" in sys.argv:
         save_gen = True
         sys.argv.remove("save-gen")
-    if "ci" in sys.argv:
-        allow_avx = False
 
     files = glob.glob("sail/csrc/src/**/*.cpp*", recursive=True)
     files = list(files) + list(glob.glob("sail/csrc/src/**/*.h*", recursive=True))
@@ -145,7 +161,7 @@ def s():
             "sail.optimizers",
             ],#setuptools.find_packages(),
         ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-        cmdclass={'build_ext': CMakeBuild},
+        cmdclass={'build_ext': CMakeBuild, "ci": CICommand},
         install_requires=REQUIREMENTS
         # cmdclass=dict(build_ext=CMakeBuild),
     )
