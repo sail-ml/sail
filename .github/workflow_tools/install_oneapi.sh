@@ -11,7 +11,8 @@ rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
 echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
-apt install -y intel-oneapi-dnnl-devel intel-oneapi-mkl-devel intel-oneapi-mpi-devel
+# apt install -y intel-oneapi-dnnl-devel intel-oneapi-mkl intel-oneapi-mpi-devel
+apt install -y intel-oneapi-dnnl-devel intel-oneapi-mkl intel-oneapi-mkl-common-devel-2021.2.0 intel-oneapi-mpi-devel
 # apt install -y intel-oneapi-mkl-common-devel-2021.2.0 
 apt-get install libatlas-base-dev liblapack-dev libblas-dev
 

@@ -15,45 +15,40 @@ endif(USE_AVX2)
 
 List(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
+set(SAIL_LIBRARIES)
+set(SAIL_INCLUDE_DIRS)
+set(SAIL_BUILD_WITH)
+
 find_package(Atlas)
 
 if (Atlas_FOUND)
 ADD_DEFINITIONS(-DAtlas_BLAS)
+list(APPEND SAIL_LIBRARIES Atlas_LIBRARIES)
+list(APPEND SAIL_INCLUDE_DIRS Atlas_INCLUDE_DIRS)
+set(SAIL_BUILD_WITH "${SAIL_BUILD_WITH} Atlas")
 endif()
 if(USE_MKL)
 find_package(MKL)
 find_package(MKLDNN)
+
 if (MKL_FOUND)
+list(APPEND SAIL_LIBRARIES MKL_LIBRARIES)
+list(APPEND SAIL_INCLUDE_DIRS MKL_INCLUDE_DIR)
+set(SAIL_BUILD_WITH "${SAIL_BUILD_WITH} MKL")
 ADD_DEFINITIONS(-DMKL)
+else()
+message(WARNING "NO MKL FOUND")
 endif()
+
 if (MKLDNN_FOUND)
 ADD_DEFINITIONS(-DMKLDNN)
+list(APPEND SAIL_LIBRARIES MKLDNN_LIBRARIES)
+list(APPEND SAIL_INCLUDE_DIRS MKLDNN_INCLUDE_DIR)
+set(SAIL_BUILD_WITH "${SAIL_BUILD_WITH} MKLDNN")
 endif()
+
 endif()
-# find_package(Doxygen)
 
-# if (DOXYGEN_FOUND)
-#     # set input and output files
-#     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/cpp/source/Doxyfile.in)
-#     set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/docs/cpp/Doxyfile-c)
-#     # set(DOXYGEN_C_OUT ${CMAKE_CURRENT_SOURCE_DIR}/docs/cpp/Doxyfile-c)
-
-
-#     # request to configure the file
-#     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-#     message("Doxygen build started")
-#     # message(${DOXYGEN_EXECUTABLE})
-#     # message(${DOXYGEN_OUT})
-#     # message(${CMAKE_CURRENT_BINARY_DIR})
-
-#     # Note: do not put "ALL" - this builds docs together with application EVERY TIME!
-#     add_custom_target( docs ALL
-#         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/docs
-#         COMMENT "Generating API documentation with Doxygen"
-#         VERBATIM )
-# else (DOXYGEN_FOUND)
-#   message("Doxygen need to be installed to generate the doxygen documentation")
-# endif (DOXYGEN_FOUND)
+message("Building SAIL with${SAIL_BUILD_WITH}")
 
 add_subdirectory(sail/csrc)
