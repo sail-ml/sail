@@ -94,6 +94,7 @@ class DotTTKernel : public Kernel {
                 //
             } else {
                 using T = typename decltype(pt)::type;
+                std::cout << "not using blas" << std::endl;
 
                 // if (trans_a == TRANS) {
                 //     t1 = clone(t1.transpose({1, 0}));
