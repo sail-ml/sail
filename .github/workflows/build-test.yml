@@ -19,19 +19,10 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
 
-      - name: Update apt
-        run: 'sudo apt-get update'
-
-      - name: Setup install files
-        run: 'chmod +x .github/workflow_tools/install.sh'
-
-      - name: Run install files
-        run: 'sudo ./.github/workflow_tools/install.sh'
-
-      - name: Setup Python
-        uses: actions/setup-python@v2.2.2
-        with:
-          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          chmod +x .github/workflow_tools/install.sh
+          sudo ./.github/workflow_tools/install.sh
 
       - name: Install Python Dependencies
         run: |
