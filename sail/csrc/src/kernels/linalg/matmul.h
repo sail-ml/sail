@@ -13,7 +13,10 @@
 #include <mkl.h>
 #include <omp.h>
 #else
-#include <cblas.h>
+extern "C"
+{
+   #include <cblas.h>
+}
 #include <omp.h>
 #endif
 
