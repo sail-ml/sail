@@ -12,7 +12,9 @@
 #ifdef MKL
 #include <mkl.h>
 #include <omp.h>
-
+#else 
+#include<cblas.h>
+#include <omp.h>
 #endif
 
 #define TRANS "T"
