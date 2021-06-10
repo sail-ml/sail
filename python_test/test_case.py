@@ -136,8 +136,9 @@ class UnitTest():
                 getattr(self, t)()
             except AssertionError as e:
                 self.runner.log_run(True, t, failure_message=traceback.format_exc())
-            else:
-                self.runner.log_run(False)
+                continue
+            
+            self.runner.log_run(False)
         self.log_complete()
 
 
