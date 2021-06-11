@@ -77,7 +77,7 @@ class AddTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic)
+            diff = check_gradients_vector(forward, dic, eps=1e-6)
             assert diff < 1e-6
 
         return
@@ -148,7 +148,7 @@ class SubtractTest(UnitTest):
                     "b": arr2
                 }
 
-                diff = check_gradients_vector(forward, dic)
+                diff = check_gradients_vector(forward, dic, eps=1e-6)
                 assert diff < 1e-6
 
             return
@@ -220,7 +220,7 @@ class MultiplyTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic)
+            diff = check_gradients_vector(forward, dic, eps=1e-6)
             assert diff < 1e-6
 
         return
@@ -292,7 +292,7 @@ class DivideTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic)
+            diff = check_gradients_vector(forward, dic, eps=1e-5)
             assert diff < 1e-5, (diff, 1e-5)
 
         return

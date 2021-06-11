@@ -30,6 +30,33 @@ class MatmulTest(UnitTest):
 
         return
 
+    
+    def test_grad(self):
+        choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
+        choices_2 = [[(3, 3), (3, 1), (3, 10)], [(18, 12), (18, 2)], [(33, 1), (33, 33)], [(64, 12)]]
+        times = []
+
+        def forward(a, b):
+            c = sail.matmul(a, b)
+            d = sail.sum(c)
+            return d
+
+        for ca, cbs in zip(choices, choices_2):
+            for cb in cbs[:1]:
+                verif_shape = (ca[0], cb[1])
+                arr1 = np.random.uniform(0, 1, (ca))
+                arr2 = np.random.uniform(0, 1, (cb))
+
+                dic = {
+                    "a": arr1,
+                    "b": arr2
+                }
+
+                diff = check_gradients_vector(forward, dic, eps=1e-6)
+                assert diff < 1e-6
+
+        return
+
 class AddmmTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -57,6 +84,34 @@ class AddmmTest(UnitTest):
                 self.assert_eq(x4.requires_grad, rq)
 
         return
+
+    def test_grad(self):
+        choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
+        choices_2 = [[(3, 3), (3, 1), (3, 10)], [(18, 12), (18, 2)], [(33, 1), (33, 33)], [(64, 12)]]
+        times = []
+        def forward(a, b, c):
+            d = sail.addmm(a, b, c)
+            e = sail.sum(d)
+            return e
+
+        for ca, cbs in zip(choices, choices_2):
+            for cb in cbs[:1]:
+                verif_shape = (ca[0], cb[1])
+                arr1 = np.random.uniform(0, 1, (ca))
+                arr2 = np.random.uniform(0, 1, (cb))
+                arr3 = np.random.uniform(0, 1, (verif_shape))
+
+                dic = {
+                    "a": arr1,
+                    "b": arr2,
+                    "c": arr3
+                }
+
+                diff = check_gradients_vector(forward, dic, eps=1e-6)
+                assert diff < 1e-6
+
+        return
+        
 
 class TensordotTest(UnitTest):
 

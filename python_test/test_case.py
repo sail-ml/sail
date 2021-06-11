@@ -77,7 +77,6 @@ def check_gradients_vector(forward_fcn, param_dictionary, eps=1e-3):
         grad_approx[i] = (j_plus[i] - j_minus[i])/(2 * eps)
         # grad_approx[i] = grad_approx[i]#to_significant(grad_approx[i], significant=7)
 
-
     num = np.linalg.norm(grad_approx - grads)
     denom = np.linalg.norm(grad_approx) + np.linalg.norm(grads)
     diff = num/denom

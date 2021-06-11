@@ -21,6 +21,8 @@ choices = [
     {"shape": (12, 3), "axis": -1, "keepdims": True, "result_shape": (12, 1)},
 ]
 
+grad_choices = [(32, 2), (12, 14), (100)]
+
 class SumTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -38,6 +40,22 @@ class SumTest(UnitTest):
             self.assert_eq(x3.shape, c["result_shape"])
             self.assert_eq_np_sail(arr3, x3, 1e-7)
             self.assert_eq(x3.requires_grad, rq)
+        return
+
+    def test_sum_grad(self):
+        def forward(a):
+            y = sail.sum(a)
+            return y 
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c["shape"]))
+            
+            dic = {
+                "a": arr1,
+            }
+
+            diff = check_gradients_vector(forward, dic, eps=1e-6)
+            assert diff < 1e-6
         return
 
 class MeanTest(UnitTest):
@@ -76,4 +94,20 @@ class MaxTest(UnitTest):
             self.assert_eq(x3.shape, c["result_shape"])
             self.assert_eq_np_sail(arr3, x3, 1e-7)
             self.assert_eq(x3.requires_grad, rq)
+        return
+
+    def test_max_grad(self):
+        def forward(a):
+            y = sail.max(a)
+            return y 
+        times = []
+        for c in grad_choices:
+            arr1 = np.random.uniform(1, 10, c)
+            
+            dic = {
+                "a": arr1,
+            }
+
+            diff = check_gradients_vector(forward, dic, eps=1e-6)
+            assert diff < 1e-6
         return
