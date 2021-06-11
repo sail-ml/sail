@@ -25,6 +25,7 @@ REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 build_path = ""
 
 allow_avx = True
+coverage = False
 
 class CICommand(distutils.cmd.Command):
 
@@ -41,7 +42,9 @@ class CICommand(distutils.cmd.Command):
 
     def run(self):
         global allow_avx
+        global coverage
         allow_avx = False
+        coverage = True
 
 
 class CMakeExtension(Extension):
@@ -96,6 +99,9 @@ class CMakeBuild(build_ext):
             print ("Compiling Sail without AVX2 Support")
             cmake_args.append("-DUSE_AVX2=OFF")
             cmake_args.append("-DUSE_MKL=OFF")
+
+        if (coverage):
+            cmake_args.append("-DCOVERAGE=ON")
 
         # example of build args
         build_args = [

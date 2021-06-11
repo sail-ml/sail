@@ -114,6 +114,15 @@ def requires_grad_decorator(func):
         func(self, True)
     return wrapper
 
+def dtype_decorator(*args):
+    def inner_wrapper(func):
+        def wrapper(self):
+            for i in range(len(args)):
+                for j in range(i, len(args)):
+                    func(self, args[i], args[j])
+        return wrapper
+    return inner_wrapper
+
 class UnitTest():
 
     @staticmethod
