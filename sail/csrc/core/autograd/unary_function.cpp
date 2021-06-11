@@ -26,7 +26,9 @@ Tensor Log::forward(TensorVector inputs) {
     stored_log = ops::log(inputs[0]);
     return stored_log;
 }
-TensorVector Log::backward(Tensor& grad) { return {grad / stored_log}; }
+TensorVector Log::backward(Tensor& grad) {
+    return {grad / Function::arg_storage[0]};
+}
 
 }  // namespace autograd
 }  // namespace sail

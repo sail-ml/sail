@@ -56,3 +56,24 @@ RETURN_OBJECT ops_exp(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     return (PyObject*)ret_class;
 }
+
+RETURN_OBJECT ops_log(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyTensor* t1;
+    PyTensor* power = NULL;
+    static char* kwlist[] = {"x", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &t1)) {
+        PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+    }
+
+    PyTensor* ret_class;
+    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    ret_class->tensor = sail::ops::log(t1->tensor);
+
+    ret_class->ndim = ret_class->tensor.get_shape().ndim();
+    ret_class->dtype = t1->ndim;
+    ret_class->requires_grad = t1->requires_grad;
+
+    return (PyObject*)ret_class;
+}

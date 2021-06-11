@@ -69,3 +69,25 @@ class SigmoidLayerTest(UnitTest):
             self.assert_eq(y.requires_grad, rq)
                 
         return
+
+class SoftmaxLayerTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test(self, rq):
+        choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, c).astype(np.float32)
+
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+
+            lin = sail.modules.Softmax()
+
+            y = lin(x1)
+            y2 = np.exp(arr1) / np.sum(np.exp(arr1), 1, keepdims=True)
+
+            self.assert_eq_np_sail(y2, y, eps=5e-7)
+            self.assert_eq(y.requires_grad, rq)
+                
+        return

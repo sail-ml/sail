@@ -319,3 +319,89 @@ class PowerTest(UnitTest):
             self.assert_eq_np_sail(arr3, x3)
             self.assert_eq(x3.requires_grad, rq)
         return
+
+class ExpTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test_base(self, rq):
+        choices = unary_elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            t = time.time()
+            x3 = sail.exp(x1) 
+            times.append(time.time() - t)
+            arr3 = np.exp(arr1) 
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+
+    def test_grad(self):
+        choices = unary_elementwise_options
+        times = []
+
+        def forward(a):
+            c = sail.exp(a)
+            d = sail.sum(c)
+            return d
+
+        for c in grad_options:
+            
+            arr1 = np.random.uniform(1, 2, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+            diff = check_gradients_vector(forward, dic, eps=1e-5)
+            assert diff < 1e-5, (diff, 1e-5)
+
+        return
+
+class LogTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test_base(self, rq):
+        choices = unary_elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(1, 2, (c))
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            t = time.time()
+            x3 = sail.log(x1) 
+            times.append(time.time() - t)
+            arr3 = np.log(arr1) 
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+
+    def test_grad(self):
+        choices = unary_elementwise_options
+        times = []
+
+        def forward(a):
+            c = sail.log(a)
+            d = sail.sum(c)
+            return d
+
+        for c in grad_options:
+            
+            arr1 = np.random.uniform(1, 2, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+            diff = check_gradients_vector(forward, dic, eps=1e-5)
+            assert diff < 1e-5, (diff, 1e-5)
+
+        return

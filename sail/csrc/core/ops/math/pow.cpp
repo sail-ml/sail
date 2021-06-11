@@ -48,7 +48,7 @@ Tensor log(Tensor& tensor1) {
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        Tensor empty_tensor = (new autograd::Exp())->apply(vec);
+        Tensor empty_tensor = (new autograd::Log())->apply(vec);
         return empty_tensor;
     }
     Tensor empty_tensor = empty_like(tensor1);
