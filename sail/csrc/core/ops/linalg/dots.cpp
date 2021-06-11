@@ -191,7 +191,8 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
 
     TensorSize new_shape = {t1.get_shape().shape[0], t2.get_shape().shape[1]};
     TensorShape s = TensorShape(new_shape);
-    Tensor empty_tensor = clone(ops::broadcast_to(add, s));
+    Tensor add_ = ops::broadcast_to(add, s);
+    Tensor empty_tensor = clone(add_);
 
     DotTTKernel().execute(t1, t2, empty_tensor);
 

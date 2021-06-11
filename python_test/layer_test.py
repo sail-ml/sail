@@ -23,7 +23,8 @@ class LinearLayerTest(UnitTest):
                 y = lin(x1)
                 y2 = np.matmul(arr1, lin.weights.numpy())
 
-                self.assert_eq_np_sail(y2, y, eps=1e-7)
+                self.assert_eq_np_sail(y2, y, eps=5e-7)
+                
         return
 
     def test_bias(self):

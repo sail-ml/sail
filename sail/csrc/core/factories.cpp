@@ -71,6 +71,7 @@ Tensor clone(const Tensor& t) {
             using T = typename decltype(pt)::type;
             T* base_data = (T*)(t.get_data());
             T* set_data = (T*)data;
+            s.recompute();
             for (int i = 0; i < numel; i++) {
                 set_data[i] = base_data[s.d_ptr];
                 s.next();
