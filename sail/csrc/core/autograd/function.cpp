@@ -3,9 +3,9 @@
 #include "function.h"
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../error.h"
-#include "../factories.h"
+#include "Tensor.h"
+#include "error.h"
+#include "factories.h"
 
 namespace sail {
 

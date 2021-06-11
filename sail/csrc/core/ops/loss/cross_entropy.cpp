@@ -3,12 +3,12 @@
 #include <iostream>
 
 #include <chrono>
-#include "../../Tensor.h"
-#include "../../autograd/autograd.h"
-#include "../../factories.h"
-#include "../../kernels/kernel.h"
-#include "../ops.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
 #include "cross_entropy.h"
+#include "factories.h"
+#include "kernels/kernel.h"
+#include "ops/ops.h"
 using namespace std::chrono;
 
 namespace sail {

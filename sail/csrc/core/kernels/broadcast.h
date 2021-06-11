@@ -4,10 +4,10 @@
 
 #include <immintrin.h>
 
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../errors.h"
-#include "../factories.h"
+#include "Tensor.h"
+#include "corefactories.h"
+#include "dtypes.h"
+#include "errors.h"
 
 namespace sail {
 

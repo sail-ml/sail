@@ -10,10 +10,10 @@
 #include <utility>
 #include <vector>
 
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../factories.h"
-#include "../tensor_shape.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "factories.h"
+#include "tensor_shape.h"
 #include "unary.h"
 
 namespace sail {

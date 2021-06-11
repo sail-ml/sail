@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../autograd/autograd.h"
-#include "../../factories.h"
-#include "../../kernels/kernel.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
 #include "elementwise.h"
+#include "factories.h"
+#include "kernels/kernel.h"
 #include "tools.h"
 
 #define MAX(a, b) (((a.ndim) > (b.ndim)) ? (a) : (b))

@@ -2,7 +2,7 @@
 
 #include <immintrin.h>
 #include <cassert>  // needed for xsimd
-#include "../Tensor.h"
+#include "Tensor.h"
 #include "base.h"
 #include "elementwise.h"
 #include "xsimd/xsimd.hpp"

@@ -1,11 +1,11 @@
 #pragma once
 #include "sgd.h"
 #include <omp.h>
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../kernels/kernel.h"
-#include "../modules/module.h"
-#include "../ops/ops.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "kernels/kernel.h"
+#include "modules/module.h"
+#include "ops/ops.h"
 #include "optimizers.h"
 namespace sail {
 namespace optimizers {

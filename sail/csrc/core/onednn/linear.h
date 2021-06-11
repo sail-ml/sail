@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dnnl.hpp>
-#include "../Tensor.h"
+#include "Tensor.h"
 using namespace dnnl;
 using dnnl::inner_product_forward;
 using tag = memory::format_tag;

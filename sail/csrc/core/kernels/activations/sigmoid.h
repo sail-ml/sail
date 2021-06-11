@@ -3,10 +3,10 @@
 #include <immintrin.h>
 #include <cassert>  // needed for xsimd
 #include <cmath>    // needed for xsimd
-#include "../../Tensor.h"
-#include "../base.h"
-#include "../elementwise.h"
-#include "../unary.h"
+#include "Tensor.h"
+#include "kernels/base.h"
+#include "kernels/elementwise.h"
+#include "kernels/unary.h"
 #include "xsimd/xsimd.hpp"
 namespace sail {
 

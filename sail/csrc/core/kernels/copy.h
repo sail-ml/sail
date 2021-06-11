@@ -4,7 +4,7 @@
 #include <immintrin.h>
 #include <iostream>
 
-#include "../Tensor.h"
+#include "Tensor.h"
 #include "base.h"
 #include "unary.h"
 

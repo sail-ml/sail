@@ -4,11 +4,11 @@
 #include "reduction_function.h"
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../factories.h"
-#include "../ops/ops.h"
-#include "../ops/reduction.h"
+#include "Tensor.h"
+#include "factories.h"
 #include "function.h"
+#include "ops/ops.h"
+#include "ops/reduction.h"
 
 namespace sail {
 

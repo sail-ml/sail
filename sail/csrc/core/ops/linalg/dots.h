@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../dtypes.h"
-#include "../../kernels/kernel.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "kernels/kernel.h"
 
 #define TRANS "T"
 #define NO_TRANS "N"

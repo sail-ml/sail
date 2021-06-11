@@ -4,9 +4,9 @@
 #include <omp.h>
 #include <algorithm>
 #include <vector>
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../utils.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "utils.h"
 
 inline Dtype avx_support[3] = {Dtype::sInt32, Dtype::sFloat32, Dtype::sFloat64};
 

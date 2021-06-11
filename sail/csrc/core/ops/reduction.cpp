@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../Tensor.h"
-#include "../autograd/reduction_function.h"
-#include "../dtypes.h"
-#include "../factories.h"
-#include "../kernels/kernel.h"
+#include "Tensor.h"
+#include "autograd/reduction_function.h"
+#include "dtypes.h"
+#include "factories.h"
+#include "kernels/kernel.h"
 
 namespace sail {
 namespace ops {

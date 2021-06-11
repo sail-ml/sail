@@ -5,9 +5,9 @@
 // #include <immintrin.h>
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../base.h"
-#include "../unary.h"
+#include "Tensor.h"
+#include "kernels/base.h"
+#include "kernels/unary.h"
 
 #ifdef MKL
 #include <mkl.h>

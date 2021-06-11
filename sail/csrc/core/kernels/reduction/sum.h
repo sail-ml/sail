@@ -2,10 +2,10 @@
 
 #include <immintrin.h>
 
-#include "../../Tensor.h"
-#include "../../dtypes.h"
-#include "../../factories.h"
-#include "../reduction.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "factories.h"
+#include "kernels/reduction.h"
 
 namespace sail {
 

@@ -7,8 +7,8 @@
 #include <immintrin.h>
 #include <omp.h>
 
-#include "../Tensor.h"
-#include "../utils.h"
+#include "Tensor.h"
+#include "utils.h"
 
 using Tensor = sail::Tensor;
 namespace sail {

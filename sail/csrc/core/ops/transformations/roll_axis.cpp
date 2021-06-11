@@ -3,11 +3,11 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../error.h"
-#include "../../factories.h"
-#include "../../tensor_shape.h"
-#include "../../types.h"
+#include "Tensor.h"
+#include "error.h"
+#include "factories.h"
+#include "tensor_shape.h"
+#include "types.h"
 
 namespace sail {
 

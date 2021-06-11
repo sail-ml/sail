@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <cassert>  // needed for xsimd
 #include <vector>
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../tensor_shape.h"
-#include "../utils.h"
+#include "Tensor.h"
+#include "dtypes.h"
 #include "kernel_utils.h"
+#include "tensor_shape.h"
+#include "utils.h"
 #include "xsimd/xsimd.hpp"
 
 using Tensor = sail::Tensor;

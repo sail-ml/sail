@@ -1,6 +1,6 @@
 #pragma once
-#include "../Tensor.h"
-#include "../dtypes.h"
+#include "Tensor.h"
+#include "dtypes.h"
 namespace sail {
 namespace modules {
 

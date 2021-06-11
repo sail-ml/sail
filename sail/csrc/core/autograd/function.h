@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
+#include "Tensor.h"
 
 #define DISABLE_GRAD_IND(i)                    \
     {                                          \

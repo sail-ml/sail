@@ -2,9 +2,9 @@
 
 #include <immintrin.h>
 #include <cassert>  // needed for xsimd
-#include "../../Tensor.h"
-#include "../base.h"
-#include "../elementwise.h"
+#include "Tensor.h"
+#include "kernels/base.h"
+#include "kernels/elementwise.h"
 #include "xsimd/xsimd.hpp"
 namespace sail {
 

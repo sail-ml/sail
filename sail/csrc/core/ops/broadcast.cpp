@@ -1,9 +1,9 @@
 #include <algorithm>
-#include "../Tensor.h"
-#include "../TensorBody.h"
-#include "../factories.h"
-#include "../tensor_shape.h"
+#include "Tensor.h"
+#include "TensorBody.h"
 #include "copy.h"
+#include "factories.h"
+#include "tensor_shape.h"
 
 namespace sail {
 

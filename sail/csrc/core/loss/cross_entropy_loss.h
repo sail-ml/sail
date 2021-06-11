@@ -1,5 +1,5 @@
-#include "../Tensor.h"
-#include "../modules/module.h"
+#include "Tensor.h"
+#include "modules/module.h"
 
 namespace sail {
 namespace loss {

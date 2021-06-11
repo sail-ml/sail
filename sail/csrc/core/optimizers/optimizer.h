@@ -1,7 +1,7 @@
 #pragma once
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../modules/module.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "modules/module.h"
 namespace sail {
 namespace optimizers {
 

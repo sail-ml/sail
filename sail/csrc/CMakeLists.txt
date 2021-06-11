@@ -22,7 +22,11 @@ if (USE_MKL)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 endif()
 
+set(CMAKE_DIR_TEMP ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_CURRENT_SOURCE_DIR "core/")
+
 add_subdirectory(core)
+set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_DIR_TEMP})
 # find_package(PythonLibs REQUIRED)
 # find_package(Python3 REQUIRED COMPONENTS NumPy)
 # include_directories(${PYTHON_INCLUDE_DIRS})

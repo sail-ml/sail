@@ -3,10 +3,10 @@
 // #include <iostream>
 
 #include "reshape.h"
-#include "../../Tensor.h"
-#include "../../error.h"
-#include "../../factories.h"
-#include "../../tensor_shape.h"
+#include "Tensor.h"
+#include "error.h"
+#include "factories.h"
+#include "tensor_shape.h"
 
 namespace sail {
 

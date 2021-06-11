@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../tensor_shape.h"
+#include "Tensor.h"
+#include "tensor_shape.h"
 
 namespace sail {
 

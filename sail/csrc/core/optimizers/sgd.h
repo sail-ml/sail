@@ -1,10 +1,10 @@
 #pragma once
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../factories.h"
-#include "../modules/module.h"
-#include "../tensor_shape.h"
+#include "Tensor.h"
+#include "dtypes.h"
+#include "factories.h"
+#include "modules/module.h"
 #include "optimizers.h"
+#include "tensor_shape.h"
 namespace sail {
 namespace optimizers {
 

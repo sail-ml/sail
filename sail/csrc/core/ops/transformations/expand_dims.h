@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../factories.h"
-#include "../../types.h"
+#include "Tensor.h"
+#include "factories.h"
+#include "types.h"
 
 namespace sail {
 

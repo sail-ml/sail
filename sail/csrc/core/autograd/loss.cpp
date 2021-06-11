@@ -5,11 +5,11 @@
 #include "loss.h"
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../factories.h"
-#include "../kernels/kernel.h"
-#include "../ops/ops.h"
+#include "Tensor.h"
+#include "factories.h"
 #include "function.h"
+#include "kernels/kernel.h"
+#include "ops/ops.h"
 
 namespace sail {
 

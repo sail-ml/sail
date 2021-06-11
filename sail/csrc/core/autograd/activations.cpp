@@ -2,13 +2,13 @@
 #include "activations.h"
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../error.h"
-#include "../factories.h"
-#include "../kernels/kernel.h"
-#include "../ops/ops.h"
-#include "../tensor_shape.h"
+#include "Tensor.h"
+#include "error.h"
+#include "factories.h"
 #include "function.h"
+#include "kernels/kernel.h"
+#include "ops/ops.h"
+#include "tensor_shape.h"
 
 namespace sail {
 

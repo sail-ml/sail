@@ -1,16 +1,16 @@
 #include "linear_layer.h"
 #include <math.h> /* pow */
-#include "../../Tensor.h"
-#include "../../autograd/autograd.h"
-#include "../../dtypes.h"
-#include "../../error.h"
-#include "../../factories.h"
-#include "../../ops/ops.h"
-#include "../../tensor_shape.h"
-// #include "../module.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
+#include "dtypes.h"
+#include "error.h"
+#include "factories.h"
+#include "ops/ops.h"
+#include "tensor_shape.h"
+// #include "module.h"
 
 #ifdef MKLDNN
-#include "../../onednn/linear.h"
+#include "onednn/linear.h"
 #endif
 
 namespace sail {

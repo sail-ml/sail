@@ -4,10 +4,10 @@
 #include <omp.h>
 #include <algorithm>
 #include <vector>
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../utils.h"
+#include "Tensor.h"
+#include "dtypes.h"
 #include "kernel_utils.h"
+#include "utils.h"
 
 using Tensor = sail::Tensor;
 

@@ -5,11 +5,11 @@
 #include <iostream>
 #include <tuple>
 
-#include "../../Tensor.h"
-#include "../../autograd/autograd.h"
-#include "../../dtypes.h"
-#include "../../error.h"
-#include "../../kernels/kernel.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
+#include "dtypes.h"
+#include "error.h"
+#include "kernels/kernel.h"
 
 namespace sail {
 

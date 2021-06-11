@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "../../Tensor.h"
-#include "../../autograd/autograd.h"
-#include "../../dtypes.h"
-#include "../../kernels/kernel.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
+#include "dtypes.h"
+#include "kernels/kernel.h"
 #include "pow.h"
 #include "tools.h"
 

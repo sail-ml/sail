@@ -3,10 +3,10 @@
 #include "addmm_function.h"
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../factories.h"
-#include "../ops/ops.h"
+#include "Tensor.h"
+#include "factories.h"
 #include "function.h"
+#include "ops/ops.h"
 
 namespace sail {
 

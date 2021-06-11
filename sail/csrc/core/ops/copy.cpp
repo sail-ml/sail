@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "../Tensor.h"
-#include "../dtypes.h"
-#include "../kernels/kernel.h"
-#include "../types.h"
+#include "Tensor.h"
 #include "copy.h"
+#include "dtypes.h"
+#include "kernels/kernel.h"
+#include "types.h"
 
-#include "../factories.h"
+#include "factories.h"
 
 namespace sail {
 

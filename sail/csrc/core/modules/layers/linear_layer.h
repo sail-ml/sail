@@ -1,10 +1,10 @@
 #pragma once
-#include "../../Tensor.h"
-#include "../../tensor_shape.h"
-#include "../module.h"
+#include "Tensor.h"
+#include "modules/module.h"
+#include "tensor_shape.h"
 
 #ifdef MKLDNN
-#include "../../onednn/linear.h"
+#include "onednn/linear.h"
 #endif
 
 namespace sail {

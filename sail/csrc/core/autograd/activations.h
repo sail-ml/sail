@@ -4,10 +4,10 @@
 
 #include <iostream>
 #include <vector>
-#include "../Tensor.h"
-#include "../TensorBody.h"
-#include "../ops/ops.h"
+#include "Tensor.h"
+#include "TensorBody.h"
 #include "function.h"
+#include "ops/ops.h"
 
 namespace sail {
 
