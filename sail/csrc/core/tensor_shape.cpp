@@ -224,14 +224,18 @@ void TensorShape::remove_one(const int dim) {
     recompute(true);
 }
 void TensorShape::remove(const int dim) {
-    if (dim == -1) {
-        int new_dim = shape.size() - 1;
+    int new_dim = dim;
+    if (dim < 0) {
+        new_dim = dim + ndim();
+    }
+    if (new_dim == -1) {
+        new_dim = shape.size() - 1;
         shape.erase(shape.begin() + new_dim);
     } else {
-        if (dim > shape.size()) {
-            throw DimensionError("Dimension value is too large for squeeze");
+        if (new_dim > shape.size()) {
+            throw DimensionError("Dimension value is too large for remove");
         }
-        shape.erase(shape.begin() + dim);
+        shape.erase(shape.begin() + new_dim);
     }
     recompute(true);
 }
@@ -288,13 +292,13 @@ TensorShape TensorShape::move_axis(long axis, long position) {
         axis = ndim() + axis;
     }
     if (position < 0) {
-        position = ndim() + position;
+        position = ndim() + position + 1;
     }
 
-    if (position < 0 || position >= ndim()) {
+    if (position < 0 || position > ndim()) {
         throw SailCError("Invalid position");
     }
-    if (axis < 0 || axis >= ndim()) {
+    if (axis < 0 || axis > ndim()) {
         throw SailCError("Invalid axis");
     }
 

@@ -5,7 +5,7 @@ import time
 import unittest
 import faulthandler
 
-import basic_ops_test, shape_test, linalg_test, layer_test
+import basic_ops_test, shape_test, linalg_test, layer_test, reduction_test
 
 # import resource, tracemalloc
 # from pympler.tracker import SummaryTracker

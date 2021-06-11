@@ -90,7 +90,7 @@ Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
 
     MaxKernel().execute(tensor1, empty_tensor, axis);
     if (keepdims) {
-        empty_tensor._expand_dims_inplace(axis);
+        empty_tensor = empty_tensor._expand_dims_inplace(axis);
     }
     return empty_tensor;
 }

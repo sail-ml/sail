@@ -6,6 +6,7 @@
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/reduction.h"
+#include "tensor_shape.h"
 
 namespace sail {
 
@@ -29,6 +30,17 @@ class MeanKernel : public Kernel {
             T* output_data = (T*)out_tensor.get_data();
 
             if (axis != NULLDIM) {
+                int axis2 = axis;
+                if (axis < 0) {
+                    axis2 = axis + t1.get_ndim();
+                }
+                numel = 1;
+                TensorShape t1_shape = t1.get_shape();
+                for (int i = 0; i < t1.get_ndim(); i++) {
+                    if (i == axis2) {
+                        numel = t1_shape.shape[i];
+                    }
+                }
                 Reduction<T, T>(Impl{numel}, t1, out_tensor, axis);
             } else {
                 Reduction<T, T>(Impl{numel}, t1, out_tensor);
