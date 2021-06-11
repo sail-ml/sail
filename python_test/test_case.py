@@ -143,17 +143,31 @@ class UnitTest():
 
     def assert_lt(self, a, b):
         assert a < b, (a, b)
+    def assert_lte(self, a, b):
+        assert a <= b, (a, b)
+    def assert_gt(self, a, b):
+        assert a > b, (a, b)
+    def assert_gte(self, a, b):
+        assert a >= b, (a, b)
 
-    def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
-        sail_np = sail_arr.numpy()
+    def assert_eq_np(self, arr1, arr2, eps=None):
         # print (np.array_equal(np_arr, sail_np))
         if (eps):
-            diff = abs(np_arr - sail_np)
+            diff = abs(arr1 - arr2)
             md = np.max(diff)
             self.assert_lt(md, eps)
             return
         
-        assert (np.array_equal(np_arr, sail_np)), (np_arr, sail_np)
+        assert (np.array_equal(arr1, arr2)), (arr1, arr2)
+
+    def assert_neq_np(self, arr1, arr2, eps=None):
+        # print (np.array_equal(np_arr, sail_np))
+        
+        assert (not np.array_equal(arr1, arr2)), (arr1, arr2)
+
+    def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
+        sail_np = sail_arr.numpy()
+        self.assert_eq_np(np_arr, sail_np, eps=eps)
 
     def run(self):
         for t in self.tests:

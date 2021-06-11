@@ -34,16 +34,20 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    shape = PySequence_Tuple(shape);
     std::vector<long> t_shape;
-    int len = PyTuple_Size(shape);
-    if (len == -1) {
+    if (PyLong_Check(shape)) {
         t_shape = {PyLong_AsLong(shape)};
     } else {
-        while (len--) {
-            t_shape.push_back(PyLong_AsLong(PyTuple_GetItem(shape, len)));
+        shape = PySequence_Tuple(shape);
+        int len = PyTuple_Size(shape);
+        if (len == -1) {
+            t_shape = {PyLong_AsLong(shape)};
+        } else {
+            while (len--) {
+                t_shape.push_back(PyLong_AsLong(PyTuple_GetItem(shape, len)));
+            }
+            std::reverse(t_shape.begin(), t_shape.end());
         }
-        std::reverse(t_shape.begin(), t_shape.end());
     }
 
     ret_class->tensor =
@@ -96,17 +100,20 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     Dtype dt = default_dtype;
-
-    shape = PySequence_Tuple(shape);
     std::vector<long> t_shape;
-    int len = PyTuple_Size(shape);
-    if (len == -1) {
+    if (PyLong_Check(shape)) {
         t_shape = {PyLong_AsLong(shape)};
     } else {
-        while (len--) {
-            t_shape.push_back(PyLong_AsLong(PyTuple_GetItem(shape, len)));
+        shape = PySequence_Tuple(shape);
+        int len = PyTuple_Size(shape);
+        if (len == -1) {
+            t_shape = {PyLong_AsLong(shape)};
+        } else {
+            while (len--) {
+                t_shape.push_back(PyLong_AsLong(PyTuple_GetItem(shape, len)));
+            }
+            std::reverse(t_shape.begin(), t_shape.end());
         }
-        std::reverse(t_shape.begin(), t_shape.end());
     }
 
     ret_class->tensor =
