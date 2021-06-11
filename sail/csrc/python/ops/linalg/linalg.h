@@ -81,6 +81,7 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
@@ -108,6 +109,7 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
     sail::Tensor res = sail::ops::matmul(tensor1, tensor2);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
@@ -138,6 +140,7 @@ RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
     sail::Tensor res = sail::ops::addmm(tensor1, tensor2, tensor3);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 

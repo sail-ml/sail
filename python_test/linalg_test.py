@@ -7,8 +7,8 @@ import unittest, random
 class MatmulTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
         choices_2 = [[(3, 3), (3, 1), (3, 10)], [(18, 12), (18, 2)], [(33, 1), (33, 33)], [(64, 12)]]
         times = []
@@ -18,21 +18,23 @@ class MatmulTest(UnitTest):
                 arr1 = np.random.uniform(0, 1, (ca))
                 arr2 = np.random.uniform(0, 1, (cb))
 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
 
                 x3 = sail.matmul(x1, x2)
                 arr3 = np.matmul(arr1, arr2)
 
                 self.assert_eq(x3.shape, verif_shape)
                 self.assert_eq_np_sail(arr3, x3, eps=1e-7)
+                self.assert_eq(x3.requires_grad, rq)
+
         return
 
 class AddmmTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
         choices_2 = [[(3, 3), (3, 1), (3, 10)], [(18, 12), (18, 2)], [(33, 1), (33, 33)], [(64, 12)]]
         times = []
@@ -43,21 +45,22 @@ class AddmmTest(UnitTest):
                 arr2 = np.random.uniform(0, 1, (cb))
                 arr3 = np.random.uniform(0, 1, (verif_shape))
 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
-                x3 = sail.Tensor(arr3, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
+                x3 = sail.Tensor(arr3, requires_grad=rq)
 
                 x4 = sail.addmm(x1, x2, x3)
                 arr4 = np.matmul(arr1, arr2) + arr3
 
                 self.assert_eq(x4.shape, verif_shape)
                 self.assert_eq_np_sail(arr4, x4, eps=1e-7)
+                self.assert_eq(x4.requires_grad, rq)
+
         return
 
 class TensordotTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
     def test_base(self):
         choices = [
             {'a_shape': (4, 3, 2), 'b_shape': (3, 2, 5), 'axes': 2, 'gc_shape': (4, 5)},  # NOQA

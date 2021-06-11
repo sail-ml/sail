@@ -24,53 +24,56 @@ choices = [
 class SumTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_sum(self):
+    @requires_grad_decorator
+    def test_sum(self, rq):
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c["shape"]))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
             
             x3 = sail.sum(x1, c['axis'], keepdims=c['keepdims']) 
             arr3 = np.sum(arr1, c["axis"], keepdims=c['keepdims'])
 
             self.assert_eq(x3.shape, c["result_shape"])
             self.assert_eq_np_sail(arr3, x3, 1e-7)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
 class MeanTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_mean(self):
+    @requires_grad_decorator
+    def test_mean(self, rq):
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c["shape"]))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
             
             x3 = sail.mean(x1, c["axis"], keepdims=c['keepdims'])
             arr3 = np.mean(arr1, c["axis"], keepdims=c['keepdims'])
 
             self.assert_eq(x3.shape, c["result_shape"])
             self.assert_eq_np_sail(arr3, x3, 1e-7)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
 class MaxTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_max(self):
+    @requires_grad_decorator
+    def test_max(self, rq):
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c["shape"]))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
             
             x3 = sail.max(x1, c["axis"], keepdims=c["keepdims"])
             arr3 = np.max(arr1, c["axis"], keepdims=c["keepdims"])
 
             self.assert_eq(x3.shape, c["result_shape"])
             self.assert_eq_np_sail(arr3, x3, 1e-7)
+            self.assert_eq(x3.requires_grad, rq)
         return

@@ -6,6 +6,7 @@ import time, traceback
 # tracemalloc.start(10)
 
 
+
 def numel(x):
     s = x.shape 
     o = 1
@@ -108,6 +109,12 @@ class RunCounter():
             self.pass_ += 1
             RunCounter.global_pass += 1
 
+def requires_grad_decorator(func):
+    def wrapper(self):
+        func(self, False)
+        func(self, True)
+    return wrapper
+
 class UnitTest():
 
     @staticmethod
@@ -175,7 +182,7 @@ class UnitTest():
             try:
                 getattr(self, t)()
             except AssertionError as e:
-                self.runner.log_run(True, t, failure_message=traceback.format_exc())
+                self.runner.log_run(True, self.__class__.__name__ + "." + t, failure_message=traceback.format_exc())
                 continue
             
             self.runner.log_run(False)

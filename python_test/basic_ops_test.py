@@ -13,16 +13,16 @@ grad_options = [(32, 3, 5), (3), (1), (2, 33, 2, 5)]
 class AddTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base_add(self):
+    @requires_grad_decorator
+    def test_base_add(self, rq):
         choices = elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))
             arr2 = np.random.uniform(0, 1, (c))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
-            x2 = sail.Tensor(arr2, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            x2 = sail.Tensor(arr2, requires_grad=rq)
             
             t = time.time()
             x3 = sail.add(x1, x2) 
@@ -30,9 +30,11 @@ class AddTest(UnitTest):
             arr3 = arr1 + arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
-    def test_broadcast_add(self):
+    @requires_grad_decorator
+    def test_broadcast_add(self, rq):
         choices = broadcasted_options
         times = []
         for c in choices:
@@ -43,8 +45,8 @@ class AddTest(UnitTest):
                 c[i] = 1
                 arr2 = np.random.uniform(0, 1, (c))
                 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
                 
                 t = time.time()
                 x3 = sail.add(x1, x2) 
@@ -52,6 +54,7 @@ class AddTest(UnitTest):
                 arr3 = arr1 + arr2 
 
                 self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
 
         return
 
@@ -82,16 +85,16 @@ class AddTest(UnitTest):
 class SubtractTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))
             arr2 = np.random.uniform(0, 1, (c))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
-            x2 = sail.Tensor(arr2, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            x2 = sail.Tensor(arr2, requires_grad=rq)
             
             t = time.time()
             x3 = sail.subtract(x1, x2) 
@@ -99,9 +102,11 @@ class SubtractTest(UnitTest):
             arr3 = arr1 - arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
-    def test_broadcast(self):
+    @requires_grad_decorator
+    def test_broadcast(self, rq):
         choices = broadcasted_options
         times = []
         for c in choices:
@@ -112,8 +117,8 @@ class SubtractTest(UnitTest):
                 c[i] = 1
                 arr2 = np.random.uniform(0, 1, (c))
                 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
                 
                 t = time.time()
                 x3 = sail.subtract(x1, x2) 
@@ -121,7 +126,7 @@ class SubtractTest(UnitTest):
                 arr3 = arr1 - arr2 
 
                 self.assert_eq_np_sail(arr3, x3)
-
+                self.assert_eq(x3.requires_grad, rq)
         return
 
         def test_grad(self):
@@ -151,16 +156,16 @@ class SubtractTest(UnitTest):
 class MultiplyTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))
             arr2 = np.random.uniform(0, 1, (c))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
-            x2 = sail.Tensor(arr2, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            x2 = sail.Tensor(arr2, requires_grad=rq)
             
             t = time.time()
             x3 = sail.multiply(x1, x2) 
@@ -168,9 +173,11 @@ class MultiplyTest(UnitTest):
             arr3 = arr1 * arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
-    def test_broadcast(self):
+    @requires_grad_decorator
+    def test_broadcast(self, rq):
         choices = broadcasted_options
         times = []
         for c in choices:
@@ -181,8 +188,8 @@ class MultiplyTest(UnitTest):
                 c[i] = 1
                 arr2 = np.random.uniform(0, 1, (c))
                 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
                 
                 t = time.time()
                 x3 = sail.multiply(x1, x2) 
@@ -190,6 +197,7 @@ class MultiplyTest(UnitTest):
                 arr3 = arr1 * arr2 
 
                 self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
 
         return
 
@@ -220,16 +228,16 @@ class MultiplyTest(UnitTest):
 class DivideTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))
             arr2 = np.random.uniform(0, 1, (c))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
-            x2 = sail.Tensor(arr2, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            x2 = sail.Tensor(arr2, requires_grad=rq)
             
             t = time.time()
             x3 = sail.divide(x1, x2) 
@@ -237,9 +245,11 @@ class DivideTest(UnitTest):
             arr3 = arr1 / arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
         return
 
-    def test_broadcast(self):
+    @requires_grad_decorator
+    def test_broadcast(self, rq):
         choices = broadcasted_options
         times = []
         for c in choices:
@@ -250,8 +260,8 @@ class DivideTest(UnitTest):
                 c[i] = 1
                 arr2 = np.random.uniform(0, 1, (c))
                 
-                x1 = sail.Tensor(arr1, requires_grad=False)
-                x2 = sail.Tensor(arr2, requires_grad=False)
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
                 
                 t = time.time()
                 x3 = sail.divide(x1, x2) 
@@ -259,6 +269,7 @@ class DivideTest(UnitTest):
                 arr3 = arr1 / arr2 
 
                 self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
 
         return
 
@@ -289,16 +300,16 @@ class DivideTest(UnitTest):
 class PowerTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
-    def test_base(self):
+    @requires_grad_decorator
+    def test_base(self, rq):
         choices = unary_elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))
             arr2 = np.random.uniform(0, 1, (c))
             
-            x1 = sail.Tensor(arr1, requires_grad=False)
-            x2 = sail.Tensor(arr2, requires_grad=False)
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            x2 = sail.Tensor(arr2, requires_grad=rq)
             
             t = time.time()
             x3 = sail.power(x1, x2) 
@@ -306,4 +317,5 @@ class PowerTest(UnitTest):
             arr3 = np.power(arr1, arr2) 
 
             self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
         return

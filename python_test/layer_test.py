@@ -7,7 +7,6 @@ import unittest, random
 class LinearLayerTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-
     def test_no_bias(self):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
         choices_2 = [[(3, 3), (3, 1), (3, 10)], [(18, 12), (18, 2)], [(33, 1), (33, 33)], [(64, 12)]]
