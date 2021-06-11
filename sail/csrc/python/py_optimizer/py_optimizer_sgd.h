@@ -1,9 +1,9 @@
 #pragma once
-#include "../../core/loss/cross_entropy_loss.h"
-#include "../../core/modules/modules.h"
-#include "../../core/optimizers/optimizers.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
+#include "core/loss/cross_entropy_loss.h"
+#include "core/modules/modules.h"
+#include "core/optimizers/optimizers.h"
 
 #include "py_optimizer_def.h"
 

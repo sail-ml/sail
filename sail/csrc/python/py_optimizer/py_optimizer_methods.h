@@ -4,14 +4,14 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../core/Tensor.h"
-#include "../../core/TensorBody.h"
-#include "../../core/dtypes.h"
-#include "../../core/factories.h"
-#include "../../core/ops/ops.h"
-#include "../../core/tensor_shape.h"
-#include "../../core/types.h"
 #include "../py_module/py_module.h"
+#include "core/Tensor.h"
+#include "core/TensorBody.h"
+#include "core/dtypes.h"
+#include "core/factories.h"
+#include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "core/types.h"
 #include "numpy/arrayobject.h"
 #include "py_optimizer_def.h"
 

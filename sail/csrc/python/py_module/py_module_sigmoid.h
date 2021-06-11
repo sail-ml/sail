@@ -1,7 +1,7 @@
 #pragma once
-#include "../../core/modules/modules.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
+#include "core/modules/modules.h"
 
 #include "py_module_def.h"
 

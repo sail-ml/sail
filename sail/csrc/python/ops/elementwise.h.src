@@ -4,11 +4,11 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../core/Tensor.h"
-#include "../../core/dtypes.h"
-#include "../../core/factories.h"
-#include "../../core/ops/ops.h"
 #include "../py_tensor/py_tensor.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
+#include "core/factories.h"
+#include "core/ops/ops.h"
 #include "numpy/arrayobject.h"
 
 #include "../macros.h"

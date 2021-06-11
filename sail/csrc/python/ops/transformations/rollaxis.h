@@ -6,11 +6,11 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "../../../core/Tensor.h"
-#include "../../../core/ops/ops.h"
-#include "../../../core/ops/reduction.h"
-#include "../../../core/tensor_shape.h"
 #include "../../py_tensor/py_tensor.h"
+#include "core/Tensor.h"
+#include "core/ops/ops.h"
+#include "core/ops/reduction.h"
+#include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
 #include "../../macros.h"

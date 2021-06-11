@@ -2,9 +2,9 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../core/Tensor.h"
-#include "../core/dtypes.h"
-// #include "../core/modules/modules.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
+// #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 
 #include "ops/ops_def.h"

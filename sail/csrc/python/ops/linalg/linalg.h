@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Python.h>
+#include <core/Tensor.h>
+#include <core/ops/ops.h>
+#include <core/tensor_shape.h>
+#include <core/types.h>
 #include <structmember.h>
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include "../../../core/Tensor.h"
-#include "../../../core/ops/ops.h"
-#include "../../../core/tensor_shape.h"
-#include "../../../core/types.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 

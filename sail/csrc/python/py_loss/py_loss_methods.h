@@ -4,13 +4,13 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../core/Tensor.h"
-#include "../../core/TensorBody.h"
-#include "../../core/dtypes.h"
-#include "../../core/factories.h"
-#include "../../core/ops/ops.h"
-#include "../../core/tensor_shape.h"
-#include "../../core/types.h"
+#include "core/Tensor.h"
+#include "core/TensorBody.h"
+#include "core/dtypes.h"
+#include "core/factories.h"
+#include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "core/types.h"
 #include "numpy/arrayobject.h"
 #include "py_loss_def.h"
 

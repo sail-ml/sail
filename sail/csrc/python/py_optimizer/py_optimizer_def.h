@@ -4,10 +4,10 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../core/Tensor.h"
-#include "../../core/dtypes.h"
-#include "../../core/modules/modules.h"
-#include "../../core/optimizers/optimizers.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
+#include "core/modules/modules.h"
+#include "core/optimizers/optimizers.h"
 #include "numpy/arrayobject.h"
 
 #include "../macros.h"
