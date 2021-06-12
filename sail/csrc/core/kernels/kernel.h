@@ -1,4 +1,5 @@
 #pragma once
+#include "base.h"
 
 #include "math/math.h"
 #include "reduction/reduction.h"

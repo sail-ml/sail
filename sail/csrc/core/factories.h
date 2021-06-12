@@ -23,12 +23,8 @@ Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32);
 
 Tensor empty_scalar(Dtype dt);
 Tensor one_scalar(Dtype dt);
-Tensor zero_scalar(Dtype dt);
-Tensor* create_grad(Dtype dt);
 
 Tensor from_data(void* data, Dtype dt, TensorShape s);
-Tensor from_data(double data);
-Tensor from_data(double data);
 
 Tensor zeros(TensorShape size, Dtype dt);
 Tensor ones(TensorShape size, Dtype dt);

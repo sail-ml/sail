@@ -3,10 +3,8 @@ cmake_minimum_required(VERSION 2.8.12)
 project(sail_c LANGUAGES CXX C) # CUDA
 # enable_language(CUDA)
 
-file(GLOB_RECURSE SRC_FILES [*.csrc])
 file(GLOB_RECURSE PYTHON_BIND_HEADERS "python/*.h")
 file(GLOB_RECURSE PYTHON_BIND_FILES "python/*.cpp")
-file(GLOB_RECURSE SAIL_BIND_FILES "../core/*.cpp")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
@@ -99,7 +97,7 @@ target_include_directories(optimizers PRIVATE "libs/xsimd/include")
 #     target_link_libraries(sail_c ${BLAS_LIBRARIES})
 # endif ()
 
-
+file(GLOB_RECURSE TEST_FILES "test/*.cpp")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -112,18 +110,13 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(test test/test_cpp/test.cpp)
+add_executable(test ${TEST_FILES})
 target_link_libraries(test PUBLIC core)
-# target_link_libraries(test PUBLIC gtest_main)
+target_include_directories(test PUBLIC ./)
+target_link_libraries(test PUBLIC gtest_main)
 target_include_directories(test PRIVATE "libs/xsimd/include")
-
-
-
-# if (BLAS_FOUND)
-#     target_compile_options(test PRIVATE ${BLAS_LINKER_FLAGS})
-#     target_link_libraries(test ${BLAS_LIBRARIES})
-# endif ()
-
-
-# include(GoogleTest)
-# gtest_discover_tests(test)
+if (COVERAGE)
+target_link_libraries(optimizers PUBLIC "-lgcov")
+endif()
+include(GoogleTest)
+gtest_discover_tests(test)

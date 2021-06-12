@@ -161,26 +161,6 @@ Tensor one_scalar(Dtype dt) {
 
     return _empty;
 }
-Tensor zero_scalar(Dtype dt) {
-    alignemnt_information info = getAlignment(dt);
-    void* data = _malloc_align(1, info.alignment, info.dtype_size);
-    launch_arithmetic(dt, [&](auto pt) {
-        using T = typename decltype(pt)::type;
-        // T data2 = (T)1;
-        // memcpy(data, (void*)(&data2), sizeof(T));
-        T x = (T)0;
-        *(T*)data = x;
-    });
-    // memset(data, 1, info.get_dtype()_size);
-    int zero = 0;
-    TensorSize shape = {1};
-    TensorShape ts = TensorShape(shape);
-    TensorBody::pointer b = new TensorBody(data, dt, ts);
-
-    Tensor _empty = Tensor(b, false);
-
-    return _empty;
-}
 
 Tensor from_data(void* data, Dtype dt, TensorShape s) {
     alignemnt_information info = getAlignment(dt);
@@ -197,24 +177,24 @@ Tensor zeros(TensorShape size, Dtype dt) {
     TensorBody::pointer b = new TensorBody(new_data, dt, size);
     return Tensor(b, false);
 }
-// Tensor ones(TensorShape size, Dtype dt) {
-//     alignemnt_information info = getAlignment(dt);
-//     int numel = size.numel();
-//     void* new_data =
-//         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-//     launch_arithmetic(dt, [&](auto pt) {
-//         using T = typename decltype(pt)::type;
+Tensor ones(TensorShape size, Dtype dt) {
+    alignemnt_information info = getAlignment(dt);
+    int numel = size.numel();
+    void* new_data =
+        _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    launch_arithmetic(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
 
-//         T* data_fill = (T*)new_data;
+        T* data_fill = (T*)new_data;
 
-//         for (int i = 0; i < numel; i++) {
-//             data_fill[i] = (T)1;
-//         }
-//     });
+        for (int i = 0; i < numel; i++) {
+            data_fill[i] = (T)1;
+        }
+    });
 
-//     TensorBody::pointer b = new TensorBody(new_data, dt, size);
-//     return Tensor(b, false);
-// }
+    TensorBody::pointer b = new TensorBody(new_data, dt, size);
+    return Tensor(b, false);
+}
 
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now

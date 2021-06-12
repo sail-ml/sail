@@ -1,11 +1,10 @@
-#pragma once
-
 #include <algorithm>
 #include <iostream>
 
 #include "Tensor.h"
 #include "error.h"
 #include "factories.h"
+#include "roll_axis.h"
 #include "tensor_shape.h"
 #include "types.h"
 

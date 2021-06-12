@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import sysconfig
+import subprocess
 import platform
 import setuptools
 import cpufeature
@@ -62,6 +63,7 @@ class CMakeBuild(build_ext):
         super().run()
 
     def build_cmake(self, ext):
+        subprocess.run(["rm", "-rf", "build/*"])
         global allow_avx
         cwd = pathlib.Path().absolute()
 
