@@ -175,3 +175,91 @@ class TransposeTest(UnitTest):
                 
         return
     
+class BroadcastTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+
+    def test_base(self):
+        a = sail.random.uniform(10, 11, (4, 1))
+        a_np = a.numpy()
+        b = sail.broadcast_to(a, (4, 4))
+        for i in range(4):
+            for j in range(4):
+                self.assert_eq_np_sail(a_np[i][0], b[i][j])
+
+        a = sail.random.uniform(10, 11, (4))
+        a_np = a.numpy()
+        b = sail.broadcast_to(a, (4, 4))
+        for i in range(4):
+            self.assert_eq_np_sail(a_np, b[i])
+
+        a = sail.random.uniform(10, 11, (10, 12, 4, 1, 45))
+        b = sail.broadcast_to(a, (10, 12, 4, 10, 45))
+        a_np = a.numpy()
+        b_np = np.broadcast_to(a_np, (10, 12, 4, 10, 45))
+
+        self.assert_eq_np_sail(a_np, a)
+        self.assert_eq_np_sail(b_np, b)
+    
+class RollaxisTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+
+    def test_base(self):
+        a = sail.random.uniform(0, 1, (10, 20, 30))
+        a_np = a.numpy()
+
+        b = sail.rollaxis(a, 0, 2)
+        b_np = np.rollaxis(a_np, 0, 2)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.rollaxis(a, 0, -1)
+        b_np = np.rollaxis(a_np, 0, -1)
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.rollaxis(a, -1, 0)
+        b_np = np.rollaxis(a_np, -1, 0)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.rollaxis(a, -2)
+        b_np = np.rollaxis(a_np, -2, 0)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+class MoveaxisTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+
+    def test_base(self):
+        a = sail.random.uniform(0, 1, (10, 20, 30))
+        a_np = a.numpy()
+
+        b = sail.moveaxis(a, 0, 2)
+        b_np = np.moveaxis(a_np, 0, 2)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.moveaxis(a, 0, -1)
+        b_np = np.moveaxis(a_np, 0, -1)
+        
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.moveaxis(a, -1, 0)
+        b_np = np.moveaxis(a_np, -1, 0)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)
+
+        b = sail.moveaxis(a, -2)
+        b_np = np.moveaxis(a_np, -2, 0)
+
+        self.assert_eq_np_sail(b_np, b)
+        self.assert_eq(b_np.shape, b.shape)

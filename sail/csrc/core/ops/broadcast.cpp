@@ -63,34 +63,10 @@ Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
         expand_shape[i] = size;
         expand_strides[i] = stride;
     }
-    // std::cout << "D" << std::endl;
 
-    // std::cout << getVectorString(expand_shape) << std::endl;
-
-    // int i1 = shape_new.ndim() - 1;
-    // int i2 = shape_base.ndim() - 1;
-
-    // while (i1 >= 0) {
-    //     if (i2 < 0) {
-    //         shape_new.strides[i1] = 0;
-    //     } else {
-    //         if (shape_base.shape[i2] != shape_new.shape[i1] &&
-    //             shape_base.shape[i2] == 1) {
-    //             shape_new.strides[i1] = 0;
-    //         } else if (shape_base.shape[i2] == shape_new.shape[i1]) {
-    //             shape_new.strides[i1] = shape_base.strides[i2];
-    //         } else {
-    //             throw SailCError("shapes cannot be broadcasted together");
-    //         }
-    //     }
-    //     i1--;
-    //     i2--;
-    // }
-
-    // std::cout << getVectorString(shape_new.shape) << std::endl;
     shape_new = TensorShape(expand_shape, expand_strides);
 
-    // shape_new.recompute();
+    shape_new.recompute();
     // shape_new.contiguous = false;
     new_.set_shape(shape_new);
 

@@ -27,6 +27,7 @@ static PyMethodDef OpsMethods[] = {
     {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
      NULL},
     {"rollaxis", (PyCFunction)ops_rollaxis, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"moveaxis", (PyCFunction)ops_moveaxis, METH_VARARGS | METH_KEYWORDS, NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
     {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 

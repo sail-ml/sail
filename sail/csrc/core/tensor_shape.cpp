@@ -284,12 +284,12 @@ std::vector<long> TensorShape::generate_all_indexes() {
     return out;
 }
 
-TensorShape TensorShape::move_axis(long axis, long position) {
+TensorShape TensorShape::roll_axis(long axis, long position) {
     if (axis < 0) {
         axis = ndim() + axis;
     }
     if (position < 0) {
-        position = ndim() + position + 1;
+        position = ndim() + position;
     }
 
     if (position < 0 || position > ndim()) {
@@ -298,7 +298,6 @@ TensorShape TensorShape::move_axis(long axis, long position) {
     if (axis < 0 || axis > ndim()) {
         throw SailCError("Invalid axis");
     }
-
     std::vector<long> axes(ndim());
     std::iota(axes.begin(), axes.end(), 0);
 
@@ -311,14 +310,31 @@ TensorShape TensorShape::move_axis(long axis, long position) {
 
     this->reorder(axes);
 
-    // long val_shape = shape[axis];
-    // shape.erase(shape.begin() + axis);
-    // long val_stride = strides[axis];
-    // strides.erase(strides.begin() + axis);
+    return *this;
+}
 
-    // shape.insert(shape.begin() + position, val_shape);
-    // strides.insert(strides.begin() + position, val_stride);
-    // recompute();
+TensorShape TensorShape::move_axis(long axis, long position) {
+    if (axis < 0) {
+        axis = ndim() + axis;
+    }
+    if (position < 0) {
+        position = ndim() + position;
+    }
+
+    if (position < 0 || position > ndim()) {
+        throw SailCError("Invalid position");
+    }
+    if (axis < 0 || axis > ndim()) {
+        throw SailCError("Invalid axis");
+    }
+    std::vector<long> axes(ndim());
+    std::iota(axes.begin(), axes.end(), 0);
+
+    axes.erase(axes.begin() + axis);
+    axes.insert(axes.begin() + position, axis);
+
+    this->reorder(axes);
+
     return *this;
 }
 

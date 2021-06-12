@@ -58,6 +58,33 @@ class AddTest(UnitTest):
 
         return
 
+    def test_broadcast_add2(self):
+        a = sail.random.uniform(0, 1, (10, 1, 45))
+        b = sail.random.uniform(0, 1, (10, 12, 45))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np + b_np, a + b)
+
+        a = sail.random.uniform(0, 1, (10, 12))
+        b = sail.random.uniform(0, 1, (10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np + b_np, a + b)
+
+        a = sail.random.uniform(0, 1, (1, 10, 12))
+        b = sail.random.uniform(0, 1, (3, 10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np + b_np, a + b)
+
+        return
+
     def test_add_grad(self):
         choices = broadcasted_options
         times = []
@@ -129,6 +156,33 @@ class SubtractTest(UnitTest):
                 self.assert_eq(x3.requires_grad, rq)
         return
 
+    def test_broadcast2(self):
+        a = sail.random.uniform(0, 1, (10, 1, 45))
+        b = sail.random.uniform(0, 1, (10, 12, 45))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np - b_np, a - b)
+
+        a = sail.random.uniform(0, 1, (10, 12))
+        b = sail.random.uniform(0, 1, (10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np - b_np, a - b)
+
+        a = sail.random.uniform(0, 1, (1, 10, 12))
+        b = sail.random.uniform(0, 1, (3, 10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np - b_np, a - b)
+
+        return
+
         def test_grad(self):
             choices = broadcasted_options
             times = []
@@ -198,6 +252,33 @@ class MultiplyTest(UnitTest):
 
                 self.assert_eq_np_sail(arr3, x3)
                 self.assert_eq(x3.requires_grad, rq)
+
+        return
+
+    def test_broadcast2(self):
+        a = sail.random.uniform(0, 1, (10, 1, 45))
+        b = sail.random.uniform(0, 1, (10, 12, 45))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np * b_np, a * b)
+
+        a = sail.random.uniform(0, 1, (10, 12))
+        b = sail.random.uniform(0, 1, (10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np * b_np, a * b)
+
+        a = sail.random.uniform(0, 1, (1, 10, 12))
+        b = sail.random.uniform(0, 1, (3, 10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np * b_np, a * b)
 
         return
 
@@ -273,6 +354,33 @@ class DivideTest(UnitTest):
 
         return
 
+    def test_broadcast2(self):
+        a = sail.random.uniform(1, 2, (10, 1, 45))
+        b = sail.random.uniform(1, 2, (10, 12, 45))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np / b_np, a / b)
+
+        a = sail.random.uniform(1, 2, (10, 12))
+        b = sail.random.uniform(1, 2, (10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np / b_np, a / b)
+
+        a = sail.random.uniform(1, 2, (1, 10, 12))
+        b = sail.random.uniform(1, 2, (3, 10, 1))
+
+        a_np = a.numpy()
+        b_np = b.numpy()
+
+        self.assert_eq_np_sail(a_np / b_np, a / b)
+
+        return
+
     def test_grad(self):
         choices = broadcasted_options
         times = []
@@ -320,6 +428,30 @@ class PowerTest(UnitTest):
             self.assert_eq(x3.requires_grad, rq)
         return
 
+    def broadcast_test(self):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            c = list(c)
+            for i in range(len(c)):
+                
+                arr1 = np.random.uniform(0, 1, (c))
+                c[i] = 1
+                arr2 = np.random.uniform(0, 1, (c))
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x2 = sail.Tensor(arr2, requires_grad=rq)
+                
+                t = time.time()
+                x3 = sail.power(x1, x2) 
+                times.append(time.time() - t)
+                arr3 = np.power(arr1, arr2) 
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+
 class ExpTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -339,6 +471,29 @@ class ExpTest(UnitTest):
 
             self.assert_eq_np_sail(arr3, x3, eps=1e-6)
             self.assert_eq(x3.requires_grad, rq)
+        return
+
+    def tets_boradcast(self, rq):
+        choices = unary_elementwise_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (c))
+                
+                x1 = sail.Tensor(arr1, requires_grad=False)
+                x2 = sail.broadcast_to(x1, c)
+
+                arr2 = np.broadcast_to(arr1, c)
+                
+                t = time.time()
+                x3 = sail.exp(x2) 
+                times.append(time.time() - t)
+                arr3 = np.exp(arr2) 
+
+                self.assert_eq_np_sail(arr3, x3, eps=1e-6)
+                self.assert_eq(x3.requires_grad, rq)
         return
 
 
@@ -382,6 +537,30 @@ class LogTest(UnitTest):
 
             self.assert_eq_np_sail(arr3, x3)
             self.assert_eq(x3.requires_grad, rq)
+        return
+
+
+    def tets_boradcast(self, rq):
+        choices = unary_elementwise_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (c))
+                
+                x1 = sail.Tensor(arr1, requires_grad=False)
+                x2 = sail.broadcast_to(x1, c)
+
+                arr2 = np.broadcast_to(arr1, c)
+                
+                t = time.time()
+                x3 = sail.log(x2) 
+                times.append(time.time() - t)
+                arr3 = np.log(arr2) 
+
+                self.assert_eq_np_sail(arr3, x3, eps=1e-6)
+                self.assert_eq(x3.requires_grad, rq)
         return
 
 

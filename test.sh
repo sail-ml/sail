@@ -29,7 +29,7 @@ if [ $2 = "coverage-xml" ]; then
 fi
 
 if [ $2 = "coverage" ]; then 
-    gcovr --filter sail/ 2> /dev/null
+    gcovr --filter sail/ -s 2> /dev/null
 fi
 # ./build/temp.linux-x86_64-3.7/sail/csrc/test
 # ctest -V

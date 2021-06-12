@@ -47,8 +47,7 @@ RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;
     ret_class->requires_grad = t1->requires_grad;
-    ret_class->base_object = (PyObject*)t1;
-
+    SET_BASE(t1, ret_class);
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }

@@ -30,6 +30,7 @@ class TensorShape {
     // template <class T>
     TensorShape reorder(const LongVec& order);
 
+    TensorShape roll_axis(long axis, long position);
     TensorShape move_axis(long axis, long position);
 
     void insert_one(const int dim);
