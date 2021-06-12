@@ -23,7 +23,7 @@ class LinearLayerTest(UnitTest):
                 y = lin(x1)
                 y2 = np.matmul(arr1, lin.weights.numpy())
 
-                self.assert_eq_np_sail(y2, y, eps=5e-7)
+                self.assert_eq_np_sail(y2, y, eps=5e-6)
                 self.assert_eq(y.requires_grad, True)
                 
         return
@@ -44,7 +44,7 @@ class LinearLayerTest(UnitTest):
                 y = lin(x1)
                 y2 = np.matmul(arr1, lin.weights.numpy()) + lin.bias.numpy()
 
-                self.assert_eq_np_sail(y2, y, eps=5e-7)
+                self.assert_eq_np_sail(y2, y, eps=5e-6)
                 self.assert_eq(y.requires_grad, True)
         return
 
@@ -65,7 +65,7 @@ class SigmoidLayerTest(UnitTest):
             y = lin(x1)
             y2 = 1/(1 + np.exp(-arr1))
 
-            self.assert_eq_np_sail(y2, y, eps=5e-7)
+            self.assert_eq_np_sail(y2, y, eps=5e-6)
             self.assert_eq(y.requires_grad, rq)
                 
         return
@@ -87,7 +87,7 @@ class SoftmaxLayerTest(UnitTest):
             y = lin(x1)
             y2 = np.exp(arr1) / np.sum(np.exp(arr1), 1, keepdims=True)
 
-            self.assert_eq_np_sail(y2, y, eps=5e-7)
+            self.assert_eq_np_sail(y2, y, eps=5e-6)
             self.assert_eq(y.requires_grad, rq)
                 
         return

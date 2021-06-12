@@ -337,7 +337,7 @@ class ExpTest(UnitTest):
             times.append(time.time() - t)
             arr3 = np.exp(arr1) 
 
-            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq_np_sail(arr3, x3, eps=1e-6)
             self.assert_eq(x3.requires_grad, rq)
         return
 
