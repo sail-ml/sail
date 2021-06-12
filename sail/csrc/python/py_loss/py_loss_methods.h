@@ -49,5 +49,5 @@ PyLoss_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
 RETURN_OBJECT PyLoss_forward(PyLoss *self, PyObject *args, PyObject *kwds) {
     PyErr_SetString(PyExc_NotImplementedError, "");
-    return NULL;
+    return nullptr;
 }

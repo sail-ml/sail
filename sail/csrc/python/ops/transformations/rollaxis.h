@@ -13,9 +13,11 @@
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_rollaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* axis = NULL;
     PyObject* position = NULL;
@@ -24,6 +26,7 @@ RETURN_OBJECT ops_rollaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &axis,
                                      &position)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -45,4 +48,5 @@ RETURN_OBJECT ops_rollaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
     Py_INCREF(ret_class->base_object);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

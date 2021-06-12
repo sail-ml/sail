@@ -9,13 +9,15 @@
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 
 RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
+    START_EXCEPTION_HANDLING
     int idx = static_cast<int>(PyLong_AsLong(key));
 
     if (idx > ((PyTensor *)self)->tensor.numel()) {
-        return NULL;
+        return nullptr;
     }
 
     PyTensor *ret_class;
@@ -29,4 +31,5 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
     ret_class->dtype = ((PyTensor *)self)->dtype;
 
     return (PyObject *)ret_class;
+    END_EXCEPTION_HANDLING
 }

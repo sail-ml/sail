@@ -13,20 +13,23 @@
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 
 RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* tuple;
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &tuple)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     int len = PyTuple_Size(tuple);
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+        return nullptr;
     }
     std::vector<long> shape;
     while (len--) {
@@ -47,4 +50,5 @@ RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
     ret_class->base_object = (PyObject*)t1;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

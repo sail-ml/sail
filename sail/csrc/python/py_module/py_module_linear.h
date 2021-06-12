@@ -1,4 +1,5 @@
 #pragma once
+#include "../error_defs.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
 #include "core/modules/modules.h"
@@ -10,6 +11,7 @@ using Linear = sail::modules::Linear;
 
 static int PyLinearModule_init(PyModule *self, PyObject *args,
                                PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     int in_features, out_features;
     bool use_bias = true;
     static char *kwlist[] = {"in_features", "out_features", "use_bias", NULL};
@@ -17,41 +19,49 @@ static int PyLinearModule_init(PyModule *self, PyObject *args,
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii|b", kwlist, &in_features,
                                      &out_features, &use_bias)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return -1;
     }
 
     // self->module = sail::modules::Module();
     self->module = (Module *)(new sail::modules::Linear(
         in_features, out_features, use_bias));
     return 0;
+    END_EXCEPTION_HANDLING_INT
 }
 
 RETURN_OBJECT
 PyLinearModule_get_weights(PyModule *self, void *closure) {
+    START_EXCEPTION_HANDLING
     PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     // Linear a = *(Linear *)self->module;
     Tensor weights = (*(Linear *)self->module).weights;
     GENERATE_FROM_TENSOR(py_weights, weights);
 
     return (PyObject *)py_weights;
+    END_EXCEPTION_HANDLING
 }
 
 static int PyLinearModule_set_weights(PyModule *self, PyTensor *t,
                                       void *closure) {
-    ((Linear *)(self->module))->weights = t->tensor;
+    START_EXCEPTION_HANDLING((Linear *)(self->module))->weights = t->tensor;
     return 0;
+    END_EXCEPTION_HANDLING_INT
 }
 
 RETURN_OBJECT
 PyLinearModule_get_bias(PyModule *self, void *closure) {
+    START_EXCEPTION_HANDLING
     PyTensor *py_bias = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     Linear a = *(Linear *)self->module;
     GENERATE_FROM_TENSOR(py_bias, a.biases);
     return (PyObject *)py_bias;
+    END_EXCEPTION_HANDLING
 }
 
 static int PyLinearModule_set_bias(PyModule *self, PyTensor *t, void *closure) {
-    ((Linear *)(self->module))->biases = t->tensor;
+    START_EXCEPTION_HANDLING((Linear *)(self->module))->biases = t->tensor;
     return 0;
+    END_EXCEPTION_HANDLING_INT
 }
 
 static PyGetSetDef PyLinearModule_get_setters[] = {
@@ -64,17 +74,20 @@ static PyGetSetDef PyLinearModule_get_setters[] = {
 
 RETURN_OBJECT
 PyLinearModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor *inputs = NULL;
     static char *kwlist[] = {"inputs", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &inputs)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
     PyTensor *py_output = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     sail::Tensor output = ((Linear *)(self->module))->forward(inputs->tensor);
     GENERATE_FROM_TENSOR(py_output, output);
     return (PyObject *)py_output;
+    END_EXCEPTION_HANDLING
 }
 
 static PyMethodDef PyLinearModule_methods[] = {

@@ -30,12 +30,12 @@ add_docstring(PyObject *unused, PyObject *args) {
 
     if (!PyArg_ParseTuple(args, "OO!:add_docstring", &obj, &PyUnicode_Type,
                           &str)) {
-        return NULL;
+        return nullptr;
     }
 
     docstr = PyUnicode_AsUTF8(str);
     if (docstr == NULL) {
-        return NULL;
+        return nullptr;
     }
 
 #define _ADDDOC(doc, name)                                           \
@@ -44,7 +44,7 @@ add_docstring(PyObject *unused, PyObject *args) {
         Py_INCREF(str); /* hold on to string (leaks reference) */    \
     } else if (strcmp(doc, docstr) != 0) {                           \
         PyErr_Format(PyExc_RuntimeError, "%s method %s", name, msg); \
-        return NULL;                                                 \
+        return nullptr;                                              \
     }
 
     if (Py_TYPE(obj) == &PyCFunction_Type) {
@@ -71,17 +71,17 @@ add_docstring(PyObject *unused, PyObject *args) {
             Py_DECREF(doc_attr);
             if (PyErr_Occurred()) {
                 /* error during PyUnicode_Compare */
-                return NULL;
+                return nullptr;
             }
             PyErr_Format(PyExc_RuntimeError, "object %s", msg);
-            return NULL;
+            return nullptr;
         }
         Py_XDECREF(doc_attr);
 
         if (PyObject_SetAttrString(obj, "__doc__", str) < 0) {
             PyErr_SetString(PyExc_TypeError,
                             "Cannot set a docstring for that object");
-            return NULL;
+            return nullptr;
         }
         Py_RETURN_NONE;
     }

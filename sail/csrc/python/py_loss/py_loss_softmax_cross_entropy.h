@@ -1,4 +1,5 @@
 #pragma once
+#include "../error_defs.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
 #include "core/loss/cross_entropy_loss.h"
@@ -17,6 +18,7 @@ static int PySCELoss_init(PyLoss *self, PyObject *args, PyObject *kwargs) {
 
 RETURN_OBJECT
 PySCELoss_forward(PyLoss *self, PyObject *args, PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor *logits = NULL;
     PyTensor *targets = NULL;
     static char *kwlist[] = {"logits", "targets", NULL};
@@ -24,6 +26,7 @@ PySCELoss_forward(PyLoss *self, PyObject *args, PyObject *kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO", kwlist, &logits,
                                      &targets)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
     PyTensor *py_output = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
@@ -31,6 +34,7 @@ PySCELoss_forward(PyLoss *self, PyObject *args, PyObject *kwargs) {
         ((Loss *)(self->module))->forward(logits->tensor, targets->tensor);
     GENERATE_FROM_TENSOR(py_output, output);
     return (PyObject *)py_output;
+    END_EXCEPTION_HANDLING
 }
 
 static PyMethodDef PySCELoss_methods[] = {

@@ -12,9 +12,11 @@
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_pow(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     sail::Tensor t;
     PyTensor* power = NULL;
@@ -22,6 +24,7 @@ RETURN_OBJECT ops_pow(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO", kwlist, &t1, &power)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -34,15 +37,18 @@ RETURN_OBJECT ops_pow(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = t1->requires_grad;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_exp(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyTensor* power = NULL;
     static char* kwlist[] = {"base", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &t1)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -55,15 +61,18 @@ RETURN_OBJECT ops_exp(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = t1->requires_grad;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_log(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyTensor* power = NULL;
     static char* kwlist[] = {"x", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &t1)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -76,4 +85,5 @@ RETURN_OBJECT ops_log(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = t1->requires_grad;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

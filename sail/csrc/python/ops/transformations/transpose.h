@@ -13,9 +13,11 @@
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* tuple = NULL;
     static char* kwlist[] = {"tensor", "axes", NULL};
@@ -23,6 +25,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &t1,
                                      &tuple)) {
         PyErr_SetString(PyExc_TypeError, "must pass a tensor and a tuple");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -36,6 +39,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
         if (len == -1) {
             PyErr_SetString(PyExc_TypeError,
                             "Shape must have atleat 1 element.");
+            return nullptr;
         }
         std::vector<long> shape;
         while (len--) {
@@ -53,6 +57,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     Py_INCREF(ret_class->base_object);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
@@ -61,6 +66,7 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &py_tuple)) {
         PyErr_SetString(PyExc_TypeError, "must pass a tensor and a shape");
+        return nullptr;
     }
 
     // BINARY_TENSOR_TYPE_CHECK(t1, t2);
@@ -68,6 +74,7 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     int len = PyTuple_Size(py_tuple);
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+        return nullptr;
     }
     TensorSize size;
     while (len--) {
@@ -97,7 +104,7 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return NULL;
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -119,13 +126,13 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return NULL;
+        return nullptr;
     }
 
     if (dim < -1 || dim > t1->tensor.get_ndim()) {
         PyErr_SetString(PyExc_ValueError,
                         ("dim must be in the range of [-1, ndim]"));
-        return NULL;
+        return nullptr;
     }
 
     PyTensor* ret_class;

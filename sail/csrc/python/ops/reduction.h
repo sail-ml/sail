@@ -9,6 +9,7 @@
 #include "core/ops/reduction.h"
 #include "numpy/arrayobject.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 
 #define REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims)           \
@@ -17,6 +18,7 @@
                                          &axis, &keepdims)) {               \
             PyErr_SetString(PyExc_TypeError,                                \
                             "must pass a tensor and an integer for axis");  \
+            return nullptr;                                                 \
         }                                                                   \
     }
 
@@ -26,6 +28,7 @@
  */
 
 RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* axis = Py_None;
     int keepdims = 0;
@@ -48,8 +51,10 @@ RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = ret_class->tensor.requires_grad;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 RETURN_OBJECT ops_max(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* axis = Py_None;
     int keepdims = 0;
@@ -72,9 +77,11 @@ RETURN_OBJECT ops_max(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = ret_class->tensor.requires_grad;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_mean(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* axis = Py_None;
     int keepdims = 0;
@@ -96,6 +103,7 @@ RETURN_OBJECT ops_mean(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->requires_grad = ret_class->tensor.requires_grad;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 /** end block **/

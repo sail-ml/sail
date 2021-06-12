@@ -12,9 +12,11 @@
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
     PyObject* t2;
     PyObject* tuple = Py_None;
@@ -28,6 +30,7 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
                                      &tuple)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -86,9 +89,12 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
+
     PyObject* t1;
     PyObject* t2;
 
@@ -97,7 +103,7 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -114,9 +120,11 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
     PyObject* t2;
     PyObject* t3;
@@ -127,7 +135,7 @@ RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OOO", &t1, &t2, &t3)) {
         PyErr_SetString(PyExc_TypeError, "Incorrect arguments");
-        return NULL;
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -145,4 +153,5 @@ RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

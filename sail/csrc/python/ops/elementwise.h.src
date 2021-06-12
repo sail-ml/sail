@@ -11,6 +11,7 @@
 #include "core/ops/ops.h"
 #include "numpy/arrayobject.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 
 /** begin block
@@ -20,6 +21,7 @@
  */
 
 RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
     PyObject* t2;
 
@@ -28,7 +30,7 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     NUMERIC_PROCESS(t1, t2);
@@ -46,18 +48,20 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
     // SET_BASE(t1, ret_class);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 /** end block **/
 
 RETURN_OBJECT cast_int32(PyObject* unused, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
 
     sail::Tensor tensor1;
 
     if (!PyArg_ParseTuple(args, "O!", &PyTensorType, &t1)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor.cast(Dtype::sInt32);
@@ -70,4 +74,5 @@ RETURN_OBJECT cast_int32(PyObject* unused, PyObject* args) {
     ret_class->dtype = 5;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
