@@ -47,8 +47,6 @@ class Function {
     TensorVector arg_storage;
     TensorVector result_storage;
     explicit Function(){};
-    std::string name = "NONE";
-    virtual std::string getName();
     virtual Tensor forward(TensorVector inputs);
     virtual Tensor apply(TensorVector& inputs);
     virtual void apply_no_forward(TensorVector& inputs);

@@ -19,7 +19,6 @@ using TensorVector = std::vector<Tensor>;
  * op = [+, -, /, *]
  */
 
-std::string Add::getName() { return "AddOp"; }
 Tensor Add::forward(TensorVector inputs) {
     return ops::add(inputs[0], inputs[1]);
 }
@@ -30,7 +29,6 @@ TensorVector Add::backward(Tensor& grad) {
     return o;
 }
 
-std::string Subtract::getName() { return "SubtractOp"; }
 Tensor Subtract::forward(TensorVector inputs) {
     return ops::subtract(inputs[0], inputs[1]);
 }
@@ -41,7 +39,6 @@ TensorVector Subtract::backward(Tensor& grad) {
     return o;
 }
 
-std::string Divide::getName() { return "DivideOp"; }
 Tensor Divide::forward(TensorVector inputs) {
     return ops::divide(inputs[0], inputs[1]);
 }
@@ -57,7 +54,6 @@ TensorVector Divide::backward(Tensor& grad) {
     return o;
 }
 
-std::string Multiply::getName() { return "MultiplyOp"; }
 Tensor Multiply::forward(TensorVector inputs) {
     return ops::multiply(inputs[0], inputs[1]);
 }
@@ -68,7 +64,6 @@ TensorVector Multiply::backward(Tensor& grad) {
     return o;
 }
 
-std::string Matmul::getName() { return "MatmulOp"; }
 Tensor Matmul::forward(TensorVector inputs) {
     return ops::matmul(inputs[0], inputs[1], trans_a, trans_b);
 }
@@ -126,7 +121,6 @@ TensorVector Matmul::backward(Tensor& grad) {
     return {ga, gb};
 }
 
-std::string Pow::getName() { return "PowOp"; }
 Tensor Pow::forward(TensorVector inputs) {
     return ops::power(inputs[0], inputs[1]);
 }

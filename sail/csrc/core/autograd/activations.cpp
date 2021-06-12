@@ -16,7 +16,6 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-std::string Sigmoid::getName() { return "SigmoidOp"; }
 Tensor Sigmoid::forward(TensorVector inputs) {
     Tensor return_ = ops::sigmoid(inputs[0]);
     Function::result_storage.push_back(Tensor(return_.get_body(), false));
@@ -32,7 +31,6 @@ TensorVector Sigmoid::backward(Tensor& grad) {
     //         stored))};
 }
 
-std::string Softmax::getName() { return "SoftmaxOp"; }
 Tensor Softmax::forward(TensorVector inputs) {
     Tensor result = ops::softmax(inputs[0], axis);
     Function::result_storage.push_back(Tensor(result));

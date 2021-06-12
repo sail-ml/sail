@@ -19,7 +19,6 @@ class Sigmoid : public Function {
    public:
     TensorBody::pointer sigmoid_stored;
     explicit Sigmoid(){};
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -28,7 +27,6 @@ class Softmax : public Function {
     Tensor softmax_stored;
     int axis;
     Softmax(int _axis = 1) { axis = _axis; };
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

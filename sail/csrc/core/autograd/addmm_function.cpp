@@ -14,7 +14,6 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-std::string AddMM::getName() { return "AddMMOp"; }
 Tensor AddMM::forward(TensorVector inputs) {
     return ops::addmm(inputs[0], inputs[1], inputs[2]);
 }

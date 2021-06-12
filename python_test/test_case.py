@@ -147,24 +147,42 @@ class UnitTest():
         print ("Test Pass Percentage: %s%%" % (int(RunCounter.global_pass/RunCounter.global_runs * 100)))
         exit(e_code)
 
+    def assertion(f):
+        def inner(self, *args, **kwargs):
+            try:
+                f(self, *args, **kwargs)
+            except AssertionError as e:
+                self.runner.log_run(True, self.__class__.__name__ + "." + self.t, failure_message=traceback.format_exc())
+                return 
+            self.runner.log_run(False)
+        return inner 
+                
+
     def __init__(self):
         self.runner = RunCounter()
         self.tests = [a for a in dir(self) if a.startswith("test")]
         self.num_tests = len(self.tests)
         self.snapshots = []
+        self.assertions = 0
 
+    @assertion
     def assert_eq(self, a, b=True):
         assert a == b, (a, b)
 
+    @assertion
     def assert_lt(self, a, b):
         assert a < b, (a, b)
+    @assertion
     def assert_lte(self, a, b):
         assert a <= b, (a, b)
+    @assertion
     def assert_gt(self, a, b):
         assert a > b, (a, b)
+    @assertion
     def assert_gte(self, a, b):
         assert a >= b, (a, b)
 
+    @assertion
     def assert_eq_np(self, arr1, arr2, eps=None):
         # print (np.array_equal(np_arr, sail_np))
         if (eps):
@@ -175,31 +193,21 @@ class UnitTest():
         
         assert (np.array_equal(arr1, arr2)), (arr1, arr2)
 
+    @assertion
     def assert_neq_np(self, arr1, arr2, eps=None):
         # print (np.array_equal(np_arr, sail_np))
         
         assert (not np.array_equal(arr1, arr2)), (arr1, arr2)
 
+    @assertion
     def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
         sail_np = sail_arr.numpy()
         self.assert_eq_np(np_arr, sail_np, eps=eps)
 
     def run(self):
         for t in self.tests:
-            # self.snapshots.append(tracemalloc.take_snapshot())
-            try:
-                getattr(self, t)()
-            except AssertionError as e:
-                self.runner.log_run(True, self.__class__.__name__ + "." + t, failure_message=traceback.format_exc())
-                continue
-            
-            self.runner.log_run(False)
-        # stats = self.snapshots[-1].compare_to(self.snapshots[-2], 'filename')    
-
-        # for stat in stats[:10]:                
-            # print("{} new KiB {} total KiB {} new {} total memory blocks: ".format(stat.size_diff/1024, stat.size / 1024, stat.count_diff ,stat.count))                
-            # for line in stat.traceback.format():                    
-            #     print(line)
+            self.t = t 
+            getattr(self, t)()
         
         self.log_complete()
 

@@ -13,7 +13,6 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-std::string Function::getName() { return "NONE"; }
 Tensor Function::apply(TensorVector& inputs) {
     // arg_storage = inputs;
     // arg_storage(inputs);

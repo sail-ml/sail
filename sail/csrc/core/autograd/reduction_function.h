@@ -60,7 +60,6 @@ class Sum : public Reduction {
     using Reduction::Reduction;
 
     // RefTensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -69,7 +68,6 @@ class Mean : public Reduction {
     using Reduction::Reduction;
 
     // RefTensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -80,7 +78,6 @@ class Max : public Reduction {
     Tensor stored_output;
 
     // RefTensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

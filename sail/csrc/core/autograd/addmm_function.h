@@ -17,7 +17,6 @@ class AddMM : public Function {
    public:
     explicit AddMM(){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

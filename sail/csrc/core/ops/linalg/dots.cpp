@@ -52,12 +52,13 @@ std::tuple<LongVec, TensorShape> GetTensorDotRollAxes(
 Tensor tensordot(const Tensor& t1, const Tensor& t2, int axes) {
     LongVec t1_dim, t2_dim;
 
-    while (axes--) {
-        t1_dim.push_back(axes);
-        t2_dim.push_back(axes);
+    for (int i = t1.get_ndim() - 1; i > (t1.get_ndim() - axes - 1); i--) {
+        t1_dim.insert(t1_dim.begin(), i);
     }
-    std::reverse(t1_dim.begin(), t1_dim.end());
-    std::reverse(t2_dim.begin(), t2_dim.end());
+
+    for (int i = 0; i < axes; i++) {
+        t2_dim.push_back(i);
+    }
 
     return tensordot(t1, t2, t1_dim, t2_dim);
 }

@@ -16,11 +16,7 @@ elif [ $1 = "python" ]; then
     python python_test/run.py
 elif [ $1 = "all" ]; then
     python python_test/run.py
-    ls
-    cd build 
-    ls 
-    
-    cd t*/sail/csrc
+    cd build/t*/sail/csrc
     ctest -V
     cd ../../../../
 else

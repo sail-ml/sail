@@ -18,7 +18,6 @@ class SoftmaxCrossEntropyLoss : public Function {
     Tensor stored_output;
     explicit SoftmaxCrossEntropyLoss(){};
     // RefTensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

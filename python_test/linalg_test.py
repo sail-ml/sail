@@ -30,6 +30,28 @@ class MatmulTest(UnitTest):
 
         return
 
+    def test_error_base(self):
+        a = sail.random.uniform(0, 1, (1))
+        b = sail.random.uniform(1, 2, (1, 2))
+        try:
+            sail.matmul(a, b)
+        except Exception as e:
+            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
+
+        a = sail.random.uniform(0, 1, (3, 4, 5))
+        b = sail.random.uniform(1, 2, (5, 2))
+        try:
+            sail.matmul(a, b)
+        except Exception as e:
+            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
+
+        a = sail.random.uniform(0, 1, (3, 5))
+        b = sail.random.uniform(1, 2, (3, 5))
+        try:
+            sail.matmul(a, b)
+        except Exception as e:
+            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
+
     
     def test_grad(self):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]

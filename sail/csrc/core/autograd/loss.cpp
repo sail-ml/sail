@@ -17,7 +17,6 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-std::string SoftmaxCrossEntropyLoss::getName() { return "MaxOp"; }
 Tensor SoftmaxCrossEntropyLoss::forward(TensorVector inputs) {
     // stored_output = ops::softmax_cross_entropy(inputs[0], inputs[1]);
     return ops::softmax_cross_entropy(inputs[0], inputs[1]);

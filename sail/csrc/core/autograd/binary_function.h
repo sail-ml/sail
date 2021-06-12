@@ -17,7 +17,6 @@ class Add : public Function {
    public:
     explicit Add(){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -26,7 +25,6 @@ class Subtract : public Function {
    public:
     explicit Subtract(){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -35,7 +33,6 @@ class Divide : public Function {
    public:
     explicit Divide(){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -44,7 +41,6 @@ class Multiply : public Function {
    public:
     explicit Multiply(){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -55,7 +51,6 @@ class Matmul : public Function {
     Matmul(std::string _trans_a, std::string _trans_b)
         : trans_a(_trans_a), trans_b(_trans_b){};
     // TensorVector arg_storage;
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
@@ -63,7 +58,6 @@ class Matmul : public Function {
 class Pow : public Function {
    public:
     explicit Pow(){};
-    std::string getName();
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

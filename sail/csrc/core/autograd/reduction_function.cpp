@@ -16,7 +16,6 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
-std::string Sum::getName() { return "SumOp"; }
 Tensor Sum::forward(TensorVector inputs) {
     return ops::sum(inputs[0], Reduction::axis, Reduction::keepdims);
 }
@@ -30,7 +29,6 @@ TensorVector Sum::backward(Tensor& grad) {
     return {full_size};
 }
 
-std::string Mean::getName() { return "MeanOp"; }
 Tensor Mean::forward(TensorVector inputs) {
     return ops::mean(inputs[0], Reduction::axis, Reduction::keepdims);
 }
@@ -44,7 +42,6 @@ TensorVector Mean::backward(Tensor& grad) {
     return {full_size};
 }
 
-std::string Max::getName() { return "MaxOp"; }
 Tensor Max::forward(TensorVector inputs) {
     stored_output = ops::max(inputs[0], Reduction::axis, Reduction::keepdims);
     return stored_output;
