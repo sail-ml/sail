@@ -4,7 +4,6 @@ name: CI
 on: 
   pull_request:
       branches: [master]
-  push:
   workflow_dispatch:
 
 jobs:
