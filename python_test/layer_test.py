@@ -42,11 +42,31 @@ class LinearLayerTest(UnitTest):
                 lin = sail.modules.Linear(cb[0], cb[1], use_bias=True)
 
                 y = lin(x1)
-                y2 = np.matmul(arr1, lin.weights.numpy()) + lin.bias.numpy()
+                y2 = np.matmul(arr1, lin.weights.numpy()) + lin.biases.numpy()
 
                 self.assert_eq_np_sail(y2, y, eps=5e-6)
                 self.assert_eq(y.requires_grad, True)
         return
+
+    def test_get_set(self):
+        l = sail.modules.Linear(32, 64)
+        weights = l.weights 
+        biases = l.biases
+
+        new_weights = sail.random.uniform(0, 0.01, (32, 64)) 
+        new_biases = sail.random.uniform(0, 0.01, (32)) 
+
+        input_ = sail.random.uniform(0, 1, (128, 32))
+
+        y1 = l(input_)
+        l.weights = new_weights
+        l.biases = new_biases
+        y2 = l(input_)
+
+        self.assert_neq_np(y1.numpy(), y2.numpy())
+        self.assert_true(l.weights.requires_grad)
+        self.assert_true(l.biases.requires_grad)
+
 
 class SigmoidLayerTest(UnitTest):
 

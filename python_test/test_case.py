@@ -181,6 +181,9 @@ class UnitTest():
     @assertion
     def assert_gte(self, a, b):
         assert a >= b, (a, b)
+    @assertion
+    def assert_true(self, a):
+        assert a
 
     @assertion
     def assert_eq_np(self, arr1, arr2, eps=None):

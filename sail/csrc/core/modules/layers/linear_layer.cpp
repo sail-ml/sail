@@ -34,6 +34,15 @@ Linear::Linear(long _input_features, long _output_features, bool _bias = true)
     }
 }
 
+void Linear::set_weights(Tensor& new_weights) {
+    new_weights.requires_grad = true;
+    weights = new_weights;
+}
+void Linear::set_biases(Tensor& new_biases) {
+    new_biases.requires_grad = true;
+    biases = new_biases;
+}
+
 // Linear::~Linear() {
 // #ifdef MKLDNN
 //     delete layer;

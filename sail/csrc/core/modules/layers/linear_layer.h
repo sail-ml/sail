@@ -28,7 +28,8 @@ class Linear : public Module {
 
     Linear(long _input_features, long _output_features, bool _bias = true);
 
-    // ~Linear();
+    void set_weights(Tensor& new_weights);
+    void set_biases(Tensor& new_biases);
 
     Tensor forward(Tensor& input);
 };

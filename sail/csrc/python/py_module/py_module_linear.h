@@ -43,7 +43,7 @@ PyLinearModule_get_weights(PyModule *self, void *closure) {
 
 static int PyLinearModule_set_weights(PyModule *self, PyTensor *t,
                                       void *closure) {
-    START_EXCEPTION_HANDLING((Linear *)(self->module))->weights = t->tensor;
+    START_EXCEPTION_HANDLING((Linear *)(self->module))->set_weights(t->tensor);
     return 0;
     END_EXCEPTION_HANDLING_INT
 }
@@ -59,7 +59,7 @@ PyLinearModule_get_bias(PyModule *self, void *closure) {
 }
 
 static int PyLinearModule_set_bias(PyModule *self, PyTensor *t, void *closure) {
-    START_EXCEPTION_HANDLING((Linear *)(self->module))->biases = t->tensor;
+    START_EXCEPTION_HANDLING((Linear *)(self->module))->set_biases(t->tensor);
     return 0;
     END_EXCEPTION_HANDLING_INT
 }
@@ -67,7 +67,7 @@ static int PyLinearModule_set_bias(PyModule *self, PyTensor *t, void *closure) {
 static PyGetSetDef PyLinearModule_get_setters[] = {
     {"weights", (getter)PyLinearModule_get_weights,
      (setter)PyLinearModule_set_weights, NULL},
-    {"bias", (getter)PyLinearModule_get_bias, (setter)PyLinearModule_set_bias,
+    {"biases", (getter)PyLinearModule_get_bias, (setter)PyLinearModule_set_bias,
      NULL},
     {NULL} /* Sentinel */
 };
