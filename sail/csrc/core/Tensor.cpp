@@ -58,12 +58,12 @@ Tensor Tensor::transpose(const LongVec& axes) {
 
 Tensor Tensor::expand_dims(const int dim) {
     int new_dim = dim;
-    if (dim < 0) {
-        new_dim = dim + get_ndim() + 1;
-    }
-    if (new_dim < 0 || new_dim > get_ndim()) {
-        throw SailCError("dim must be in the range of [-ndim, ndim]");
-    }
+    // if (dim < 0) {
+    //     new_dim = dim + get_ndim() + 1;
+    // }
+    // if (new_dim < 0 || new_dim > get_ndim()) {
+    //     throw DimensionError("dim must be in the range of [-ndim, ndim]");
+    // }
     TensorShape s = body->get_shape();
     s.insert_one(new_dim);
     TensorShape x = TensorShape(s.shape);  // this is a super hacky fix
@@ -75,12 +75,6 @@ Tensor Tensor::expand_dims(const int dim) {
 }
 Tensor Tensor::_expand_dims_inplace(const int dim) {
     int new_dim = dim;
-    if (dim < 0) {
-        new_dim = dim + get_ndim() + 1;
-    }
-    if (new_dim < 0 || new_dim > get_ndim()) {
-        throw SailCError("dim must be in the range of [-ndim, ndim]");
-    }
     TensorShape s = body->get_shape();
     s.insert_one(dim);
     set_shape(s);
@@ -89,14 +83,8 @@ Tensor Tensor::_expand_dims_inplace(const int dim) {
 
 Tensor Tensor::squeeze(const int dim) {
     int new_dim = dim;
-    if (dim < 0) {
-        new_dim = dim + get_ndim() + 1;
-    }
-    if (new_dim < 0 || new_dim > get_ndim()) {
-        throw SailCError("dim must be in the range of [-ndim, ndim]");
-    }
     TensorShape s = body->get_shape();
-    s.remove_one(dim);
+    s.remove_one(new_dim);
     TensorShape x = TensorShape(s.shape);
     TensorBody::pointer new_body = TensorBody::pointer(
         new TensorBody(body->get_data(), body->get_dtype(), x,

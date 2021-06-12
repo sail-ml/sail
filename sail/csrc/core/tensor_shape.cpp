@@ -196,47 +196,44 @@ void TensorShape::enforce_axis(int axis) {
 }
 
 void TensorShape::insert_one(const int dim) {
-    if (dim == -1) {
-        shape.push_back(1);
-    } else {
-        if (dim > shape.size()) {
-            throw DimensionError(
-                "Dimension value is too large for expand_dims");
-        }
-        shape.insert(shape.begin() + dim, 1);
+    int new_dim = dim;
+    if (dim < 0) {
+        new_dim = new_dim + ndim() + 1;
     }
+    if (new_dim > shape.size()) {
+        throw DimensionError("Dimension value is too large for expand_dims");
+    }
+    shape.insert(shape.begin() + new_dim, 1);
+
     recompute(true);
 }
 void TensorShape::remove_one(const int dim) {
-    if (dim == -1) {
-        int new_dim = shape.size() - 1;
-        if (is_one(shape, new_dim)) {
-            shape.erase(shape.begin() + new_dim);
-        }
-    } else {
-        if (dim > shape.size()) {
-            throw DimensionError("Dimension value is too large for squeeze");
-        }
-        if (is_one(shape, dim)) {
-            shape.erase(shape.begin() + dim);
-        }
+    int new_dim = dim;
+    if (new_dim < 0) {
+        new_dim = new_dim + ndim();
     }
+    if (new_dim > shape.size()) {
+        throw DimensionError("Dimension value is too large for squeeze");
+    }
+    if (is_one(shape, new_dim)) {
+        shape.erase(shape.begin() + new_dim);
+    } else {
+        throw SailCError("Cannot remove value at dimension " +
+                         std::to_string(new_dim) + " because it is not 1");
+    }
+
     recompute(true);
 }
 void TensorShape::remove(const int dim) {
     int new_dim = dim;
-    if (dim < 0) {
-        new_dim = dim + ndim();
+    if (new_dim < 0) {
+        new_dim = new_dim + ndim();
     }
-    if (new_dim == -1) {
-        new_dim = shape.size() - 1;
-        shape.erase(shape.begin() + new_dim);
-    } else {
-        if (new_dim > shape.size()) {
-            throw DimensionError("Dimension value is too large for remove");
-        }
-        shape.erase(shape.begin() + new_dim);
+    // std::cout << new_dim << ", " << ndim() << ", " << dim << std::endl;
+    if (new_dim > shape.size()) {
+        throw DimensionError("Dimension value is too large for squeeze");
     }
+    shape.erase(shape.begin() + new_dim);
     recompute(true);
 }
 

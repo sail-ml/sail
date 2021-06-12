@@ -39,11 +39,11 @@ PyObject* make_getter_code() {
 }
 PyObject* exc_dict = make_getter_code();
 
-PyObject* PyDimensionError = PyErr_NewException("sail.DimensionException",
+PyObject* PyDimensionError = PyErr_NewException("sail.DimensionError",
                                                 NULL,  // use to pick base class
                                                 exc_dict);
 
-PyObject* PySailError = PyErr_NewException("sail.SailException",
+PyObject* PySailError = PyErr_NewException("sail.SailError",
                                            NULL,  // use to pick base class
                                            exc_dict);
 

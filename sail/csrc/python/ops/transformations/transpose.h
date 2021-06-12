@@ -61,6 +61,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
 }
 
 RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* py_tuple;
 
@@ -95,9 +96,11 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     int dim;
 
@@ -117,21 +120,17 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     int dim;
 
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return nullptr;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
         return nullptr;
     }
 
@@ -145,4 +144,5 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

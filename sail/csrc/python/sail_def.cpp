@@ -110,6 +110,7 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
     //                                       exc_dict);
 
     PyModule_AddObject(m, "DimensionError", PyDimensionError);
+    PyModule_AddObject(m, "SailError", PySailError);
     PyModule_AddObject(m, "random", PyInit_random());
     // PyModule_AddObject(m, "modules", PyInit_modules());
     PyModule_AddFunctions(m, OpsMethods);
