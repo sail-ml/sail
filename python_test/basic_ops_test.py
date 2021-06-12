@@ -104,8 +104,7 @@ class AddTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic, eps=1e-6)
-            assert diff < 1e-6
+            self.assert_true(check_gradients_vector(forward, dic))
 
         return
 
@@ -202,8 +201,8 @@ class SubtractTest(UnitTest):
                     "b": arr2
                 }
 
-                diff = check_gradients_vector(forward, dic, eps=1e-6)
-                assert diff < 1e-6
+                self.assert_true(check_gradients_vector(forward, dic))
+
 
             return
 
@@ -301,8 +300,7 @@ class MultiplyTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic, eps=1e-6)
-            assert diff < 1e-6
+            self.assert_true(check_gradients_vector(forward, dic))
 
         return
 
@@ -400,8 +398,7 @@ class DivideTest(UnitTest):
                 "b": arr2
             }
 
-            diff = check_gradients_vector(forward, dic, eps=1e-5)
-            assert diff < 1e-5, (diff, 1e-5)
+            self.assert_true(check_gradients_vector(forward, dic))
 
         return
 
@@ -513,8 +510,7 @@ class ExpTest(UnitTest):
             dic = {
                 "a": arr1,
             }
-            diff = check_gradients_vector(forward, dic, eps=1e-5)
-            assert diff < 1e-5, (diff, 1e-5)
+            self.assert_true(check_gradients_vector(forward, dic))
 
         return
 
@@ -580,7 +576,6 @@ class LogTest(UnitTest):
             dic = {
                 "a": arr1,
             }
-            diff = check_gradients_vector(forward, dic, eps=1e-5)
-            assert diff < 1e-5, (diff, 1e-5)
+            self.assert_true(check_gradients_vector(forward, dic))
 
         return

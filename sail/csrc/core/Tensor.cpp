@@ -171,6 +171,7 @@ void Tensor::backward() {
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {
         if (has_grad()) {
+            std::cout << "yeah?" << std::endl;
             Tensor ng = _grad + get_grad();
             set_grad(ng);
         } else {

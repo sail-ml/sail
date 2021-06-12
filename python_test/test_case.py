@@ -29,18 +29,7 @@ def vector_to_dictionary(vector, dictionary):
         start += int(numel(data))   
     return nd
 
-
-dic = {"a": np.random.uniform(1, 2, (35)), 
-       "b": np.random.uniform(1, 2, (35)),
-       }
-
-def forward(a, b):
-    c = sail.multiply(a, b)
-    d = sail.sum(c)
-    return d
-
-
-def check_gradients_vector(forward_fcn, param_dictionary, eps=1e-3):
+def check_gradients_vector(forward_fcn, param_dictionary, rtol=1e-5, atol=1e-8, eps=1e-3):
     params = [sail.Tensor(param_dictionary[a], requires_grad=True) for a in param_dictionary]
     output = forward_fcn(*params)
     output.backward()
@@ -75,12 +64,8 @@ def check_gradients_vector(forward_fcn, param_dictionary, eps=1e-3):
         j_minus[i] = z.numpy()
 
         grad_approx[i] = (j_plus[i] - j_minus[i])/(2 * eps)
-        # grad_approx[i] = grad_approx[i]#to_significant(grad_approx[i], significant=7)
 
-    num = np.linalg.norm(grad_approx - grads)
-    denom = np.linalg.norm(grad_approx) + np.linalg.norm(grads)
-    diff = num/denom
-    return diff 
+    return np.allclose(np.array(grad_approx), np.array(grads), rtol=rtol, atol=atol)
 
 
 class RunCounter():

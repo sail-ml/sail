@@ -54,8 +54,7 @@ class SumTest(UnitTest):
                 "a": arr1,
             }
 
-            diff = check_gradients_vector(forward, dic, eps=1e-6)
-            assert diff < 1e-6
+            self.assert_true(check_gradients_vector(forward, dic))
         return
 
 class MeanTest(UnitTest):
@@ -108,6 +107,5 @@ class MaxTest(UnitTest):
                 "a": arr1,
             }
 
-            diff = check_gradients_vector(forward, dic, eps=1e-6)
-            assert diff < 1e-6
+            self.assert_true(check_gradients_vector(forward, dic))
         return

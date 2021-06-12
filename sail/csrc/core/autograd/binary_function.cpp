@@ -60,7 +60,7 @@ Tensor Multiply::forward(TensorVector inputs) {
 TensorVector Multiply::backward(Tensor& grad) {
     Tensor a = Function::arg_storage[0];
     Tensor b = Function::arg_storage[1];
-    TensorVector o = {b, a};
+    TensorVector o = {b * grad, a * grad};
     return o;
 }
 

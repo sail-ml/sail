@@ -74,8 +74,7 @@ class MatmulTest(UnitTest):
                     "b": arr2
                 }
 
-                diff = check_gradients_vector(forward, dic, eps=1e-6)
-                assert diff < 1e-6
+                self.assert_true(check_gradients_vector(forward, dic))
 
         return
 
@@ -129,8 +128,7 @@ class AddmmTest(UnitTest):
                     "c": arr3
                 }
 
-                diff = check_gradients_vector(forward, dic, eps=1e-6)
-                assert diff < 1e-6
+                self.assert_true(check_gradients_vector(forward, dic))
 
         return
         
