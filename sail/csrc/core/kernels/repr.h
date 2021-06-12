@@ -180,22 +180,19 @@ class ReprKernel : public Kernel {
                     formatter.Scan(value);
                 }
             }
-            if (!t1.is_scalar()) {
-                os << "tensor(";
-                if (t1.get_shape().numel() == 0) {
-                    os << "[]";
-                } else {
-                    bool should_abbreviate =
-                        t1.get_shape().numel() > kThreshold;
-                    ArrayReprRecursive<T>(t1, formatter, 8, os,
-                                          should_abbreviate);
-                }
-                os << ", shape=" << t1.get_shape().get_string();
-                os << ")";
-
+            os << "tensor(";
+            if (t1.get_shape().numel() == 0) {
+                os << "[]";
             } else {
-                ArrayReprRecursive<T>(t1, formatter, 8, os, false);
+                bool should_abbreviate = t1.get_shape().numel() > kThreshold;
+                ArrayReprRecursive<T>(t1, formatter, 8, os, should_abbreviate);
             }
+            os << ", shape=" << t1.get_shape().get_string();
+            os << ")";
+
+            // } else {
+            //     ArrayReprRecursive<T>(t1, formatter, 8, os, false);
+            // }
         });
     }
 
