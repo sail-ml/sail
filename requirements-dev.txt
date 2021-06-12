@@ -1,6 +1,9 @@
+setuptools
 wheel
 pytest
 cpufeature
 sphinx
 pydata_sphinx_theme
 gcovr
+tensorflow
+torch

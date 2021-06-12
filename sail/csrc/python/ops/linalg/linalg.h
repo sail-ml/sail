@@ -1,20 +1,22 @@
 #pragma once
 
 #include <Python.h>
+#include <core/Tensor.h>
+#include <core/ops/ops.h>
+#include <core/tensor_shape.h>
+#include <core/types.h>
 #include <structmember.h>
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include "../../../src/Tensor.h"
-#include "../../../src/ops/ops.h"
-#include "../../../src/tensor_shape.h"
-#include "../../../src/types.h"
 #include "../../py_tensor/py_tensor.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
     PyObject* t2;
     PyObject* tuple = Py_None;
@@ -28,6 +30,7 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
                                      &tuple)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -81,13 +84,17 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
+
     PyObject* t1;
     PyObject* t2;
 
@@ -96,7 +103,7 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -108,13 +115,16 @@ RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
     sail::Tensor res = sail::ops::matmul(tensor1, tensor2);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyObject* t1;
     PyObject* t2;
     PyObject* t3;
@@ -125,7 +135,7 @@ RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
 
     if (!PyArg_ParseTuple(args, "OOO", &t1, &t2, &t3)) {
         PyErr_SetString(PyExc_TypeError, "Incorrect arguments");
-        return NULL;
+        return nullptr;
     }
 
     tensor1 = ((PyTensor*)t1)->tensor;
@@ -138,8 +148,10 @@ RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
     sail::Tensor res = sail::ops::addmm(tensor1, tensor2, tensor3);
 
     ret_class->tensor = res;
+    ret_class->requires_grad = res.requires_grad;
     ret_class->ndim = ((PyTensor*)t1)->ndim;
     ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

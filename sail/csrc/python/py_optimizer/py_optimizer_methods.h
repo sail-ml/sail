@@ -4,17 +4,18 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/TensorBody.h"
-#include "../../src/dtypes.h"
-#include "../../src/factories.h"
-#include "../../src/ops/ops.h"
-#include "../../src/tensor_shape.h"
-#include "../../src/types.h"
 #include "../py_module/py_module.h"
+#include "core/Tensor.h"
+#include "core/TensorBody.h"
+#include "core/dtypes.h"
+#include "core/factories.h"
+#include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "core/types.h"
 #include "numpy/arrayobject.h"
 #include "py_optimizer_def.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 using Optimizer = sail::optimizers::Optimizer;
 
@@ -53,22 +54,27 @@ PyOptimizer_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
 RETURN_OBJECT PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
                                        PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     //     PyErr_SetString(PyExc_NotImplementedError, "");
-    //     return NULL;
+    //     return nullptr;
     PyModule *mod = nullptr;
     static char *kwlist[] = {"module", NULL};
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &mod)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
     self->optimizer->track_module(*(mod->module));
     Py_INCREF(mod);
     Py_RETURN_NONE;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT PyOptimizer_update(PyOptimizer *self) {
+    START_EXCEPTION_HANDLING
     //     PyErr_SetString(PyExc_NotImplementedError, "");
-    //     return NULL;
+    //     return nullptr;
 
     self->optimizer->update();
     Py_RETURN_NONE;
+    END_EXCEPTION_HANDLING
 }

@@ -2,43 +2,44 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../src/Tensor.h"
-#include "../src/dtypes.h"
-// #include "../src/modules/modules.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
+// #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 
+#include "error_defs.h"
 #include "ops/ops_def.h"
 #include "py_dtypes/py_dtype.h"
 #include "py_module/py_module.h"
 #include "py_tensor/py_tensor.h"
 
-PyObject* make_getter_code() {
-    const char* code =
-        "def code(self):\n"
-        "  try:\n"
-        "    return self.args[1]\n"
-        "  except IndexError:\n"
-        "    return -1\n"
-        "code = property(code)\n"
-        "def message(self):\n"
-        "  try:\n"
-        "    return self.args[0]\n"
-        "  except IndexError:\n"
-        "    return ''\n"
-        "\n";
+// PyObject* make_getter_code() {
+//     const char* code =
+//         "def code(self):\n"
+//         "  try:\n"
+//         "    return self.args[1]\n"
+//         "  except IndexError:\n"
+//         "    return -1\n"
+//         "code = property(code)\n"
+//         "def message(self):\n"
+//         "  try:\n"
+//         "    return self.args[0]\n"
+//         "  except IndexError:\n"
+//         "    return ''\n"
+//         "\n";
 
-    PyObject* d = PyDict_New();
-    PyObject* dict_globals = PyDict_New();
-    PyDict_SetItemString(dict_globals, "__builtins__", PyEval_GetBuiltins());
-    PyObject* output = PyRun_String(code, Py_file_input, dict_globals, d);
-    if (output == NULL) {
-        Py_DECREF(d);
-        return NULL;
-    }
-    Py_DECREF(output);
-    Py_DECREF(dict_globals);
-    return d;
-}
+//     PyObject* d = PyDict_New();
+//     PyObject* dict_globals = PyDict_New();
+//     PyDict_SetItemString(dict_globals, "__builtins__", PyEval_GetBuiltins());
+//     PyObject* output = PyRun_String(code, Py_file_input, dict_globals, d);
+//     if (output == NULL) {
+//         Py_DECREF(d);
+//         return NULL;
+//     }
+//     Py_DECREF(output);
+//     Py_DECREF(dict_globals);
+//     return d;
+// }
 
 static PyModuleDef module = {PyModuleDef_HEAD_INIT, "sail_c",
                              "Example module that creates an extension type.",
@@ -102,13 +103,14 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
         return NULL;
     }
 
-    PyObject* exc_dict = make_getter_code();
+    // PyObject* exc_dict = make_getter_code();
 
-    PyDimensionError = PyErr_NewException("sail.DimensionException",
-                                          NULL,  // use to pick base class
-                                          exc_dict);
+    // PyDimensionError = PyErr_NewException("sail.DimensionException",
+    //                                       NULL,  // use to pick base class
+    //                                       exc_dict);
 
     PyModule_AddObject(m, "DimensionError", PyDimensionError);
+    PyModule_AddObject(m, "SailError", PySailError);
     PyModule_AddObject(m, "random", PyInit_random());
     // PyModule_AddObject(m, "modules", PyInit_modules());
     PyModule_AddFunctions(m, OpsMethods);

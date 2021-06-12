@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Python.h>
-#include "../src/Tensor.h"
-#include "../src/dtypes.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
 #include "py_tensor/py_tensor.h"
 
 // sail::Tensor getNumeric(PyObject* number) {
@@ -35,6 +35,7 @@
             memcpy(new_tensor.get_data(), ptr, sizeof(val));   \
         } else if (PyObject_TypeCheck(number, &PyLong_Type)) { \
             PyErr_SetString(PyExc_TypeError, "Nah.");          \
+            return nullptr;                                    \
         }                                                      \
     }
 
@@ -44,10 +45,10 @@
 #define BINARY_TENSOR_TYPE_CHECK(a, b)               \
     {                                                \
         if (!PyObject_TypeCheck(a, &PyTensorType)) { \
-            return NULL;                             \
+            return nullptr;                          \
         }                                            \
         if (!PyObject_TypeCheck(b, &PyTensorType)) { \
-            return NULL;                             \
+            return nullptr;                          \
         }                                            \
     }
 
@@ -69,7 +70,7 @@
     {                                                        \
         if (!PyObject_TypeCheck(t1, &PyTensorType) &&        \
             !PyObject_TypeCheck(t2, &PyTensorType)) {        \
-            return NULL;                                     \
+            return nullptr;                                  \
         }                                                    \
         if (PyObject_TypeCheck(t1, &PyTensorType) &&         \
             PyObject_TypeCheck(t2, &PyTensorType)) {         \
@@ -84,7 +85,7 @@
             tensor1 = ((PyTensor *)t2)->tensor;              \
             GET_NUMERIC(t1, tensor2);                        \
         } else {                                             \
-            return NULL;                                     \
+            return nullptr;                                  \
         }                                                    \
     }
 

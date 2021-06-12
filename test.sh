@@ -13,11 +13,23 @@ elif [ $1 = "gdb" ]; then
     cd build/temp.linux-x86_64-3.7/sail/csrc
     gdb ./test
 elif [ $1 = "python" ]; then
-    python -m pytest
+    python python_test/run.py
+elif [ $1 = "all" ]; then
+    python python_test/run.py
+    cd build/t*/sail/csrc
+    ctest -V
+    cd ../../../../
 else
     cd build/temp.linux-x86_64-3.7/sail/csrc
-    ./test
+    ctest -V
 fi
 
+if [ $2 = "coverage-xml" ]; then 
+    gcovr --filter sail/ --xml coverage.xml -s 2> /dev/null
+fi
+
+if [ $2 = "coverage" ]; then 
+    gcovr --filter sail/ -s 2> /dev/null
+fi
 # ./build/temp.linux-x86_64-3.7/sail/csrc/test
 # ctest -V

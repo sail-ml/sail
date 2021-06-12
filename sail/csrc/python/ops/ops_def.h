@@ -21,11 +21,13 @@ static PyMethodDef OpsMethods[] = {
      NULL},
     {"power", (PyCFunction)ops_pow, METH_VARARGS | METH_KEYWORDS, NULL},
     {"exp", (PyCFunction)ops_exp, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"log", (PyCFunction)ops_log, METH_VARARGS | METH_KEYWORDS, NULL},
 
     {"reshape", (PyCFunction)ops_reshape, METH_VARARGS, NULL},
     {"transpose", (PyCFunction)ops_transpose, METH_VARARGS | METH_KEYWORDS,
      NULL},
     {"rollaxis", (PyCFunction)ops_rollaxis, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"moveaxis", (PyCFunction)ops_moveaxis, METH_VARARGS | METH_KEYWORDS, NULL},
     {"expand_dims", (PyCFunction)ops_expand_dims, METH_VARARGS, NULL},
     {"squeeze", (PyCFunction)ops_squeeze, METH_VARARGS, NULL},
 

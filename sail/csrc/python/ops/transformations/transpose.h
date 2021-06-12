@@ -6,16 +6,18 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "../../../src/Tensor.h"
-#include "../../../src/ops/ops.h"
-#include "../../../src/ops/reduction.h"
-#include "../../../src/tensor_shape.h"
 #include "../../py_tensor/py_tensor.h"
+#include "core/Tensor.h"
+#include "core/ops/ops.h"
+#include "core/ops/reduction.h"
+#include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../../error_defs.h"
 #include "../../macros.h"
 
 RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* tuple = NULL;
     static char* kwlist[] = {"tensor", "axes", NULL};
@@ -23,6 +25,7 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &t1,
                                      &tuple)) {
         PyErr_SetString(PyExc_TypeError, "must pass a tensor and a tuple");
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -31,10 +34,12 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     if (tuple == NULL) {
         ret_class->tensor = sail::ops::transpose(t1->tensor);
     } else {
+        tuple = PySequence_Tuple(tuple);
         int len = PyTuple_Size(tuple);
         if (len == -1) {
             PyErr_SetString(PyExc_TypeError,
                             "Shape must have atleat 1 element.");
+            return nullptr;
         }
         std::vector<long> shape;
         while (len--) {
@@ -52,20 +57,25 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
     Py_INCREF(ret_class->base_object);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* py_tuple;
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &py_tuple)) {
         PyErr_SetString(PyExc_TypeError, "must pass a tensor and a shape");
+        return nullptr;
     }
 
     // BINARY_TENSOR_TYPE_CHECK(t1, t2);
+    py_tuple = PySequence_Tuple(py_tuple);
     int len = PyTuple_Size(py_tuple);
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+        return nullptr;
     }
     TensorSize size;
     while (len--) {
@@ -86,22 +96,18 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     int dim;
 
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return NULL;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
-        return NULL;
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -114,22 +120,18 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     int dim;
 
     if (!PyArg_ParseTuple(args, "Oi", &t1, &dim)) {
         PyErr_SetString(PyExc_TypeError,
                         "Inputs should be a sail tensor and an integer");
-        return NULL;
-    }
-
-    if (dim < -1 || dim > t1->tensor.get_ndim()) {
-        PyErr_SetString(PyExc_ValueError,
-                        ("dim must be in the range of [-1, ndim]"));
-        return NULL;
+        return nullptr;
     }
 
     PyTensor* ret_class;
@@ -142,4 +144,5 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     Py_INCREF(t1);
 
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

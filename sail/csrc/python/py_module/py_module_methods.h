@@ -4,13 +4,13 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/TensorBody.h"
-#include "../../src/dtypes.h"
-#include "../../src/factories.h"
-#include "../../src/ops/ops.h"
-#include "../../src/tensor_shape.h"
-#include "../../src/types.h"
+#include "core/Tensor.h"
+#include "core/TensorBody.h"
+#include "core/dtypes.h"
+#include "core/factories.h"
+#include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "core/types.h"
 #include "numpy/arrayobject.h"
 #include "py_module_def.h"
 
@@ -49,5 +49,5 @@ PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
 RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds) {
     PyErr_SetString(PyExc_NotImplementedError, "");
-    return NULL;
+    return nullptr;
 }

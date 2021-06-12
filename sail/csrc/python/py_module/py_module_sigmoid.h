@@ -1,7 +1,8 @@
 #pragma once
-#include "../../src/modules/modules.h"
+#include "../error_defs.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
+#include "core/modules/modules.h"
 
 #include "py_module_def.h"
 
@@ -9,23 +10,28 @@ using Sigmoid = sail::modules::Sigmoid;
 
 static int PySigmoidModule_init(PyModule *self, PyObject *args,
                                 PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     self->module = (Module *)(new Sigmoid());
     return 0;
+    END_EXCEPTION_HANDLING_INT
 }
 
 RETURN_OBJECT
 PySigmoidModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     PyTensor *inputs = NULL;
     static char *kwlist[] = {"inputs", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &inputs)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return nullptr;
     }
     PyTensor *py_output = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     sail::Tensor output = ((Sigmoid *)(self->module))->forward(inputs->tensor);
     GENERATE_FROM_TENSOR(py_output, output);
     return (PyObject *)py_output;
+    END_EXCEPTION_HANDLING
 }
 
 static PyMethodDef PySigmoidModule_methods[] = {

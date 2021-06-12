@@ -6,27 +6,30 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "../../src/Tensor.h"
-#include "../../src/ops/ops.h"
-#include "../../src/ops/reduction.h"
-#include "../../src/tensor_shape.h"
 #include "../py_tensor/py_tensor.h"
+#include "core/Tensor.h"
+#include "core/ops/ops.h"
+#include "core/ops/reduction.h"
+#include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
+#include "../error_defs.h"
 #include "../macros.h"
 
 RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
+    START_EXCEPTION_HANDLING
     PyTensor* t1;
     PyObject* tuple;
 
     if (!PyArg_ParseTuple(args, "OO", &t1, &tuple)) {
         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return NULL;
+        return nullptr;
     }
 
     int len = PyTuple_Size(tuple);
     if (len == -1) {
         PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+        return nullptr;
     }
     std::vector<long> shape;
     while (len--) {
@@ -44,7 +47,7 @@ RETURN_OBJECT ops_broadcast_to(PyObject* self, PyObject* args) {
     ret_class->ndim = ret_class->tensor.get_shape().ndim();
     ret_class->dtype = t1->ndim;
     ret_class->requires_grad = t1->requires_grad;
-    ret_class->base_object = (PyObject*)t1;
-
+    SET_BASE(t1, ret_class);
     return (PyObject*)ret_class;
+    END_EXCEPTION_HANDLING
 }

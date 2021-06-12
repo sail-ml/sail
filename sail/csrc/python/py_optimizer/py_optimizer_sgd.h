@@ -1,9 +1,10 @@
 #pragma once
-#include "../../src/loss/cross_entropy_loss.h"
-#include "../../src/modules/modules.h"
-#include "../../src/optimizers/optimizers.h"
+#include "../error_defs.h"
 #include "../macros.h"
 #include "../py_tensor/py_tensor_def.h"
+#include "core/loss/cross_entropy_loss.h"
+#include "core/modules/modules.h"
+#include "core/optimizers/optimizers.h"
 
 #include "py_optimizer_def.h"
 
@@ -12,15 +13,18 @@ using Optimizer = sail::optimizers::Optimizer;
 
 static int PyOptimizerSGD_init(PyOptimizer *self, PyObject *args,
                                PyObject *kwargs) {
+    START_EXCEPTION_HANDLING
     // self->module = sail::modules::Module();
     float learning_rate = 0.0001;
     static char *kwlist[] = {"learning_rate", NULL};
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "f", kwlist,
                                      &learning_rate)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+        return -1;
     }
     self->optimizer = (Optimizer *)(new SGD(learning_rate));
     return 0;
+    END_EXCEPTION_HANDLING_INT
 }
 
 // RETURN_OBJECT

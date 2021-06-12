@@ -4,15 +4,14 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
-#include "../../src/Tensor.h"
-#include "../../src/dtypes.h"
-#include "../../src/error.h"
+#include "../error_defs.h"
 #include "../macros.h"
 #include "../ops/elementwise.h"
+#include "core/Tensor.h"
+#include "core/dtypes.h"
+#include "core/error.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
-
-RETURN_OBJECT PyDimensionError;
 
 /** begin block
  * name = [add, sub, mul, truediv]
@@ -20,6 +19,7 @@ RETURN_OBJECT PyDimensionError;
  */
 
 RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
+    START_EXCEPTION_HANDLING
     sail::Tensor tensor1;
     sail::Tensor tensor2;
 
@@ -35,6 +35,7 @@ RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
     // SET_BASE(t1, ret_class);
 
     return (PyObject *)ret_class;
+    END_EXCEPTION_HANDLING
 }
 
 /** end block **/
