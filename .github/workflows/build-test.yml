@@ -41,7 +41,7 @@ jobs:
         run: ./test.sh python
 
       - name: generate coverage
-        run: gcovr -r . --xml coverage.xml
+        run: gcovr --filter sail/ --xml coverage.xml
 
       - uses: codecov/codecov-action@v1
         with:

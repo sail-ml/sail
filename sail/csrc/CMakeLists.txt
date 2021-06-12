@@ -16,13 +16,13 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -pthread -fopenmp -fpermissive -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 
 if (COVERAGE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -w -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 else()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -pthread -fopenmp -Ofast -ffast-math")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 endif()
 
 if (USE_MKL)
@@ -54,6 +54,9 @@ target_link_libraries(sail_c PRIVATE core)
 target_include_directories(sail_c PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 target_include_directories(sail_c PUBLIC ./)
 TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
+if (COVERAGE)
+target_link_libraries(sail_c PUBLIC "-lgcov")
+endif()
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
 
 
@@ -63,6 +66,9 @@ target_link_libraries(modules PRIVATE core)
 target_include_directories(modules PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 target_include_directories(modules PUBLIC ./)
 TARGET_LINK_LIBRARIES( modules LINK_PUBLIC ${Boost_LIBRARIES} )
+if (COVERAGE)
+target_link_libraries(modules PUBLIC "-lgcov")
+endif()
 target_include_directories(modules PRIVATE "libs/xsimd/include")
 
 # loss
@@ -71,6 +77,9 @@ target_link_libraries(loss PRIVATE core)
 target_include_directories(loss PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 target_include_directories(loss PUBLIC ./)
 TARGET_LINK_LIBRARIES( loss LINK_PUBLIC ${Boost_LIBRARIES} )
+if (COVERAGE)
+target_link_libraries(loss PUBLIC "-lgcov")
+endif()
 target_include_directories(loss PRIVATE "libs/xsimd/include")
 
 # optimizers
@@ -79,6 +88,9 @@ target_link_libraries(optimizers PRIVATE core)
 target_include_directories(optimizers PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
 target_include_directories(optimizers PUBLIC ./)
 TARGET_LINK_LIBRARIES( optimizers LINK_PUBLIC ${Boost_LIBRARIES} )
+if (COVERAGE)
+target_link_libraries(optimizers PUBLIC "-lgcov")
+endif()
 target_include_directories(optimizers PRIVATE "libs/xsimd/include")
 
 
