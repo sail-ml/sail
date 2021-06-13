@@ -69,7 +69,7 @@ class BasicMLP(UnitTest):
         opt.track_module(linear2)
 
         # define loss function
-        loss_fcn = sail.loss.SoftmaxCrossEntropy()
+        loss_fcn = sail.losses.SoftmaxCrossEntropy()
 
         losses = []
         accs = []

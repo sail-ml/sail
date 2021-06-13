@@ -18,7 +18,7 @@ class SoftmaxCrossEntropyTest(UnitTest):
             x1 = sail.Tensor(arr1, requires_grad=False)
             x2 = sail.Tensor(targs, requires_grad=False)
 
-            lin = sail.loss.SoftmaxCrossEntropy()
+            lin = sail.losses.SoftmaxCrossEntropy()
 
             loss_sail = lin(x1, x2)
 

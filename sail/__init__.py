@@ -1,6 +1,6 @@
 # from .autograd import Function
 from .modules import *
-from .loss import *
+from .losses import *
 from .optimizers import *
 from .csrc import *
 from .csrc import __all__ as __csrc_all__
@@ -10,10 +10,10 @@ __all__ = __csrc_all__
 
 from sail import modules as modules
 from sail import optimizers as optimizers
-from sail import loss as loss
+from sail import losses as losses
 
 __all__.append("modules")
-__all__.append("loss")
+__all__.append("losses")
 __all__.append("optimizers")
 
 ## IMPORT DOCUMENTATION
@@ -21,6 +21,9 @@ __all__.append("optimizers")
 from ._sail_docs import *
 from ._tensor_docs import *
 from ._module_docs import *
+from ._loss_docs import *
+from ._optimizer_docs import *
+
 
 
 

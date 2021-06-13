@@ -23,8 +23,9 @@ author = 'Tucker Siegel'
 
 import sail
 from sail import modules
-print (modules)
-print (dir(modules))
+from sail import losses
+print (losses)
+print (dir(losses))
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').

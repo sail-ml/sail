@@ -8,7 +8,9 @@ Mutation Ops
 .. autosummary::
     :toctree: generated
 
+    broadcast_to
     expand_dims
+    moveaxis
     reshape
     rollaxis
     squeeze
@@ -27,9 +29,18 @@ Elementwise
     add
     divide
     multiply
-    subtract
     power
+    subtract
+    
+Unary
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: generated
+
     exp
+    log
+    
 
 Linear Algebra
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -46,6 +57,8 @@ Reduction
 .. autosummary::
     :toctree: generated
 
+    max
+    mean 
     sum
 
 

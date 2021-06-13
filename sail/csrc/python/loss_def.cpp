@@ -15,7 +15,7 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "loss",
                              "Example module that creates an extension type.",
                              -1, 0};
 
-PyMODINIT_FUNC PyInit_libloss(void) {
+PyMODINIT_FUNC PyInit_liblosses(void) {
     import_array();
     PyObject* m;
 

@@ -51,7 +51,7 @@ opt.track_module(linear1)
 opt.track_module(linear2)
 
 # define loss function
-loss_fcn = sail.loss.SoftmaxCrossEntropy()
+loss_fcn = sail.losses.SoftmaxCrossEntropy()
 
 for i in range(epochs):
 

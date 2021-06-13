@@ -19,3 +19,14 @@ Linear Layers
     :template: module_template.rst
 
     Linear
+  
+Activations Layers
+----------------------------------
+
+.. autosummary::
+    :toctree: generated
+    :template: module_template.rst
+
+    Sigmoid
+    Softmax
+  

@@ -70,15 +70,15 @@ endif()
 target_include_directories(modules PRIVATE "libs/xsimd/include")
 
 # loss
-add_library(loss MODULE "python/loss_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(loss PRIVATE core)
-target_include_directories(loss PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
-target_include_directories(loss PUBLIC ./)
-TARGET_LINK_LIBRARIES( loss LINK_PUBLIC ${Boost_LIBRARIES} )
+add_library(losses MODULE "python/loss_def.cpp" ${PYTHON_BIND_HEADERS})
+target_link_libraries(losses PRIVATE core)
+target_include_directories(losses PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+target_include_directories(losses PUBLIC ./)
+TARGET_LINK_LIBRARIES( losses LINK_PUBLIC ${Boost_LIBRARIES} )
 if (COVERAGE)
-target_link_libraries(loss PUBLIC "-lgcov")
+target_link_libraries(losses PUBLIC "-lgcov")
 endif()
-target_include_directories(loss PRIVATE "libs/xsimd/include")
+target_include_directories(losses PRIVATE "libs/xsimd/include")
 
 # optimizers
 add_library(optimizers MODULE "python/optimizer_def.cpp" ${PYTHON_BIND_HEADERS})

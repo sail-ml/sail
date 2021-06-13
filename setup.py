@@ -64,6 +64,7 @@ class CMakeBuild(build_ext):
 
     def build_cmake(self, ext):
         subprocess.run(["rm", "-rf", "build/*"])
+        subprocess.run(["python", "process_docs.py"], cwd="sail")
         global allow_avx
         cwd = pathlib.Path().absolute()
 
@@ -124,11 +125,11 @@ class CMakeBuild(build_ext):
 
         copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
         copyfile("%s/libmodules.so" % build_path, "sail/modules/libmodules.so")
-        copyfile("%s/libloss.so" % build_path, "sail/loss/libloss.so")
+        copyfile("%s/liblosses.so" % build_path, "sail/losses/liblosses.so")
         copyfile("%s/liboptimizers.so" % build_path, "sail/optimizers/liboptimizers.so")
 
         copyfile("%s/libmodules.so" % build_path, "%s/../modules/libmodules.so" % build_path)
-        copyfile("%s/libloss.so" % build_path, "%s/../loss/libloss.so" % build_path)
+        copyfile("%s/liblosses.so" % build_path, "%s/../losses/liblosses.so" % build_path)
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
 
 def s():
@@ -167,7 +168,7 @@ def s():
             "sail", 
             "sail.csrc",
             "sail.modules",
-            "sail.loss",
+            "sail.losses",
             "sail.optimizers",
             ],#setuptools.find_packages(),
         ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
