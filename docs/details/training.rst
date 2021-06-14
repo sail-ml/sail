@@ -74,6 +74,31 @@ parameter store, we no longer have to worry about attaching each individual laye
 Training Loop 
 --------------
 
-Time to actually train the model! First, we need a loss function. Let's just use ``sail.losses.
+Time to actually train the model! First, we need a loss function. Let's just use ``sail.losses.MeanSquaredError``. 
+Here is the training code, and below is a description::
+
+    loss_fcn = sail.losses.MeanSquaredError()
+
+    for e in range(epochs):
+
+        // shuffle data here if you want to 
+        
+        start = 0
+        end = batch_size 
+
+        while (end < len(input_data)):
+
+            batch_x = input_data[start:end]
+            batch_y = targets[start:end]
+
+            predictions = model(batch_x)
+            loss = loss_fcn(predictions, batch_y)
+            loss.backward()
+
+            optimizer.update()
+
+There it is! The way the works is simple. First, we create the loss function, then go into a loop for the number of epochs. We then iterate over every batch.
+Once we extract a batch, we feed it through the model. This creates the graph that is then used for calculating gradients. We calculate the loss, then propogate 
+that error back through the grad using ``loss.backward()``. Finally, we call ``optimizer.update()`` to update all the parameters registered to the optimizer.
     
 
