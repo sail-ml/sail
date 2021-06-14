@@ -33,3 +33,13 @@ Forward Parameters:
     * **targets** (*Tensor*) – The targets (1D) to compare with. These targets must be integers, where each value indicates the index of the correct class
 """)
 add_docstring_fcn("SoftmaxCrossEntropy", "forward", "")
+
+
+add_docstring_class("MeanSquaredError", r"""
+sail.losses.MeanSquaredError()
+Computes the mean squared error loss of input `logits`, compared to `target`
+
+Forward Parameters:
+    * **logits** (*Tensor*) – The logits produced by a model
+    * **targets** (*Tensor*) – The targets to compare with
+""")

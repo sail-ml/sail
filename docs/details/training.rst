@@ -73,5 +73,7 @@ parameter store, we no longer have to worry about attaching each individual laye
 
 Training Loop 
 --------------
+
+Time to actually train the model! First, we need a loss function. Let's just use ``sail.losses.
     
 

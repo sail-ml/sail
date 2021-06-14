@@ -1,1 +1,1 @@
-from .liblosses import Loss, SoftmaxCrossEntropy
+from .liblosses import Loss, SoftmaxCrossEntropy, MeanSquaredError
