@@ -121,7 +121,14 @@ html_favicon = 'sail-favicon.ico'
 
 
 html_theme_options = {
-  "navigation_depth": 1
+    "navigation_depth": 1,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/sail-ml/sail",
+            "icon": "fab fa-github-square",
+        },
+    ],
 }
 
 

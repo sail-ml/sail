@@ -100,5 +100,7 @@ Here is the training code, and below is a description::
 There it is! The way the works is simple. First, we create the loss function, then go into a loop for the number of epochs. We then iterate over every batch.
 Once we extract a batch, we feed it through the model. This creates the graph that is then used for calculating gradients. We calculate the loss, then propogate 
 that error back through the grad using ``loss.backward()``. Finally, we call ``optimizer.update()`` to update all the parameters registered to the optimizer.
+
+To see more examples, please checkout the examples on `github <https://github.com/sail-ml/sail/tree/master/examples/>`_
     
 
