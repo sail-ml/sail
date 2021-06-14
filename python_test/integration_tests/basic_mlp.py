@@ -101,7 +101,7 @@ class BasicMLP(UnitTest):
                 y_batch = sail.Tensor(y_batch)
 
 
-                preds = forward(x_batch)
+                preds = mnist(x_batch)
 
                 loss = loss_fcn(preds, y_batch)
                 total_loss += loss.numpy()[0]
@@ -114,7 +114,7 @@ class BasicMLP(UnitTest):
                 steps += 1
 
             losses.append(total_loss/steps)
-            pred_test = forward(sail.Tensor(x_test))
+            pred_test = mnist(sail.Tensor(x_test))
             acc = accuracy(pred_test, y_test)
 
             accs.append(acc)

@@ -81,7 +81,7 @@ for i in range(epochs):
         y_batch = sail.Tensor(y_batch)
 
 
-        preds = mnist.forward(x_batch)
+        preds = mnist(x_batch)
 
         loss = loss_fcn(preds, y_batch)
         total_loss += loss.numpy()[0]
@@ -93,7 +93,7 @@ for i in range(epochs):
         end += batch_size
         steps += 1
 
-    pred_test = mnist.forward(sail.Tensor(x_test))
+    pred_test = mnist(sail.Tensor(x_test))
     acc = accuracy(pred_test, y_test)
 
     print ("E: %s | L: %s | ACC: %s" % ((i + 1), total_loss / steps, acc))

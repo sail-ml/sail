@@ -30,6 +30,7 @@ RETURN_OBJECT PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 //////////////////////////////////////////////
 RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds);
+RETURN_OBJECT PyModule_call(PyModule *self, PyObject *args, PyObject *kwds);
 int PyModule_setattr(PyModule *self, PyObject *attr, PyObject *value);
 
 static PyMethodDef PyModule_methods[] = {
@@ -53,7 +54,7 @@ static PyTypeObject PyModuleType = {
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */
     0,                                                 /* tp_hash */
-    PyModule_forward,                                                 /* tp_call */
+    PyModule_call,                                                 /* tp_call */
     0,                                                 /* tp_str */
     PyObject_GenericGetAttr,                                                 /* tp_getattro */
     PyModule_setattr,                                                 /* tp_setattro */
