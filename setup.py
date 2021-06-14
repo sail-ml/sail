@@ -127,10 +127,12 @@ class CMakeBuild(build_ext):
         copyfile("%s/libmodules.so" % build_path, "sail/modules/libmodules.so")
         copyfile("%s/liblosses.so" % build_path, "sail/losses/liblosses.so")
         copyfile("%s/liboptimizers.so" % build_path, "sail/optimizers/liboptimizers.so")
+        copyfile("%s/librandom.so" % build_path, "sail/random/librandom.so")
 
         copyfile("%s/libmodules.so" % build_path, "%s/../modules/libmodules.so" % build_path)
         copyfile("%s/liblosses.so" % build_path, "%s/../losses/liblosses.so" % build_path)
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
+        copyfile("%s/librandom.so" % build_path, "%s/../random/librandom.so" % build_path)
 
 def s():
    
@@ -170,6 +172,7 @@ def s():
             "sail.modules",
             "sail.losses",
             "sail.optimizers",
+            "sail.random",
             ],#setuptools.find_packages(),
         ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
         cmdclass={'build_ext': CMakeBuild, "ci": CICommand},

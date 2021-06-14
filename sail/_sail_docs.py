@@ -149,7 +149,7 @@ Returns the sum of `tensor` over specified axis.
 Args:
 	tensor (Tensor): Input data
 	axis (int, optional): If provided, then `axis` represents the axis to be summed over
-	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with a 1, otherwise, those axes will be removed
+	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
 
 Examples:
 	>>> x = sail.random.uniform(0, 1, (12, 32, 4, 5))
@@ -172,7 +172,7 @@ Returns the mean of `tensor` over specified axis.
 Args:
 	tensor (Tensor): Input data
 	axis (int, optional): If provided, then `axis` represents the axis to be summed over
-	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with a 1, otherwise, those axes will be removed
+	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
 
 Examples:
 	>>> x = sail.random.uniform(0, 1, (12, 32, 4, 5))
@@ -195,7 +195,7 @@ Returns the maximum of `tensor` over specified axis.
 Args:
 	tensor (Tensor): Input data
 	axis (int, optional): If provided, then `axis` represents the axis to be summed over
-	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with a 1, otherwise, those axes will be removed
+	keepdims (boolean, optional): If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
 
 Examples:
 	>>> x = sail.random.uniform(0, 1, (12, 32, 4, 5))
@@ -422,5 +422,105 @@ Examples:
 	        [0.49103028 0.99704099 0.25268090 0.82328194 0.81215674]
 	        [0.49103028 0.99704099 0.25268090 0.82328194 0.81215674]
 	        [0.49103028 0.99704099 0.25268090 0.82328194 0.81215674]
-	        [0.49103028 0.99704099 0.25268090 0.82328194 0.81215674]], shape=(5, 5))"""
+	        [0.49103028 0.99704099 0.25268090 0.82328194 0.81215674]], shape=(5, 5))
+	"""
 add_docstring(sail.broadcast_to, descr)
+
+descr = r"""
+sail.random.uniform(min=0, max=1, shape=None) -> Tensor
+Returns tensor with the data randomly sampled from a uniform distribution ``[min, max)``
+
+Args:
+	min (float, optional): Minimum value of the distribution to sample from
+	max (float, optional): Maximum value of the distribution to sample from
+	shape (int or tuple of ints, optional): Shape of tensor to generate
+
+Examples:
+	>>> x = sail.random.uniform(-1.2, 1.5, (5, 5))
+	>>> x
+	tensor([[-1.09468198 -0.45043695 -0.24446410 -0.80004257  0.34527856]
+	        [-0.11556864  0.2868877   0.72795057  0.10089595 -0.46267119]
+	        [ 0.13150010  0.68349499  0.70531654  1.31088471 -0.81466377]
+	        [-0.48935455 -0.431037    1.25867462  1.31644297 -0.75355840]
+	        [-1.18125939  1.16481411  0.23229218  0.03774609 -0.41145924]], shape=(5, 5))
+	"""
+add_docstring(sail.random.uniform, descr)
+
+descr = r"""
+sail.random.uniform_like(tensor, min=0, max=1) -> Tensor
+Returns tensor with the data randomly sampled from a uniform distribution ``[min, max)``, matching the shape and dtype of `tensor`
+
+Args:
+	tensor (Tensor): Tensor to pull shape and dtype from
+	min (float, optional): Minimum value of the distribution to sample from
+	max (float, optional): Maximum value of the distribution to sample from
+
+Examples:
+	>>> x = sail.random.uniform(-1.2, 1.5, (5, 5))
+	>>> x
+	tensor([[-1.09468198 -0.45043695 -0.24446410 -0.80004257  0.34527856]
+	        [-0.11556864  0.2868877   0.72795057  0.10089595 -0.46267119]
+	        [ 0.13150010  0.68349499  0.70531654  1.31088471 -0.81466377]
+	        [-0.48935455 -0.431037    1.25867462  1.31644297 -0.75355840]
+	        [-1.18125939  1.16481411  0.23229218  0.03774609 -0.41145924]], shape=(5, 5))
+	>>> y = sail.random.uniform_like(x, 0, 1)
+	>>> y
+	tensor([[0.55789685 0.99225152 0.90981728 0.85239333 0.82039648]
+	        [0.01004955 0.49320447 0.71664029 0.22954908 0.06711420]
+	        [0.48683277 0.47218278 0.82349455 0.52004343 0.8389914 ]
+	        [0.66190428 0.13273992 0.38301027 0.9323185  0.8466584 ]
+	        [0.38657394 0.07601264 0.97111505 0.67133880 0.07671827]], shape=(5, 5))
+	"""
+add_docstring(sail.random.uniform_like, descr)
+
+descr = r"""
+sail.random.normal(mean=0, std=1, shape=None) -> Tensor
+Returns tensor with the data randomly sampled from a normal distribution
+
+.. math::
+	\text{{out}}_{{i}} \sim \mathcal{{N}}(\text{mean}, \text{std})
+
+Args:
+	mean (float, optional): Mean of the distribution to sample from
+	std (float, optional): Standard deviation of the distribution to sample from
+	shape (int or tuple of ints, optional): Shape of tensor to generate
+
+Examples:
+	>>> x = sail.random.normal(10, 2, (5, 5))
+	>>> x
+	tensor([[ 7.74214363  9.92879963 11.89224243 10.95844841 11.03163052]
+	        [10.55741215  6.18779612 11.78238773  8.78879356 11.94272995]
+	        [11.21028709 14.10308552 11.88035011 13.36896324 10.38013458]
+	        [ 6.62501764  4.37194538  8.72444248  7.75856304  9.74470139]
+	        [11.36308765  9.17077446 11.09016800  9.5281763  12.16518688]], shape=(5, 5))
+	"""
+add_docstring(sail.random.normal, descr)
+
+descr = r"""
+sail.random.normal_like(tensor, mean=0, std=1) -> Tensor
+Returns tensor with the data randomly sampled from a normal distribution, matching the shape and dtype of `tensor`
+
+.. math::
+	\text{{out}}_{{i}} \sim \mathcal{{N}}(\text{mean}, \text{std})
+
+Args:
+	tensor (Tensor): Tensor to pull shape and dtype from
+	mean (float, optional): Mean of the distribution to sample from
+	std (float, optional): Standard deviation of the distribution to sample from
+
+Examples:
+	>>> x = sail.random.normal(10, 2, (5, 5))
+	>>> x
+	tensor([[ 7.74214363  9.92879963 11.89224243 10.95844841 11.03163052]
+	        [10.55741215  6.18779612 11.78238773  8.78879356 11.94272995]
+	        [11.21028709 14.10308552 11.88035011 13.36896324 10.38013458]
+	        [ 6.62501764  4.37194538  8.72444248  7.75856304  9.74470139]
+	        [11.36308765  9.17077446 11.09016800  9.5281763  12.16518688]], shape=(5, 5))
+	>>> y = sail.random.normal_like(x, 0, 1)
+	>>> y
+	tensor([[ 0.58550960  2.60267472 -2.28640366 -0.33341908 -0.21114956]
+	        [-0.67798704 -1.83559990  1.19175482  0.35748199  0.6637082 ]
+	        [ 2.05228353  0.42571735 -1.46537054  0.08667278  1.31353283]
+	        [ 0.25700086  1.47934365  0.3713915   0.54774326  1.25102699]
+	        [ 1.84346902  0.57650614  0.97455609  1.14918649 -1.60790646]], shape=(5, 5))"""
+add_docstring(sail.random.normal_like, descr)
