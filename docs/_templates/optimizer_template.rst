@@ -14,7 +14,7 @@
         functions which are implemented in {{ name }}.
     .. note::
         To get a better understanding of how optimizers work to actually train a neural network,
-        see TRAINING EXPLAINED
+        see :ref:`training` for more details.
 
 
 ..
