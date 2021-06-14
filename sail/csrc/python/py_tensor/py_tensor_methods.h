@@ -19,7 +19,7 @@
 
 #define CAST_TYPE_CHECK(args, x)                               \
     {                                                          \
-        if (!PyArg_ParseTuple(args, "O!", &PyDtypeBase, &x)) { \
+        if (!PyArg_ParseTuple(args, "O", &PyDtypeBase, &x)) { \
             return nullptr;                                    \
         }                                                      \
     }
@@ -213,9 +213,11 @@ static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
 RETURN_OBJECT
 PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     START_EXCEPTION_HANDLING
-    PyDtype *type;
+    PyObject *type;
 
-    CAST_TYPE_CHECK(args, type);
+    if (!PyArg_ParseTuple(args, "O", &type)) { 
+        return nullptr;                                    
+    }   
 
     Dtype dt = ((PyDtype *)type)->dtype;
 

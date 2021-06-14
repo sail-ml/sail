@@ -63,7 +63,6 @@ RETURN_OBJECT PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
         return nullptr;
     }
-    std::cout << "ja" << std::endl;
     self->optimizer->track_module(*(mod->module));
     Py_INCREF(mod);
     Py_RETURN_NONE;
