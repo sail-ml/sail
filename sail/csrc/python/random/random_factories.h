@@ -6,7 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "../../py_tensor/py_tensor.h"
+#include "../py_tensor/py_tensor.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
 #include "core/factories.h"
@@ -15,8 +15,8 @@
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
-#include "../../error_defs.h"
-#include "../../macros.h"
+#include "../error_defs.h"
+#include "../macros.h"
 
 RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
                                  PyObject* kwargs) {
@@ -26,7 +26,7 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     double max = 1;
     static char* kwlist[] = {"min", "max", "shape", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddO", kwlist, &min, &max,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ddO", kwlist, &min, &max,
                                      &shape)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
         return nullptr;
@@ -38,7 +38,9 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     std::vector<long> t_shape;
-    if (PyLong_Check(shape)) {
+    if (shape == NULL) {
+        t_shape = {1};
+    } else if (PyLong_Check(shape)) {
         t_shape = {PyLong_AsLong(shape)};
     } else {
         shape = PySequence_Tuple(shape);
@@ -99,7 +101,7 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
     double std = 1;
     static char* kwlist[] = {"mean", "std", "shape", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ddO", kwlist, &mean, &std,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ddO", kwlist, &mean, &std,
                                      &shape)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
         return nullptr;
@@ -110,7 +112,9 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
 
     Dtype dt = default_dtype;
     std::vector<long> t_shape;
-    if (PyLong_Check(shape)) {
+    if (shape == NULL) {
+        t_shape = {1};
+    } else if (PyLong_Check(shape)) {
         t_shape = {PyLong_AsLong(shape)};
     } else {
         shape = PySequence_Tuple(shape);

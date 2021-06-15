@@ -1,1 +1,1 @@
-from .liboptimizers import SGD
+from .liboptimizers import Optimizer, SGD

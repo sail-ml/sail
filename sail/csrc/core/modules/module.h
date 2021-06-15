@@ -18,6 +18,11 @@ class Module {
     void register_param(Tensor& t) {
         t.requires_grad = true;
         params.push_back(t);
+    } 
+    void register_params(TensorVector& p) {
+        for (Tensor t : p) {
+            params.push_back(t);
+        }
     }
 };
 }  // namespace modules

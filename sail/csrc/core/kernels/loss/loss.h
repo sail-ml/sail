@@ -1,2 +1,3 @@
-#include "cross_entropy.h"
+#pragma once 
+
 #include "mean_squared_error.h"

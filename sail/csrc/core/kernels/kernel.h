@@ -13,3 +13,5 @@
 #include "activations/sigmoid.h"
 
 #include "optimizers/sgd.h"
+
+#include "loss/loss.h"

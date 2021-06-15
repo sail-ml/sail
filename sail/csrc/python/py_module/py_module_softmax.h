@@ -47,7 +47,7 @@ static PyMethodDef PySoftmaxModule_methods[] = {
 };
 
 static PyTypeObject PySoftmaxModuleType = {
-    PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.Sigmoid", /* tp_name */
+    PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.Softmax", /* tp_name */
     sizeof(PyModule),                                   /* tp_basicsize */
     0,                                                  /* tp_itemsize */
     (destructor)PyModule_dealloc,                       /* tp_dealloc */

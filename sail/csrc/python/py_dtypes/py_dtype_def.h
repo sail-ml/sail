@@ -15,27 +15,18 @@ typedef struct {
     int dt_val;
 } PyDtype;
 
-/////////////// BASE PY FCNS ////////////////
-RETURN_OBJECT PyDtype_Int32_new(PyTypeObject *type, PyObject *args,
-                                PyObject *kwds);
-RETURN_OBJECT PyDtype_Float32_new(PyTypeObject *type, PyObject *args,
-                                  PyObject *kwds);
-RETURN_OBJECT PyDtype_Float64_new(PyTypeObject *type, PyObject *args,
-                                  PyObject *kwds);
-
 ///////////// REPR ////////////////////////////
-// These are super hacky, but Im rolling with it
 RETURN_OBJECT
-PyDtype_Int32_repr(PyDtype *obj) {
-    return PyUnicode_FromString("<class 'sail.int32'>");
-}
-RETURN_OBJECT
-PyDtype_Float32_repr(PyDtype *obj) {
-    return PyUnicode_FromString("<class 'sail.float32'>");
-}
-RETURN_OBJECT
-PyDtype_Float64_repr(PyDtype *obj) {
-    return PyUnicode_FromString("<class 'sail.float64'>");
+PyDtype_Repr(PyDtype *obj) {
+    if (obj->dtype == Dtype::sInt32) {
+        return PyUnicode_FromString("<class 'sail.int32'>");
+    } else if (obj->dtype == Dtype::sFloat32) {
+        return PyUnicode_FromString("<class 'sail.float32'>");
+    } else if (obj->dtype == Dtype::sFloat32) {
+        return PyUnicode_FromString("<class 'sail.float64'>");
+    } else {
+        return PyUnicode_FromString("<class 'sail.dtype'>");
+    }
 }
 
 static int PyDtype_traverse(PyDtype *self, visitproc visit, void *arg);
@@ -43,7 +34,7 @@ static int PyDtype_clear(PyDtype *self);
 static void PyDtype_dealloc(PyDtype *self);
 
 static PyTypeObject PyDtypeBase = {
-    PyVarObject_HEAD_INIT(NULL, 0) "sail.get_dtype()", /* tp_name */
+    PyVarObject_HEAD_INIT(NULL, 0) "sail.dtype", /* tp_name */
     sizeof(PyDtype),                                   /* tp_basicsize */
     0,                                                 /* tp_itemsize */
     (destructor)PyDtype_dealloc,                       /* tp_dealloc */
@@ -51,7 +42,7 @@ static PyTypeObject PyDtypeBase = {
     0,                                                 /* tp_getattr */
     0,                                                 /* tp_setattr */
     0,                                                 /* tp_reserved */
-    0,                                                 /* tp_repr */
+    &PyDtype_Repr,                                                 /* tp_repr */
     0,                                                 /* tp_as_number */
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */

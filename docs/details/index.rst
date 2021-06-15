@@ -42,3 +42,12 @@ The speed of SAIL boils down to three main points
     copy/move semantics, and all tensor data is managed by a pointer, allowing the data to be moved if the 
     container is destroyed. We also make use of SIMD (read: vectorized) operations, allowing for low level 
     cpu instruction vectorization for operations. 
+
+More information
+-------------------
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   
+   training 
+   view-or-copy
