@@ -23,8 +23,11 @@ author = 'Tucker Siegel'
 
 import sail
 from sail import modules
-print (modules)
-print (dir(modules))
+from sail import losses
+from sail import random
+
+print (losses)
+print (dir(losses))
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -115,6 +118,18 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = "pydata_sphinx_theme"
 html_logo = "sail-logo.png"
 html_favicon = 'sail-favicon.ico'
+
+
+html_theme_options = {
+    "navigation_depth": 1,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/sail-ml/sail",
+            "icon": "fab fa-github-square",
+        },
+    ],
+}
 
 
 

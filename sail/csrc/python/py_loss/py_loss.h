@@ -4,3 +4,4 @@
 #include "py_loss_methods.h"
 
 #include "py_loss_softmax_cross_entropy.h"
+#include "py_loss_mean_squared_error.h"

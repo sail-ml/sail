@@ -41,16 +41,21 @@ class BasicMLP(UnitTest):
         x_test = x_test[:500]
         y_test = y_test[:500]
 
-        linear1 = sail.modules.Linear(784, 32, use_bias=True)
-        linear2 = sail.modules.Linear(32, 10, use_bias=True)
-        sigmoid1 = sail.modules.Sigmoid()
+        class MnistModel(sail.modules.Module):
 
+            def __init__(self):
+                super().__init__()
+                self.linear1 = sail.modules.Linear(784, 32, use_bias=True)
+                self.linear2 = sail.modules.Linear(32, 10, use_bias=True)
+                self.sigmoid1 = sail.modules.Sigmoid()
         # define forward function 
-        def forward(x):
-            y = linear1(x)
-            y = sigmoid1(y)
-            y = linear2(y)
-            return y
+            def forward(self, x):
+                y = self.linear1(x)
+                y = self.sigmoid1(y)
+                y = self.linear2(y)
+                return y
+
+        mnist = MnistModel()
 
         def accuracy(logits, labels):
             logits = logits.numpy()
@@ -59,17 +64,17 @@ class BasicMLP(UnitTest):
             y = y.astype(np.int32)
             return np.mean(y)
 
+
         epochs = 5
         batch_size = 64
         learning_rate = 1e-4
 
         # define optimizer
-        opt = sail.optimizers.SGD(1e-4)
-        opt.track_module(linear1)
-        opt.track_module(linear2)
+        opt = sail.optimizers.SGD(learning_rate)
+        opt.track_module(mnist)
 
         # define loss function
-        loss_fcn = sail.loss.SoftmaxCrossEntropy()
+        loss_fcn = sail.losses.SoftmaxCrossEntropy()
 
         losses = []
         accs = []
@@ -96,7 +101,7 @@ class BasicMLP(UnitTest):
                 y_batch = sail.Tensor(y_batch)
 
 
-                preds = forward(x_batch)
+                preds = mnist(x_batch)
 
                 loss = loss_fcn(preds, y_batch)
                 total_loss += loss.numpy()[0]
@@ -109,7 +114,7 @@ class BasicMLP(UnitTest):
                 steps += 1
 
             losses.append(total_loss/steps)
-            pred_test = forward(sail.Tensor(x_test))
+            pred_test = mnist(sail.Tensor(x_test))
             acc = accuracy(pred_test, y_test)
 
             accs.append(acc)

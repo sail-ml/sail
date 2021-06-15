@@ -22,5 +22,14 @@ class SoftmaxCrossEntropyLoss : public Function {
     TensorVector backward(Tensor& grad);
 };
 
+class MeanSquaredErrorLoss : public Function {
+   public:
+    Tensor stored_output;
+    explicit MeanSquaredErrorLoss(){};
+    // RefTensorVector arg_storage;
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
+
 }  // namespace autograd
 }  // namespace sail

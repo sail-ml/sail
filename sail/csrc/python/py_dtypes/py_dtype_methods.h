@@ -9,30 +9,6 @@
 
 #include "../macros.h"
 
-RETURN_OBJECT
-PyDtype_Int32_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
-    PyDtype* self;
-    self = (PyDtype*)type->tp_alloc(type, 0);
-    self->dtype = Dtype::sInt32;
-    self->dt_val = 5;
-    return (PyObject*)self;
-}
-RETURN_OBJECT
-PyDtype_Float32_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
-    PyDtype* self;
-    self = (PyDtype*)type->tp_alloc(type, 0);
-    self->dtype = Dtype::sFloat32;
-    self->dt_val = 11;
-    return (PyObject*)self;
-}
-RETURN_OBJECT
-PyDtype_Float64_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
-    PyDtype* self;
-    self = (PyDtype*)type->tp_alloc(type, 0);
-    self->dtype = Dtype::sFloat64;
-    self->dt_val = 12;
-    return (PyObject*)self;
-}
 static int PyDtype_traverse(PyDtype* self, visitproc visit, void* arg) {
     Py_VISIT(self->base_object);
     return 0;

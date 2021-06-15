@@ -15,12 +15,13 @@ static PyModuleDef module = {PyModuleDef_HEAD_INIT, "loss",
                              "Example module that creates an extension type.",
                              -1, 0};
 
-PyMODINIT_FUNC PyInit_libloss(void) {
+PyMODINIT_FUNC PyInit_liblosses(void) {
     import_array();
     PyObject* m;
 
     if (PyType_Ready(&PyLossType) < 0) return NULL;
     if (PyType_Ready(&PySCELossType) < 0) return NULL;
+    if (PyType_Ready(&PyMSELossType) < 0) return NULL;
     if (PyType_Ready(&PyTensorType) < 0) return NULL;
 
     m = PyModule_Create(&module);
@@ -34,6 +35,12 @@ PyMODINIT_FUNC PyInit_libloss(void) {
     if (PyModule_AddObject(m, "SoftmaxCrossEntropy",
                            (PyObject*)&PySCELossType) < 0) {
         Py_DECREF(&PySCELossType);
+        Py_DECREF(m);
+        return NULL;
+    }
+    if (PyModule_AddObject(m, "MeanSquaredError",
+                           (PyObject*)&PyMSELossType) < 0) {
+        Py_DECREF(&PyMSELossType);
         Py_DECREF(m);
         return NULL;
     }

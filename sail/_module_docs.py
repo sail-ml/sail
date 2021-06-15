@@ -42,3 +42,21 @@ Attributes:
         have a shape of ``(out_features,)``.
 """)
 add_docstring_fcn("Linear", "forward", "")
+
+add_docstring_class("Sigmoid", r"""
+sail.modules.Sigmoid()
+Applies the sigmoid function to the input data, which squashes the input to be between [0, 1]
+
+.. math::
+    \text{Sigmoid}(x_{i}) = \frac{\mathrm{1} }{\mathrm{1} + e^{-x} }
+""")
+
+add_docstring_class("Softmax", r"""
+sail.modules.Softmax()
+Applies the softmax function to the input data, which squashes the inputs to sum to 1 along dimension 1
+
+.. math::
+    \text{Softmax}(x_{i}) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
+
+
+""")

@@ -30,6 +30,8 @@ RETURN_OBJECT PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 //////////////////////////////////////////////
 RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds);
+RETURN_OBJECT PyModule_call(PyModule *self, PyObject *args, PyObject *kwds);
+int PyModule_setattr(PyModule *self, PyObject *attr, PyObject *value);
 
 static PyMethodDef PyModule_methods[] = {
     {"forward", (PyCFunction)PyModule_forward, METH_VARARGS | METH_KEYWORDS,
@@ -52,10 +54,10 @@ static PyTypeObject PyModuleType = {
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */
     0,                                                 /* tp_hash */
-    0,                                                 /* tp_call */
+    PyModule_call,                                                 /* tp_call */
     0,                                                 /* tp_str */
-    0,                                                 /* tp_getattro */
-    0,                                                 /* tp_setattro */
+    PyObject_GenericGetAttr,                                                 /* tp_getattro */
+    PyModule_setattr,                                                 /* tp_setattro */
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */

@@ -27,16 +27,21 @@ y_test = y_test.astype(np.int64)
 
 # define layers 
 
-linear1 = sail.modules.Linear(784, 32, use_bias=True)
-linear2 = sail.modules.Linear(32, 10, use_bias=True)
-sigmoid1 = sail.modules.Sigmoid()
+class MnistModel(sail.modules.Module):
 
+    def __init__(self):
+        super().__init__()
+        self.linear1 = sail.modules.Linear(784, 32, use_bias=True)
+        self.linear2 = sail.modules.Linear(32, 10, use_bias=True)
+        self.sigmoid1 = sail.modules.Sigmoid()
 # define forward function 
-def forward(x):
-    y = linear1(x)
-    y = sigmoid1(y)
-    y = linear2(y)
-    return y
+    def forward(self, x):
+        y = self.linear1(x)
+        y = self.sigmoid1(y)
+        y = self.linear2(y)
+        return y
+
+mnist = MnistModel()
 
 def accuracy(logits, labels):
     logits = logits.numpy()
@@ -45,13 +50,14 @@ def accuracy(logits, labels):
     y = y.astype(np.int32)
     return np.mean(y)
 
+
+
 # define optimizer
 opt = sail.optimizers.SGD(learning_rate)
-opt.track_module(linear1)
-opt.track_module(linear2)
+opt.track_module(mnist)
 
 # define loss function
-loss_fcn = sail.loss.SoftmaxCrossEntropy()
+loss_fcn = sail.losses.SoftmaxCrossEntropy()
 
 for i in range(epochs):
 
@@ -75,7 +81,7 @@ for i in range(epochs):
         y_batch = sail.Tensor(y_batch)
 
 
-        preds = forward(x_batch)
+        preds = mnist(x_batch)
 
         loss = loss_fcn(preds, y_batch)
         total_loss += loss.numpy()[0]
@@ -87,7 +93,7 @@ for i in range(epochs):
         end += batch_size
         steps += 1
 
-    pred_test = forward(sail.Tensor(x_test))
+    pred_test = mnist(sail.Tensor(x_test))
     acc = accuracy(pred_test, y_test)
 
     print ("E: %s | L: %s | ACC: %s" % ((i + 1), total_loss / steps, acc))

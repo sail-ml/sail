@@ -8,6 +8,7 @@
 #include "core/TensorBody.h"
 #include "core/dtypes.h"
 #include "core/factories.h"
+#include "core/modules/module.h"
 #include "core/ops/ops.h"
 #include "core/tensor_shape.h"
 #include "core/types.h"
@@ -17,6 +18,7 @@
 #include "../macros.h"
 
 static int PyModule_init(PyModule *self, PyObject *args, PyObject *kwargs) {
+    self->module = new sail::modules::Module();
     return 0;
 }
 static int PyModule_traverse(PyModule *self, visitproc visit, void *arg) {
@@ -48,6 +50,19 @@ PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 /////////////////////////////////////////
 
 RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds) {
-    PyErr_SetString(PyExc_NotImplementedError, "");
-    return nullptr;
+    Py_RETURN_NONE;
+}
+RETURN_OBJECT PyModule_call(PyModule *self, PyObject *args, PyObject *kwds) {
+    PyObject* forward = PyObject_GetAttrString((PyObject*)self,(char*)"forward");
+    PyObject* myResult = PyObject_Call(forward, args, kwds);
+    return myResult;
+}
+int PyModule_setattr(PyModule *self, PyObject *attr, PyObject *value) {
+    
+    if (PyObject_IsInstance(value, (PyObject *)&PyModuleType)) {
+        self->module->register_params(((PyModule *)value)->module->params);
+    } 
+    PyObject_GenericSetAttr((PyObject*)self, attr, value);
+    
+    return 0;
 }
