@@ -10,7 +10,13 @@
 namespace sail {
 namespace ops {
 
-Tensor elementwise_equal(const Tensor& tensor1, const Tensor& tensor2) {
+/** begin block
+ * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
+ * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
+ */
+
+
+Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     Tensor empty_tensor;  //= empty_like(tensor1);
     Tensor t1, t2;
 
@@ -31,9 +37,11 @@ Tensor elementwise_equal(const Tensor& tensor1, const Tensor& tensor2) {
         empty_tensor = empty_like(t1);
     }
 
-    ElementwiseEquality().execute(t1, t2, empty_tensor, broadcast);
+    $kName$().execute(t1, t2, empty_tensor, broadcast);
     return empty_tensor;
 }
+
+/** end block **/
 
 }  // namespace ops
 }  // namespace sail

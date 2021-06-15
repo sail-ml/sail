@@ -6,6 +6,7 @@
 #include "linalg/linalg.h"
 #include "math/power.h"
 #include "reduction.h"
+#include "math/clip.h"
 #include "transformations/rollaxis.h"
 #include "transformations/transpose.h"
 
@@ -39,5 +40,6 @@ static PyMethodDef OpsMethods[] = {
     {"add_docstring", (PyCFunction)add_docstring, METH_VARARGS, NULL},
 
     {"broadcast_to", (PyCFunction)ops_broadcast_to, METH_VARARGS, NULL},
+    {"clip", (PyCFunction)ops_clip, METH_VARARGS | METH_KEYWORDS, NULL},
 
     {NULL}};

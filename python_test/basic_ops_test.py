@@ -8,7 +8,7 @@ elementwise_options = [(12,), (512, 128), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5,
 broadcasted_options = [(512, 128), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
 unary_elementwise_options = [(12,), (32, 12), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
 unary_broadcasted_options = [(32, 12), (3, 14, 2), (8, 12, 12, 12), (3, 1, 5, 6), (13, 14)]
-grad_options = [(32, 3, 5), (3), (1), (2, 33, 2, 5)]
+grad_options = [(32, 3, 5), (30), (12), (2, 33, 2, 5)]
 
 class AddTest(UnitTest):
 
@@ -577,5 +577,43 @@ class LogTest(UnitTest):
                 "a": arr1,
             }
             self.assert_true(check_gradients_vector(forward, dic))
+
+        return
+        
+        
+class ClipTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test_base(self, rq):
+        choices = unary_elementwise_options
+        for c in choices:
+            arr1 = np.random.normal(5, 2, (c))
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+
+            arr2 = np.clip(arr1, 4, 6)
+            x2 = sail.clip(x1, 4, 6)
+
+            self.assert_eq_np_sail(arr2, x2)
+            self.assert_eq(x2.requires_grad, rq)
+        return
+
+    def test_grad(self):
+        times = []
+
+        def forward(a):
+            c = sail.clip(a, 4, 6)
+            d = sail.sum(c)
+            return d
+
+        for c in grad_options:
+            
+            arr1 = np.random.uniform(3, 7, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+            self.assert_true(check_gradients_vector(forward, dic, rtol=1e-2, atol=1e-4, eps=1e-8))
 
         return
