@@ -111,3 +111,46 @@ class SoftmaxLayerTest(UnitTest):
             self.assert_eq(y.requires_grad, rq)
                 
         return
+
+
+class ReLULayerTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test(self, rq):
+        choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(-1, 1, c).astype(np.float32)
+
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+
+            lin = sail.modules.ReLU()
+
+            y = lin(x1)
+            y2 = np.clip(arr1, 0, 100)
+
+            self.assert_eq_np_sail(y2, y, eps=1e-8)
+            self.assert_eq(y.requires_grad, rq)
+                
+        return
+
+    def test_add_grad(self):
+        times = []
+
+        def forward(a):
+            c = sail.modules.ReLU()(a)
+            d = sail.sum(c)
+            return d
+
+        for c in [(3, 3), (12, 18), (2, 33), (32, 64)]:
+            
+            arr1 = np.random.uniform(-1, 1, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic, rtol=1e-2, atol=1e-4, eps=1e-8))
+
+        return

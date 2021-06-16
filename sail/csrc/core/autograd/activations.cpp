@@ -46,5 +46,16 @@ TensorVector Softmax::backward(Tensor& grad) {
     return {ret};
 }
 
+Tensor ReLU::forward(TensorVector inputs) {
+    Tensor result = ops::ReLU(inputs[0]);
+    return result;
+}
+TensorVector ReLU::backward(Tensor& grad) {
+    Tensor stored = Function::arg_storage[0];
+    Tensor zero_arr = zeros(grad.get_shape(), grad.get_dtype());
+    Tensor cond = stored > zero_arr;
+    return {grad * cond};
+}
+
 }  // namespace autograd
 }  // namespace sail

@@ -159,7 +159,23 @@ Tensor Tensor::operator/(const Tensor& other) {
 }
 
 Tensor Tensor::operator-() { return ops::negate(*this); }
-// UNARY OPS
+
+Tensor Tensor::operator==(const Tensor& other) {
+    return ops::elementwise_equal(*this, other);
+}
+Tensor Tensor::operator>=(const Tensor& other) {
+    return ops::elementwise_gte(*this, other);
+}
+Tensor Tensor::operator<=(const Tensor& other) {
+    return ops::elementwise_lte(*this, other);
+}
+Tensor Tensor::operator>(const Tensor& other) {
+    return ops::elementwise_gt(*this, other);
+}
+Tensor Tensor::operator<(const Tensor& other) {
+    return ops::elementwise_lt(*this, other);
+}
+
 
 Tensor Tensor::sum() { return ops::sum(*this); }
 
