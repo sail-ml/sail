@@ -170,10 +170,10 @@ Tensor Tensor::operator<=(const Tensor& other) {
     return ops::elementwise_lte(*this, other);
 }
 Tensor Tensor::operator>(const Tensor& other) {
-    return ops::elementwise_lt(*this, other);
+    return ops::elementwise_gt(*this, other);
 }
 Tensor Tensor::operator<(const Tensor& other) {
-    return ops::elementwise_gt(*this, other);
+    return ops::elementwise_lt(*this, other);
 }
 
 

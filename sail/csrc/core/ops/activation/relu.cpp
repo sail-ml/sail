@@ -15,13 +15,15 @@ namespace ops {
 using TensorVector = std::vector<Tensor>;
 
 Tensor ReLU(Tensor& input) {
+    Tensor empty_tensor;
     if (input.requires_grad) {
         TensorVector vec;
         vec.emplace_back(input);
-        Tensor e = (new autograd::ReLU())->apply(vec);
-        return e;
+        empty_tensor = (new autograd::ReLU())->apply(vec);
+        return empty_tensor;
     }
-    Tensor empty_tensor = empty_like(input);
+
+    empty_tensor = empty_like(input);
     ClipMinOnlyKernel().execute(input, 0.0, empty_tensor);
     return empty_tensor;
 }

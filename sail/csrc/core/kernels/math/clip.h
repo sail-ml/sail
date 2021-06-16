@@ -19,7 +19,7 @@ class ClipMinOnlyKernel : public Kernel {
                 T min_val;
                 Impl(T min_val_) : min_val(min_val_) {}
                 inline void call_base(T x1, T& out) { 
-                    if (x1 <= min_val) {
+                    if (x1 >= min_val) {
                         out = x1;
                     } else {
                         out = min_val;
