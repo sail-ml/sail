@@ -22,11 +22,19 @@ class Sigmoid : public Function {
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
+
 class Softmax : public Function {
    public:
     Tensor softmax_stored;
     int axis;
     Softmax(int _axis = 1) { axis = _axis; };
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
+
+class ReLU : public Function {
+   public:
+    explicit ReLU() {};
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
