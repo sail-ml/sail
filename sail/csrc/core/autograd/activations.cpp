@@ -52,9 +52,9 @@ Tensor ReLU::forward(TensorVector inputs) {
 }
 TensorVector ReLU::backward(Tensor& grad) {
     Tensor stored = Function::arg_storage[0];
-    Tensor zero_arr = zeros(grad.get_shape(), grad.get_dtype());
-    Tensor cond = stored > zero_arr;
-    return {grad * cond};
+    Tensor zero_arr = empty_like(stored);
+    ReluBackwardsKernel().execute(stored, grad, zero_arr);
+    return {zero_arr};
 }
 
 }  // namespace autograd

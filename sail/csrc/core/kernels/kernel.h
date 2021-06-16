@@ -11,6 +11,7 @@
 
 #include "activations/log_softmax.h"
 #include "activations/sigmoid.h"
+#include "activations/relu.h"
 
 #include "optimizers/sgd.h"
 

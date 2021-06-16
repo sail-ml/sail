@@ -31,14 +31,18 @@ Tensor MeanSquaredErrorLoss::forward(TensorVector inputs) {
     return ops::mean_squared_error(inputs[0], inputs[1]);
 }
 TensorVector MeanSquaredErrorLoss::backward(Tensor& grad) {
-    Tensor diff = Function::arg_storage[0] - Function::arg_storage[1];
-    grad = ops::broadcast_to(grad, diff.get_shape());
+    Tensor emp = empty_like(Function::arg_storage[0]);
+    Tensor emp2 = empty_like(Function::arg_storage[0]);
 
-    float v = 2.0 / (float)diff.numel();
-    Tensor v_ = from_data((void*)(&v), grad.get_dtype(), TensorShape({1}));
+    MeanSquaredErrorBackwardKernel().execute(
+        Function::arg_storage[0],
+        Function::arg_storage[1],
+        grad,
+        emp,
+        emp2
+    );
 
-    grad = grad * diff * v_;
-    return {grad, -grad};
+    return {emp, emp2};
 
 }
 
