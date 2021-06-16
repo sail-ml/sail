@@ -27,6 +27,7 @@ Activations Layers
     :toctree: generated
     :template: module_template.rst
 
+    ReLU
     Sigmoid
     Softmax
   

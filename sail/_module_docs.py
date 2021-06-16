@@ -62,7 +62,7 @@ Applies the softmax function to the input data, which squashes the inputs to sum
 """)
 
 add_docstring_class("ReLU", r"""
-sail.modules.Softmax()
+sail.modules.ReLU()
 Applies the relu function to the input data
 
 .. math::
