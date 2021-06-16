@@ -185,7 +185,6 @@ void Tensor::backward() {
     backward(t);
 }
 void Tensor::backward(Tensor& _grad) {
-    std::cout << _grad << std::endl;
     if (requires_grad) {
         if (has_grad()) {
             std::cout << "yeah?" << std::endl;
