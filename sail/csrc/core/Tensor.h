@@ -125,13 +125,11 @@ class Tensor {
     Tensor operator/(const Tensor& t);
     Tensor operator[](const int t) const;
 
-
     Tensor operator==(const Tensor& other);
     Tensor operator>=(const Tensor& other);
     Tensor operator<=(const Tensor& other);
     Tensor operator>(const Tensor& other);
     Tensor operator<(const Tensor& other);
-
 
     Tensor transpose();
     Tensor transpose(const LongVec& axes);

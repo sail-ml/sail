@@ -53,16 +53,16 @@ RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds) {
     Py_RETURN_NONE;
 }
 RETURN_OBJECT PyModule_call(PyModule *self, PyObject *args, PyObject *kwds) {
-    PyObject* forward = PyObject_GetAttrString((PyObject*)self,(char*)"forward");
-    PyObject* myResult = PyObject_Call(forward, args, kwds);
+    PyObject *forward =
+        PyObject_GetAttrString((PyObject *)self, (char *)"forward");
+    PyObject *myResult = PyObject_Call(forward, args, kwds);
     return myResult;
 }
 int PyModule_setattr(PyModule *self, PyObject *attr, PyObject *value) {
-    
     if (PyObject_IsInstance(value, (PyObject *)&PyModuleType)) {
         self->module->register_params(((PyModule *)value)->module->params);
-    } 
-    PyObject_GenericSetAttr((PyObject*)self, attr, value);
-    
+    }
+    PyObject_GenericSetAttr((PyObject *)self, attr, value);
+
     return 0;
 }

@@ -4,9 +4,9 @@
 #include "docstring.h"
 #include "elementwise.h"
 #include "linalg/linalg.h"
+#include "math/clip.h"
 #include "math/power.h"
 #include "reduction.h"
-#include "math/clip.h"
 #include "transformations/rollaxis.h"
 #include "transformations/transpose.h"
 

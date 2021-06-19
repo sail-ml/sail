@@ -33,9 +33,9 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
         return NULL;
     }
 
-    PyObject* int32 = (PyObject *)generate_dtype(Dtype::sInt32, 5);
-    PyObject* float32 = (PyObject *)generate_dtype(Dtype::sFloat32, 11);
-    PyObject* float64 = (PyObject *)generate_dtype(Dtype::sFloat64, 12);
+    PyObject* int32 = (PyObject*)generate_dtype(Dtype::sInt32, 5);
+    PyObject* float32 = (PyObject*)generate_dtype(Dtype::sFloat32, 11);
+    PyObject* float64 = (PyObject*)generate_dtype(Dtype::sFloat64, 12);
 
     Py_INCREF(int32);
     Py_INCREF(float32);
@@ -47,7 +47,6 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
     PyModule_AddObject(m, "float32", float32);
     PyModule_AddObject(m, "float64", float64);
     PyModule_AddFunctions(m, OpsMethods);
-
 
     /// RANDOM MODULE
 

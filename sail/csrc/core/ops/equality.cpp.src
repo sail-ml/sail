@@ -10,11 +10,11 @@
 namespace sail {
 namespace ops {
 
+// clang-format off
 /** begin block
  * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
  * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
  */
-
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     Tensor empty_tensor;  //= empty_like(tensor1);
@@ -42,6 +42,8 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
 }
 
 /** end block **/
+
+// clang-format on
 
 }  // namespace ops
 }  // namespace sail

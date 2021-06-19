@@ -28,7 +28,8 @@ class MeanSquaredErrorKernel : public Kernel {
                     out = ex / (double)_numel;
                 }
             };
-            BinaryElementwiseNoAvx<T, T, T>(Impl{numel}, true, t1, t2, out_tensor);
+            BinaryElementwiseNoAvx<T, T, T>(Impl{numel}, true, t1, t2,
+                                            out_tensor);
         });
     }
 };

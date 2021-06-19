@@ -8,8 +8,7 @@
 
 using ReLU = sail::modules::ReLU;
 
-static int PyReLUModule_init(PyModule *self, PyObject *args,
-                                PyObject *kwargs) {
+static int PyReLUModule_init(PyModule *self, PyObject *args, PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     self->module = (Module *)(new ReLU());
     return 0;
@@ -35,30 +34,30 @@ PyReLUModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
 }
 
 static PyMethodDef PyReLUModule_methods[] = {
-    {"forward", (PyCFunction)PyReLUModule_forward,
-     METH_VARARGS | METH_KEYWORDS, NULL},
+    {"forward", (PyCFunction)PyReLUModule_forward, METH_VARARGS | METH_KEYWORDS,
+     NULL},
     {NULL} /* Sentinel */
 };
 
 static PyTypeObject PyReLUModuleType = {
     PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.ReLU", /* tp_name */
-    sizeof(PyModule),                                   /* tp_basicsize */
-    0,                                                  /* tp_itemsize */
-    (destructor)PyModule_dealloc,                       /* tp_dealloc */
-    0,                                                  /* tp_print */
-    0,                                                  /* tp_getattr */
-    0,                                                  /* tp_setattr */
-    0,                                                  /* tp_reserved */
-    0,                                                  /* tp_repr */
-    0,                                                  /* tp_as_number */
-    0,                                                  /* tp_as_sequence */
-    0,                                                  /* tp_as_mapping */
-    0,                                                  /* tp_hash */
+    sizeof(PyModule),                                /* tp_basicsize */
+    0,                                               /* tp_itemsize */
+    (destructor)PyModule_dealloc,                    /* tp_dealloc */
+    0,                                               /* tp_print */
+    0,                                               /* tp_getattr */
+    0,                                               /* tp_setattr */
+    0,                                               /* tp_reserved */
+    0,                                               /* tp_repr */
+    0,                                               /* tp_as_number */
+    0,                                               /* tp_as_sequence */
+    0,                                               /* tp_as_mapping */
+    0,                                               /* tp_hash */
     PyReLUModule_forward,                            /* tp_call */
-    0,                                                  /* tp_str */
-    0,                                                  /* tp_getattro */
-    0,                                                  /* tp_setattro */
-    0,                                                  /* tp_as_buffer */
+    0,                                               /* tp_str */
+    0,                                               /* tp_getattro */
+    0,                                               /* tp_setattro */
+    0,                                               /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
     NULL,                            /* tp_doc */
@@ -76,7 +75,7 @@ static PyTypeObject PyReLUModuleType = {
     0,                               /* tp_descr_get */
     0,                               /* tp_descr_set */
     0,                               /* tp_dictoffset */
-    (initproc)PyReLUModule_init,  /* tp_init */
+    (initproc)PyReLUModule_init,     /* tp_init */
     0,                               /* tp_alloc */
     PyModule_new,                    /* tp_new */
     PyObject_GC_Del                  /* tp_free */

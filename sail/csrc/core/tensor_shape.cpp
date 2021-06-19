@@ -59,6 +59,9 @@ TensorShape::TensorShape(LongVec shape_) {
     }
     recompute();
 }
+
+void ignore_innermost() {}
+
 int TensorShape::next() {
     int i;
     // if (contiguous) {

@@ -176,7 +176,6 @@ Tensor Tensor::operator<(const Tensor& other) {
     return ops::elementwise_lt(*this, other);
 }
 
-
 Tensor Tensor::sum() { return ops::sum(*this); }
 
 void Tensor::backward() {

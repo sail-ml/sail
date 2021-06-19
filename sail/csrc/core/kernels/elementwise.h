@@ -8,6 +8,7 @@
 #include "Tensor.h"
 #include "dtypes.h"
 #include "kernel_utils.h"
+#include "tensor_iterator.h"
 #include "tensor_shape.h"
 #include "utils.h"
 #include "xsimd/xsimd.hpp"
@@ -20,6 +21,14 @@ using get = typename get_Nth_type<N, Args...>::type;
 namespace sail {
 
 namespace inner_elementwise {
+
+// <typename T, typename Op>
+// void loop(Op op, T* p1, T* p2, T* p3, TensorShape t1, TensorShape t2,
+// TensorShape t3) {
+//     int t1_nop = t1.numel();
+//     int t2_nop = t2.numel();
+
+// }
 
 template <typename... Ts, typename Op>
 void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
@@ -39,22 +48,49 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape s2 = t2.get_shape();
     TensorShape s3 = out.get_shape();
 
-    s1.recompute();
-    s2.recompute();
-    s3.recompute();
+    // std::cout << t1.get_shape().get_string() << std::endl;
+    // std::cout << t1.is_view() << std::endl;
 
-    int numel = t1.numel() > t2.numel() ? t1.numel() : t2.numel();
+    // TensorIterator test = TensorIterator(s1);
+    // std::cout << test.out_loop_size() << std::endl;
+    // std::cout << test.inner_loop_size() << std::endl;
 
-    for (i = 0; i < numel; i += 1) {
-        op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[s3.d_ptr]);
-        s1.next();
-        s2.next();
-        s3.next();
+    MultiTensorIterator test =
+        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    int z = 0;
+    for (int i = 0; i < test.out_loop_size(); i++) {
+        for (int j = 0; j < test.inner_loop_size(); j++) {
+            op.call_base(p1[test.d_ptrs[0]], p2[test.d_ptrs[1]], p3[z]);
+            test.advance_d_ptr();
+            z += 1;
+        }
+        test.backup_d_ptr();
+        test.next();
     }
+    // std::cout << getVectorString(test.shape) << std::endl;
+    // std::cout << "strides " << getVectorString(test.strides[0]) << std::endl;
+    // std::cout << "strides " << getVectorString(test.strides[1]) << std::endl;
+    // // std::cout << "strides " << getVectorString(test.strides[2]) <<
+    // std::endl; std::cout << "numel " << test.numel() << std::endl; std::cout
+    // << "ndim " << test.ndim() << std::endl; std::cout << "tensorcount " <<
+    // test.tensor_count << std::endl;
 
-    s1.reset();
-    s2.reset();
-    s3.reset();
+    // s1.recompute();
+    // s2.recompute();
+    // s3.recompute();
+
+    // int numel = t1.numel() > t2.numel() ? t1.numel() : t2.numel();
+
+    // for (i = 0; i < numel; i += 1) {
+    //     op.call_base(p1[s1.d_ptr], p2[s2.d_ptr], p3[s3.d_ptr]);
+    //     s1.next();
+    //     s2.next();
+    //     s3.next();
+    // }
+
+    // s1.reset();
+    // s2.reset();
+    // s3.reset();
 }
 template <typename... Ts, typename Op>
 void launch_parallel_binary_elementwise(Op op, const Tensor &t1,

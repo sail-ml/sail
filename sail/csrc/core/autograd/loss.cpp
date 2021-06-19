@@ -39,7 +39,6 @@ TensorVector MeanSquaredErrorLoss::backward(Tensor& grad) {
 
     grad = grad * diff * v_;
     return {grad, -grad};
-
 }
 
 }  // namespace autograd

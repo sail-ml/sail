@@ -21,7 +21,8 @@ RETURN_OBJECT ops_clip(PyObject* self, PyObject* args, PyObject* kwargs) {
     double min, max;
     static char* kwlist[] = {"tensor", "min", "max", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Odd", kwlist, &t1, &min, &max)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Odd", kwlist, &t1, &min,
+                                     &max)) {
         PyErr_SetString(PyExc_TypeError, "incorrect arguments");
         return nullptr;
     }

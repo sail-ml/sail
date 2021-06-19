@@ -34,7 +34,7 @@ class Softmax : public Function {
 
 class ReLU : public Function {
    public:
-    explicit ReLU() {};
+    explicit ReLU(){};
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };

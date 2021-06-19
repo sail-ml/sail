@@ -54,10 +54,10 @@ static PyTypeObject PyModuleType = {
     0,                                                 /* tp_as_sequence */
     0,                                                 /* tp_as_mapping */
     0,                                                 /* tp_hash */
-    PyModule_call,                                                 /* tp_call */
+    PyModule_call,                                     /* tp_call */
     0,                                                 /* tp_str */
-    PyObject_GenericGetAttr,                                                 /* tp_getattro */
-    PyModule_setattr,                                                 /* tp_setattro */
+    PyObject_GenericGetAttr,                           /* tp_getattro */
+    PyModule_setattr,                                  /* tp_setattro */
     0,                                                 /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */

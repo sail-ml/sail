@@ -10,8 +10,8 @@
 #include "transformations/squeeze.h"
 #include "transformations/transpose.h"
 
+#include "activation/relu.h"
 #include "activation/sigmoid.h"
 #include "activation/softmax.h"
-#include "activation/relu.h"
 #include "loss/loss.h"
 #include "math/math.h"

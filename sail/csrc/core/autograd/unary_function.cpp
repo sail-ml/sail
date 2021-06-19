@@ -32,7 +32,8 @@ Tensor ClipMinOnly::forward(TensorVector inputs) {
     return ops::clip(inputs[0], min);
 }
 TensorVector ClipMinOnly::backward(Tensor& grad) {
-    Tensor cond_check = from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
+    Tensor cond_check =
+        from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
     Tensor cond = ops::elementwise_lte(cond_check, Function::arg_storage[0]);
     return {grad * cond};
 }
@@ -41,18 +42,18 @@ Tensor Clip::forward(TensorVector inputs) {
     return ops::clip(inputs[0], min, max);
 }
 TensorVector Clip::backward(Tensor& grad) {
-    Tensor cond_check = from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
+    Tensor cond_check =
+        from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
 
     Tensor cond = ops::elementwise_lte(cond_check, Function::arg_storage[0]);
-    
+
     cond_check = from_data((void*)(&max), grad.get_dtype(), TensorShape({1}));
     cond = cond * ops::elementwise_lte(Function::arg_storage[0], cond_check);
 
     Tensor out = grad * cond;
-    
+
     return {out};
 }
-
 
 }  // namespace autograd
 }  // namespace sail

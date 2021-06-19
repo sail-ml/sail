@@ -3,9 +3,9 @@
 #include <chrono>
 #include "Tensor.h"
 #include "autograd/autograd.h"
-#include "mean_squared_error.h"
 #include "factories.h"
 #include "kernels/kernel.h"
+#include "mean_squared_error.h"
 #include "ops/ops.h"
 using namespace std::chrono;
 
@@ -27,7 +27,6 @@ Tensor mean_squared_error(Tensor& logits, Tensor& targets) {
     Tensor out = empty(0, logits.get_dtype(), logits.get_shape());
     MeanSquaredErrorKernel().execute(logits, targets, out);
     return ops::sum(out);
-    
 }
 
 }  // namespace ops

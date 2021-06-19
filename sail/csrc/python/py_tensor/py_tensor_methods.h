@@ -17,11 +17,11 @@
 #include "../error_defs.h"
 #include "../macros.h"
 
-#define CAST_TYPE_CHECK(args, x)                               \
-    {                                                          \
+#define CAST_TYPE_CHECK(args, x)                              \
+    {                                                         \
         if (!PyArg_ParseTuple(args, "O", &PyDtypeBase, &x)) { \
-            return nullptr;                                    \
-        }                                                      \
+            return nullptr;                                   \
+        }                                                     \
     }
 
 static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
@@ -215,9 +215,9 @@ PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     START_EXCEPTION_HANDLING
     PyObject *type;
 
-    if (!PyArg_ParseTuple(args, "O", &type)) { 
-        return nullptr;                                    
-    }   
+    if (!PyArg_ParseTuple(args, "O", &type)) {
+        return nullptr;
+    }
 
     Dtype dt = ((PyDtype *)type)->dtype;
 

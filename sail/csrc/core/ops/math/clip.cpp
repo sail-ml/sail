@@ -1,7 +1,7 @@
 #include "Tensor.h"
+#include "autograd/autograd.h"
 #include "dtypes.h"
 #include "factories.h"
-#include "autograd/autograd.h"
 #include "kernels/kernel.h"
 
 namespace sail {
