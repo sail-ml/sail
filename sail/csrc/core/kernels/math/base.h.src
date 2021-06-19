@@ -35,6 +35,13 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_aligned(out, c);
                 }
 
+                inline void call_avx_test(T& x1, T* x2, T* out) {
+                    avx_type a = avx_type::broadcast(x1);
+                    avx_type b = xsimd::load_unaligned(x2);
+                    auto c = a $baseOp$ b;
+                    xsimd::store_unaligned(out, c);
+                }
+
                 inline void call_avx_non_aligned(T* x1, T* x2, T* out) {
                     avx_type a = xsimd::load_unaligned(x1);
                     avx_type b = xsimd::load_unaligned(x2);
@@ -42,7 +49,8 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_unaligned(out, c);
                 }
             };
-            BinaryElementwise<T, T, T>(Impl{}, broadcast, t1, t2, out_tensor);
+            BinaryElementwise<T, T, T>(Impl{}, broadcast, t1, t2, out_tensor,
+                                       true);
         });
     }
 };

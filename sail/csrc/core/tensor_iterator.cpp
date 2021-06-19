@@ -151,9 +151,9 @@ std::vector<long> MultiTensorIterator::next() {
     return d_ptrs;
 }
 
-void MultiTensorIterator::advance_d_ptr() {
+void MultiTensorIterator::advance_d_ptr(int b) {
     for (int a = 0; a < tensor_count; a++) {
-        d_ptrs[a] += strides[a].back();
+        d_ptrs[a] += strides[a].back() * b;
     }
 }
 void MultiTensorIterator::backup_d_ptr() {

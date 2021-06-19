@@ -42,7 +42,7 @@ class MultiTensorIterator : public TensorIterator {
 
     MultiTensorIterator add_input(TensorShape& t_shape);
 
-    void advance_d_ptr();
+    void advance_d_ptr(int b);
     void backup_d_ptr();
     std::vector<long> next();
     long tensor_count = 1;
