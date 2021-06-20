@@ -25,8 +25,12 @@ class $name$TTKernel : public Kernel {
             using avx_type = xsimd::simd_type<T>;
 
             struct Impl {
+                avx_type scal;
                 inline void call_base(T& x1, T& x2, T& out) {
                     out = x1 $baseOp$ x2;
+                }
+                inline void set_scalar_val(T& x1) {
+                    scal = avx_type::broadcast(x1);
                 }
                 inline void call_avx_aligned(T* x1, T* x2, T* out) {
                     avx_type a = xsimd::load_aligned(x1);
@@ -35,11 +39,10 @@ class $name$TTKernel : public Kernel {
                     xsimd::store_aligned(out, c);
                 }
 
-                inline void call_avx_test(T& x1, T* x2, T* out) {
-                    avx_type a = avx_type::broadcast(x1);
+                inline void iterator_avx(T* x2, T* out) {
                     avx_type b = xsimd::load_unaligned(x2);
-                    auto c = a $baseOp$ b;
-                    xsimd::store_unaligned(out, c);
+                    auto c = scal $baseOp$ b;
+                    c.store_unaligned(out);
                 }
 
                 inline void call_avx_non_aligned(T* x1, T* x2, T* out) {

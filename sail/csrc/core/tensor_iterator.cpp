@@ -1,4 +1,5 @@
 #include "tensor_iterator.h"
+#include <omp.h>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -8,6 +9,7 @@
 #include <vector>
 #include "Tensor.h"
 #include "tensor_shape.h"
+
 namespace sail {
 
 TensorIterator::TensorIterator(TensorShape& t_shape) {
@@ -93,14 +95,13 @@ MultiTensorIterator::MultiTensorIterator(TensorShape& t_shape) {
 
     TensorIterator::shape = old_shape;
     shape = old_shape;
-    strides.push_back(old_strides);
+    strides = Vec2D(old_strides);
+    lasts.emplace_back(old_strides.back());
 
     TensorIterator::_ndim = old_shape.size();
-    // _numel = std::accumulate(old_shape.begin(), old_shape.end(), 1,
-    // std::multiplies<long>());
 
     std::vector<long> co(TensorIterator::_ndim, 0);
-    coordinates.push_back(co);
+    coordinates = Vec2D(co);
 
     for (int i = 0; i < _ndim; i++) {
         TensorIterator::_numel *= old_shape[i];
@@ -108,18 +109,18 @@ MultiTensorIterator::MultiTensorIterator(TensorShape& t_shape) {
         temp_strides_back.emplace_back(shape_m1[i] * old_strides[i]);
     }
 
-    strides_back.push_back(temp_strides_back);
+    strides_back = Vec2D(temp_strides_back);
     d_ptrs.push_back(0);
 }
 
 MultiTensorIterator MultiTensorIterator::add_input(TensorShape& t_shape) {
     tensor_count += 1;
 
-    std::vector<long> old_shape = t_shape.shape;
     std::vector<long> old_strides = t_shape.strides;
     std::vector<long> temp_strides_back;
 
     strides.push_back(old_strides);
+    lasts.emplace_back(old_strides.back());
 
     std::vector<long> co(TensorIterator::_ndim, 0);
     coordinates.push_back(co);
@@ -131,35 +132,6 @@ MultiTensorIterator MultiTensorIterator::add_input(TensorShape& t_shape) {
     strides_back.push_back(temp_strides_back);
     d_ptrs.push_back(0);
     return *this;
-}
-
-std::vector<long> MultiTensorIterator::next() {
-    int i = 0;
-    for (int a = 0; a < tensor_count; a++) {
-        for (i = TensorIterator::_ndim - 2; i >= 0; i--) {
-            if (coordinates[a][i] < shape_m1[i]) {
-                coordinates[a][i] += 1;
-                d_ptrs[a] += strides[a][i];
-                break;
-            } else {
-                coordinates[a][i] = 0;
-                d_ptrs[a] -= strides_back[a][i];
-            }
-        }
-        d_ptrs[a] -= strides_back[a].back();
-    }
-    return d_ptrs;
-}
-
-void MultiTensorIterator::advance_d_ptr(int b) {
-    for (int a = 0; a < tensor_count; a++) {
-        d_ptrs[a] += strides[a].back() * b;
-    }
-}
-void MultiTensorIterator::backup_d_ptr() {
-    for (int a = 0; a < tensor_count; a++) {
-        d_ptrs[a] -= strides[a].back();
-    }
 }
 
 }  // namespace sail

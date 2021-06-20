@@ -13,6 +13,12 @@
 #include "utils.h"
 #include "xsimd/xsimd.hpp"
 
+#include <chrono>
+using namespace std::chrono;
+
+// Use auto keyword to avoid typing long
+// type definitions to get the timepoint
+// at this instant use function now()
 using Tensor = sail::Tensor;
 
 template <std::size_t N, typename... Args>
@@ -59,8 +65,8 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     MultiTensorIterator test =
         MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
 
-    bool scalar_0 = (test.strides[0].back() == 0) ? true : false;
-    bool scalar_1 = (test.strides[1].back() == 0) ? true : false;
+    bool scalar_0 = (test.strides.at_back(0) == 0) ? true : false;
+    bool scalar_1 = (test.strides.at_back(1) == 0) ? true : false;
     int z = 0;
     for (int i = 0; i < test.out_loop_size(); i++) {
         for (int j = 0; j < test.inner_loop_size(); j++) {
@@ -90,40 +96,40 @@ void launch_binary_elementwise2(Op op, const Tensor &t1, const Tensor &t2,
 
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
-    TensorShape s3 = out.get_shape();
-
-    // std::cout << t1.get_shape().get_string() << std::endl;
-    // std::cout << t1.is_view() << std::endl;
-
-    // TensorIterator test = TensorIterator(s1);
-    // std::cout << test.out_loop_size() << std::endl;
-    // std::cout << test.inner_loop_size() << std::endl;
 
     MultiTensorIterator test =
         MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
 
-    bool scalar_0 = (test.strides[0].back() == 0) ? true : false;
-    bool scalar_1 = (test.strides[1].back() == 0) ? true : false;
+    bool scalar_0 = (test.strides.at_back(0) == 0) ? true : false;
+    bool scalar_1 = (test.strides.at_back(1) == 0) ? true : false;
+
+    int inner_loop_size = test.inner_loop_size();
+    int inner_steps = inner_loop_size / jump;
+    int outer_steps = test.out_loop_size();
+    std::vector<long> strides = test.get_strides();
     int z = 0;
-    // for (int i = 0; i < test.out_loop_size(); i++) {
-    //     for (int j = 0; j < test.inner_loop_size(); j++) {
-    //         op.call_base(p1[test.d_ptrs[0]], p2[test.d_ptrs[1]], p3[z]);
-    //         test.advance_d_ptr();
-    //         z += 1;
-    //     }
-    //     test.backup_d_ptr();
-    //     test.next();
-    // }
-    int inner_steps = test.inner_loop_size() / jump;
-    // using avx = xsimd::simd_batch<get<0, Ts...>>;
-    for (int i = 0; i < test.out_loop_size(); i++) {
-        int j = 0;
-        for (; j < inner_steps * jump; j += jump) {
-            op.call_avx_test(p1[test.d_ptrs[0]], p2 + test.d_ptrs[1], p3 + z);
-            test.advance_d_ptr(jump);
-            z += jump;
+    // auto start = high_resolution_clock::now();
+    for (int i = 0; i < outer_steps; i++) {
+        int inner = 0;
+        if (scalar_0 && !scalar_1) {
+            op.set_scalar_val(p1[test.d_ptrs[0]]);
+        } else if (!scalar_0 && scalar_1) {
+            op.set_scalar_val(p2[test.d_ptrs[1]]);
         }
-        for (; j < test.inner_loop_size(); j++) {
+        for (int j = 0; j < inner_steps; j += 1) {
+            if (scalar_0 && !scalar_1) {
+                op.iterator_avx(p2 + test.d_ptrs[1], p3 + z);
+            } else if (!scalar_0 && scalar_1) {
+                op.iterator_avx(p1 + test.d_ptrs[0], p3 + z);
+            } else {
+                op.call_avx_aligned(p1 + test.d_ptrs[0], p2 + test.d_ptrs[1],
+                                    p3 + z);
+            }
+            z += jump;
+            inner += jump;
+            test.advance_d_ptr(jump);
+        }
+        for (; inner < inner_loop_size; inner++) {
             op.call_base(p1[test.d_ptrs[0]], p2[test.d_ptrs[1]], p3[z]);
             test.advance_d_ptr(1);
             z += 1;
@@ -131,6 +137,12 @@ void launch_binary_elementwise2(Op op, const Tensor &t1, const Tensor &t2,
         test.backup_d_ptr();
         test.next();
     }
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<nanoseconds>(stop - start);
+
+    // To get the value of duration use the count()
+    // member function on the duration object
+    // std::cout << duration.count() << std::endl;
 }
 template <typename... Ts, typename Op>
 void launch_parallel_binary_elementwise(Op op, const Tensor &t1,

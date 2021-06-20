@@ -13,6 +13,7 @@
 
 #include "../error_defs.h"
 #include "../macros.h"
+#include "../py_utils.h"
 
 /** begin block
  * name = [add, sub, mul, div]
@@ -38,8 +39,10 @@ RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
     PyTensor* ret_class;
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
+    NoGIL gil_release;
     ret_class->tensor =
         sail::ops::$fname$(((PyTensor*)t1)->tensor, ((PyTensor*)t2)->tensor);
+    gil_release.~NoGIL();
     // std::cout << (ret_class->tensor.fcn)->getName() << std::endl;
 
     ret_class->ndim = ret_class->tensor.get_ndim();
