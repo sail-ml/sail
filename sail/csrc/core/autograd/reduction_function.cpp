@@ -49,12 +49,16 @@ Tensor Max::forward(TensorVector inputs) {
 TensorVector Max::backward(Tensor& grad) {
     Tensor cond =
         ops::elementwise_equal(Function::arg_storage[0], stored_output);
-    // if  (!(Function::arg_storage[0].get_ndim() == 0 || axis == -1 || keepdims
-    // == true)) {
-    //     grad = grad.expand_dims(axis);
-    // }
-    // Tensor full_size =
-    //     ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
+    return {grad * cond};
+}
+
+Tensor Min::forward(TensorVector inputs) {
+    stored_output = ops::min(inputs[0], Reduction::axis, Reduction::keepdims);
+    return stored_output;
+}
+TensorVector Min::backward(Tensor& grad) {
+    Tensor cond =
+        ops::elementwise_equal(Function::arg_storage[0], stored_output);
     return {grad * cond};
 }
 

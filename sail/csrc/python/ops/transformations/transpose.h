@@ -50,9 +50,6 @@ RETURN_OBJECT ops_transpose(PyObject* self, PyObject* args, PyObject* kwargs) {
         ret_class->tensor = sail::ops::transpose(t1->tensor, shape);
     }
 
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = t1->ndim;
-    ret_class->requires_grad = t1->requires_grad;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(ret_class->base_object);
 
@@ -90,8 +87,6 @@ RETURN_OBJECT ops_reshape(PyObject* self, PyObject* args) {
     sail::TensorShape new_ = sail::TensorShape(size);
 
     ret_class->tensor = t1->tensor.reshape(new_);
-    ret_class->ndim = t1->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(t1);
 
@@ -114,8 +109,6 @@ RETURN_OBJECT ops_expand_dims(PyObject* self, PyObject* args) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = t1->tensor.expand_dims(dim);
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(t1);
 
@@ -138,8 +131,6 @@ RETURN_OBJECT ops_squeeze(PyObject* self, PyObject* args) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = t1->tensor.squeeze(dim);
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = t1->dtype;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(t1);
 

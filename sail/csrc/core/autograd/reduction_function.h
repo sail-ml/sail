@@ -81,6 +81,15 @@ class Max : public Reduction {
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);
 };
+class Min : public Reduction {
+   public:
+    using Reduction::Reduction;
+    Tensor stored_output;
+
+    // RefTensorVector arg_storage;
+    Tensor forward(TensorVector inputs);
+    TensorVector backward(Tensor& grad);
+};
 
 }  // namespace autograd
 }  // namespace sail

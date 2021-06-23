@@ -15,9 +15,6 @@ using SCTensor = sail::Tensor;
 typedef struct {
     PyObject_HEAD PyObject *base_object = NULL;
     SCTensor tensor;
-    int ndim;
-    int dtype;
-    bool requires_grad = false;
 } PyTensor;
 
 ///////////////////// DEFINITIONS ///////////////////////
@@ -48,19 +45,15 @@ static int PyTensor_set_grad(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_requires_grad(PyTensor *self, void *closure);
 static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
                                       void *closure);
+RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
+static int PyTensor_set_ndim(PyTensor *self, PyObject *value, void *closure);
 
 //////////// CLASS METHODS ////////////////
-RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
 RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
 RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
-static PyMemberDef PyTensor_members[] = {
-    {"ndim", T_INT, offsetof(PyTensor, ndim), 0, NULL},
-    // {"requires_grad", T_BOOL, offsetof(PyTensor, requires_grad), 0,
-    //  "requires_grad"},
-    {NULL}};
 
 static PyMethodDef PyTensor_methods[] = {
     {"numpy", (PyCFunction)PyTensor_get_numpy, METH_VARARGS},
@@ -72,6 +65,7 @@ static PyMethodDef PyTensor_methods[] = {
 
 static PyGetSetDef PyTensor_get_setters[] = {
     {"shape", (getter)PyTensor_get_shape, (setter)PyTensor_set_shape, NULL},
+    {"ndim", (getter)PyTensor_get_ndim, (setter)PyTensor_set_ndim, NULL},
     {"grad", (getter)PyTensor_get_grad, (setter)PyTensor_set_grad, NULL},
     {"requires_grad", (getter)PyTensor_get_requires_grad,
      (setter)PyTensor_set_requires_grad, NULL},
@@ -163,7 +157,7 @@ static PyTypeObject PyTensorType = {
     0,                               /* tp_iter */
     0,                               /* tp_iternext */
     PyTensor_methods,                /* tp_methods */
-    PyTensor_members,                /* tp_members */
+    0,                               /* tp_members */
     PyTensor_get_setters,            // PyTensor_getsetters, /* tp_getset */
     0,                               /* tp_base */
     0,                               /* tp_dict */

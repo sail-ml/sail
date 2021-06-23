@@ -84,74 +84,65 @@ RETURN_OBJECT ops_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
     sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
 
     ret_class->tensor = res;
-    ret_class->requires_grad = res.requires_grad;
-    ret_class->ndim = ((PyTensor*)t1)->ndim;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
 
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
-    START_EXCEPTION_HANDLING
+// RETURN_OBJECT ops_matmul(PyObject* self, PyObject* args) {
+//     START_EXCEPTION_HANDLING
 
-    PyObject* t1;
-    PyObject* t2;
+//     PyObject* t1;
+//     PyObject* t2;
 
-    sail::Tensor tensor1;
-    sail::Tensor tensor2;
+//     sail::Tensor tensor1;
+//     sail::Tensor tensor2;
 
-    if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return nullptr;
-    }
+//     if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
+//         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
+//         return nullptr;
+//     }
 
-    tensor1 = ((PyTensor*)t1)->tensor;
-    tensor2 = ((PyTensor*)t2)->tensor;
+//     tensor1 = ((PyTensor*)t1)->tensor;
+//     tensor2 = ((PyTensor*)t2)->tensor;
 
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+//     PyTensor* ret_class;
+//     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    sail::Tensor res = sail::ops::matmul(tensor1, tensor2);
+//     sail::Tensor res = sail::ops::matmul(tensor1, tensor2);
 
-    ret_class->tensor = res;
-    ret_class->requires_grad = res.requires_grad;
-    ret_class->ndim = ((PyTensor*)t1)->ndim;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
+//     ret_class->tensor = res;
 
-    return (PyObject*)ret_class;
-    END_EXCEPTION_HANDLING
-}
+//     return (PyObject*)ret_class;
+//     END_EXCEPTION_HANDLING
+// }
 
-RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
-    START_EXCEPTION_HANDLING
-    PyObject* t1;
-    PyObject* t2;
-    PyObject* t3;
+// RETURN_OBJECT ops_addmm(PyObject* self, PyObject* args) {
+//     START_EXCEPTION_HANDLING
+//     PyObject* t1;
+//     PyObject* t2;
+//     PyObject* t3;
 
-    sail::Tensor tensor1;
-    sail::Tensor tensor2;
-    sail::Tensor tensor3;
+//     sail::Tensor tensor1;
+//     sail::Tensor tensor2;
+//     sail::Tensor tensor3;
 
-    if (!PyArg_ParseTuple(args, "OOO", &t1, &t2, &t3)) {
-        PyErr_SetString(PyExc_TypeError, "Incorrect arguments");
-        return nullptr;
-    }
+//     if (!PyArg_ParseTuple(args, "OOO", &t1, &t2, &t3)) {
+//         PyErr_SetString(PyExc_TypeError, "Incorrect arguments");
+//         return nullptr;
+//     }
 
-    tensor1 = ((PyTensor*)t1)->tensor;
-    tensor2 = ((PyTensor*)t2)->tensor;
-    tensor3 = ((PyTensor*)t3)->tensor;
+//     tensor1 = ((PyTensor*)t1)->tensor;
+//     tensor2 = ((PyTensor*)t2)->tensor;
+//     tensor3 = ((PyTensor*)t3)->tensor;
 
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+//     PyTensor* ret_class;
+//     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    sail::Tensor res = sail::ops::addmm(tensor1, tensor2, tensor3);
+//     sail::Tensor res = sail::ops::addmm(tensor1, tensor2, tensor3);
 
-    ret_class->tensor = res;
-    ret_class->requires_grad = res.requires_grad;
-    ret_class->ndim = ((PyTensor*)t1)->ndim;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
+//     ret_class->tensor = res;
 
-    return (PyObject*)ret_class;
-    END_EXCEPTION_HANDLING
-}
+//     return (PyObject*)ret_class;
+//     END_EXCEPTION_HANDLING
+// }

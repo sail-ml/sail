@@ -41,9 +41,6 @@ RETURN_OBJECT ops_rollaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
             sail::ops::rollaxis(t1->tensor, axis_val, position_val);
     }
 
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = t1->ndim;
-    ret_class->requires_grad = t1->requires_grad;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(ret_class->base_object);
 
@@ -69,16 +66,13 @@ RETURN_OBJECT ops_moveaxis(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     int axis_val = PyLong_AsLong(axis);
     if (position == NULL) {
-        ret_class->tensor = sail::ops::rollaxis(t1->tensor, axis_val);
+        ret_class->tensor = sail::ops::moveaxis(t1->tensor, axis_val);
     } else {
         int position_val = PyLong_AsLong(position);
         ret_class->tensor =
             sail::ops::moveaxis(t1->tensor, axis_val, position_val);
     }
 
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = t1->ndim;
-    ret_class->requires_grad = t1->requires_grad;
     ret_class->base_object = (PyObject*)t1;
     Py_INCREF(ret_class->base_object);
 

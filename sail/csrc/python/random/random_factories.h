@@ -58,10 +58,6 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     ret_class->tensor =
         sail::random::uniform(sail::TensorShape(t_shape), dt, min, max);
 
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = get_np_type_numFromDtype(dt);
-    ret_class->requires_grad = false;
-
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }
@@ -84,10 +80,6 @@ RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = sail::random::uniform_like(t1->tensor, min, max);
-
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = t1->dtype;
-    ret_class->requires_grad = t1->requires_grad;
 
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
@@ -132,10 +124,6 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
     ret_class->tensor =
         sail::random::normal(sail::TensorShape(t_shape), mean, std);
 
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = get_np_type_numFromDtype(dt);
-    ret_class->requires_grad = false;
-
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }
@@ -158,10 +146,6 @@ RETURN_OBJECT ops_random_normal_like(PyObject* self, PyObject* args,
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = sail::random::normal_like(t1->tensor, mean, std);
-
-    ret_class->ndim = ret_class->tensor.get_shape().ndim();
-    ret_class->dtype = t1->dtype;
-    ret_class->requires_grad = t1->requires_grad;
 
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING

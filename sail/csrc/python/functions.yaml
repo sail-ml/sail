@@ -1,0 +1,173 @@
+
+
+add:
+  signatures:
+    - add(Tensor x1, Tensor x2)
+  internal_func: sail::ops::add
+
+subtract:
+  signatures:
+    - subtract(Tensor x1, Tensor x2)
+  internal_func: sail::ops::subtract
+
+divide:
+  signatures:
+    - divide(Tensor x1, Tensor x2)
+  internal_func: sail::ops::divide
+
+multiply:
+  signatures:
+    - multiply(Tensor x1, Tensor x2)
+  internal_func: sail::ops::multiply
+
+power:
+  signatures:
+    - power(Tensor x1, Tensor x2)
+  internal_func: sail::ops::power
+
+matmul:
+  signatures:
+    - matmul(Tensor x1, Tensor x2)
+  internal_func: sail::ops::matmul
+
+addmm:
+  signatures:
+    - addmm(Tensor x1, Tensor x2, Tensor x3)
+  internal_func: sail::ops::addmm
+
+log:
+  signatures:
+    - log(Tensor x1)
+  internal_func: sail::ops::log
+
+exp:
+  signatures:
+    - exp(Tensor x1)
+  internal_func: sail::ops::exp
+
+clip:
+  signatures:
+    - clip(Tensor x1, double min, double max)
+  internal_func: sail::ops::clip
+
+sum:
+  signatures:
+    - sum(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::sum
+  special_impl: reduction
+mean:
+  signatures:
+    - mean(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::mean
+  special_impl: reduction
+max:
+  signatures:
+    - max(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::max
+  special_impl: reduction
+min:
+  signatures:
+    - min(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::min
+  special_impl: reduction
+
+reshape:
+  signatures:
+    - reshape(Tensor t1, sequence new_shape)
+  internal_func: sail::ops::reshape
+  custom_dispatch: 
+    - |
+        new_shape = PySequence_Tuple(new_shape);
+        int len = PyTuple_Size(new_shape);
+        if (len == -1) {
+            PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+            return nullptr;
+        }
+        TensorSize size;
+        while (len--) {
+            size.push_back(PyLong_AsLong(PyTuple_GetItem(new_shape, len)));
+        }
+
+        std::reverse(size.begin(), size.end());
+
+        sail::TensorShape new_ = sail::TensorShape(size);
+
+        ret_class->tensor = t1->tensor.reshape(new_);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+transpose:
+  signatures:
+    - transpose(Tensor t1, sequence tuple=NULL)
+  internal_func: sail::ops::transpose
+  custom_dispatch: 
+    - |
+        if (tuple == NULL) {
+            ret_class->tensor = sail::ops::transpose(t1->tensor);
+        } else {
+            tuple = PySequence_Tuple(tuple);
+            int len = PyTuple_Size(tuple);
+            if (len == -1) {
+                PyErr_SetString(PyExc_TypeError,
+                                "Shape must have atleat 1 element.");
+                return nullptr;
+            }
+            std::vector<long> shape;
+            while (len--) {
+                shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
+            }
+            std::reverse(shape.begin(), shape.end());
+
+            ret_class->tensor = sail::ops::transpose(t1->tensor, shape);
+        }
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);
+
+expand_dims:
+  signatures:
+    - expand_dims(Tensor t1, int dim)
+  internal_func: sail::ops::expand_dims
+  custom_dispatch: 
+    - |
+        ret_class->tensor = t1->tensor.expand_dims(dim);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+        return (PyObject*)ret_class;
+
+squeeze:
+  signatures:
+    - squeeze(Tensor t1, int dim)
+  internal_func: sail::ops::expand_dims
+  custom_dispatch: 
+    - |
+        ret_class->tensor = t1->tensor.squeeze(dim);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+        return (PyObject*)ret_class;
+
+rollaxis:
+  signatures:
+    - rollaxis(Tensor t1, int axis=0, int position=0)
+  internal_func: sail::ops::rollaxis
+  custom_dispatch: 
+    - |
+      ret_class->tensor =
+                sail::ops::rollaxis(t1->tensor, axis, position);
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);
+
+moveaxis:
+  signatures:
+    - moveaxis(Tensor t1, int axis=0, int position=0)
+  internal_func: sail::ops::moveaxis
+  custom_dispatch: 
+    - |
+        ret_class->tensor =
+                sail::ops::moveaxis(t1->tensor, axis, position);
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);

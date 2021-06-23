@@ -47,9 +47,6 @@ RETURN_OBJECT ops_sum(PyObject* self, PyObject* args, PyObject* kwargs) {
                                            PyLong_AsLong(axis), (bool)keepdims);
     }
 
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->requires_grad = ret_class->tensor.requires_grad;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }
@@ -73,9 +70,6 @@ RETURN_OBJECT ops_max(PyObject* self, PyObject* args, PyObject* kwargs) {
                                            PyLong_AsLong(axis), (bool)keepdims);
     }
 
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->requires_grad = ret_class->tensor.requires_grad;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }
@@ -99,9 +93,6 @@ RETURN_OBJECT ops_mean(PyObject* self, PyObject* args, PyObject* kwargs) {
             ((PyTensor*)t1)->tensor, PyLong_AsLong(axis), (bool)keepdims);
     }
 
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->requires_grad = ret_class->tensor.requires_grad;
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
 }

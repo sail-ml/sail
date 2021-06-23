@@ -8,6 +8,7 @@
 #include "numpy/arrayobject.h"
 
 #include "error_defs.h"
+#include "functions.h"
 #include "ops/ops_def.h"
 #include "py_dtypes/py_dtype.h"
 #include "py_module/py_module.h"
@@ -47,6 +48,7 @@ PyMODINIT_FUNC PyInit_libsail_c(void) {
     PyModule_AddObject(m, "float32", float32);
     PyModule_AddObject(m, "float64", float64);
     PyModule_AddFunctions(m, OpsMethods);
+    PyModule_AddFunctions(m, SailOpsMethods);
 
     /// RANDOM MODULE
 

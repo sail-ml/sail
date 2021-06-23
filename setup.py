@@ -65,6 +65,8 @@ class CMakeBuild(build_ext):
     def build_cmake(self, ext):
         subprocess.run(["rm", "-rf", "build/*"])
         subprocess.run(["python", "process_docs.py"], cwd="sail")
+        subprocess.run(["python", "generate.py"], cwd="sail/csrc/python")
+        # exit()
         global allow_avx
         cwd = pathlib.Path().absolute()
 
@@ -133,6 +135,9 @@ class CMakeBuild(build_ext):
         copyfile("%s/liblosses.so" % build_path, "%s/../losses/liblosses.so" % build_path)
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
         copyfile("%s/librandom.so" % build_path, "%s/../rand/librandom.so" % build_path)
+
+        subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
+
 
 def s():
    

@@ -15,38 +15,34 @@
 #include "../macros.h"
 #include "../py_utils.h"
 
-/** begin block
- * name = [add, sub, mul, div]
- * fname = [add, subtract, multiply, divide]
- * op = [+, -, *, /]
- */
+// /** begin block
+//  * name = [add, sub, mul, div]
+//  * fname = [add, subtract, multiply, divide]
+//  * op = [+, -, *, /]
+//  */
 
-RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
-    START_EXCEPTION_HANDLING
-    PyObject* t1;
-    PyObject* t2;
+// RETURN_OBJECT ops_$name$(PyObject* self, PyObject* args) {
+//     START_EXCEPTION_HANDLING
+//     PyObject* t1;
+//     PyObject* t2;
 
-    sail::Tensor tensor1;
-    sail::Tensor tensor2;
+//     sail::Tensor tensor1;
+//     sail::Tensor tensor2;
 
-    if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
-        PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-        return nullptr;
-    }
+//     if (!PyArg_ParseTuple(args, "OO", &t1, &t2)) {
+//         PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
+//         return nullptr;
+//     }
 
-    PyTensor* ret_class;
-    ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+//     PyTensor* ret_class;
+//     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor =
-        sail::ops::$fname$(((PyTensor*)t1)->tensor, ((PyTensor*)t2)->tensor);
+//     ret_class->tensor =
+//         sail::ops::$fname$(((PyTensor*)t1)->tensor, ((PyTensor*)t2)->tensor);
 
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = ((PyTensor*)t1)->dtype;
-    ret_class->requires_grad = ret_class->tensor.requires_grad;
-
-    return (PyObject*)ret_class;
-    END_EXCEPTION_HANDLING
-}
+//     return (PyObject*)ret_class;
+//     END_EXCEPTION_HANDLING
+// }
 
 /** end block **/
 
@@ -66,9 +62,6 @@ RETURN_OBJECT cast_int32(PyObject* unused, PyObject* args) {
     ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
 
     ret_class->tensor = tensor1;
-
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->dtype = 5;
 
     return (PyObject*)ret_class;
     END_EXCEPTION_HANDLING
