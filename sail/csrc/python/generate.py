@@ -167,6 +167,11 @@ for f in functions:
 
     function_name = f 
     dispatches = []
+    if "full_impl" in functions[f]:
+        funcs.append(functions[f]["full_impl"])
+        used_funcs.append(FUNCS_MEMBER.format(name=function_name))
+        continue
+    
     if ("special_impl" in functions[f]):
         if functions[f]["special_impl"] == "reduction":
             dispatches = REDUCTION_DISPATCH_CODE.format(
