@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "core/error.h"
+#include "core/exception.h"
 #include "core/tensor_shape.h"
 #include "core/ops/ops.h"
 

@@ -4,7 +4,6 @@
 
 #include "Tensor.h"
 #include "dtypes.h"
-#include "kernels/kernel.h"
 
 namespace sail {
 

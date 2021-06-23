@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 project(sail_c LANGUAGES CXX) # CUDA
 # find_package(CUDA REQUIRED)
 
+
 file(GLOB_RECURSE headers "*.h")
 file(GLOB_RECURSE files "*.cpp")
+
 
 include(FindBLAS)
 
@@ -16,3 +18,7 @@ endif()
 target_link_libraries(core PUBLIC ${SAIL_LIBRARIES})
 
 target_include_directories(core PRIVATE "../libs/xsimd/include")
+
+
+
+

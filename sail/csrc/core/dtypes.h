@@ -3,7 +3,7 @@
 #include <immintrin.h>
 #include <cstring>
 // #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "utils.h"
 
 // using Tensor = sail::Tensor;
@@ -104,7 +104,8 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
             return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
         default:
-            throw DtypeError{"Dtype error in launch arithmetic"};
+            THROW_ERROR_DETAILED(DtypeError,
+                                 "Dtype error in launch arithmetic");
     }
 }
 
@@ -146,7 +147,7 @@ inline Dtype GetDtype(const std::string& name) {
             return pair.dtype;
         }
     }
-    throw DtypeError{"Dtype not found get dtype"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found get dtype");
 }
 
 template <typename T>
@@ -166,7 +167,7 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
             break;
     }
     // throw DtypeError{"unsupported NumPy dtype"};
-    throw DtypeError{"Dtype not found np int"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found np int");
 }
 inline int get_np_type_numFromDtype(Dtype dtype) {
     switch (dtype) {
@@ -183,7 +184,7 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
     }
     // std::cout << dtype << std::endl;
     // throw DtypeError{"unsupported NumPy dtype"};
-    throw DtypeError{"Dtype not found NP DTYE"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found NP DTYPE");
 }
 
 inline long GetDtypeSize(Dtype dtype) {
@@ -206,7 +207,7 @@ inline long GetDtypeSize(Dtype dtype) {
             return pair.size;
         }
     }
-    throw DtypeError{"Dtype not found get size"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found get size");
 }
 
 typedef struct {
@@ -251,7 +252,7 @@ inline alignemnt_information getAlignment(Dtype dtype) {
             info = {32, 8, 4};
             return info;
         default:
-            throw DtypeError{"Dtype error GET ALIGNMENT"};
+            THROW_ERROR_DETAILED(DtypeError, "Dtype not found GET ALIGNMENT");
     }
 }
 

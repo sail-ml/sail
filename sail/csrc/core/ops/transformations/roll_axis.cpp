@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 #include "roll_axis.h"
 #include "tensor_shape.h"

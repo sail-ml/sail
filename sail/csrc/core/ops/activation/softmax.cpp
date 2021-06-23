@@ -5,7 +5,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 
 #include "softmax.h"
@@ -25,6 +25,8 @@ Tensor softmax(Tensor& input, int axis = 1) {
     Tensor y = input - max;
     y = ops::exp(y);
     y = y / ops::sum(y, axis, true);
+    // Tensor y = empty_like(input);
+    // sail::internal::softmax_stub(input, axis, y);
     return y;
 }
 

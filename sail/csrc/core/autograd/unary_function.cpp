@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 #include "function.h"
 #include "ops/ops.h"

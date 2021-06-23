@@ -4,7 +4,7 @@
 #include "autograd/autograd.h"
 #include "elementwise.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "tools.h"
 
 #define MAX(a, b) (((a.ndim) > (b.ndim)) ? (a) : (b))
@@ -71,7 +71,7 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
         broadcast = true;
     }
 
-    $kName$TTKernel().execute(t1, t2, empty_tensor, broadcast);
+    sail::internal::$name$_stub(t1, t2, empty_tensor, broadcast);
 
     return empty_tensor;
 }
@@ -105,7 +105,7 @@ Tensor $name$(Tensor& tensor1, const Tensor& tensor2) {
         t2 = tensor2;
     }
 
-    $kName$TTKernel().execute(t1, t2, t1, broadcast);
+    sail::internal::add_stub(t1, t2, t1, broadcast);
 
     return t1;
 }

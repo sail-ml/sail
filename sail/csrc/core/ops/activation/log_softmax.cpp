@@ -6,7 +6,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 
 #include "softmax.h"

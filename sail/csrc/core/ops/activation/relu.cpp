@@ -5,7 +5,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 
 #include "relu.h"
@@ -24,7 +24,7 @@ Tensor ReLU(Tensor& input) {
     }
 
     empty_tensor = empty_like(input);
-    ClipMinOnlyKernel().execute(input, 0.0, empty_tensor);
+    sail::internal::clip_min_stub(input, 0.0, empty_tensor);
     return empty_tensor;
 }
 

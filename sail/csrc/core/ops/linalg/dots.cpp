@@ -7,8 +7,8 @@
 #include "autograd/autograd.h"
 #include "dots.h"
 #include "dtypes.h"
-#include "error.h"
-#include "kernels/kernel.h"
+#include "exception.h"
+#include "kernels/Kernel.h"
 
 namespace sail {
 
@@ -92,9 +92,10 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
     TensorShape dot_shape =
         TensorShape({a_remain_total_size, b_remain_total_size});
     Tensor dot_out = zeros(dot_shape, t1.get_dtype());
-
-    DotTTKernel().execute(t1.transpose(a_roll_axes).reshape(a_shape),
-                          t2.transpose(b_roll_axes).reshape(b_shape), dot_out);
+    // DotTTKernel().execute
+    sail::internal::matmul_stub(t1.transpose(a_roll_axes).reshape(a_shape),
+                                t2.transpose(b_roll_axes).reshape(b_shape),
+                                dot_out, true, "N", "N");
     LongVec out_shape = a_remain_dims.shape;
     std::copy(b_remain_dims.shape.begin(), b_remain_dims.shape.end(),
               std::back_inserter(out_shape));
@@ -167,7 +168,7 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
     TensorShape s = TensorShape(new_shape);
     Tensor empty_tensor = empty(0, t1.get_dtype(), s);
 
-    DotTTKernel().execute(t1, t2, empty_tensor, true, trans_a, trans_b);
+    sail::internal::matmul_stub(t1, t2, empty_tensor, true, trans_a, trans_b);
 
     return empty_tensor;
 }
@@ -207,7 +208,7 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
     Tensor add_ = ops::broadcast_to(add, s);
     Tensor empty_tensor = clone(add_);
 
-    DotTTKernel().execute(t1, t2, empty_tensor);
+    sail::internal::matmul_stub(t1, t2, empty_tensor, false, "N", "N");
 
     return empty_tensor;
 }

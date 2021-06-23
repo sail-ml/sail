@@ -8,7 +8,7 @@
 #include "Tensor.h"
 #include "factories.h"
 #include "function.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 
 namespace sail {
@@ -23,7 +23,8 @@ Tensor SoftmaxCrossEntropyLoss::forward(TensorVector inputs) {
 TensorVector SoftmaxCrossEntropyLoss::backward(Tensor& grad) {
     Tensor y = ops::softmax(Function::arg_storage[0]);
     Tensor z = empty(0, y.get_dtype(), y.get_shape());
-    SoftmaxBackwardSubtractKernel().execute(y, Function::arg_storage[1], z);
+    sail::internal::softmax_backward_partial_stub(y, Function::arg_storage[1],
+                                                  z);
     return {z};
 }
 

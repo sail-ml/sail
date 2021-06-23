@@ -53,10 +53,6 @@ TensorIterator::TensorIterator(TensorShape& t_shape) {
     _numel =
         std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<long>());
 
-    std::cout << "S " << getVectorString(shape) << std::endl;
-    std::cout << "ST " << getVectorString(strides) << std::endl;
-    std::cout << "NUMEL " << _numel << std::endl;
-    std::cout << "NDIM " << _ndim << std::endl;
     std::vector<long> co(i2, 0);
     coordinates = co;
 }

@@ -5,7 +5,7 @@
 #include "autograd/reduction_function.h"
 #include "dtypes.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 
 namespace sail {
 namespace ops {
@@ -32,7 +32,7 @@ Tensor sum(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
 
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
 
-    SumTKernel().execute(tensor1, empty_tensor, axis);
+    sail::internal::sum_stub(tensor1, axis, empty_tensor);
     if (keepdims) {
         empty_tensor = empty_tensor._expand_dims_inplace(axis);
     }
@@ -60,7 +60,7 @@ Tensor mean(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
 
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
 
-    MeanKernel().execute(tensor1, empty_tensor, axis);
+    sail::internal::mean_stub(tensor1, axis, empty_tensor);
     if (keepdims) {
         empty_tensor = empty_tensor._expand_dims_inplace(axis);
     }
@@ -88,7 +88,7 @@ Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
 
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
 
-    MaxKernel().execute(tensor1, empty_tensor, axis);
+    sail::internal::max_stub(tensor1, axis, empty_tensor);
     if (keepdims) {
         empty_tensor = empty_tensor._expand_dims_inplace(axis);
     }

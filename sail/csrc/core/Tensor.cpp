@@ -10,7 +10,7 @@
 // #include "cuda/cuda_math.h"
 #include "dtypes.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
 #include "types.h"
@@ -25,7 +25,7 @@ using TensorVector = std::vector<Tensor>;
 namespace sail {
 
 std::ostream& operator<<(std::ostream& os, const Tensor& tensor) {
-    ReprKernel().execute(tensor, os);
+    sail::internal::repr_stub(tensor, os);
     return os;
 }
 
@@ -43,9 +43,9 @@ Tensor Tensor::reshape(const TensorShape& new_shape) const {
 Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) const {
     int s = new_shape.numel();
     if (s != numel()) {
-        throw DimensionError{"Cannot reshape tensor of shape ",
+        THROW_ERROR_DETAILED(DimensionError, "Cannot reshape tensor of shape ",
                              get_shape().get_string(), " to ",
-                             new_shape.get_string()};
+                             new_shape.get_string());
     }
     set_shape(new_shape);
     return *this;

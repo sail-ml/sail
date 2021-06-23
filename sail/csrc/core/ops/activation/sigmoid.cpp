@@ -5,7 +5,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 
 #include "sigmoid.h"
@@ -22,7 +22,8 @@ Tensor sigmoid(Tensor& input) {
         return e;
     }
     Tensor empty_tensor = empty_like(input);
-    SigmoidKernel().execute(input, empty_tensor);
+    sail::internal::sigmoid_stub(
+        input, empty_tensor);  // SigmoidKernel().execute(input, empty_tensor);
     return empty_tensor;
 }
 

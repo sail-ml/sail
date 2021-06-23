@@ -5,7 +5,7 @@
 
 #include "Tensor.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 
 namespace sail {
 namespace ops {

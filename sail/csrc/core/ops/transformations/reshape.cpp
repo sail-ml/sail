@@ -4,7 +4,7 @@
 
 #include "reshape.h"
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 #include "tensor_shape.h"
 
@@ -15,9 +15,9 @@ namespace ops {
 Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape) {
     int s = new_shape.numel();
     if (s != tensor1.numel()) {
-        throw DimensionError{"Cannot reshape tensor of shape ",
+        THROW_ERROR_DETAILED(DimensionError, "Cannot reshape tensor of shape ",
                              tensor1.get_shape().get_string(), " to ",
-                             new_shape.get_string()};
+                             new_shape.get_string());
     }
     Tensor new_tensor;
     if (tensor1.is_view()) {  // reshaping a view gets messy

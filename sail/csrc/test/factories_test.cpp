@@ -2,7 +2,7 @@
 #include "core/factories.h"
 #include "core/ops/ops.h"
 #include "core/Tensor.h"
-#include "core/error.h"
+#include "core/exception.h"
 #include "core/dtypes.h"
 #include "core/tensor_shape.h"
 

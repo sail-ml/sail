@@ -96,11 +96,11 @@ class CMakeBuild(build_ext):
         print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"] and allow_avx):
             print ("Compiling Sail with AVX2 Support")
-            cmake_args.append("-DUSE_AVX2=ON")
+            cmake_args.append("-DUSE_AVX=ON")
             cmake_args.append("-DUSE_MKL=ON")
         else:
             print ("Compiling Sail without AVX2 Support")
-            cmake_args.append("-DUSE_AVX2=OFF")
+            cmake_args.append("-DUSE_AVX=OFF")
             cmake_args.append("-DUSE_MKL=OFF")
 
         if (coverage):

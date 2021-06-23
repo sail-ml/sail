@@ -5,7 +5,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "pow.h"
 #include "tools.h"
 
@@ -30,7 +30,7 @@ Tensor power(Tensor& tensor1, Tensor& tensor2) {
         TensorShape s = TensorShape(new_);
         empty_tensor.set_shape(s);
     }
-    PowerKernel().execute(tensor1, tensor2, empty_tensor, broadcast);
+    sail::internal::power_stub(tensor1, tensor2, empty_tensor, broadcast);
     return empty_tensor;
 }
 Tensor exp(Tensor& tensor1) {
@@ -41,7 +41,7 @@ Tensor exp(Tensor& tensor1) {
         return empty_tensor;
     }
     Tensor empty_tensor = empty_like(tensor1);
-    PowerExpKernel().execute(tensor1, empty_tensor);
+    sail::internal::exp_stub(tensor1, empty_tensor);
     return empty_tensor;
 }
 Tensor log(Tensor& tensor1) {
@@ -52,7 +52,7 @@ Tensor log(Tensor& tensor1) {
         return empty_tensor;
     }
     Tensor empty_tensor = empty_like(tensor1);
-    LogKernel().execute(tensor1, empty_tensor);
+    sail::internal::log_stub(tensor1, empty_tensor);
     return empty_tensor;
 }
 

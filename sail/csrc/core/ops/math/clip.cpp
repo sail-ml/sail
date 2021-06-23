@@ -2,7 +2,7 @@
 #include "autograd/autograd.h"
 #include "dtypes.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 
 namespace sail {
 
@@ -20,7 +20,7 @@ Tensor clip(Tensor& tensor1, double min) {
         return empty_tensor;
     }
     empty_tensor = empty(0, tensor1.get_dtype(), tensor1.get_shape());
-    ClipMinOnlyKernel().execute(tensor1, min, empty_tensor);
+    sail::internal::clip_min_stub(tensor1, min, empty_tensor);
     return empty_tensor;
 }
 
@@ -35,7 +35,7 @@ Tensor clip(Tensor& tensor1, double min, double max) {
         return empty_tensor;
     }
     empty_tensor = empty_like(tensor1);
-    ClipKernel().execute(tensor1, min, max, empty_tensor);
+    sail::internal::clip_stub(tensor1, min, max, empty_tensor);
     return empty_tensor;
 }
 }  // namespace ops

@@ -70,6 +70,7 @@
     {                                                        \
         if (!PyObject_TypeCheck(t1, &PyTensorType) &&        \
             !PyObject_TypeCheck(t2, &PyTensorType)) {        \
+            std::cout << "why here" << std::endl;            \
             return nullptr;                                  \
         }                                                    \
         if (PyObject_TypeCheck(t1, &PyTensorType) &&         \

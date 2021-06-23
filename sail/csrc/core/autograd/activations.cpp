@@ -3,10 +3,10 @@
 #include <iostream>
 #include <vector>
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 #include "function.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
 
@@ -24,7 +24,7 @@ Tensor Sigmoid::forward(TensorVector inputs) {
 TensorVector Sigmoid::backward(Tensor& grad) {
     Tensor stored = Function::result_storage[0];
     Tensor result_tensor = empty(0, stored.get_dtype(), stored.get_shape());
-    SigmoidBackwardKernel().execute(stored, result_tensor);
+    sail::internal::sigmoid_backward_stub(stored, result_tensor);
     return {grad * result_tensor};
     // return {grad *
     //         (stored * (ones(stored.get_shape(), stored.get_dtype()) -

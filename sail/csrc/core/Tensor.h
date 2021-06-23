@@ -7,7 +7,7 @@
 #include "TensorBody.h"
 
 #include "dtypes.h"
-#include "error.h"
+#include "exception.h"
 #include "tensor_shape.h"
 #include "types.h"
 

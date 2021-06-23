@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "tensor_shape.h"
 #include "transpose.h"
 

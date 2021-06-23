@@ -9,7 +9,7 @@
 #include "../ops/elementwise.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "core/error.h"
+#include "core/exception.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
 

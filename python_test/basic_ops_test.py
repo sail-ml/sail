@@ -24,9 +24,9 @@ class AddTest(UnitTest):
             x1 = sail.Tensor(arr1, requires_grad=rq)
             x2 = sail.Tensor(arr2, requires_grad=rq)
             
-            t = time.time()
+            # t = time.time()
             x3 = sail.add(x1, x2) 
-            times.append(time.time() - t)
+            # times.append(time.time() - t)
             arr3 = arr1 + arr2 
 
             self.assert_eq_np_sail(arr3, x3)
@@ -41,9 +41,9 @@ class AddTest(UnitTest):
             c = list(c)
             for i in range(len(c)):
                 
-                arr1 = np.random.uniform(0, 1, (c))
+                arr1 = np.random.uniform(0, 1, (c)).astype(np.float32)
                 c[i] = 1
-                arr2 = np.random.uniform(0, 1, (c))
+                arr2 = np.random.uniform(0, 1, (c)).astype(np.float32)
                 
                 x1 = sail.Tensor(arr1, requires_grad=rq)
                 x2 = sail.Tensor(arr2, requires_grad=rq)
@@ -323,7 +323,7 @@ class DivideTest(UnitTest):
             times.append(time.time() - t)
             arr3 = arr1 / arr2 
 
-            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq_np_sail(arr3, x3, eps=1e-5)
             self.assert_eq(x3.requires_grad, rq)
         return
 
@@ -347,7 +347,7 @@ class DivideTest(UnitTest):
                 times.append(time.time() - t)
                 arr3 = arr1 / arr2 
 
-                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq_np_sail(arr3, x3, eps=1e-5)
                 self.assert_eq(x3.requires_grad, rq)
 
         return
@@ -359,7 +359,7 @@ class DivideTest(UnitTest):
         a_np = a.numpy()
         b_np = b.numpy()
 
-        self.assert_eq_np_sail(a_np / b_np, a / b)
+        self.assert_eq_np_sail(a_np / b_np, a / b, eps=1e-5)
 
         a = sail.random.uniform(1, 2, (10, 12))
         b = sail.random.uniform(1, 2, (10, 1))
@@ -367,7 +367,7 @@ class DivideTest(UnitTest):
         a_np = a.numpy()
         b_np = b.numpy()
 
-        self.assert_eq_np_sail(a_np / b_np, a / b)
+        self.assert_eq_np_sail(a_np / b_np, a / b, eps=1e-5)
 
         a = sail.random.uniform(1, 2, (1, 10, 12))
         b = sail.random.uniform(1, 2, (3, 10, 1))
@@ -375,7 +375,7 @@ class DivideTest(UnitTest):
         a_np = a.numpy()
         b_np = b.numpy()
 
-        self.assert_eq_np_sail(a_np / b_np, a / b)
+        self.assert_eq_np_sail(a_np / b_np, a / b, eps=1e-5)
 
         return
 
@@ -531,7 +531,7 @@ class LogTest(UnitTest):
             times.append(time.time() - t)
             arr3 = np.log(arr1) 
 
-            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq_np_sail(arr3, x3, eps=1e-6)
             self.assert_eq(x3.requires_grad, rq)
         return
 

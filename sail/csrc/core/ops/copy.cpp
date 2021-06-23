@@ -3,7 +3,7 @@
 #include "Tensor.h"
 #include "copy.h"
 #include "dtypes.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "types.h"
 
 #include "factories.h"
@@ -17,7 +17,7 @@ Tensor copy(Tensor& tensor1) {
     empty_tensor =
         empty(tensor1.get_ndim(), tensor1.get_dtype(), tensor1.get_shape());
 
-    CopyTTKernel().execute(tensor1, empty_tensor);
+    sail::internal::cast_stub(tensor1, empty_tensor);  // change to basic copy
 
     return empty_tensor;
 }
@@ -30,7 +30,7 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
     // }
     Tensor empty_tensor = empty(tensor1.get_ndim(), dt, tensor1.get_shape());
 
-    CopyTTKernel().execute(tensor1, empty_tensor);
+    sail::internal::cast_stub(tensor1, empty_tensor);
 
     return empty_tensor;
 }

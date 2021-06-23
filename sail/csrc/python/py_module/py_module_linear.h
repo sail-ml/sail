@@ -34,7 +34,7 @@ PyLinearModule_get_weights(PyModule *self, void *closure) {
     START_EXCEPTION_HANDLING
     PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     // Linear a = *(Linear *)self->module;
-    Tensor weights = (*(Linear *)self->module).weights;
+    sail::Tensor weights = (*(Linear *)self->module).weights;
     GENERATE_FROM_TENSOR(py_weights, weights);
 
     return (PyObject *)py_weights;

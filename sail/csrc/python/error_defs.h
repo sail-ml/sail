@@ -6,7 +6,7 @@
 #include <iostream>
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "core/error.h"
+#include "core/exception.h"
 // #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 

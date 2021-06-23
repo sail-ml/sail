@@ -6,7 +6,7 @@
 #include <iterator>
 #include <vector>
 
-#include "error.h"
+#include "exception.h"
 #include "types.h"
 
 inline bool isAlignedAs(const void* p, const int8_t alignment) {

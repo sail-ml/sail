@@ -9,7 +9,7 @@ file(GLOB_RECURSE PYTHON_BIND_FILES "python/*.cpp")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
-# ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
+# ADD_DEFINITIONS(-DUSE_AVX) # NEED FOR AVX2 SUPPORT IN KERNELS
 FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
@@ -21,10 +21,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -O0 --coverage -fprofile-abs-path 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -w -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 else()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -pthread -fopenmp -Ofast -ffast-math")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
-endif()
-
-if (USE_MKL)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 endif()
 
 set(CMAKE_DIR_TEMP ${CMAKE_CURRENT_SOURCE_DIR})

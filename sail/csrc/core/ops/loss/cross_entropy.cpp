@@ -7,7 +7,7 @@
 #include "autograd/autograd.h"
 #include "cross_entropy.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "ops/ops.h"
 using namespace std::chrono;
 
@@ -38,7 +38,7 @@ Tensor softmax_cross_entropy(Tensor& logits, Tensor& targets) {
 
     Tensor temp_res = zeros(TensorShape({1}),
                             dt);  // ops::sum(log_y * casted_one_hot_tensor);
-    SoftmaxMulSumKernel().execute(log_y, targets, temp_res);
+    sail::internal::softmax_mul_sum_stub(log_y, targets, temp_res);
     result = temp_res * t_coeff;
 
     return result;

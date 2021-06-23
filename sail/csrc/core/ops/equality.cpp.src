@@ -4,7 +4,7 @@
 
 #include "Tensor.h"
 #include "factories.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "math/tools.h"
 
 namespace sail {
@@ -13,6 +13,7 @@ namespace ops {
 // clang-format off
 /** begin block
  * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
+ * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub]
  * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
  */
 
@@ -37,7 +38,7 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
         empty_tensor = empty_like(t1);
     }
 
-    $kName$().execute(t1, t2, empty_tensor, broadcast);
+    sail::internal::$stub$(t1, t2, empty_tensor, broadcast);
     return empty_tensor;
 }
 

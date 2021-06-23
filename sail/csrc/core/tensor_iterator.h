@@ -59,8 +59,8 @@ class Vec2D {
     const T& at(int row, int col) const { return vec[row * cols + col]; }
     T& at(int row, int col) { return vec[row * cols + col]; }
 
-    const T& at_back(int row) const { return vec[row * last_loc]; }
-    T& at_back(int row) { return vec[row * last_loc]; }
+    const T& at_back(int row) const { return vec[row * cols + (cols - 1)]; }
+    T& at_back(int row) { return vec[row * cols + (cols - 1)]; }
 };
 
 class TensorIterator {
@@ -83,7 +83,6 @@ class TensorIterator {
     virtual void backup_d_ptr();
     long next();
 
-   protected:
     long _numel = 1;
     long _ndim = 0;
     long _out_loop_size = 1;
