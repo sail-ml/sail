@@ -78,21 +78,21 @@ static void PyTensor_dealloc(PyTensor *self) {
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
-RETURN_OBJECT
-PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+static PyObject *PyTensor_new(PyTypeObject *type, PyObject *args,
+                              PyObject *kwds) {
     PyTensor *self;
     self = (PyTensor *)type->tp_alloc(type, 0);
 
     return (PyObject *)self;
 }
 
-RETURN_OBJECT PyTensor_repr(PyTensor *self) {
+static PyObject *PyTensor_repr(PyTensor *self) {
     START_EXCEPTION_HANDLING
     return PyUnicode_FromString(sail::ops::tensor_repr(self->tensor).c_str());
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure) {
+static PyObject *PyTensor_get_ndim(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     long x = static_cast<long>(self->tensor.get_ndim());
     return PyLong_FromLong(x);
@@ -140,8 +140,7 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
     return array;
     END_EXCEPTION_HANDLING
 }
-RETURN_OBJECT
-PyTensor_get_numpy(PyTensor *self, void *closure) {
+static PyObject *PyTensor_get_numpy(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     // Py_INCREF(self);
 
@@ -152,7 +151,7 @@ PyTensor_get_numpy(PyTensor *self, void *closure) {
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure) {
+static PyObject *PyTensor_get_grad(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     if (self->tensor.has_grad() == false) {
         Py_INCREF(Py_None);
@@ -176,7 +175,7 @@ static int PyTensor_set_grad(PyTensor *self, void *closure) {
     return -1;
 }
 
-RETURN_OBJECT PyTensor_get_requires_grad(PyTensor *self, void *closure) {
+static PyObject *PyTensor_get_requires_grad(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     if (self->tensor.requires_grad) {
         Py_RETURN_TRUE;
@@ -201,8 +200,8 @@ static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
     END_EXCEPTION_HANDLING_INT
 }
 
-RETURN_OBJECT
-PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
+static PyObject *PyTensor_astype(PyObject *self, PyObject *args,
+                                 void *closure) {
     START_EXCEPTION_HANDLING
     PyObject *type;
 
@@ -221,8 +220,7 @@ PyTensor_astype(PyObject *self, PyObject *args, void *closure) {
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT
-PyTensor_get_shape(PyTensor *self, void *closure) {
+static PyObject *PyTensor_get_shape(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     PyObject *tuple = PyTuple_New(self->tensor.get_ndim());
     int c = 0;
@@ -239,7 +237,7 @@ static int PyTensor_set_shape(PyTensor *self, void *closure) {
     return -1;
 }
 
-RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure) {
+static PyObject *PyTensor_backward(PyTensor *self, void *closure) {
     START_EXCEPTION_HANDLING
     self->tensor.backward();
     Py_INCREF(Py_None);

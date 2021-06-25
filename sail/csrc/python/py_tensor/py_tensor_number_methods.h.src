@@ -6,7 +6,6 @@
 #include <iostream>
 #include "../error_defs.h"
 #include "../macros.h"
-#include "../ops/elementwise.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
 #include "core/exception.h"
@@ -18,7 +17,7 @@
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
+static PyObject *PyTensor_$name$(PyObject *t1, PyObject *t2) {
     START_EXCEPTION_HANDLING
     sail::Tensor tensor1;
     sail::Tensor tensor2;

@@ -29,7 +29,7 @@ TensorVector Log::backward(Tensor& grad) {
 }
 
 Tensor ClipMinOnly::forward(TensorVector inputs) {
-    return ops::clip(inputs[0], min);
+    return ops::clip_min(inputs[0], min);
 }
 TensorVector ClipMinOnly::backward(Tensor& grad) {
     Tensor cond_check =

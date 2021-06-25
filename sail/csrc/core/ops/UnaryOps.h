@@ -3,13 +3,13 @@
 #include <iostream>
 
 #include "Tensor.h"
-#include "factories.h"
-#include "kernels/Kernel.h"
 
 namespace sail {
+
 namespace ops {
 
-Tensor sigmoid(Tensor& input);
+Tensor negate(const Tensor& tensor1);
 
 }  // namespace ops
+
 }  // namespace sail

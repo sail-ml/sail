@@ -16,8 +16,7 @@ typedef struct {
 } PyDtype;
 
 ///////////// REPR ////////////////////////////
-RETURN_OBJECT
-PyDtype_Repr(PyDtype *obj) {
+static PyObject *PyDtype_Repr(PyDtype *obj) {
     if (obj->dtype == Dtype::sInt32) {
         return PyUnicode_FromString("<class 'sail.int32'>");
     } else if (obj->dtype == Dtype::sFloat32) {

@@ -43,8 +43,8 @@ static void PyOptimizer_dealloc(PyOptimizer *self) {
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
-RETURN_OBJECT
-PyOptimizer_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+static PyObject *PyOptimizer_new(PyTypeObject *type, PyObject *args,
+                                 PyObject *kwds) {
     PyOptimizer *self;
     self = (PyOptimizer *)type->tp_alloc(type, 0);
     return (PyObject *)self;
@@ -52,8 +52,8 @@ PyOptimizer_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
 /////////////////////////////////////////
 
-RETURN_OBJECT PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
-                                       PyObject *kwargs) {
+static PyObject *PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
+                                          PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     //     PyErr_SetString(PyExc_NotImplementedError, "");
     //     return nullptr;
@@ -69,7 +69,7 @@ RETURN_OBJECT PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT PyOptimizer_update(PyOptimizer *self) {
+static PyObject *PyOptimizer_update(PyOptimizer *self) {
     START_EXCEPTION_HANDLING
     //     PyErr_SetString(PyExc_NotImplementedError, "");
     //     return nullptr;

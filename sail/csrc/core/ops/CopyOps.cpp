@@ -1,7 +1,7 @@
 #include <iostream>
 
+#include "CopyOps.h"
 #include "Tensor.h"
-#include "copy.h"
 #include "dtypes.h"
 #include "kernels/Kernel.h"
 #include "types.h"

@@ -9,7 +9,7 @@ file(GLOB_RECURSE files "*.cpp")
 
 include(FindBLAS)
 
-add_library(core STATIC ${headers} ${files} )#"cuda/cuda_math.h" "cuda/cuda_math.cu")
+add_library(core STATIC ${headers} ${files} )
 target_include_directories(core PUBLIC ./)
 target_include_directories(core PUBLIC ${SAIL_INCLUDE_DIRS})
 if (COVERAGE)

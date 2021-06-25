@@ -7,14 +7,12 @@
 // #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 
-#include "ops/ops_def.h"
 #include "py_dtypes/py_dtype.h"
 #include "py_module/py_module.h"
 #include "py_tensor/py_tensor.h"
 
 static PyModuleDef module = {PyModuleDef_HEAD_INIT, "modules",
-                             "Example module that creates an extension type.",
-                             -1, 0};
+                             "Modules for SAIL", -1, 0};
 
 PyMODINIT_FUNC PyInit_libmodules(void) {
     import_array();

@@ -8,8 +8,6 @@
 #include "core/dtypes.h"
 #include "numpy/arrayobject.h"
 
-#include "../macros.h"
-
 using SCTensor = sail::Tensor;
 
 typedef struct {
@@ -24,34 +22,35 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs);
 static int PyTensor_traverse(PyTensor *self, visitproc visit, void *arg);
 static int PyTensor_clear(PyTensor *self);
 static void PyTensor_dealloc(PyTensor *self);
-RETURN_OBJECT PyTensor_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
-RETURN_OBJECT PyTensor_repr(PyTensor *self);
+static PyObject *PyTensor_new(PyTypeObject *type, PyObject *args,
+                              PyObject *kwds);
+static PyObject *PyTensor_repr(PyTensor *self);
 
 /////////////// ARITHMETIC /////////////////
-RETURN_OBJECT PyTensor_add(PyObject *self, PyObject *other);
-RETURN_OBJECT PyTensor_sub(PyObject *self, PyObject *other);
-RETURN_OBJECT PyTensor_mul(PyObject *self, PyObject *other);
-RETURN_OBJECT PyTensor_truediv(PyObject *self, PyObject *other);
+static PyObject *PyTensor_add(PyObject *self, PyObject *other);
+static PyObject *PyTensor_sub(PyObject *self, PyObject *other);
+static PyObject *PyTensor_mul(PyObject *self, PyObject *other);
+static PyObject *PyTensor_truediv(PyObject *self, PyObject *other);
 
 ///////////// MAPPING ///////////////////
-RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key);
+static PyObject *PyTensor_getitem(PyObject *self, PyObject *key);
 
 ///////////// GET SET //////////////////
-RETURN_OBJECT PyTensor_get_shape(PyTensor *self, void *closure);
+static PyObject *PyTensor_get_shape(PyTensor *self, void *closure);
 static int PyTensor_set_shape(PyTensor *self,
                               void *closure);  // DOES NOTHING
-RETURN_OBJECT PyTensor_get_grad(PyTensor *self, void *closure);
+static PyObject *PyTensor_get_grad(PyTensor *self, void *closure);
 static int PyTensor_set_grad(PyTensor *self, void *closure);
-RETURN_OBJECT PyTensor_get_requires_grad(PyTensor *self, void *closure);
+static PyObject *PyTensor_get_requires_grad(PyTensor *self, void *closure);
 static int PyTensor_set_requires_grad(PyTensor *self, PyObject *value,
                                       void *closure);
-RETURN_OBJECT PyTensor_get_ndim(PyTensor *self, void *closure);
+static PyObject *PyTensor_get_ndim(PyTensor *self, void *closure);
 static int PyTensor_set_ndim(PyTensor *self, PyObject *value, void *closure);
 
 //////////// CLASS METHODS ////////////////
-RETURN_OBJECT PyTensor_get_numpy(PyTensor *self, void *closure);
-RETURN_OBJECT PyTensor_astype(PyObject *self, PyObject *args, void *closure);
-RETURN_OBJECT PyTensor_backward(PyTensor *self, void *closure);
+static PyObject *PyTensor_get_numpy(PyTensor *self, void *closure);
+static PyObject *PyTensor_astype(PyObject *self, PyObject *args, void *closure);
+static PyObject *PyTensor_backward(PyTensor *self, void *closure);
 
 //////////// DEF ARRAYS ///////////////////
 

@@ -14,8 +14,8 @@ static int PyMSELoss_init(PyLoss *self, PyObject *args, PyObject *kwargs) {
     return 0;
 }
 
-RETURN_OBJECT
-PyMSELoss_forward(PyLoss *self, PyObject *args, PyObject *kwargs) {
+static PyObject *PyMSELoss_forward(PyLoss *self, PyObject *args,
+                                   PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor *logits = NULL;
     PyTensor *targets = NULL;

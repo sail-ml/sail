@@ -73,7 +73,7 @@ min:
 
 tensordot:
   full_impl: |
-      RETURN_OBJECT sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+      static PyObject* sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
           START_EXCEPTION_HANDLING
           PyObject* t1;
           PyObject* t2;
@@ -151,7 +151,7 @@ tensordot:
       
 broadcast_to:
   full_impl: |
-      RETURN_OBJECT sail_broadcast_to(PyObject* self, PyObject* args) {
+      static PyObject* sail_broadcast_to(PyObject* self, PyObject* args) {
         START_EXCEPTION_HANDLING
         PyTensor* t1;
         PyObject* tuple;
@@ -290,7 +290,7 @@ moveaxis:
 
 add_docstring:
   full_impl: |    
-    RETURN_OBJECT
+    static PyObject*
     sail_add_docstring(PyObject *unused, PyObject *args) {
         PyObject *obj;
         PyObject *str;

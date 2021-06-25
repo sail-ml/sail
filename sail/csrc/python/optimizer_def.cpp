@@ -7,7 +7,6 @@
 // #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 
-#include "ops/ops_def.h"
 #include "py_dtypes/py_dtype.h"
 #include "py_optimizer/py_optimizer.h"
 #include "py_tensor/py_tensor.h"

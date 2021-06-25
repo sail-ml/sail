@@ -6,7 +6,8 @@
 #include <iostream>
 #include "numpy/arrayobject.h"
 
-#include "ops/ops_def.h"
+#include "macros.h"
+
 #include "py_dtypes/py_dtype.h"
 #include "py_loss/py_loss.h"
 #include "py_tensor/py_tensor.h"

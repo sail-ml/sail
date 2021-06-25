@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 
 #include "Tensor.h"
 #include "factories.h"
@@ -9,7 +10,7 @@
 namespace sail {
 namespace ops {
 
-Tensor ReLU(Tensor& input);
+std::string tensor_repr(Tensor& array);
 
 }  // namespace ops
 }  // namespace sail

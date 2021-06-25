@@ -15,8 +15,8 @@ static int PyReLUModule_init(PyModule *self, PyObject *args, PyObject *kwargs) {
     END_EXCEPTION_HANDLING_INT
 }
 
-RETURN_OBJECT
-PyReLUModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+static PyObject *PyReLUModule_forward(PyModule *self, PyObject *args,
+                                      PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor *inputs = NULL;
     static char *kwlist[] = {"inputs", NULL};

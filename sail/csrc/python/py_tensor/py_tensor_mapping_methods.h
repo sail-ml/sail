@@ -12,7 +12,7 @@
 #include "../error_defs.h"
 #include "../macros.h"
 
-RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
+static PyObject *PyTensor_getitem(PyObject *self, PyObject *key) {
     START_EXCEPTION_HANDLING
     int idx = static_cast<int>(PyLong_AsLong(key));
 

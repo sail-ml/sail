@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "Tensor.h"
-#include "kernels/Kernel.h"
 
 namespace sail {
 

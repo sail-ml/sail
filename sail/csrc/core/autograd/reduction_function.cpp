@@ -7,8 +7,8 @@
 #include "Tensor.h"
 #include "factories.h"
 #include "function.h"
+#include "ops/ReductionOps.h"
 #include "ops/ops.h"
-#include "ops/reduction.h"
 
 namespace sail {
 

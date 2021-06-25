@@ -11,15 +11,14 @@
 #include "core/dtypes.h"
 #include "core/factories.h"
 #include "core/ops/ops.h"
-#include "core/ops/reduction.h"
 #include "core/tensor_shape.h"
 #include "numpy/arrayobject.h"
 
 #include "../error_defs.h"
 #include "../macros.h"
 
-RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
-                                 PyObject* kwargs) {
+static PyObject* ops_random_uniform(PyObject* self, PyObject* args,
+                                    PyObject* kwargs) {
     START_EXCEPTION_HANDLING
     PyObject* shape = NULL;
     double min = 0;
@@ -62,8 +61,8 @@ RETURN_OBJECT ops_random_uniform(PyObject* self, PyObject* args,
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
-                                      PyObject* kwargs) {
+static PyObject* ops_random_uniform_like(PyObject* self, PyObject* args,
+                                         PyObject* kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor* t1 = NULL;
     double min = 0;
@@ -85,8 +84,8 @@ RETURN_OBJECT ops_random_uniform_like(PyObject* self, PyObject* args,
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
-                                PyObject* kwargs) {
+static PyObject* ops_random_normal(PyObject* self, PyObject* args,
+                                   PyObject* kwargs) {
     START_EXCEPTION_HANDLING
     PyObject* shape = NULL;
     double mean = 0;
@@ -128,8 +127,8 @@ RETURN_OBJECT ops_random_normal(PyObject* self, PyObject* args,
     END_EXCEPTION_HANDLING
 }
 
-RETURN_OBJECT ops_random_normal_like(PyObject* self, PyObject* args,
-                                     PyObject* kwargs) {
+static PyObject* ops_random_normal_like(PyObject* self, PyObject* args,
+                                        PyObject* kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor* t1 = NULL;
     double mean = 0;

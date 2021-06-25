@@ -26,11 +26,13 @@ static int PyModule_init(PyModule *self, PyObject *args, PyObject *kwargs);
 static int PyModule_traverse(PyModule *self, visitproc visit, void *arg);
 static int PyModule_clear(PyModule *self);
 static void PyModule_dealloc(PyModule *self);
-RETURN_OBJECT PyModule_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+static PyObject *PyModule_new(PyTypeObject *type, PyObject *args,
+                              PyObject *kwds);
 
 //////////////////////////////////////////////
-RETURN_OBJECT PyModule_forward(PyModule *self, PyObject *args, PyObject *kwds);
-RETURN_OBJECT PyModule_call(PyModule *self, PyObject *args, PyObject *kwds);
+static PyObject *PyModule_forward(PyModule *self, PyObject *args,
+                                  PyObject *kwds);
+static PyObject *PyModule_call(PyModule *self, PyObject *args, PyObject *kwds);
 int PyModule_setattr(PyModule *self, PyObject *attr, PyObject *value);
 
 static PyMethodDef PyModule_methods[] = {

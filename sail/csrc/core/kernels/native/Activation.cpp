@@ -42,24 +42,23 @@ void sigmoid_backward_kernel(const Tensor& t1, Tensor& out) {
     });
 }
 
-void softmax_kernel(Tensor& t1, int axis, Tensor& out) {
+void softmax_kernel(Tensor& t1, const int axis, Tensor& out) {
     launch_arithmetic(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
         Tensor max = ops::max(t1, axis, true);
         Tensor t2 = t1 - max;
-        Tensor s = ops::sum(t2, axis, true);
-        s = ops::broadcast_to(s, t2.get_shape());
+        Tensor s = ops::sum(ops::exp(t2), axis, true);
+        Tensor new_s = ops::broadcast_to(s, t2.get_shape());
         struct Impl {
             T one = (T)1;
             inline void call_base(T x1, T s_val, T& out) {
                 T ex = (T)std::exp((double)x1);
-                ex = ex / s_val;
-                out = (T)std::log(double(ex));
+                out = ex / s_val;
             }
         };
-        native::BinaryElementwise<T>(Impl{}, true, t2, s, out);
+        native::BinaryElementwise<T>(Impl{}, true, t2, new_s, out);
     });
 }
 
@@ -131,9 +130,9 @@ void softmax_mul_sum_kernel(Tensor& t1, Tensor& targets, Tensor& out_tensor) {
     });
 }
 }  // namespace
+REGISTER_ONLY_NATIVE_DISPATCH(softmax_stub, &softmax_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(sigmoid_stub, &sigmoid_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(sigmoid_backward_stub, &sigmoid_backward_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(softmax_stub, &softmax_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(softmax_backward_partial_stub,
                               &softmax_backward_partial_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(softmax_mul_sum_stub, &softmax_mul_sum_kernel);

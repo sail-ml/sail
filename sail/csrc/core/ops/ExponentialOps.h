@@ -3,15 +3,14 @@
 #include <iostream>
 
 #include "Tensor.h"
-#include "dtypes.h"
 
 namespace sail {
 
 namespace ops {
 
-Tensor power(Tensor& tensor1, Tensor& power);
-Tensor exp(Tensor& tensor1);
-Tensor log(Tensor& tensor1);
+Tensor exp(const Tensor& tensor1);
+Tensor log(const Tensor& tensor1);
+Tensor power(const Tensor& tensor1, const Tensor& tensor2);
 
 }  // namespace ops
 

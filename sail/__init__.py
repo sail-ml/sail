@@ -9,8 +9,8 @@ __all__ = __csrc_all__
 
 ## IMPORT SUBPACKAGES
 
-from sail import modules as modules
 from sail import optimizers as optimizers
+from sail import modules as modules
 from sail import losses as losses
 from sail import rand as random
 

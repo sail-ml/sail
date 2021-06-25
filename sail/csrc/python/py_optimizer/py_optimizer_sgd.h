@@ -27,7 +27,7 @@ static int PyOptimizerSGD_init(PyOptimizer *self, PyObject *args,
     END_EXCEPTION_HANDLING_INT
 }
 
-// RETURN_OBJECT
+// static PyObject*
 // PyOptimizerSGD_forward(PyOptimizer *self, PyObject *args, PyObject *kwargs) {
 //     PyTensor *logits = NULL;
 //     PyTensor *targets = NULL;

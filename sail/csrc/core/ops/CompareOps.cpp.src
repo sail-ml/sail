@@ -1,0 +1,89 @@
+#include <iostream>
+
+#include "CompareOps.h"
+#include "Tensor.h"
+#include "autograd/autograd.h"
+#include "factories.h"
+#include "kernels/Kernel.h"
+#include "ops/tools.h"
+
+#define MAX(a, b) (((a.ndim) > (b.ndim)) ? (a) : (b))
+#define MIN(a, b) (((a.ndim) < (b.ndim)) ? (a) : (b))
+
+namespace sail {
+
+namespace ops {
+using TensorVector = std::vector<Tensor>;
+
+Tensor clip(const Tensor& tensor1, const double min, const double max) {
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        return (new autograd::Clip(min, max))->apply(vec);
+    }
+    Tensor empty_tensor = empty_like(tensor1);
+    sail::internal::clip_stub(tensor1, min, max, empty_tensor);
+    return empty_tensor;
+}
+
+Tensor clip_min(const Tensor& tensor1, const double min) {
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        return (new autograd::ClipMinOnly(min))->apply(vec);
+    }
+    Tensor empty_tensor = empty_like(tensor1);
+    sail::internal::clip_min_stub(tensor1, min, empty_tensor);
+    return empty_tensor;
+}
+
+Tensor clip_max(const Tensor& tensor1, const double max) {
+    // if (tensor1.requires_grad) {
+    //     TensorVector vec;
+    //     vec.emplace_back(tensor1);
+    //     return (new autograd::ClipMinOnly(min))->apply(vec);
+    // }
+    Tensor empty_tensor = empty_like(tensor1);
+    sail::internal::clip_max_stub(tensor1, max, empty_tensor);
+    return empty_tensor;
+}
+
+// clang-format off
+/** begin block
+ * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
+ * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub]
+ * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
+ */
+
+Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
+    Tensor empty_tensor;  //= empty_like(tensor1);
+    Tensor t1, t2;
+
+    Dtype dt = tensor1.get_dtype();
+
+    bool broadcast = must_broadcast(tensor1, tensor2);
+    if (broadcast) {
+        std::vector<long> new_ =
+            merge_shapes(tensor1.get_shape().shape, tensor2.get_shape().shape);
+        TensorShape s = TensorShape(new_);
+        empty_tensor = empty(s.ndim(), dt, s);
+        empty_tensor.requires_grad = t1.requires_grad;
+        t1 = ops::broadcast_to(tensor1, s);
+        t2 = ops::broadcast_to(tensor2, s);
+    } else {
+        t1 = tensor1;
+        t2 = tensor2;
+        empty_tensor = empty_like(t1);
+    }
+
+    sail::internal::$stub$(t1, t2, empty_tensor, broadcast);
+    return empty_tensor;
+}
+
+/** end block **/
+
+// clang-format on
+
+}  // namespace ops
+
+}  // namespace sail

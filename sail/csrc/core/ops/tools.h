@@ -3,15 +3,13 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
-#include "kernels/Kernel.h"
 
 namespace sail {
 
 inline bool must_broadcast(const Tensor& t1, const Tensor& t2) {
     TensorSize shape1 = t1.get_shape().shape;
     TensorSize shape2 = t2.get_shape().shape;
-    // Tensor& larger_shape = (new Tensor());
-    // Tensor& smaller_shape = (new Tensor());
+
     TensorShape larger_shape, smaller_shape;
     bool bc = false;
     if (t1.get_ndim() > t2.get_ndim()) {

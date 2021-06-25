@@ -47,7 +47,7 @@ TensorVector Softmax::backward(Tensor& grad) {
 }
 
 Tensor ReLU::forward(TensorVector inputs) {
-    Tensor result = ops::ReLU(inputs[0]);
+    Tensor result = ops::relu(inputs[0]);
     return result;
 }
 TensorVector ReLU::backward(Tensor& grad) {

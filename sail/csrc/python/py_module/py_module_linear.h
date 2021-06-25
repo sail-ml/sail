@@ -29,8 +29,7 @@ static int PyLinearModule_init(PyModule *self, PyObject *args,
     END_EXCEPTION_HANDLING_INT
 }
 
-RETURN_OBJECT
-PyLinearModule_get_weights(PyModule *self, void *closure) {
+static PyObject *PyLinearModule_get_weights(PyModule *self, void *closure) {
     START_EXCEPTION_HANDLING
     PyTensor *py_weights = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     // Linear a = *(Linear *)self->module;
@@ -48,8 +47,7 @@ static int PyLinearModule_set_weights(PyModule *self, PyTensor *t,
     END_EXCEPTION_HANDLING_INT
 }
 
-RETURN_OBJECT
-PyLinearModule_get_bias(PyModule *self, void *closure) {
+static PyObject *PyLinearModule_get_bias(PyModule *self, void *closure) {
     START_EXCEPTION_HANDLING
     PyTensor *py_bias = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     Linear a = *(Linear *)self->module;
@@ -72,8 +70,8 @@ static PyGetSetDef PyLinearModule_get_setters[] = {
     {NULL} /* Sentinel */
 };
 
-RETURN_OBJECT
-PyLinearModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+static PyObject *PyLinearModule_forward(PyModule *self, PyObject *args,
+                                        PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor *inputs = NULL;
     static char *kwlist[] = {"inputs", NULL};
