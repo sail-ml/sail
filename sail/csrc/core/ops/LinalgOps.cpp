@@ -3,9 +3,9 @@
 #include <iostream>
 #include <tuple>
 
+#include "LinalgOps.h"
 #include "Tensor.h"
 #include "autograd/autograd.h"
-#include "dots.h"
 #include "dtypes.h"
 #include "exception.h"
 #include "kernels/Kernel.h"

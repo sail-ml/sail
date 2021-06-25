@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -10,6 +9,7 @@
 namespace sail {
 namespace ops {
 
+Tensor softmax_cross_entropy(Tensor& logits, Tensor& targets);
 Tensor mean_squared_error(Tensor& logits, Tensor& targets);
 
 }  // namespace ops
