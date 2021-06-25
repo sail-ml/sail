@@ -3,7 +3,7 @@
 
 #include "ReductionOps.h"
 #include "Tensor.h"
-#include "autograd/reduction_function.h"
+#include "autograd/autograd.h"
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/Kernel.h"

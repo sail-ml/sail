@@ -45,22 +45,5 @@ class Multiply : public Function {
     TensorVector backward(Tensor& grad);
 };
 
-class Matmul : public Function {
-   public:
-    std::string trans_a, trans_b;
-    Matmul(std::string _trans_a, std::string _trans_b)
-        : trans_a(_trans_a), trans_b(_trans_b){};
-    // TensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-};
-
-class Pow : public Function {
-   public:
-    explicit Pow(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-};
-
 }  // namespace autograd
 }  // namespace sail

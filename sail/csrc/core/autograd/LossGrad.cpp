@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "loss.h"
+#include "LossGrad.h"
 #include <iostream>
 #include <vector>
 #include "Tensor.h"

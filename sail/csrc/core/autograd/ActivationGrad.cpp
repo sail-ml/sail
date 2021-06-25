@@ -1,5 +1,5 @@
 
-#include "activations.h"
+#include "ActivationGrad.h"
 #include <iostream>
 #include <vector>
 #include "Tensor.h"

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "reduction_function.h"
+#include "ReductionGrad.h"
 #include <iostream>
 #include <vector>
 #include "Tensor.h"
