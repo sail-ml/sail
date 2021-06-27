@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -68,14 +69,13 @@ class DtypeError : public SailCError {
 //         static_cast<uint32_t>(__LINE__),
 //         #cond "INTERNAL ASSERT FAILED at" C10_STRINGIZE(__FILE__));
 //   }
-#define SAIL_CHECK(cond, ...)                                     \
-    if (!cond) {                                                  \
-        throw SailCError("Internal check fail. ", ##__VA_ARGS__); \
+#define SAIL_CHECK(cond, ...)          \
+    if (!(cond)) {                     \
+        throw SailCError(__VA_ARGS__); \
     }
-#define SAIL_CHECK_LINE(cond, ...)                                         \
-    if (!cond) {                                                           \
-        throw SailCError("Internal check fail. Failed at ", __FILE__, ":", \
-                         __LINE__, "\n", ##__VA_ARGS__);                   \
+#define SAIL_CHECK_LINE(cond, ...)                                      \
+    if (!(cond)) {                                                      \
+        throw SailCError(__FILE__, ":", __LINE__, "\n", ##__VA_ARGS__); \
     }
 
 #define THROW_ERROR(err_t, ...) throw err_t(##__VA_ARGS__)
