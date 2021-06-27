@@ -119,28 +119,28 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
     }
 
     if (t1.is_scalar() || t2.is_scalar()) {
-        throw SailCError("Cannot pass scalars to matmul");
+        THROW_ERROR_DETAILED(SailCError, "Cannot pass scalars to matmul");
     }
 
     if (t1.get_ndim() != t2.get_ndim()) {
-        throw SailCError("Number of dimensions must match");
+        THROW_ERROR_DETAILED(SailCError, "Number of dimensions must match");
     }
 
     if (trans_a == NO_TRANS && trans_b == NO_TRANS) {
         if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
-            throw SailCError("Inner dimensions must match");
+            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
         }
     } else if (trans_a == TRANS && trans_b == NO_TRANS) {
         if (t1.get_shape().shape[0] != t2.get_shape().shape[0]) {
-            throw SailCError("Inner dimensions must match");
+            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
         }
     } else if (trans_a == NO_TRANS && trans_b == TRANS) {
         if (t1.get_shape().shape[1] != t2.get_shape().shape[1]) {
-            throw SailCError("Inner dimensions must match");
+            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
         }
     } else {
         if (t1.get_shape().shape[0] != t2.get_shape().shape[1]) {
-            throw SailCError("Inner dimensions must match");
+            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
         }
     }
 

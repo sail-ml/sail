@@ -79,6 +79,8 @@ class DtypeError : public SailCError {
     }
 
 #define THROW_ERROR(err_t, ...) throw err_t(##__VA_ARGS__)
-#define THROW_ERROR_DETAILED(err_t, ...)                             \
-    throw err_t("Error occured at ", __FILE__, ":", __LINE__, ":\n", \
-                ##__VA_ARGS__)
+#define THROW_ERROR_DETAILED(err_t, ...)               \
+    throw err_t(__VA_ARGS__, "\n", "File: ", __FILE__, \
+                "\nLine: ", __LINE__)  // throw err_t("Error occured at ",
+                                       // __FILE__, ":", __LINE__, ":\n",
+                                       //             ##__VA_ARGS__)

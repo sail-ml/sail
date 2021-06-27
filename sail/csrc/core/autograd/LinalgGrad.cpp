@@ -42,8 +42,8 @@ TensorVector AddMM::backward(Tensor& grad) {
             Tensor bt = ops::rollaxis(b, -2);
             ga = ops::tensordot(bt, grad, grad.get_ndim());
         } else {
-            // ga = ops::matmul(grad, b.transpose({1, 0}), NO_TRANS, NO_TRANS);
             ga = ops::matmul(grad, b, NO_TRANS, TRANS);
+            // ga = ops::matmul(grad, b.transpose({1, 0}), NO_TRANS, NO_TRANS);
             // ga = ops::broadcast_to(ga, a.get_shape());
             // std::cout << ga << std::endl;
         }

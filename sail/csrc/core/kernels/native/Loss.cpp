@@ -16,6 +16,11 @@ void mse_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
+        bool broadcast;
+        if (t1.is_view() || t2.is_view()) {
+            broadcast = true;
+        }
+
         long numel = out_tensor.numel();
         struct Impl {
             long _numel;
@@ -25,7 +30,8 @@ void mse_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
                 out = ex / (double)_numel;
             }
         };
-        native::BinaryElementwise<T>(Impl{numel}, true, t1, t2, out_tensor);
+        native::BinaryElementwise<T>(Impl{numel}, broadcast, t1, t2,
+                                     out_tensor);
     });
 }
 

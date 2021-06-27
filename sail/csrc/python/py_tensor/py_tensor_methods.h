@@ -46,11 +46,9 @@ static int PyTensor_init(PyTensor *self, PyObject *args, PyObject *kwargs) {
     TensorSize shape, strides;
 
     long int *shape_ptr = PyArray_SHAPE(array);
-    long int *stride_ptr = PyArray_STRIDES(array);
 
     for (int i = 0; i < ndim; i++) {
         shape.push_back(shape_ptr[i]);
-        strides.push_back(stride_ptr[i] / dt_size);
     }
 
     self->tensor = sail::from_data(data, dt, sail::TensorShape(shape));

@@ -59,7 +59,7 @@ void clip_kernel(const Tensor& t1, const double min, const double max,
             T min, max;
             Impl(T min, T max) : min(min), max(max){};
             inline void call_base(T x1, T& out) {
-                out = std::clamp(out, min, max);
+                out = std::clamp(x1, min, max);
             }
         };
         native::UnaryElementwise<T>(Impl{(T)min, (T)max}, t1, out);

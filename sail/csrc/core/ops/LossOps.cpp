@@ -38,6 +38,9 @@ Tensor softmax_cross_entropy(Tensor& logits, Tensor& targets) {
 }
 Tensor mean_squared_error(Tensor& logits, Tensor& targets) {
     Tensor result;
+    if (logits.get_shape().shape != targets.get_shape().shape) {
+        THROW_ERROR_DETAILED(DimensionError, "Shapes must match");
+    }
     if (logits.requires_grad) {
         TensorVector vec;
         vec.emplace_back(logits);
@@ -46,6 +49,7 @@ Tensor mean_squared_error(Tensor& logits, Tensor& targets) {
                      ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
         return result;
     }
+
     Tensor out = empty_like(logits);
     sail::internal::mse_stub(logits, targets, out);
     return ops::sum(out);
