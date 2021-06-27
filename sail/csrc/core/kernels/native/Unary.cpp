@@ -23,7 +23,7 @@ void negate_kernel(const Tensor& t1, Tensor& out) {
 }
 
 }  // namespace
-REGISTER_ONLY_NATIVE_DISPATCH(negate_stub, &negate_kernel);
+REGISTER_ARCH_DISPATCH(negate_stub, DEFAULT, &negate_kernel);
 
 }  // namespace internal
 

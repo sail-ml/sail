@@ -59,14 +59,7 @@ void clip_kernel(const Tensor& t1, const double min, const double max,
             T min, max;
             Impl(T min, T max) : min(min), max(max){};
             inline void call_base(T x1, T& out) {
-                if (x1 > max) {
-                    out = max;
-                    return;
-                } else if (x1 < min) {
-                    out = min;
-                    return;
-                }
-                out = x1;
+                out = std::clamp(out, min, max);
             }
         };
         native::UnaryElementwise<T>(Impl{(T)min, (T)max}, t1, out);
@@ -74,9 +67,9 @@ void clip_kernel(const Tensor& t1, const double min, const double max,
 }
 
 }  // namespace
-REGISTER_ONLY_NATIVE_DISPATCH(clip_min_stub, &clip_min_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(clip_max_stub, &clip_max_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(clip_stub, &clip_kernel);
+REGISTER_ARCH_DISPATCH(clip_min_stub, DEFAULT, &clip_min_kernel);
+REGISTER_ARCH_DISPATCH(clip_max_stub, DEFAULT, &clip_max_kernel);
+REGISTER_ARCH_DISPATCH(clip_stub, DEFAULT, &clip_kernel);
 
 namespace {
 void equal_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
