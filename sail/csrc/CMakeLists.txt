@@ -9,22 +9,17 @@ file(GLOB_RECURSE PYTHON_BIND_FILES "python/*.cpp")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
-# ADD_DEFINITIONS(-DUSE_AVX2) # NEED FOR AVX2 SUPPORT IN KERNELS
+# ADD_DEFINITIONS(-DUSE_AVX) # NEED FOR AVX2 SUPPORT IN KERNELS
 FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wno-unused-variable -Wno-pointer-arith")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fpermissive -Wno-unused-variable -Wno-pointer-arith -fPIC -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -fopenmp -ffast-math -march=native")
 
 if (COVERAGE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -w -O0 --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
-else()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -w -fPIC -pthread -fopenmp -Ofast -ffast-math")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
-endif()
-
-if (USE_MKL)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -fprofile-abs-path -lgcov")# -march=haswell -mavx2 -ftree-vectorize -fopt-info-loop-optimized")
 endif()
 
 set(CMAKE_DIR_TEMP ${CMAKE_CURRENT_SOURCE_DIR})

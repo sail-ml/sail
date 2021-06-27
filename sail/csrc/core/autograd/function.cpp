@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 
 namespace sail {

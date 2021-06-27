@@ -8,7 +8,6 @@
 #include "numpy/arrayobject.h"
 
 #include "error_defs.h"
-#include "ops/ops_def.h"
 #include "py_dtypes/py_dtype.h"
 #include "py_module/py_module.h"
 #include "py_tensor/py_tensor.h"

@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "error.h"
+#include "exception.h"
 
 namespace sail {
 
@@ -59,6 +59,9 @@ TensorShape::TensorShape(LongVec shape_) {
     }
     recompute();
 }
+
+void ignore_innermost() {}
+
 int TensorShape::next() {
     int i;
     // if (contiguous) {
@@ -201,7 +204,8 @@ void TensorShape::insert_one(const int dim) {
         new_dim = new_dim + ndim() + 1;
     }
     if (new_dim > shape.size()) {
-        throw DimensionError("Dimension value is too large for expand_dims");
+        THROW_ERROR_DETAILED(DimensionError,
+                             "Dimension value is too large for expand_dims");
     }
     shape.insert(shape.begin() + new_dim, 1);
 
@@ -213,13 +217,15 @@ void TensorShape::remove_one(const int dim) {
         new_dim = new_dim + ndim();
     }
     if (new_dim > shape.size()) {
-        throw DimensionError("Dimension value is too large for squeeze");
+        THROW_ERROR_DETAILED(DimensionError,
+                             "Dimension value is too large for squeeze");
     }
     if (is_one(shape, new_dim)) {
         shape.erase(shape.begin() + new_dim);
     } else {
-        throw SailCError("Cannot remove value at dimension " +
-                         std::to_string(new_dim) + " because it is not 1");
+        THROW_ERROR_DETAILED(DimensionError,
+                             "Cannot remove value at dimension ", new_dim,
+                             " because it is not 1");
     }
 
     recompute(true);
@@ -231,7 +237,8 @@ void TensorShape::remove(const int dim) {
     }
     // std::cout << new_dim << ", " << ndim() << ", " << dim << std::endl;
     if (new_dim > shape.size()) {
-        throw DimensionError("Dimension value is too large for squeeze");
+        THROW_ERROR_DETAILED(DimensionError,
+                             "Dimension value is too large for squeeze");
     }
     shape.erase(shape.begin() + new_dim);
     recompute(true);

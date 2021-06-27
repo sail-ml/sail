@@ -29,13 +29,13 @@ static int PyOptimizer_init(PyOptimizer *self, PyObject *args,
 static int PyOptimizer_traverse(PyOptimizer *self, visitproc visit, void *arg);
 static int PyOptimizer_clear(PyOptimizer *self);
 static void PyOptimizer_dealloc(PyOptimizer *self);
-RETURN_OBJECT PyOptimizer_new(PyTypeObject *type, PyObject *args,
-                              PyObject *kwds);
+static PyObject *PyOptimizer_new(PyTypeObject *type, PyObject *args,
+                                 PyObject *kwds);
 
 //////////////////////////////////////////////
-RETURN_OBJECT PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
-                                       PyObject *kwargs);
-RETURN_OBJECT PyOptimizer_update(PyOptimizer *self);
+static PyObject *PyOptimizer_track_module(PyOptimizer *self, PyObject *args,
+                                          PyObject *kwargs);
+static PyObject *PyOptimizer_update(PyOptimizer *self);
 
 static PyMethodDef PyOptimizer_methods[] = {
     {"track_module", (PyCFunction)PyOptimizer_track_module,

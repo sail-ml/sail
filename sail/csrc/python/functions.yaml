@@ -1,0 +1,371 @@
+
+
+add:
+  signatures:
+    - add(Tensor x1, Tensor x2)
+  internal_func: sail::ops::add
+
+subtract:
+  signatures:
+    - subtract(Tensor x1, Tensor x2)
+  internal_func: sail::ops::subtract
+
+divide:
+  signatures:
+    - divide(Tensor x1, Tensor x2)
+  internal_func: sail::ops::divide
+
+multiply:
+  signatures:
+    - multiply(Tensor x1, Tensor x2)
+  internal_func: sail::ops::multiply
+
+power:
+  signatures:
+    - power(Tensor x1, Tensor x2)
+  internal_func: sail::ops::power
+
+matmul:
+  signatures:
+    - matmul(Tensor x1, Tensor x2)
+  internal_func: sail::ops::matmul
+
+addmm:
+  signatures:
+    - addmm(Tensor x1, Tensor x2, Tensor x3)
+  internal_func: sail::ops::addmm
+
+log:
+  signatures:
+    - log(Tensor x1)
+  internal_func: sail::ops::log
+
+exp:
+  signatures:
+    - exp(Tensor x1)
+  internal_func: sail::ops::exp
+
+clip:
+  signatures:
+    - clip(Tensor x1, double min, double max)
+  internal_func: sail::ops::clip
+
+sum:
+  signatures:
+    - sum(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::sum
+  special_impl: reduction
+mean:
+  signatures:
+    - mean(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::mean
+  special_impl: reduction
+max:
+  signatures:
+    - max(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::max
+  special_impl: reduction
+min:
+  signatures:
+    - min(Tensor tensor, int axis=None, bool keepdims=false)
+  internal_func: sail::ops::min
+  special_impl: reduction
+
+tensordot:
+  full_impl: |
+      static PyObject* sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+          START_EXCEPTION_HANDLING
+          PyObject* t1;
+          PyObject* t2;
+          PyObject* tuple = Py_None;
+          int v = 2;
+
+          sail::Tensor tensor1;
+          sail::Tensor tensor2;
+
+          static char* kwlist[] = {"a", "b", "axes", NULL};
+
+          if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
+                                          &tuple)) {
+              PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+              return nullptr;
+          }
+
+          tensor1 = ((PyTensor*)t1)->tensor;
+          tensor2 = ((PyTensor*)t2)->tensor;
+
+          std::vector<long> axes_1;
+          std::vector<long> axes_2;
+
+          if (PyTuple_Check(tuple)) {
+              PyObject* tuple1 = PyTuple_GetItem(tuple, 0);
+              PyObject* tuple2 = PyTuple_GetItem(tuple, 1);
+
+              tuple1 = PySequence_Tuple(tuple1);
+              tuple2 = PySequence_Tuple(tuple2);
+
+              int len = PyTuple_Size(tuple1);
+              if (len == -1) {
+                  axes_1 = {PyLong_AsLong(tuple1)};
+              } else {
+                  while (len--) {
+                      axes_1.push_back(PyLong_AsLong(PyTuple_GetItem(tuple1, len)));
+                  }
+                  std::reverse(axes_1.begin(), axes_1.end());
+              }
+              len = PyTuple_Size(tuple2);
+              if (len == -1) {
+                  axes_2 = {PyLong_AsLong(tuple2)};
+              } else {
+                  while (len--) {
+                      axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
+                  }
+                  std::reverse(axes_2.begin(), axes_2.end());
+              }
+          } else {
+              if (PyLong_Check(tuple)) {
+                  v = PyLong_AsLong(tuple);
+              }
+              for (int i = tensor1.get_ndim() - 1; i > (tensor1.get_ndim() - v - 1);
+                  i--) {
+                  axes_1.insert(axes_1.begin(), i);
+              }
+
+              for (int i = 0; i < v; i++) {
+                  axes_2.push_back(i);
+              }
+          }
+
+          PyTensor* ret_class;
+          ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+          sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
+
+          ret_class->tensor = res;
+
+          return (PyObject*)ret_class;
+          END_EXCEPTION_HANDLING
+      }
+      
+      
+      
+broadcast_to:
+  full_impl: |
+      static PyObject* sail_broadcast_to(PyObject* self, PyObject* args) {
+        START_EXCEPTION_HANDLING
+        PyTensor* t1;
+        PyObject* tuple;
+
+        if (!PyArg_ParseTuple(args, "OO", &t1, &tuple)) {
+            PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
+            return nullptr;
+        }
+
+        int len = PyTuple_Size(tuple);
+        if (len == -1) {
+            PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+            return nullptr;
+        }
+        std::vector<long> shape;
+        while (len--) {
+            shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
+        }
+        std::reverse(shape.begin(), shape.end());
+
+        sail::TensorShape s = sail::TensorShape(shape);
+
+        PyTensor* ret_class;
+        ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+        ret_class->tensor = sail::ops::broadcast_to(t1->tensor, s);
+
+        // ret_class->dtype = t1- >ndim;
+        SET_BASE(t1, ret_class);
+        return (PyObject*)ret_class;
+        END_EXCEPTION_HANDLING
+      }
+
+
+reshape:
+  signatures:
+    - reshape(Tensor t1, sequence new_shape)
+  internal_func: sail::ops::reshape
+  custom_dispatch: 
+    - |
+        new_shape = PySequence_Tuple(new_shape);
+        int len = PyTuple_Size(new_shape);
+        if (len == -1) {
+            PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
+            return nullptr;
+        }
+        TensorSize size;
+        while (len--) {
+            size.push_back(PyLong_AsLong(PyTuple_GetItem(new_shape, len)));
+        }
+
+        std::reverse(size.begin(), size.end());
+
+        sail::TensorShape new_ = sail::TensorShape(size);
+
+        ret_class->tensor = t1->tensor.reshape(new_);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+transpose:
+  signatures:
+    - transpose(Tensor t1, sequence tuple=NULL)
+  internal_func: sail::ops::transpose
+  custom_dispatch: 
+    - |
+        if (tuple == NULL) {
+            ret_class->tensor = sail::ops::transpose(t1->tensor);
+        } else {
+            tuple = PySequence_Tuple(tuple);
+            int len = PyTuple_Size(tuple);
+            if (len == -1) {
+                PyErr_SetString(PyExc_TypeError,
+                                "Shape must have atleat 1 element.");
+                return nullptr;
+            }
+            std::vector<long> shape;
+            while (len--) {
+                shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
+            }
+            std::reverse(shape.begin(), shape.end());
+
+            ret_class->tensor = sail::ops::transpose(t1->tensor, shape);
+        }
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);
+
+expand_dims:
+  signatures:
+    - expand_dims(Tensor t1, int dim)
+  internal_func: sail::ops::expand_dims
+  custom_dispatch: 
+    - |
+        ret_class->tensor = t1->tensor.expand_dims(dim);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+        return (PyObject*)ret_class;
+
+squeeze:
+  signatures:
+    - squeeze(Tensor t1, int dim)
+  internal_func: sail::ops::expand_dims
+  custom_dispatch: 
+    - |
+        ret_class->tensor = t1->tensor.squeeze(dim);
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(t1);
+
+        return (PyObject*)ret_class;
+
+rollaxis:
+  signatures:
+    - rollaxis(Tensor t1, int axis=0, int position=0)
+  internal_func: sail::ops::rollaxis
+  custom_dispatch: 
+    - |
+      ret_class->tensor =
+                sail::ops::rollaxis(t1->tensor, axis, position);
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);
+
+moveaxis:
+  signatures:
+    - moveaxis(Tensor t1, int axis=0, int position=0)
+  internal_func: sail::ops::moveaxis
+  custom_dispatch: 
+    - |
+        ret_class->tensor =
+                sail::ops::moveaxis(t1->tensor, axis, position);
+
+        ret_class->base_object = (PyObject*)t1;
+        Py_INCREF(ret_class->base_object);
+
+
+add_docstring:
+  full_impl: |    
+    static PyObject*
+    sail_add_docstring(PyObject *unused, PyObject *args) {
+        PyObject *obj;
+        PyObject *str;
+    #if PY_VERSION_HEX >= 0x030700A2 && \
+        (!defined(PYPY_VERSION_NUM) || PYPY_VERSION_NUM > 0x07030300)
+        const char *docstr;
+    #else
+        char *docstr;
+    #endif
+        static char *msg = "already has a different docstring";
+
+        /* Don't add docstrings */
+        if (Py_OptimizeFlag > 1) {
+            Py_RETURN_NONE;
+        }
+
+        if (!PyArg_ParseTuple(args, "OO!:add_docstring", &obj, &PyUnicode_Type,
+                              &str)) {
+            return nullptr;
+        }
+
+        docstr = PyUnicode_AsUTF8(str);
+        if (docstr == NULL) {
+            return nullptr;
+        }
+
+    #define _ADDDOC(doc, name)                                           \
+        if (!(doc)) {                                                    \
+            doc = docstr;                                                \
+            Py_INCREF(str); /* hold on to string (leaks reference) */    \
+        } else if (strcmp(doc, docstr) != 0) {                           \
+            PyErr_Format(PyExc_RuntimeError, "%s method %s", name, msg); \
+            return nullptr;                                              \
+        }
+
+        if (Py_TYPE(obj) == &PyCFunction_Type) {
+            PyCFunctionObject *new_ob = (PyCFunctionObject *)obj;
+            _ADDDOC(new_ob->m_ml->ml_doc, new_ob->m_ml->ml_name);
+        } else if (Py_TYPE(obj) == &PyType_Type) {
+            PyTypeObject *new_ob = (PyTypeObject *)obj;
+            _ADDDOC(new_ob->tp_doc, new_ob->tp_name);
+        } else if (Py_TYPE(obj) == &PyMemberDescr_Type) {
+            PyMemberDescrObject *new_ob = (PyMemberDescrObject *)obj;
+            _ADDDOC(new_ob->d_member->doc, new_ob->d_member->name);
+        } else if (Py_TYPE(obj) == &PyGetSetDescr_Type) {
+            PyGetSetDescrObject *new_ob = (PyGetSetDescrObject *)obj;
+            _ADDDOC(new_ob->d_getset->doc, new_ob->d_getset->name);
+        } else if (Py_TYPE(obj) == &PyMethodDescr_Type) {
+            PyMethodDescrObject *new_ob = (PyMethodDescrObject *)obj;
+            _ADDDOC(new_ob->d_method->ml_doc, new_ob->d_method->ml_name);
+        } else {
+            PyObject *doc_attr;
+
+            doc_attr = PyObject_GetAttrString(obj, "__doc__");
+            if (doc_attr != NULL && doc_attr != Py_None &&
+                (PyUnicode_Compare(doc_attr, str) != 0)) {
+                Py_DECREF(doc_attr);
+                if (PyErr_Occurred()) {
+                    /* error during PyUnicode_Compare */
+                    return nullptr;
+                }
+                PyErr_Format(PyExc_RuntimeError, "object %s", msg);
+                return nullptr;
+            }
+            Py_XDECREF(doc_attr);
+
+            if (PyObject_SetAttrString(obj, "__doc__", str) < 0) {
+                PyErr_SetString(PyExc_TypeError,
+                                "Cannot set a docstring for that object");
+                return nullptr;
+            }
+            Py_RETURN_NONE;
+        }
+
+    #undef _ADDDOC
+
+        Py_RETURN_NONE;
+    }

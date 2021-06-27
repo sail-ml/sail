@@ -3,7 +3,7 @@
 #include <omp.h>
 #include "Tensor.h"
 #include "dtypes.h"
-#include "kernels/kernel.h"
+#include "kernels/Kernel.h"
 #include "modules/module.h"
 #include "ops/ops.h"
 #include "optimizers.h"
@@ -33,7 +33,7 @@ void SGD::update() {
         Tensor t = Optimizer::params[i];
         Tensor grad = t.get_grad();
         // DISABLE_GRAD(t, grad);
-        SGDKernel().execute(t, grad, learning_rate);
+        sail::internal::sgd_stub(t, grad, learning_rate);
         // ENABLE_GRAD(t, grad);
         // t += grad;
         t.clear_grad();

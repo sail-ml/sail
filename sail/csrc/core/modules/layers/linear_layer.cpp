@@ -3,7 +3,7 @@
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
-#include "error.h"
+#include "exception.h"
 #include "factories.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"

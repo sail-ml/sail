@@ -12,7 +12,7 @@
 #include "../error_defs.h"
 #include "../macros.h"
 
-RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
+static PyObject *PyTensor_getitem(PyObject *self, PyObject *key) {
     START_EXCEPTION_HANDLING
     int idx = static_cast<int>(PyLong_AsLong(key));
 
@@ -26,9 +26,6 @@ RETURN_OBJECT PyTensor_getitem(PyObject *self, PyObject *key) {
     ret_class->tensor = ((PyTensor *)self)->tensor[idx];
 
     SET_BASE(self, ret_class);
-
-    ret_class->ndim = ((PyTensor *)ret_class)->tensor.get_ndim();
-    ret_class->dtype = ((PyTensor *)self)->dtype;
 
     return (PyObject *)ret_class;
     END_EXCEPTION_HANDLING

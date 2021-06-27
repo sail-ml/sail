@@ -6,10 +6,9 @@
 #include <iostream>
 #include "../error_defs.h"
 #include "../macros.h"
-#include "../ops/elementwise.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "core/error.h"
+#include "core/exception.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
 
@@ -18,7 +17,7 @@
  * op = [+, -, *, /]
  */
 
-RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
+static PyObject *PyTensor_$name$(PyObject *t1, PyObject *t2) {
     START_EXCEPTION_HANDLING
     sail::Tensor tensor1;
     sail::Tensor tensor2;
@@ -30,8 +29,6 @@ RETURN_OBJECT PyTensor_$name$(PyObject *t1, PyObject *t2) {
 
     ret_class->tensor = tensor1 $op$ tensor2;
 
-    ret_class->ndim = ret_class->tensor.get_ndim();
-    ret_class->requires_grad = ret_class->tensor.requires_grad;
     // SET_BASE(t1, ret_class);
 
     return (PyObject *)ret_class;

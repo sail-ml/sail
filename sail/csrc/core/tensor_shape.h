@@ -33,6 +33,8 @@ class TensorShape {
     TensorShape roll_axis(long axis, long position);
     TensorShape move_axis(long axis, long position);
 
+    void ignore_innermost();
+
     void insert_one(const int dim);
     void remove_one(const int dim);
     void remove(const int dim);

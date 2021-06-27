@@ -3,29 +3,9 @@
 #include <Python.h>
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "py_tensor/py_tensor.h"
+#include "py_tensor/py_tensor_def.h"
 
-// sail::Tensor getNumeric(PyObject* number) {
-//     sail::Tensor new_tensor;
-//     if (PyObject_TypeCheck(number, &PyFloat_Type)) {
-
-//         new_tensor = sail::empty_scalar(Dtype::sFloat64);
-//         double val = PyFloat_AsDouble(number);
-//         double *ptr = &val;
-//         memcpy(new_tensor.storage.data, ptr, sizeof(val));
-//         return new_tensor;
-//     } else if (PyObject_TypeCheck(number, &PyLong_Type)) {
-//         new_tensor = sail::empty_scalar(Dtype::sFloat64);
-//         new_tensor.free();
-//         new_tensor.storage.data = PyLong_AsVoidPtr(number);
-//     }
-
-//     return new_tensor;
-// }
-// new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
-            // new_tensor.free();                                 \
-            // new_tensor.set_data(PyLong_AsVoidPtr(number));     \
-
+#define RETURN_OBJECT static PyObject *
 #define GET_NUMERIC(number, new_tensor)                        \
     {                                                          \
         if (PyObject_TypeCheck(number, &PyFloat_Type)) {       \
@@ -38,9 +18,6 @@
             return nullptr;                                    \
         }                                                      \
     }
-
-#define RETURN_OBJECT static PyObject *
-// using RETURN_OBJECT = RETURN_OBJECT;
 
 #define BINARY_TENSOR_TYPE_CHECK(a, b)               \
     {                                                \
@@ -55,8 +32,6 @@
 #define COPY(src, dest)                      \
     {                                        \
         dest->tensor = src->tensor;          \
-        dest->ndim = src->ndim;              \
-        dest->dtype = src->dtype;            \
         dest->base_object = (PyObject *)src; \
         Py_INCREF(src);                      \
     }
@@ -89,10 +64,26 @@
         }                                                    \
     }
 
-#define GENERATE_FROM_TENSOR(pyobj, t)                          \
-    {                                                           \
-        pyobj->tensor = t;                                      \
-        pyobj->ndim = t.get_ndim();                             \
-        pyobj->dtype = get_np_type_numFromDtype(t.get_dtype()); \
-        pyobj->requires_grad = t.requires_grad;                 \
+#define GENERATE_FROM_TENSOR(pyobj, t) \
+    { pyobj->tensor = t; }
+
+#define SEQUENCE_TO_LIST(sequence, list)                                \
+    {                                                                   \
+        if (sequence == NULL) {                                         \
+            list = {1};                                                 \
+        } else if (PyLong_Check(sequence)) {                            \
+            list = {PyLong_AsLong(sequence)};                           \
+        } else {                                                        \
+            sequence = PySequence_Tuple(sequence);                      \
+            int len = PyTuple_Size(sequence);                           \
+            if (len == -1) {                                            \
+                list = {PyLong_AsLong(sequence)};                       \
+            } else {                                                    \
+                while (len--) {                                         \
+                    list.push_back(                                     \
+                        PyLong_AsLong(PyTuple_GetItem(sequence, len))); \
+                }                                                       \
+                std::reverse(list.begin(), list.end());                 \
+            }                                                           \
+        }                                                               \
     }

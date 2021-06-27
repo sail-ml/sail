@@ -38,8 +38,8 @@ static void PyLoss_dealloc(PyLoss *self) {
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
-RETURN_OBJECT
-PyLoss_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+static PyObject *PyLoss_new(PyTypeObject *type, PyObject *args,
+                            PyObject *kwds) {
     PyLoss *self;
     self = (PyLoss *)type->tp_alloc(type, 0);
     return (PyObject *)self;
@@ -47,7 +47,7 @@ PyLoss_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
 /////////////////////////////////////////
 
-RETURN_OBJECT PyLoss_forward(PyLoss *self, PyObject *args, PyObject *kwds) {
+static PyObject *PyLoss_forward(PyLoss *self, PyObject *args, PyObject *kwds) {
     PyErr_SetString(PyExc_NotImplementedError, "");
     return nullptr;
 }

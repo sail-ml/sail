@@ -7,6 +7,6 @@
 #include "py_module_linear.h"
 
 // Activations
+#include "py_module_relu.h"
 #include "py_module_sigmoid.h"
 #include "py_module_softmax.h"
-#include "py_module_relu.h"

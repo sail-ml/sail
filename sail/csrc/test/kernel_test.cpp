@@ -7,8 +7,12 @@
 
 #include <iostream>
 
-TEST(KernelTest, BaseKernelInstantiation) {
-    
-    sail::Kernel k = sail::Kernel();
 
-}
+
+// TEST(KernelTest, BaseKernelInstantiation) {
+    
+//     sail::Kernel k = sail::Kernel();
+
+    
+
+// }

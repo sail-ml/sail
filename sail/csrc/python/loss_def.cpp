@@ -6,7 +6,8 @@
 #include <iostream>
 #include "numpy/arrayobject.h"
 
-#include "ops/ops_def.h"
+#include "macros.h"
+
 #include "py_dtypes/py_dtype.h"
 #include "py_loss/py_loss.h"
 #include "py_tensor/py_tensor.h"
@@ -38,8 +39,8 @@ PyMODINIT_FUNC PyInit_liblosses(void) {
         Py_DECREF(m);
         return NULL;
     }
-    if (PyModule_AddObject(m, "MeanSquaredError",
-                           (PyObject*)&PyMSELossType) < 0) {
+    if (PyModule_AddObject(m, "MeanSquaredError", (PyObject*)&PyMSELossType) <
+        0) {
         Py_DECREF(&PyMSELossType);
         Py_DECREF(m);
         return NULL;

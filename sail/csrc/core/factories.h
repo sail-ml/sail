@@ -6,7 +6,7 @@
 
 #include "Tensor.h"
 #include "dtypes.h"
-#include "error.h"
+#include "exception.h"
 #include "types.h"
 
 namespace sail {

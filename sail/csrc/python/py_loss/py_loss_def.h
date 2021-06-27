@@ -26,10 +26,10 @@ static int PyLoss_init(PyLoss *self, PyObject *args, PyObject *kwargs);
 static int PyLoss_traverse(PyLoss *self, visitproc visit, void *arg);
 static int PyLoss_clear(PyLoss *self);
 static void PyLoss_dealloc(PyLoss *self);
-RETURN_OBJECT PyLoss_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+static PyObject *PyLoss_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 //////////////////////////////////////////////
-RETURN_OBJECT PyLoss_forward(PyLoss *self, PyObject *args, PyObject *kwds);
+static PyObject *PyLoss_forward(PyLoss *self, PyObject *args, PyObject *kwds);
 
 static PyMethodDef PyLoss_methods[] = {
     {"forward", (PyCFunction)PyLoss_forward, METH_VARARGS | METH_KEYWORDS,

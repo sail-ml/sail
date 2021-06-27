@@ -3,7 +3,7 @@
 #include <immintrin.h>
 #include <cstring>
 // #include "Tensor.h"
-#include "error.h"
+#include "exception.h"
 #include "utils.h"
 
 // using Tensor = sail::Tensor;
@@ -77,7 +77,7 @@ template <typename T>
 constexpr Dtype TypeToDtype = PrimitiveType<std::remove_const<T>>::sDtype;
 
 template <typename F, typename... Args>
-inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
+inline auto dispatch_all_types(Dtype dtype, F&& f, Args&&... args) {
     switch (dtype) {
         // case Dtype::sInt8:
         //     return std::forward<F>(f)(PrimitiveType<int8_t>{},
@@ -104,13 +104,47 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
             return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
         default:
-            throw DtypeError{"Dtype error in launch arithmetic"};
+            THROW_ERROR_DETAILED(DtypeError,
+                                 "Dtype error in launch arithmetic");
+    }
+}
+template <typename F, typename... Args>
+inline auto dispatch_fp_types(Dtype dtype, F&& f, Args&&... args) {
+    switch (dtype) {
+        case Dtype::sFloat32:
+            return std::forward<F>(f)(PrimitiveType<float>{},
+                                      std::forward<Args>(args)...);
+        case Dtype::sFloat64:
+            return std::forward<F>(f)(PrimitiveType<double>{},
+                                      std::forward<Args>(args)...);
+        default:
+            return;
+    }
+}
+template <typename F_float, typename F_int, typename... Args>
+inline auto dispatch_fp_int_types(Dtype dtype, F_float&& f, F_int&& fi,
+                                  Args&&... args) {
+    switch (dtype) {
+        case Dtype::sInt32:
+            return std::forward<F_int>(fi)(PrimitiveType<int32_t>{},
+                                           std::forward<Args>(args)...);
+        case Dtype::sInt64:
+            return std::forward<F_int>(fi)(PrimitiveType<int64_t>{},
+                                           std::forward<Args>(args)...);
+        case Dtype::sFloat32:
+            return std::forward<F_float>(f)(PrimitiveType<float>{},
+                                            std::forward<Args>(args)...);
+        case Dtype::sFloat64:
+            return std::forward<F_float>(f)(PrimitiveType<double>{},
+                                            std::forward<Args>(args)...);
+        default:
+            return;
     }
 }
 
 inline char GetCharCode(Dtype dtype) {
-    return launch_arithmetic(dtype,
-                             [](auto pt) { return decltype(pt)::sCharCode; });
+    return dispatch_all_types(dtype,
+                              [](auto pt) { return decltype(pt)::sCharCode; });
 }
 
 inline Dtype GetDtype(const std::string& name) {
@@ -146,7 +180,7 @@ inline Dtype GetDtype(const std::string& name) {
             return pair.dtype;
         }
     }
-    throw DtypeError{"Dtype not found get dtype"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found get dtype");
 }
 
 template <typename T>
@@ -166,7 +200,7 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
             break;
     }
     // throw DtypeError{"unsupported NumPy dtype"};
-    throw DtypeError{"Dtype not found np int"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found np int");
 }
 inline int get_np_type_numFromDtype(Dtype dtype) {
     switch (dtype) {
@@ -183,7 +217,7 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
     }
     // std::cout << dtype << std::endl;
     // throw DtypeError{"unsupported NumPy dtype"};
-    throw DtypeError{"Dtype not found NP DTYE"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found NP DTYPE");
 }
 
 inline long GetDtypeSize(Dtype dtype) {
@@ -206,7 +240,7 @@ inline long GetDtypeSize(Dtype dtype) {
             return pair.size;
         }
     }
-    throw DtypeError{"Dtype not found get size"};
+    THROW_ERROR_DETAILED(DtypeError, "Dtype not found get size");
 }
 
 typedef struct {
@@ -251,7 +285,7 @@ inline alignemnt_information getAlignment(Dtype dtype) {
             info = {32, 8, 4};
             return info;
         default:
-            throw DtypeError{"Dtype error GET ALIGNMENT"};
+            THROW_ERROR_DETAILED(DtypeError, "Dtype not found GET ALIGNMENT");
     }
 }
 

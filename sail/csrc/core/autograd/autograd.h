@@ -1,8 +1,11 @@
 #pragma once
 
-#include "activations.h"
-#include "addmm_function.h"
-#include "binary_function.h"
+#include "ActivationGrad.h"
+#include "LossGrad.h"
+#include "ReductionGrad.h"
+#include "UnaryGrad.h"
 #include "function.h"
-#include "loss.h"
-#include "unary_function.h"
+
+#include "BinaryGrad.h"
+#include "ExponentialGrad.h"
+#include "LinalgGrad.h"

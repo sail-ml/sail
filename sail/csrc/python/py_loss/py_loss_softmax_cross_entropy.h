@@ -16,8 +16,8 @@ static int PySCELoss_init(PyLoss *self, PyObject *args, PyObject *kwargs) {
     return 0;
 }
 
-RETURN_OBJECT
-PySCELoss_forward(PyLoss *self, PyObject *args, PyObject *kwargs) {
+static PyObject *PySCELoss_forward(PyLoss *self, PyObject *args,
+                                   PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor *logits = NULL;
     PyTensor *targets = NULL;

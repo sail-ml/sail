@@ -65,6 +65,8 @@ class CMakeBuild(build_ext):
     def build_cmake(self, ext):
         subprocess.run(["rm", "-rf", "build/*"])
         subprocess.run(["python", "process_docs.py"], cwd="sail")
+        subprocess.run(["python", "generate.py"], cwd="sail/csrc/python")
+        # exit()
         global allow_avx
         cwd = pathlib.Path().absolute()
 
@@ -96,15 +98,17 @@ class CMakeBuild(build_ext):
         print (cpufeature.CPUFeature)
         if (cpufeature.CPUFeature["AVX2"] and allow_avx):
             print ("Compiling Sail with AVX2 Support")
-            cmake_args.append("-DUSE_AVX2=ON")
+            cmake_args.append("-DUSE_AVX=ON")
             cmake_args.append("-DUSE_MKL=ON")
         else:
             print ("Compiling Sail without AVX2 Support")
-            cmake_args.append("-DUSE_AVX2=OFF")
+            cmake_args.append("-DUSE_AVX=OFF")
             cmake_args.append("-DUSE_MKL=OFF")
 
         if (coverage):
             cmake_args.append("-DCOVERAGE=ON")
+        else:
+            cmake_args.append("-DCOVERAGE=OFF")
 
         # example of build args
         build_args = [
@@ -127,12 +131,15 @@ class CMakeBuild(build_ext):
         copyfile("%s/libmodules.so" % build_path, "sail/modules/libmodules.so")
         copyfile("%s/liblosses.so" % build_path, "sail/losses/liblosses.so")
         copyfile("%s/liboptimizers.so" % build_path, "sail/optimizers/liboptimizers.so")
-        copyfile("%s/librandom.so" % build_path, "sail/random/librandom.so")
+        copyfile("%s/librandom.so" % build_path, "sail/rand/librandom.so")
 
         copyfile("%s/libmodules.so" % build_path, "%s/../modules/libmodules.so" % build_path)
         copyfile("%s/liblosses.so" % build_path, "%s/../losses/liblosses.so" % build_path)
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
-        copyfile("%s/librandom.so" % build_path, "%s/../random/librandom.so" % build_path)
+        copyfile("%s/librandom.so" % build_path, "%s/../rand/librandom.so" % build_path)
+
+        subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
+
 
 def s():
    
@@ -172,7 +179,7 @@ def s():
             "sail.modules",
             "sail.losses",
             "sail.optimizers",
-            "sail.random",
+            "sail.rand",
             ],#setuptools.find_packages(),
         ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
         cmdclass={'build_ext': CMakeBuild, "ci": CICommand},

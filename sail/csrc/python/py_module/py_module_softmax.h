@@ -22,8 +22,8 @@ static int PySoftmaxModule_init(PyModule *self, PyObject *args,
     END_EXCEPTION_HANDLING_INT
 }
 
-RETURN_OBJECT
-PySoftmaxModule_forward(PyModule *self, PyObject *args, PyObject *kwargs) {
+static PyObject *PySoftmaxModule_forward(PyModule *self, PyObject *args,
+                                         PyObject *kwargs) {
     START_EXCEPTION_HANDLING
     PyTensor *inputs = NULL;
     static char *kwlist[] = {"inputs", NULL};
