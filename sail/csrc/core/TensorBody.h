@@ -63,6 +63,7 @@ class TensorBody {
     TensorBody::pointer create_owner();
 
     inline void* get_data() { return data; }
+    inline void set_data(void* d) { data = d; }
     inline Dtype get_dtype() { return dtype; }
     inline TensorShape get_shape() { return *shape; }
     inline alignemnt_information get_info() { return info; }

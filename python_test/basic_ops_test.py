@@ -15,7 +15,7 @@ class AddTest(UnitTest):
     # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base_add(self, rq):
-        choices = elementwise_options[:1]
+        choices = elementwise_options
         times = []
         for c in choices:
             arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
@@ -58,6 +58,22 @@ class AddTest(UnitTest):
 
         return
 
+    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    def test_dtype(self, dtype1, dtype2):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(10, 20, c).astype(dtype1[0])
+            x2 = sail.random.uniform(10, 20, c).astype(dtype2[0])
+            arr1 = x1.numpy()
+            arr2 = x2.numpy()
+
+            x3 = x1 + x2 
+            arr3 = arr1 + arr2 
+
+            self.assert_eq_np_sail(arr3, x3)
+
+            
     def test_broadcast_add2(self):
         a = sail.random.uniform(0, 1, (10, 1, 45))
         b = sail.random.uniform(0, 1, (10, 12, 45))
@@ -153,6 +169,21 @@ class SubtractTest(UnitTest):
                 self.assert_eq_np_sail(arr3, x3)
                 self.assert_eq(x3.requires_grad, rq)
         return
+
+    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    def test_dtype(self, dtype1, dtype2):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(10, 20, c).astype(dtype1[0])
+            x2 = sail.random.uniform(10, 20, c).astype(dtype2[0])
+            arr1 = x1.numpy()
+            arr2 = x2.numpy()
+
+            x3 = x1 - x2 
+            arr3 = arr1 - arr2 
+
+            self.assert_eq_np_sail(arr3, x3)
 
     def test_broadcast2(self):
         a = sail.random.uniform(0, 1, (10, 1, 45))
@@ -253,6 +284,21 @@ class MultiplyTest(UnitTest):
 
         return
 
+    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    def test_dtype(self, dtype1, dtype2):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(10, 20, c).astype(dtype1[0])
+            x2 = sail.random.uniform(10, 20, c).astype(dtype2[0])
+            arr1 = x1.numpy()
+            arr2 = x2.numpy()
+
+            x3 = x1 * x2 
+            arr3 = arr1 * arr2 
+
+            self.assert_eq_np_sail(arr3, x3)
+
     def test_broadcast2(self):
         a = sail.random.uniform(0, 1, (10, 1, 45))
         b = sail.random.uniform(0, 1, (10, 12, 45))
@@ -350,6 +396,21 @@ class DivideTest(UnitTest):
                 self.assert_eq(x3.requires_grad, rq)
 
         return
+
+    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    def test_dtype(self, dtype1, dtype2):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(1, 2, c).astype(dtype1[0])
+            x2 = sail.random.uniform(1, 2, c).astype(dtype2[0])
+            arr1 = x1.numpy()
+            arr2 = x2.numpy()
+
+            x3 = x1 / x2 
+            arr3 = arr1 / arr2 
+
+            self.assert_eq_np_sail(arr3, x3)
 
     def test_broadcast2(self):
         a = sail.random.uniform(1, 2, (10, 1, 45))

@@ -37,6 +37,14 @@ Tensor empty_like(const Tensor& tensor) {
     _empty.requires_grad = tensor.requires_grad;
     return _empty;
 }
+Tensor empty_like(const Tensor& tensor, Dtype& dt) {
+    TensorBody::pointer body = TensorBody::pointer(
+        new TensorBody(dt, TensorShape(tensor.get_shape().shape)));
+
+    Tensor _empty = Tensor(body, tensor.requires_grad);
+    _empty.requires_grad = tensor.requires_grad;
+    return _empty;
+}
 
 Tensor clone(const Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));

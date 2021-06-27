@@ -74,6 +74,8 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
         axis_total_size *= a_dim;
     }
 
+    Dtype dt = promote_dtype(t1.get_dtype(), t2.get_dtype());
+
     auto a_tup = GetTensorDotRollAxes(t1.get_shape(), t1_dim, false);
     auto b_tup = GetTensorDotRollAxes(t2.get_shape(), t2_dim, true);
     LongVec a_roll_axes = std::get<0>(a_tup);
@@ -91,7 +93,9 @@ Tensor tensordot(const Tensor& t1, const Tensor& t2, LongVec t1_dim,
 
     TensorShape dot_shape =
         TensorShape({a_remain_total_size, b_remain_total_size});
-    Tensor dot_out = zeros(dot_shape, t1.get_dtype());
+    Tensor dot_out = zeros(dot_shape, dt);
+    t1 = t1.cast(dt);
+    t2 = t2.cast(dt);
     // DotTTKernel().execute
     sail::internal::matmul_stub(t1.transpose(a_roll_axes).reshape(a_shape),
                                 t2.transpose(b_roll_axes).reshape(b_shape),
@@ -150,6 +154,7 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
         t1 = clone(t1);
         t2 = clone(t2);
     }
+    Dtype dt = promote_dtype(t1.get_dtype(), t2.get_dtype());
 
     TensorSize new_shape;
     TensorSize s1 = t1.get_shape().shape;
@@ -166,7 +171,10 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
     new_shape.push_back(r);
     new_shape.push_back(c);
     TensorShape s = TensorShape(new_shape);
-    Tensor empty_tensor = empty(0, t1.get_dtype(), s);
+    Tensor empty_tensor = empty(0, dt, s);
+
+    t1 = t1.cast(dt);
+    t2 = t2.cast(dt);
 
     sail::internal::matmul_stub(t1, t2, empty_tensor, true, trans_a, trans_b);
 
@@ -202,6 +210,11 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
         t1 = clone(t1);
         t2 = clone(t2);
     }
+
+    Dtype dt = promote_dtype(t1.get_dtype(), t2.get_dtype());
+    t1 = t1.cast(dt);
+    t2 = t2.cast(dt);
+    add = add.cast(dt);
 
     TensorSize new_shape = {t1.get_shape().shape[0], t2.get_shape().shape[1]};
     TensorShape s = TensorShape(new_shape);

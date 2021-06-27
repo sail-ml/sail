@@ -110,8 +110,11 @@ int Tensor::get_np_type_num() { return get_np_type_numFromDtype(get_dtype()); }
 
 // todo - move to op
 Tensor Tensor::cast(const Dtype dt) {
-    Tensor casted = ops::cast(*this, dt);
-    return casted;
+    if (dt != get_dtype()) {
+        Tensor casted = ops::cast(*this, dt);
+        return casted;
+    }
+    return *this;
 }
 
 Tensor Tensor::operator[](const int index) const {
@@ -186,7 +189,6 @@ void Tensor::backward() {
 void Tensor::backward(Tensor& _grad) {
     if (requires_grad) {
         if (has_grad()) {
-            std::cout << "yeah?" << std::endl;
             Tensor ng = _grad + get_grad();
             set_grad(ng);
         } else {

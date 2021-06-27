@@ -48,6 +48,10 @@ PyObject* PyDimensionError =
     PyErr_NewException("sail.DimensionError",
                        PySailError,  // use to pick base class
                        NULL);
+PyObject* PyTypeError =
+    PyErr_NewException("sail.TypeError",
+                       PySailError,  // use to pick base class
+                       NULL);
 
 #define START_EXCEPTION_HANDLING try {
 #define END_EXCEPTION_HANDLING                                        \
@@ -58,6 +62,10 @@ PyObject* PyDimensionError =
     }                                                                 \
     catch (const SailCError& e) {                                     \
         PyErr_SetString(PySailError, e.what());                       \
+        return nullptr;                                               \
+    }                                                                 \
+    catch (const TypeError& e) {                                      \
+        PyErr_SetString(PyTypeError, e.what());                       \
         return nullptr;                                               \
     }                                                                 \
     catch (const std::exception& e) {                                 \
@@ -76,6 +84,10 @@ PyObject* PyDimensionError =
     }                                                                 \
     catch (const SailCError& e) {                                     \
         PyErr_SetString(PySailError, e.what());                       \
+        return -1;                                                    \
+    }                                                                 \
+    catch (const TypeError& e) {                                      \
+        PyErr_SetString(PyTypeError, e.what());                       \
         return -1;                                                    \
     }                                                                 \
     catch (const std::exception& e) {                                 \

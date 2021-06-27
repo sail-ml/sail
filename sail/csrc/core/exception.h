@@ -60,6 +60,11 @@ class DtypeError : public SailCError {
    public:
     using SailCError::SailCError;
 };
+// Error on using invalid contexts.
+class TypeError : public SailCError {
+   public:
+    using SailCError::SailCError;
+};
 
 // #define SAIL_ASSERT(cond, ...)
 //   if (C10_UNLIKELY_OR_CONST(!(cond))) {
@@ -76,6 +81,11 @@ class DtypeError : public SailCError {
 #define SAIL_CHECK_LINE(cond, ...)                                      \
     if (!(cond)) {                                                      \
         throw SailCError(__FILE__, ":", __LINE__, "\n", ##__VA_ARGS__); \
+    }
+#define SAIL_TYPE_CHECK_2(a, b)                                                \
+    if (a.get_dtype() != b.get_dtype()) {                                      \
+        throw TypeError("Tensor types do not match. Recieved ", a.get_dtype(), \
+                        " and ", b.get_dtype());                               \
     }
 
 #define THROW_ERROR(err_t, ...) throw err_t(##__VA_ARGS__)

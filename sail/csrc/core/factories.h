@@ -13,6 +13,7 @@ namespace sail {
 
 Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape);
 Tensor empty_like(const Tensor& tensor);
+Tensor empty_like(const Tensor& tensor, Dtype& dt);
 Tensor make_view(void* data, Dtype dt, TensorShape shape);
 Tensor make_view(const Tensor& t);
 Tensor copy(Tensor t);

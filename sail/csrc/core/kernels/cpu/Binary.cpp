@@ -85,7 +85,7 @@ void div_kernel(const Tensor &t1, const Tensor &t2, Tensor &out,
 }  // namespace
 REGISTER_AVX_DISPATCH(add_stub, &add_kernel);
 REGISTER_AVX_DISPATCH(subtract_stub, &sub_kernel);
-REGISTER_AVX_DISPATCH(divide_stub, &div_kernel);
+// REGISTER_AVX_DISPATCH(divide_stub, &div_kernel);
 REGISTER_AVX_DISPATCH(multiply_stub, &mul_kernel);
 
 }  // namespace internal
