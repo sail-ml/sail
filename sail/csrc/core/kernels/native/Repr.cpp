@@ -165,7 +165,7 @@ using Formatter =
 class ReprKernel {
    public:
     void execute(const Tensor& t1, std::ostream& os) {
-        launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_types(t1.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             Formatter<T> formatter;
 

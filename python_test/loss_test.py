@@ -33,7 +33,6 @@ class SoftmaxCrossEntropyTest(UnitTest):
 
 class MeanSquaredErrorTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test(self, rq):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
@@ -73,5 +72,4 @@ class MeanSquaredErrorTest(UnitTest):
             }
 
             self.assert_true(check_gradients_vector(forward, dic))
-
         return

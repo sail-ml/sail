@@ -13,7 +13,7 @@ namespace {
 
 void power_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
                   bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -27,7 +27,7 @@ void power_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 }
 
 void exp_kernel(const Tensor& t1, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         struct Impl {
@@ -40,7 +40,7 @@ void exp_kernel(const Tensor& t1, Tensor& out) {
 }
 
 void log_kernel(const Tensor& t1, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         struct Impl {
@@ -53,9 +53,9 @@ void log_kernel(const Tensor& t1, Tensor& out) {
 }
 
 }  // namespace
+REGISTER_ARCH_DISPATCH(log_stub, DEFAULT, &log_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(power_stub, &power_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(exp_stub, &exp_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(log_stub, &log_kernel);
 
 }  // namespace internal
 

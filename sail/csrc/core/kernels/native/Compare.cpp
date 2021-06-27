@@ -11,7 +11,7 @@ namespace internal {
 namespace {
 
 void clip_min_kernel(const Tensor& t1, const double min, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -31,7 +31,7 @@ void clip_min_kernel(const Tensor& t1, const double min, Tensor& out) {
 }
 
 void clip_max_kernel(const Tensor& t1, const double max, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -52,7 +52,7 @@ void clip_max_kernel(const Tensor& t1, const double max, Tensor& out) {
 
 void clip_kernel(const Tensor& t1, const double min, const double max,
                  Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         struct Impl {
@@ -81,7 +81,7 @@ REGISTER_ONLY_NATIVE_DISPATCH(clip_stub, &clip_kernel);
 namespace {
 void equal_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                   bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -100,7 +100,7 @@ void equal_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 }
 void lt_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -119,7 +119,7 @@ void lt_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 }
 void gt_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -138,7 +138,7 @@ void gt_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 }
 void lte_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                 bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -157,7 +157,7 @@ void lte_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 }
 void gte_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                 bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 

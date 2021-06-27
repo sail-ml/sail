@@ -12,7 +12,7 @@ namespace internal {
 namespace {
 
 void mse_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 

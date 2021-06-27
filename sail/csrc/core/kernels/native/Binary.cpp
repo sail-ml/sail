@@ -12,7 +12,7 @@ namespace {
 
 void add_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
                 bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -25,7 +25,7 @@ void add_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 
 void subtract_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
                      bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -38,7 +38,7 @@ void subtract_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 
 void multiply_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
                      bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -51,7 +51,7 @@ void multiply_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 
 void divide_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
                    bool broadcast) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -63,10 +63,10 @@ void divide_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 }
 
 }  // namespace
-REGISTER_ONLY_NATIVE_DISPATCH(add_stub, &add_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(subtract_stub, &subtract_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(multiply_stub, &multiply_kernel);
-REGISTER_ONLY_NATIVE_DISPATCH(divide_stub, &divide_kernel);
+REGISTER_ARCH_DISPATCH(add_stub, DEFAULT, &add_kernel);
+REGISTER_ARCH_DISPATCH(subtract_stub, DEFAULT, &subtract_kernel);
+REGISTER_ARCH_DISPATCH(multiply_stub, DEFAULT, &multiply_kernel);
+REGISTER_ARCH_DISPATCH(divide_stub, DEFAULT, &divide_kernel);
 
 }  // namespace internal
 

@@ -5,7 +5,7 @@ import time
 import unittest
 import faulthandler
 
-# import loss_test
+import loss_test
 import basic_ops_test
 import shape_test
 import linalg_test
@@ -16,7 +16,7 @@ import cast_test
 import print_test
 
 import integration_tests.basic_mlp
-# import integration_tests.integration_test1
+import integration_tests.integration_test1
 
 if __name__ == "__main__":
     faulthandler.enable()

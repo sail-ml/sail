@@ -74,7 +74,8 @@ struct DispatchStub<rT (*)(Args...), T> {
             USE = call;
         }
         // FnPtr call_ptr = DEFAULT;
-        return (*USE)(std::forward<ArgTypes>(args)...);
+        return (*USE)(args...);
+        // return (*USE)(std::forward<ArgTypes>(args)...);
     }
 
     FnPtr USE = nullptr;
@@ -98,8 +99,19 @@ struct DispatchStub<rT (*)(Args...), T> {
     template <>                                \
     decltype(fn) DispatchStub<decltype(fn), struct name>::arch = fn;
 
+#ifdef USE_AVX
+
+#define REGISTER_AVX_DISPATCH(name, fn) \
+    template <>                         \
+    decltype(fn) DispatchStub<decltype(fn), struct name>::AVX = fn;
+
+#else
+
+#define REGISTER_AVX_DISPATCH(name, fn) ;
+#endif
+
 #define REGISTER_ONLY_NATIVE_DISPATCH(name, fn) \
     REGISTER_ARCH_DISPATCH(name, DEFAULT, fn);  \
-    REGISTER_ARCH_DISPATCH(name, AVX, static_cast<decltype(fn)>(nullptr));
+    REGISTER_AVX_DISPATCH(name, static_cast<decltype(fn)>(nullptr));
 }  // namespace internal
 }  // namespace sail

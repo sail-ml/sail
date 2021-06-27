@@ -120,7 +120,7 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
     } else {
         long numel = tensor.get_shape().numel();
         void *new_data = malloc(numel * tensor.get_info().dtype_size);
-        launch_arithmetic(tensor.get_dtype(), [&](auto pt) {
+        dispatch_all_types(tensor.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;

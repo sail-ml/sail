@@ -79,7 +79,7 @@ class TensorIterator {
     long ndim() const;
     long inner_loop_size() const;
     long out_loop_size() const;
-    virtual void advance_d_ptr();
+    virtual void advance_d_ptr(int j = 1);
     virtual void backup_d_ptr();
     long next();
 

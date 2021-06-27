@@ -55,6 +55,7 @@ TensorIterator::TensorIterator(TensorShape& t_shape) {
 
     std::vector<long> co(i2, 0);
     coordinates = co;
+    lasts.push_back(strides.back());
 }
 
 long TensorIterator::numel() const { return _numel; }
@@ -65,8 +66,8 @@ long TensorIterator::inner_loop_size() const { return shape.back(); }
 
 long TensorIterator::out_loop_size() const { return _numel / shape.back(); }
 
-void TensorIterator::advance_d_ptr() { d_ptr += strides.back(); }
-void TensorIterator::backup_d_ptr() { d_ptr -= strides.back(); }
+void TensorIterator::advance_d_ptr(int times = 1) { d_ptr += lasts[0] * times; }
+void TensorIterator::backup_d_ptr() { d_ptr -= lasts[0]; }
 
 long TensorIterator::next() {
     int i = 0;
@@ -80,7 +81,7 @@ long TensorIterator::next() {
             d_ptr -= strides_back[i];
         }
     }
-    d_ptr -= strides_back[_ndim - 1];
+    d_ptr -= strides_back.back();
     return d_ptr;
 }
 

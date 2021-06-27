@@ -77,7 +77,7 @@ template <typename T>
 constexpr Dtype TypeToDtype = PrimitiveType<std::remove_const<T>>::sDtype;
 
 template <typename F, typename... Args>
-inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
+inline auto dispatch_all_types(Dtype dtype, F&& f, Args&&... args) {
     switch (dtype) {
         // case Dtype::sInt8:
         //     return std::forward<F>(f)(PrimitiveType<int8_t>{},
@@ -108,10 +108,43 @@ inline auto launch_arithmetic(Dtype dtype, F&& f, Args&&... args) {
                                  "Dtype error in launch arithmetic");
     }
 }
+template <typename F, typename... Args>
+inline auto dispatch_fp_types(Dtype dtype, F&& f, Args&&... args) {
+    switch (dtype) {
+        case Dtype::sFloat32:
+            return std::forward<F>(f)(PrimitiveType<float>{},
+                                      std::forward<Args>(args)...);
+        case Dtype::sFloat64:
+            return std::forward<F>(f)(PrimitiveType<double>{},
+                                      std::forward<Args>(args)...);
+        default:
+            return;
+    }
+}
+template <typename F_float, typename F_int, typename... Args>
+inline auto dispatch_fp_int_types(Dtype dtype, F_float&& f, F_int&& fi,
+                                  Args&&... args) {
+    switch (dtype) {
+        case Dtype::sInt32:
+            return std::forward<F_int>(fi)(PrimitiveType<int32_t>{},
+                                           std::forward<Args>(args)...);
+        case Dtype::sInt64:
+            return std::forward<F_int>(fi)(PrimitiveType<int64_t>{},
+                                           std::forward<Args>(args)...);
+        case Dtype::sFloat32:
+            return std::forward<F_float>(f)(PrimitiveType<float>{},
+                                            std::forward<Args>(args)...);
+        case Dtype::sFloat64:
+            return std::forward<F_float>(f)(PrimitiveType<double>{},
+                                            std::forward<Args>(args)...);
+        default:
+            return;
+    }
+}
 
 inline char GetCharCode(Dtype dtype) {
-    return launch_arithmetic(dtype,
-                             [](auto pt) { return decltype(pt)::sCharCode; });
+    return dispatch_all_types(dtype,
+                              [](auto pt) { return decltype(pt)::sCharCode; });
 }
 
 inline Dtype GetDtype(const std::string& name) {

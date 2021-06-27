@@ -35,8 +35,16 @@ TensorVector MeanSquaredErrorLoss::backward(Tensor& grad) {
     Tensor diff = Function::arg_storage[0] - Function::arg_storage[1];
     grad = ops::broadcast_to(grad, diff.get_shape());
 
-    float v = 2.0 / (float)diff.numel();
-    Tensor v_ = from_data((void*)(&v), grad.get_dtype(), TensorShape({1}));
+    void* data =
+        _malloc_align(1, grad.get_info().alignment, grad.get_info().dtype_size);
+    dispatch_all_types(grad.get_dtype(), [&](auto pt) {
+        using T = typename decltype(pt)::type;
+        T inner_data = 2.0 / (T)diff.numel();
+        T* d = static_cast<T*>(data);
+        d[0] = inner_data;
+    });
+
+    Tensor v_ = from_data(data, grad.get_dtype(), TensorShape({1}));
 
     grad = grad * diff * v_;
     return {grad, -grad};

@@ -46,8 +46,7 @@ Tensor mean_squared_error(Tensor& logits, Tensor& targets) {
                      ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
         return result;
     }
-
-    Tensor out = empty(0, logits.get_dtype(), logits.get_shape());
+    Tensor out = empty_like(logits);
     sail::internal::mse_stub(logits, targets, out);
     return ops::sum(out);
 }

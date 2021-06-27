@@ -19,7 +19,7 @@ namespace {
 void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
                    bool empty = false, std::string trans_a = "N",
                    std::string trans_b = "N") {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         auto name = decltype(pt)::GetName();
 
         std::vector<long> t1_shape = t1.get_shape().shape;

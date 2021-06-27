@@ -12,7 +12,7 @@ namespace internal {
 namespace {
 
 void sum_kernel(const Tensor& t1, const int axis, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         // std::cout << decltype(pt)::type << std::endl;
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
@@ -29,7 +29,7 @@ void sum_kernel(const Tensor& t1, const int axis, Tensor& out) {
 }
 
 void mean_kernel(const Tensor& t1, const int axis, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         T numel = (T)t1.numel();
@@ -59,7 +59,7 @@ void mean_kernel(const Tensor& t1, const int axis, Tensor& out) {
 }
 
 void min_kernel(const Tensor& t1, const int axis, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {
@@ -79,7 +79,7 @@ void min_kernel(const Tensor& t1, const int axis, Tensor& out) {
 }
 
 void max_kernel(const Tensor& t1, const int axis, Tensor& out) {
-    launch_arithmetic(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {

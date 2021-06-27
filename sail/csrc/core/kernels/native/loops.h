@@ -101,15 +101,15 @@ void launch_unary_elementwise(Op op, const Tensor &t1, const Tensor &out) {
 
     if (t1.is_view()) {
         TensorShape s = t1.get_shape();
-        TensorIterator iter = TensorIterator(s);
+        MultiTensorIterator iter = MultiTensorIterator(s);
         int inner_loop_size = iter.inner_loop_size();
         int outer_steps = iter.out_loop_size();
 
         int z = 0;
         for (int i = 0; i < outer_steps; i++) {
             for (int j = 0; j < inner_loop_size; j += 1) {
-                op.call_base(p1[iter.d_ptr], p2[z]);
-                iter.advance_d_ptr();
+                op.call_base(p1[iter.d_ptrs[0]], p2[z]);
+                iter.advance_d_ptr(1);
                 z += 1;
             }
             iter.backup_d_ptr();

@@ -107,6 +107,8 @@ class CMakeBuild(build_ext):
 
         if (coverage):
             cmake_args.append("-DCOVERAGE=ON")
+        else:
+            cmake_args.append("-DCOVERAGE=OFF")
 
         # example of build args
         build_args = [

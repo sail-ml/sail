@@ -30,8 +30,8 @@ Tensor empty(const int ndims, const Dtype& dt, const TensorShape& shape) {
 }
 
 Tensor empty_like(const Tensor& tensor) {
-    TensorBody::pointer body = TensorBody::pointer(
-        new TensorBody(tensor.get_dtype(), tensor.get_shape()));
+    TensorBody::pointer body = TensorBody::pointer(new TensorBody(
+        tensor.get_dtype(), TensorShape(tensor.get_shape().shape)));
 
     Tensor _empty = Tensor(body, tensor.requires_grad);
     _empty.requires_grad = tensor.requires_grad;
@@ -46,7 +46,7 @@ Tensor clone(const Tensor& t) {
     if (t.is_view()) {
         int numel = s.numel();
         data = _malloc_align(numel, info.alignment, info.dtype_size);
-        launch_arithmetic(t.get_dtype(), [&](auto pt) {
+        dispatch_all_types(t.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             T* base_data = (T*)(t.get_data());
             T* set_data = (T*)data;
@@ -91,7 +91,7 @@ Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32) {
     long total_data = size * t.numel();
     alignemnt_information info = getAlignment(dt);
     void* data = _calloc_align(total_data, info.alignment, info.dtype_size);
-    launch_arithmetic(dt, [&](auto pt) {
+    dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* t_data = (T*)data;
@@ -144,7 +144,7 @@ Tensor one_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
 
-    launch_arithmetic(dt, [&](auto pt) {
+    dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
         // T data2 = (T)1;
         // memcpy(data, (void*)(&data2), sizeof(T));
@@ -182,7 +182,7 @@ Tensor ones(TensorShape size, Dtype dt) {
     int numel = size.numel();
     void* new_data =
         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-    launch_arithmetic(dt, [&](auto pt) {
+    dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_fill = (T*)new_data;
@@ -204,7 +204,7 @@ Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    launch_arithmetic(dt, [&](auto pt) {
+    dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -236,7 +236,7 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    launch_arithmetic(dt, [&](auto pt) {
+    dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
