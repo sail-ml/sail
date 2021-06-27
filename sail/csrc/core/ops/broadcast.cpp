@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Tensor.h"
 #include "TensorBody.h"
+#include "exception.h"
 #include "factories.h"
 #include "tensor_shape.h"
 
@@ -53,9 +54,15 @@ Tensor broadcast_to(const Tensor &tensor, TensorShape shape) {
                              : expand_shape[i + 1] * expand_strides[i + 1];
         int64_t targetSize = sizes[i];
         if (targetSize == -1) {
+            SAIL_CHECK(
+                dim >= 0, "The expanded size of the tensor (", targetSize,
+                ") isn't allowed in a leading, non-existing dimension ", i);
             targetSize = size;
         }
         if (size != targetSize) {
+            SAIL_CHECK(size == 1, "Tensor shapes must match at dimension ", i,
+                       ". Target shape: ", getVectorString(sizes),
+                       ". Input shape: ", getVectorString(tensor_sizes));
             size = targetSize;
             stride = 0;
         }
