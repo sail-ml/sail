@@ -17,11 +17,11 @@ typedef struct {
 
 ///////////// REPR ////////////////////////////
 static PyObject *PyDtype_Repr(PyDtype *obj) {
-    if (obj->dtype == Dtype::sInt32) {
+    if (obj->dt_val == 5) {
         return PyUnicode_FromString("<class 'sail.int32'>");
-    } else if (obj->dtype == Dtype::sFloat32) {
+    } else if (obj->dt_val == 11) {
         return PyUnicode_FromString("<class 'sail.float32'>");
-    } else if (obj->dtype == Dtype::sFloat32) {
+    } else if (obj->dt_val == 12) {
         return PyUnicode_FromString("<class 'sail.float64'>");
     } else {
         return PyUnicode_FromString("<class 'sail.dtype'>");
@@ -41,7 +41,7 @@ static PyTypeObject PyDtypeBase = {
     0,                                           /* tp_getattr */
     0,                                           /* tp_setattr */
     0,                                           /* tp_reserved */
-    &PyDtype_Repr,                               /* tp_repr */
+    (reprfunc)PyDtype_Repr,                      /* tp_repr */
     0,                                           /* tp_as_number */
     0,                                           /* tp_as_sequence */
     0,                                           /* tp_as_mapping */

@@ -46,6 +46,23 @@ Tensor view(Tensor& t1) {
     return new_;
 }
 
+Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
+    Tensor ret;
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_types(dt, [&](auto pt2) {
+            using T_in = typename decltype(pt)::type;
+            using T_out = typename decltype(pt2)::type;
+
+            T_in* d = static_cast<T_in*>(t1.get_data());
+            std::cout << d[0] << std::endl;
+            T_out* nd = reinterpret_cast<T_out*>(d);
+            std::cout << nd[0] << std::endl;
+            ret = make_view((void*)nd, dt, t1.get_shape());
+        });
+    });
+    return ret;
+}
+
 /** end block **/
 
 }  // namespace ops

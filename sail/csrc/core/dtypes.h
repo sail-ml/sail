@@ -289,5 +289,15 @@ inline alignemnt_information getAlignment(Dtype dtype) {
     }
 }
 
+inline bool can_cast_safe(Dtype dt1, Dtype dt2) { return dt1 < dt2; }
+
+inline Dtype promote_dtype(Dtype dt1, Dtype dt2) {
+    if (dt1 == Dtype::sInt32 && dt2 == Dtype::sFloat32) {
+        return Dtype::sFloat64;
+    } else if (dt1 == Dtype::sFloat32 && dt2 == Dtype::sInt32) {
+        return Dtype::sFloat64;
+    }
+    return std::max(dt1, dt2);
+}
 // inline bool can_cast(Dtype from, Dtype to){};
 // #include "Tensor.h"
