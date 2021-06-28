@@ -34,6 +34,20 @@ class SliceTest(UnitTest):
             break
             
         return
+    def test_complex_slice(self):
+        choices = [(12, 13, 3), (20, 5), (18, 15), (12, 3, 2, 3), (20,)]
+        times = []
+        for c in choices:
+            x = sail.random.uniform(0, 1, c)
+            y = x.numpy()
+
+            x = x[(c[0]//2):((c[0]//2) + 1)]
+            y = y[(c[0]//2):((c[0]//2) + 1)]
+
+            self.assert_eq_np_sail(y, x)
+            break
+            
+        return
 
 
 class ReshapeTest(UnitTest):
