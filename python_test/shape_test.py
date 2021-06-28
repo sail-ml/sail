@@ -4,6 +4,38 @@ import sail
 import time
 import unittest, random
 
+class LengthTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+
+    def test_base(self):
+        choices = [(12, 13, 3), (2, 5), (18, 15), (1, 3, 2, 3), (2,)]
+        times = []
+        for c in choices:
+            x = sail.random.uniform(0, 1, c)
+            self.assert_eq(len(x), c[0])
+        return
+
+class SliceTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+
+    def test_basic_slice(self):
+        choices = [(12, 13, 3), (20, 5), (18, 15), (12, 3, 2, 3), (20,)]
+        times = []
+        for c in choices:
+            x = sail.random.uniform(0, 1, c)
+            y = x.numpy()
+
+            x = x[c[0]//2]
+            y = y[c[0]//2]
+
+            self.assert_eq_np_sail(y, x)
+            break
+            
+        return
+
+
 class ReshapeTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)

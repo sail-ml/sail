@@ -10,6 +10,7 @@
 #include "core/dtypes.h"
 #include "core/factories.h"
 #include "core/ops/ops.h"
+#include "core/tensor_iterator.h"
 #include "core/tensor_shape.h"
 #include "core/types.h"
 #include "numpy/arrayobject.h"
@@ -110,7 +111,14 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
     int type = tensor.get_np_type_num();
 
     PyObject *array;
-    if (!tensor.is_view()) {
+    if (tensor.is_scalar()) {
+        void *data =
+            malloc(tensor.get_info().dtype_size);  // self->tensor.data;
+
+        memcpy(data, tensor.get_data(), tensor.get_info().dtype_size);
+        long shape = 0;
+        array = PyArray_SimpleNewFromData(ndims, &shape, type, data);
+    } else if (!tensor.is_view()) {
         void *data = malloc(tensor.getTotalSize());  // self->tensor.data;
 
         memcpy(data, tensor.get_data(), tensor.getTotalSize());
@@ -123,12 +131,19 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
             T *data = (T *)tensor.get_data();
             T *data2 = (T *)new_data;
             sail::TensorShape s0 = tensor.get_shape();
-            // s0.recompute();
-            for (int i = 0; i < numel; i++) {
-                data2[i] = data[s0.d_ptr];
-                s0.next();
+            sail::MultiTensorIterator iter = sail::MultiTensorIterator(s0);
+            long out_size = iter.out_loop_size();
+            long in_size = iter.inner_loop_size();
+            int z = 0;
+            for (int i = 0; i < out_size; i++) {
+                for (int j = 0; j < in_size; j++) {
+                    data2[z] = data[iter.d_ptrs[0]];
+                    iter.advance_d_ptr(1);
+                    z += 1;
+                }
+                iter.backup_d_ptr();
+                iter.next();
             }
-            // s0.reset();
         });
         shape = tensor.get_shape_ptr();
         ndims = tensor.get_ndim();
@@ -242,3 +257,5 @@ static PyObject *PyTensor_backward(PyTensor *self, void *closure) {
     return Py_None;
     END_EXCEPTION_HANDLING
 }
+
+static long PyTensor_len(PyTensor *self) { return self->tensor.len(); }

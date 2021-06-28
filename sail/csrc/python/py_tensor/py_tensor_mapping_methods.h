@@ -14,16 +14,22 @@
 
 static PyObject *PyTensor_getitem(PyObject *self, PyObject *key) {
     START_EXCEPTION_HANDLING
-    int idx = static_cast<int>(PyLong_AsLong(key));
-
-    if (idx > ((PyTensor *)self)->tensor.numel()) {
-        return nullptr;
-    }
-
     PyTensor *ret_class;
     ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+    if (PySlice_Check(key)) {
+        long start, stop, step;
+        PySlice_GetIndices(key, ((PyTensor *)self)->tensor.len(), &start, &stop,
+                           &step);
+        ret_class->tensor = ((PyTensor *)self)->tensor.slice(start, stop);
+    } else {
+        int idx = static_cast<int>(PyLong_AsLong(key));
 
-    ret_class->tensor = ((PyTensor *)self)->tensor[idx];
+        if (idx > ((PyTensor *)self)->tensor.numel()) {
+            return nullptr;
+        }
+
+        ret_class->tensor = ((PyTensor *)self)->tensor[idx];
+    }
 
     SET_BASE(self, ret_class);
 

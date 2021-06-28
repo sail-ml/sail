@@ -189,13 +189,17 @@ class ReprKernel {
                 }
             }
             os << "tensor(";
-            if (t1.get_shape().numel() == 0) {
-                os << "[]";
+            if (t1.is_scalar()) {
+                T x = *(T*)t1.get_data();
+                formatter.Scan(x);
+                formatter.Print(os, x);
             } else {
                 bool should_abbreviate = t1.get_shape().numel() > kThreshold;
                 ArrayReprRecursive<T>(t1, formatter, 8, os, should_abbreviate);
             }
-            os << ", shape=" << t1.get_shape().get_string();
+            if (!t1.is_scalar()) {
+                os << ", shape=" << t1.get_shape().get_string();
+            }
             os << ")";
 
             // } else {
@@ -214,7 +218,7 @@ class ReprKernel {
                             size_t indent, std::ostream& os,
                             bool abbreviate = false) const {
         long ndim = tensor.get_shape().ndim();
-        if (ndim == 0) {
+        if (tensor.is_scalar()) {
             formatter.Print(os, *(T*)tensor.get_data());
             return;
         }
