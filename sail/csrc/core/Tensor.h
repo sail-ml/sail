@@ -79,6 +79,7 @@ class Tensor {
     void clear_function() { fcn = nullptr; }
 
     long numel() const { return body.get()->get_shape().numel(); }
+    long len() const { return body.get()->get_shape().shape[0]; }
 
     Dtype get_dtype() const { return body.get()->get_dtype(); }
 
@@ -116,6 +117,8 @@ class Tensor {
 
     void backward();
     void backward(Tensor& grad);
+
+    Tensor slice(long start, long stop);
 
     Tensor operator+(const Tensor& t);
     Tensor operator+=(const Tensor& t);

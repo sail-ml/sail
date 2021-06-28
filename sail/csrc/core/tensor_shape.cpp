@@ -245,6 +245,9 @@ void TensorShape::remove(const int dim) {
 }
 
 long TensorShape::numel() const {
+    if (shape.size() == 0) {
+        return 0;
+    }
     long s = 1;
     for (long a : shape) {
         s *= a;
@@ -271,6 +274,9 @@ long TensorShape::getTotalSize(int mod) {
 }
 
 std::string TensorShape::get_string() {
+    if (numel() == 0) {
+        return std::string("()");
+    }
     std::stringstream result;
     std::copy(shape.begin(), shape.end(),
               std::ostream_iterator<int>(result, ", "));

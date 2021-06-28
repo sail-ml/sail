@@ -51,6 +51,7 @@ static int PyTensor_set_ndim(PyTensor *self, PyObject *value, void *closure);
 static PyObject *PyTensor_get_numpy(PyTensor *self, void *closure);
 static PyObject *PyTensor_astype(PyObject *self, PyObject *args, void *closure);
 static PyObject *PyTensor_backward(PyTensor *self, void *closure);
+static long PyTensor_len(PyTensor *self);
 
 //////////// DEF ARRAYS ///////////////////
 
@@ -121,7 +122,7 @@ static PyNumberMethods PyTensorNumberMethods = {
 static PyMappingMethods PyTensorMappingMethods = {
     // https://docs.python.org/3/c-api/typeobj.html#c.PyMappingMethods
 
-    0,                             // mp_length
+    (lenfunc)PyTensor_len,         // mp_length
     (binaryfunc)PyTensor_getitem,  // mp_subscript
     0,                             // mp_ass_subscript
 };

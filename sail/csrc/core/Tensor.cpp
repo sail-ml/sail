@@ -9,6 +9,7 @@
 #include "autograd/autograd.h"
 // #include "cuda/cuda_math.h"
 #include "dtypes.h"
+#include "exception.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
 #include "ops/ops.h"
@@ -94,7 +95,7 @@ Tensor Tensor::squeeze(const int dim) {
 }
 
 bool Tensor::is_scalar() const {
-    if (numel() == 1) {
+    if (get_shape().shape.size() == 0) {
         return true;
     }
     return false;
@@ -117,12 +118,40 @@ Tensor Tensor::cast(const Dtype dt) {
     return *this;
 }
 
+Tensor Tensor::slice(long start, long stop) {
+    void* new_ptr;
+    TensorSize new_shape;
+    TensorSize new_strides;
+    alignemnt_information info = get_info();
+    TensorShape shape_details = get_shape();
+    long dim = shape_details.shape[0];
+    long offset = 0;
+
+    offset += (shape_details.strides[0] * info.dtype_size) * (start);
+    new_ptr = get_data() + offset;
+    new_shape.push_back(stop - start);
+    new_strides.push_back(shape_details.strides[0]);
+    for (int i = 1; i < shape_details.ndim(); i++) {
+        new_shape.push_back(shape_details.shape[i]);
+        new_strides.push_back(shape_details.strides[i]);
+    }
+
+    Tensor e =
+        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+
+    return e;
+}
+
 Tensor Tensor::operator[](const int index) const {
     void* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
     alignemnt_information info = get_info();
     TensorShape shape_details = get_shape();
+
+    if (is_scalar()) {
+        THROW_ERROR_DETAILED(SailCError, "Cannot index a single value.");
+    }
     long dim = shape_details.shape[0];
     long offset = 0;
 
@@ -132,8 +161,6 @@ Tensor Tensor::operator[](const int index) const {
         new_shape.push_back(shape_details.shape[i]);
         new_strides.push_back(shape_details.strides[i]);
     }
-
-    // std::cout << getVectorString(new_shape) << std::endl;
 
     Tensor e =
         make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
