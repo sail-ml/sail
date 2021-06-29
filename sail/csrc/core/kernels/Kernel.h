@@ -5,6 +5,7 @@
 #include "Exponential.h"
 #include "Linalg.h"
 #include "Loss.h"
+#include "Mutation.h"
 #include "Optimizer.h"
 #include "Reduction.h"
 #include "Repr.h"

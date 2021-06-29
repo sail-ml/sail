@@ -12,6 +12,7 @@ import linalg_test
 import layer_test
 import reduction_test
 import factory_test 
+import cat_test 
 import cast_test 
 import print_test
 

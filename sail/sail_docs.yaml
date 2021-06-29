@@ -510,3 +510,32 @@ sail:
                 [4.         4.         4.79287767 4.         4.         4.11931086 6.         5.36888313 6.         6.        ]
                 [6.         4.         4.         6.         5.55413008 6.         4.         6.         6.         6.        ]
                 [6.         4.         6.         4.         6.         6.         6.         4.31791449 4.09643078 4.        ]], shape=(10, 10))
+  cat:
+    header: sail.cat(tensors, axis=0) -> Tensor
+    description: Concatenate the `tensor` along axis `axis`
+    args:
+      tensor:
+        type: List of Tensors
+        description: Input data
+      axis:
+        type: int
+        description: The axis to concatenate on
+    notes: The tensor shapes must match along every axis except `axis`
+    examples: |
+        >>> x = sail.random.normal(5, 3, (10, 10))
+  stack:
+    header: sail.stack(tensor, min, max) -> Tensor
+    description: Returns a copy of the tensor with values clipped to between `min` and `max`
+    args:
+      tensor:
+        type: Tensor
+        description: Input data
+      min:
+        type: float
+        description: Min value to compare to
+      max:
+        type: float
+        description: Max value to compare to
+    notes: The tensor shapes be equal
+    examples: |
+        >>> x = sail.random.normal(5, 3, (10, 10))

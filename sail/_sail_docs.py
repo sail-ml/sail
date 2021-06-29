@@ -561,3 +561,36 @@ Examples:
 	        [6.         4.         6.         4.         6.         6.         6.         4.31791449 4.09643078 4.        ]], shape=(10, 10))
 	"""
 add_docstring(sail.clip, descr)
+
+descr = r"""
+sail.cat(tensors, axis=0) -> Tensor
+Concatenate the `tensor` along axis `axis`
+
+.. note::
+	The tensor shapes must match along every axis except `axis`
+
+Args:
+	tensor (List of Tensors): Input data
+	axis (int): The axis to concatenate on
+
+Examples:
+	>>> x = sail.random.normal(5, 3, (10, 10))
+	"""
+add_docstring(sail.cat, descr)
+
+descr = r"""
+sail.stack(tensor, min, max) -> Tensor
+Returns a copy of the tensor with values clipped to between `min` and `max`
+
+.. note::
+	The tensor shapes be equal
+
+Args:
+	tensor (Tensor): Input data
+	min (float): Min value to compare to
+	max (float): Max value to compare to
+
+Examples:
+	>>> x = sail.random.normal(5, 3, (10, 10))
+	"""
+add_docstring(sail.stack, descr)

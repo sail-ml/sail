@@ -138,7 +138,7 @@ class CMakeBuild(build_ext):
         copyfile("%s/liboptimizers.so" % build_path, "%s/../optimizers/liboptimizers.so" % build_path)
         copyfile("%s/librandom.so" % build_path, "%s/../rand/librandom.so" % build_path)
 
-        subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
+        # subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
 
 
 def s():

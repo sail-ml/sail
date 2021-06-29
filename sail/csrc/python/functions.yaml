@@ -287,6 +287,47 @@ moveaxis:
         ret_class->base_object = (PyObject*)t1;
         Py_INCREF(ret_class->base_object);
 
+cat:
+  signatures:
+    - cat(sequence tensors, int axis=1)
+  internal_func: sail::ops::cat
+  custom_dispatch: 
+    - |
+        int len = PySequence_Length(tensors);
+        std::vector<sail::Tensor> tensor_list;
+        if (len < 2) {
+          PyErr_SetString(PyExc_TypeError,
+                "Tensor list must have atleast 2 elements.");
+                return nullptr;
+        }
+        while(len--) {
+          PyObject* x = PySequence_GetItem(tensors, len);
+          tensor_list.push_back(((PyTensor*)x)->tensor);
+        }
+        std::reverse(tensor_list.begin(), tensor_list.end());
+
+        ret_class->tensor = sail::ops::cat(tensor_list, axis);
+stack:
+  signatures:
+    - stack(sequence tensors, int axis=1)
+  internal_func: sail::ops::stack
+  custom_dispatch: 
+    - |
+        int len = PySequence_Length(tensors);
+        std::vector<sail::Tensor> tensor_list;
+        if (len < 2) {
+          PyErr_SetString(PyExc_TypeError,
+                "Tensor list must have atleast 2 elements.");
+                return nullptr;
+        }
+        while(len--) {
+          PyObject* x = PySequence_GetItem(tensors, len);
+          tensor_list.push_back(((PyTensor*)x)->tensor);
+        }
+        std::reverse(tensor_list.begin(), tensor_list.end());
+
+        ret_class->tensor = sail::ops::stack(tensor_list, axis);
+
 
 add_docstring:
   full_impl: |    

@@ -467,11 +467,11 @@ class PowerTest(UnitTest):
     # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base(self, rq):
-        choices = unary_elementwise_options
+        choices = elementwise_options
         times = []
         for c in choices:
-            arr1 = np.random.uniform(0, 1, (c))
-            arr2 = np.random.uniform(0, 1, (c))
+            arr1 = np.random.uniform(1, 2, (c))
+            arr2 = np.random.uniform(1, 2, (c))
             
             x1 = sail.Tensor(arr1, requires_grad=rq)
             x2 = sail.Tensor(arr2, requires_grad=rq)
@@ -485,16 +485,17 @@ class PowerTest(UnitTest):
             self.assert_eq(x3.requires_grad, rq)
         return
 
-    def broadcast_test(self):
+    @requires_grad_decorator
+    def test_broadcast(self, rq):
         choices = broadcasted_options
         times = []
         for c in choices:
             c = list(c)
             for i in range(len(c)):
                 
-                arr1 = np.random.uniform(0, 1, (c))
+                arr1 = np.random.uniform(1, 2, (c))
                 c[i] = 1
-                arr2 = np.random.uniform(0, 1, (c))
+                arr2 = np.random.uniform(1, 2, (c))
                 
                 x1 = sail.Tensor(arr1, requires_grad=rq)
                 x2 = sail.Tensor(arr2, requires_grad=rq)

@@ -43,6 +43,11 @@ class TensorShape {
     void enforce_axis(int axis);
     std::vector<long> generate_all_indexes();
 
+    bool operator==(const TensorShape& other) const {
+        return other.shape == shape;
+    }
+    long operator[](const int index) const { return shape[index]; }
+
     int next();
     int next(int n);
     void reset();
