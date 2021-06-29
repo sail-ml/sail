@@ -28,11 +28,13 @@ Mutation Ops
 
 
     broadcast_to
+    cat
     expand_dims
     moveaxis
     reshape
     rollaxis
     squeeze
+    stack
     transpose
 
 
