@@ -85,7 +85,7 @@ long TensorIterator::next() {
     return d_ptr;
 }
 
-MultiTensorIterator::MultiTensorIterator(TensorShape& t_shape) {
+MultiTensorIterator::MultiTensorIterator(TensorShape t_shape) {
     std::vector<long> old_shape = t_shape.shape;
     std::vector<long> old_strides = t_shape.strides;
     std::vector<long> temp_strides_back;

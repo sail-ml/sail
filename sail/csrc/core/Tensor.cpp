@@ -75,7 +75,6 @@ Tensor Tensor::expand_dims(const int dim) {
     return new_tensor;
 }
 Tensor Tensor::_expand_dims_inplace(const int dim) {
-    int new_dim = dim;
     TensorShape s = body->get_shape();
     s.insert_one(dim);
     set_shape(s);

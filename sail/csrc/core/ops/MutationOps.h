@@ -19,6 +19,9 @@ Tensor moveaxis(const Tensor& tensor1, const int axis, const int position = 0);
 Tensor transpose(const Tensor& tensor1);
 Tensor transpose(const Tensor& tensor1, const LongVec& dims);
 
+Tensor cat(std::vector<Tensor> tensors, const int axis = 0);
+Tensor stack(std::vector<Tensor> tensors, const int axis = 0);
+
 }  // namespace ops
 
 }  // namespace sail

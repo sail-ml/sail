@@ -100,7 +100,7 @@ class MultiTensorIterator : public TensorIterator {
     // std::vector<std::vector<long>> strides_back;
     // std::vector<std::vector<long>> coordinates;
 
-    MultiTensorIterator(TensorShape& t_shape);
+    MultiTensorIterator(TensorShape t_shape);
 
     MultiTensorIterator add_input(TensorShape& t_shape);
 

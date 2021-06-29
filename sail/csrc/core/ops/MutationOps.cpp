@@ -4,6 +4,8 @@
 
 #include "Tensor.h"
 #include "factories.h"
+#include "kernels/Kernel.h"
+#include "tensor_iterator.h"
 #include "tensor_shape.h"
 #include "types.h"
 
@@ -84,6 +86,21 @@ Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
         new_shape, /*is_view*/ true));
     Tensor new_tensor = Tensor(new_body, tensor1.requires_grad);
     return new_tensor;
+}
+
+Tensor cat(std::vector<Tensor> tensors, const int axis = 0) {
+    Tensor out = sail::internal::cat_stub(tensors, axis, 1);
+    return out;
+}
+
+Tensor stack(std::vector<Tensor> tensors, const int axis = 0) {
+    TensorShape check = tensors[0].get_shape();
+    for (int i = 0; i < tensors.size(); i++) {
+        SAIL_CHECK(check.shape == tensors[i].get_shape().shape,
+                   "Shapes must match");
+    }
+    Tensor out = sail::internal::stack_stub(tensors, axis);
+    return out;
 }
 
 }  // namespace ops

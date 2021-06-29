@@ -8,12 +8,13 @@ from .libsail_c import broadcast_to, transpose, rollaxis, moveaxis
 from .libsail_c import int32 
 from .libsail_c import float32 
 from .libsail_c import float64 
+from .libsail_c import cat, stack
 from .libsail_c import power, exp, log, SailError, DimensionError
 
 
 
 __all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "squeeze", "sum",
            "int32", "float32", "float64", "broadcast_to", "transpose", "tensordot", "rollaxis", "add_docstring",
-           "power", "exp", "min", "addmm", "max", "mean", "log", "SailError", "DimensionError", "moveaxis", "clip"]
+           "power", "exp", "min", "stack", "cat", "addmm", "max", "mean", "log", "SailError", "DimensionError", "moveaxis", "clip"]
 
 
