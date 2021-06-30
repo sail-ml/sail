@@ -19,6 +19,9 @@ Tensor make_view(const Tensor& t);
 Tensor copy(Tensor t);
 Tensor clone(const Tensor& t);
 Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32);
+
+// template <typename T>
+// Tensor from_single_value(T value, Dtype dt);
 // Tensor empty_like(int ndims, void* data, Dtype dt, TensorSize strides,
 // TensorSize shape);
 

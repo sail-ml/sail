@@ -12,7 +12,6 @@ grad_options = [(32, 3, 5), (30), (12), (2, 33, 2, 5)]
 
 class AddTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base_add(self, rq):
         choices = elementwise_options
@@ -31,6 +30,81 @@ class AddTest(UnitTest):
 
             self.assert_eq_np_sail(arr3, x3)
             self.assert_eq(x3.requires_grad, rq)
+        return
+    @requires_grad_decorator
+    def test_base_add_int(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1 + x1 + 2
+            arr3 = 1 + arr1 + 2
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+    @requires_grad_decorator
+    def test_base_add_float(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1.2 + x1 + 1.3
+            arr3 = 1.2 + arr1 + 1.3 
+
+            self.assert_eq_np_sail(arr3, x3, eps=1e-8)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+    @requires_grad_decorator
+    def test_broadcast_add_int(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+
+                x3 = 1 + x1 + 2
+                arr3 = 1 + arr1 + 2 
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+    @requires_grad_decorator
+    def test_broadcast_add_float(self, rq):
+        choices = [(2, 8)]#broadcasted_options[:1]
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+                
+                x3 = 1.1 + x1 + 2.2
+                arr3 = 1.1 + arr1 + 2.2
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
         return
 
     @requires_grad_decorator
@@ -58,7 +132,9 @@ class AddTest(UnitTest):
 
         return
 
-    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    
+
+    @dtype_decorator
     def test_dtype(self, dtype1, dtype2):
         choices = elementwise_options
         times = []
@@ -170,7 +246,7 @@ class SubtractTest(UnitTest):
                 self.assert_eq(x3.requires_grad, rq)
         return
 
-    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    @dtype_decorator
     def test_dtype(self, dtype1, dtype2):
         choices = elementwise_options
         times = []
@@ -184,6 +260,81 @@ class SubtractTest(UnitTest):
             arr3 = arr1 - arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+
+    @requires_grad_decorator
+    def test_base_int(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1 - x1 - 2
+            arr3 = 1 - arr1 - 2
+
+            self.assert_eq_np_sail(arr3, x3, eps=1e-7)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+    @requires_grad_decorator
+    def test_base_float(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1.2 - x1 - 1.3
+            arr3 = 1.2 - arr1 - 1.3 
+
+            self.assert_eq_np_sail(arr3, x3, eps=1e-7)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+    @requires_grad_decorator
+    def test_broadcast_int(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b))#.astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+
+                x3 = 1 - x1 - 2
+                arr3 = 1 - arr1 - 2 
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+    @requires_grad_decorator
+    def test_broadcast_float(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b))#.astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+
+                x3 = 1.1 - x1 - 2.2
+                arr3 = 1.1 - arr1 - 2.2
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+        return
 
     def test_broadcast2(self):
         a = sail.random.uniform(0, 1, (10, 1, 45))
@@ -238,7 +389,7 @@ class SubtractTest(UnitTest):
 
 class MultiplyTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
+#     # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base(self, rq):
         choices = elementwise_options
@@ -284,9 +435,9 @@ class MultiplyTest(UnitTest):
 
         return
 
-    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    @dtype_decorator
     def test_dtype(self, dtype1, dtype2):
-        choices = elementwise_options
+        choices = elementwise_options[:1]
         times = []
         for c in choices:
             x1 = sail.random.uniform(10, 20, c).astype(dtype1[0])
@@ -298,6 +449,83 @@ class MultiplyTest(UnitTest):
             arr3 = arr1 * arr2 
 
             self.assert_eq_np_sail(arr3, x3)
+
+    @requires_grad_decorator
+    def test_base_int(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1 * x1 * 2
+            arr3 = 1 * arr1 * 2 
+
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+    @requires_grad_decorator
+    def test_base_float(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1.2 * x1 * 1.3
+            arr3 = 1.2 * arr1 * 1.3 
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+    @requires_grad_decorator
+    def test_broadcast_int(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+
+                x3 = 1 * x1 * 2
+                arr3 = 1 * arr1 * 2 
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+    @requires_grad_decorator
+    def test_broadcast_float(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+                
+                x3 = 1.1 * x1 * 2.2
+                arr3 = 1.1 * arr1 * 2.2
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
 
     def test_broadcast2(self):
         a = sail.random.uniform(0, 1, (10, 1, 45))
@@ -351,7 +579,6 @@ class MultiplyTest(UnitTest):
 
 class DivideTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base(self, rq):
         choices = elementwise_options
@@ -397,9 +624,88 @@ class DivideTest(UnitTest):
 
         return
 
-    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
-    def test_dtype(self, dtype1, dtype2):
+    @requires_grad_decorator
+    def test_base_int(self, rq):
         choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1 / x1 / 2
+            arr3 = 1 / arr1 / 2 
+
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+    @requires_grad_decorator
+    def test_base_float(self, rq):
+        choices = elementwise_options
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c))#.astype(np.float32)
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = 1.2 / x1 / 1.3
+            arr3 = 1.2 / arr1 / 1.3 
+
+            self.assert_eq_np_sail(arr3, x3)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+    @requires_grad_decorator
+    def test_broadcast_int(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+
+                x3 = 1 / x1 / 2
+                arr3 = 1 / arr1 / 2 
+
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+    @requires_grad_decorator
+    def test_broadcast_float(self, rq):
+        choices = broadcasted_options
+        times = []
+        for c in choices:
+            for i in range(len(c)):
+                b = list(c)
+        
+                b[i] = 1
+                arr1 = np.random.uniform(0, 1, (b)).astype(np.float32)
+                
+                x1 = sail.Tensor(arr1, requires_grad=rq)
+                x1 = sail.broadcast_to(x1, c)
+                arr1 = np.broadcast_to(arr1, c)
+                
+                x3 = 1.2 / x1 / 1.3
+                arr3 = 1.2 / arr1 / 1.3 
+
+
+                self.assert_eq_np_sail(arr3, x3)
+                self.assert_eq(x3.requires_grad, rq)
+
+        return
+
+    @dtype_decorator
+    def test_dtype(self, dtype1, dtype2):
+        choices = [(2, 2)]#elementwise_options
         times = []
         for c in choices:
             x1 = sail.random.uniform(1, 2, c).astype(dtype1[0])

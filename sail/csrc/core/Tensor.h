@@ -8,6 +8,7 @@
 
 #include "dtypes.h"
 #include "exception.h"
+#include "numeric.h"
 #include "tensor_shape.h"
 #include "types.h"
 
@@ -121,11 +122,21 @@ class Tensor {
     Tensor slice(long start, long stop);
 
     Tensor operator+(const Tensor& t);
+    Tensor operator+(const Numeric n);
+
     Tensor operator+=(const Tensor& t);
+    Tensor operator+=(const Numeric n);
+
     Tensor operator-(const Tensor& t);
+    Tensor operator-(const Numeric n);
     Tensor operator-();
+
     Tensor operator*(const Tensor& t);
+    Tensor operator*(const Numeric n);
+
     Tensor operator/(const Tensor& t);
+    Tensor operator/(const Numeric n);
+
     Tensor operator[](const int t) const;
 
     Tensor operator==(const Tensor& other);
@@ -147,6 +158,10 @@ class Tensor {
 };
 
 std::ostream& operator<<(std::ostream& os, const Tensor& tensor);
+Tensor operator+(Numeric n, Tensor& te);
+Tensor operator/(Numeric n, Tensor& te);
+Tensor operator-(Numeric n, Tensor& te);
+Tensor operator*(Numeric n, Tensor& te);
 
 inline int _numel(TensorSize _shape) {
     auto size = 1;

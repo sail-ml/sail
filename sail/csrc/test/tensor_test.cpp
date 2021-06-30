@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 #include "core/exception.h"
 #include "core/tensor_shape.h"
+#include "core/Tensor.h"
+#include "core/numeric.h"
 #include "core/ops/ops.h"
 
 #include <iostream>
@@ -26,4 +28,11 @@ TEST(TensorTest, SetShape) {
     x.set_shape(sh);
 
     ASSERT_EQ(x.get_shape().shape, sh.shape);
+}
+TEST(TensorTest, Numeric) {
+    
+    sail::Tensor x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
+    sail::Tensor y = x + 1;
+    std::cout << x << std::endl;
+    std::cout << y << std::endl;
 }

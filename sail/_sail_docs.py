@@ -564,33 +564,61 @@ add_docstring(sail.clip, descr)
 
 descr = r"""
 sail.cat(tensors, axis=0) -> Tensor
-Concatenate the `tensor` along axis `axis`
+Concatenate the `tensors` along axis `axis`
 
 .. note::
 	The tensor shapes must match along every axis except `axis`
 
 Args:
-	tensor (List of Tensors): Input data
+	tensors (List of Tensors): Input data
 	axis (int): The axis to concatenate on
 
 Examples:
-	>>> x = sail.random.normal(5, 3, (10, 10))
+	>>> a = sail.random.normal(2, 3, (2, 3, 4))
+	>>> b = sail.random.normal(5, 6, (2, 1, 4))
+	>>> sail.cat([a, b], axis=1)
+	tensor([[[ 1.55464458  0.8382771   5.41314983  3.65020585]
+	        [ 4.19970369 -0.8858959   3.21581888 -2.26835299]
+	        [ 7.18340015 -2.02944613  0.24170594  4.67959166]
+	        [ 6.80190945 11.18344784  8.07440472  0.44980499]]
+	
+	        [[ 4.03359985  3.65223217  4.77977037  0.64304084]
+	        [ 0.069889   -1.98670769  0.5359674   4.06634569]
+	        [ 3.83425260  4.61976576  3.9376111  -1.84104609]
+	        [11.87357998  3.23362517  3.74682021  4.41867399]]], shape=(2, 4, 4))
 	"""
 add_docstring(sail.cat, descr)
 
 descr = r"""
-sail.stack(tensor, min, max) -> Tensor
-Returns a copy of the tensor with values clipped to between `min` and `max`
+sail.stack(tensors, axis=0) -> Tensor
+Stacks the `tensors` by creating a new aixs at `axis`
 
 .. note::
-	The tensor shapes be equal
+	The tensor shapes must be equal
 
 Args:
-	tensor (Tensor): Input data
-	min (float): Min value to compare to
-	max (float): Max value to compare to
+	tensors (List of Tensors): Input data
+	axis (int): The axis to create
 
 Examples:
-	>>> x = sail.random.normal(5, 3, (10, 10))
+	>>> a = sail.random.normal(2, 3, (2, 3, 4))
+	>>> b = sail.random.normal(5, 6, (2, 3, 4))
+	>>> sail.stack([a,b], axis=1)
+	tensor([[[[-1.04555118  5.94666147  3.64661813  4.2072997 ]
+	          [-1.6440171  -4.31030703  3.17859864  4.52637434]
+	          [ 5.35747242  3.35846686  1.07206750  0.77765495]]
+	
+	        [[ 5.56071281  6.41274500  7.91134834  2.64334273]
+	          [12.57038212  1.11714733 15.22538662 -7.66946459]
+	          [ 0.35488090  8.23595142 17.21108818  2.7792344 ]]]
+	
+	
+	        [[[ 3.90003204  3.48069668 -0.62004548 -0.89546055]
+	          [ 1.00864995  1.89758968 -0.45129502  6.72634983]
+	          [ 2.19042587 -1.64629543  1.35155416  3.7297151 ]]
+	
+	        [[ 4.43006849  4.48486471  5.26496983 -0.22395246]
+	          [15.39132500  6.0622344  -0.05248788 10.19824314]
+	          [ 7.6022191   5.0593729  14.05028057  9.58600616]]]], shape=(2, 2, 3, 4))
 	"""
 add_docstring(sail.stack, descr)

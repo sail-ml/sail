@@ -126,6 +126,19 @@ Tensor make_view(const Tensor& t) {
     return _empty;
 }
 
+// template <typename T>
+// Tensor from_single_value(T value, Dtype dt) {
+//     TensorShape shape = TensorShape({1});
+//     Tensor empty_tensor = empty(0, dt, shape);
+//     dispatch_all_types(dt, [&](auto pt) {
+//         using Tensor_T = typename decltype(pt)::type;
+//         Tensor_T val = static_cast<Tensor_T>(value);
+//         Tensor_T* data = static_cast<Tensor_T*>(empty_tensor.get_data());
+//         data[0] = val;
+//     });
+//     return empty_tensor;
+// }
+
 // Tensor copy(Tensor t) {
 //     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
 
