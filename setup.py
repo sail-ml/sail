@@ -139,6 +139,8 @@ class CMakeBuild(build_ext):
         copyfile("%s/librandom.so" % build_path, "%s/../rand/librandom.so" % build_path)
 
         subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
+        subprocess.run(["rm", "-rf", "module_def.h"], cwd="sail/csrc/python")
+        subprocess.run(["rm", "-rf", "py_module/module.h"], cwd="sail/csrc/python")
 
 
 def s():

@@ -61,16 +61,11 @@ Tensor Linear::forward(Tensor& input) {
             batch_size = _batch_size;
             output_shape = TensorShape({batch_size, output_features});
 
-            // if (params != nullptr) {
-            //     delete params;
-            //     delete layer;
-            // }
             params.reset(new onednn::OneDNNLinearParams(input, input_features,
                                                         output_features));
             layer.reset(new onednn::OneDNNLinear(params));
 
             layer->initialize();
-            // layer->add_base_data(weights.get_data(), biases.get_data());
         }
 
         Tensor Tdest = empty(0, Dtype::sFloat32, output_shape);
