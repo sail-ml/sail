@@ -34,7 +34,12 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
     Tensor empty_tensor;  //= empty_like(tensor1);
     Tensor t1, t2;
 
-    Dtype dt = promote_dtype(tensor1.get_dtype(), tensor2.get_dtype());
+    Dtype dt;
+    if ("$name$" == "divide") {
+        dt = promote_dtype(tensor1.get_dtype(), tensor2.get_dtype(), true);
+    } else {
+        dt = promote_dtype(tensor1.get_dtype(), tensor2.get_dtype());
+    }
 
     bool broadcast = must_broadcast(tensor1, tensor2);
     if (broadcast) {
@@ -45,6 +50,7 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
         empty_tensor.requires_grad = t1.requires_grad;
         t1 = ops::broadcast_to(tensor1, s);
         t2 = ops::broadcast_to(tensor2, s);
+
     } else {
         t1 = tensor1;
         t2 = tensor2;

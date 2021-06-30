@@ -5,7 +5,7 @@ from .libsail_c import add, subtract, divide, multiply, matmul, tensordot, addmm
 from .libsail_c import reshape, expand_dims, squeeze, clip
 from .libsail_c import sum, add_docstring, max, mean, min
 from .libsail_c import broadcast_to, transpose, rollaxis, moveaxis
-from .libsail_c import int32 
+from .libsail_c import int8, uint8, int16, uint16, int32, uint32, int64, uint64
 from .libsail_c import float32 
 from .libsail_c import float64 
 from .libsail_c import cat, stack
@@ -14,7 +14,7 @@ from .libsail_c import power, exp, log, SailError, DimensionError
 
 
 __all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "squeeze", "sum",
-           "int32", "float32", "float64", "broadcast_to", "transpose", "tensordot", "rollaxis", "add_docstring",
-           "power", "exp", "min", "stack", "cat", "addmm", "max", "mean", "log", "SailError", "DimensionError", "moveaxis", "clip"]
+            "broadcast_to", "transpose", "tensordot", "rollaxis", "add_docstring", "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64",
+           "float32", "float64", "power", "exp", "min", "stack", "cat", "addmm", "max", "mean", "log", "SailError", "DimensionError", "moveaxis", "clip"]
 
 

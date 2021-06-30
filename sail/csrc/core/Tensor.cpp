@@ -174,17 +174,41 @@ void Tensor::swap_body(Tensor& t) {
 }
 
 Tensor Tensor::operator+(const Tensor& other) { return ops::add(*this, other); }
+Tensor Tensor::operator+(const Numeric other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return *this + t;
+}
+
 Tensor Tensor::operator+=(const Tensor& other) {
     return ops::iadd(*this, other);
 }
+Tensor Tensor::operator+=(const Numeric other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::iadd(*this, t);
+}
+
 Tensor Tensor::operator-(const Tensor& other) {
     return ops::subtract(*this, other);
 }
+Tensor Tensor::operator-(const Numeric other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return *this - t;
+}
+
 Tensor Tensor::operator*(const Tensor& other) {
     return ops::multiply(*this, other);
 }
+Tensor Tensor::operator*(const Numeric other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return *this * t;
+}
+
 Tensor Tensor::operator/(const Tensor& other) {
     return ops::divide(*this, other);
+}
+Tensor Tensor::operator/(const Numeric other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return *this / t;
 }
 
 Tensor Tensor::operator-() { return ops::negate(*this); }
@@ -232,6 +256,23 @@ void Tensor::backward(Tensor& _grad) {
             }
         }
     }
+}
+
+Tensor operator+(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return t + te;
+}
+Tensor operator-(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return t - te;
+}
+Tensor operator/(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return t / te;
+}
+Tensor operator*(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return t * te;
 }
 
 }  // namespace sail

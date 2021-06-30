@@ -28,7 +28,8 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
     // for (long s : tensor1.get_shape().shape) {
     //     new_strides.push_back(dt_size * s);
     // }
-    Tensor empty_tensor = empty(tensor1.get_ndim(), dt, tensor1.get_shape());
+    Tensor empty_tensor =
+        empty(tensor1.get_ndim(), dt, TensorShape(tensor1.get_shape().shape));
 
     sail::internal::cast_stub(tensor1, empty_tensor);
 
@@ -54,9 +55,7 @@ Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
             using T_out = typename decltype(pt2)::type;
 
             T_in* d = static_cast<T_in*>(t1.get_data());
-            std::cout << d[0] << std::endl;
             T_out* nd = reinterpret_cast<T_out*>(d);
-            std::cout << nd[0] << std::endl;
             ret = make_view((void*)nd, dt, t1.get_shape());
         });
     });

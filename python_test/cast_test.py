@@ -13,12 +13,12 @@ grad_options = [(32, 3, 5), (3), (1), (2, 33, 2, 5)]
 class CastTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
-    @dtype_decorator([sail.float64, np.float64], [sail.float32, np.float32], [sail.int32, np.int32])
+    @dtype_decorator
     def test_base(self, dtype1, dtype2):
         choices = elementwise_options
         times = []
         for c in choices:
-            x1 = sail.random.uniform(10, 20, c)
+            x1 = sail.random.uniform(1, 100000, c)
             x2 = x1.astype(dtype1[0])
             arr1 = x2.numpy()
 

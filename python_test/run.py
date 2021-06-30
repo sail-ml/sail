@@ -5,8 +5,8 @@ import time
 import unittest
 import faulthandler
 
-import loss_test
 import basic_ops_test
+import loss_test
 import shape_test
 import linalg_test
 import layer_test

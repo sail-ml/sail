@@ -99,14 +99,22 @@ def requires_grad_decorator(func):
         func(self, True)
     return wrapper
 
-def dtype_decorator(*args):
-    def inner_wrapper(func):
-        def wrapper(self):
-            for i in range(len(args)):
-                for j in range(i, len(args)):
-                    func(self, args[i], args[j])
-        return wrapper
-    return inner_wrapper
+def dtype_decorator(func):
+    args = [[sail.float64, np.float64], 
+            [sail.float32, np.float32], 
+            [sail.int64, np.int64], 
+            [sail.uint64, np.uint64], 
+            [sail.int32, np.int32], 
+            [sail.uint32, np.uint32], 
+            [sail.int16, np.int16], 
+            [sail.uint16, np.uint16], 
+            [sail.int8, np.int8], 
+            [sail.uint8, np.uint8]]
+    def wrapper(self):
+        for i in range(len(args)):
+            for j in range(i, len(args)):
+                func(self, args[i], args[j])
+    return wrapper
 
 class UnitTest():
 

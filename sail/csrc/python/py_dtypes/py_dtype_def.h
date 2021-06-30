@@ -17,12 +17,26 @@ typedef struct {
 
 ///////////// REPR ////////////////////////////
 static PyObject *PyDtype_Repr(PyDtype *obj) {
-    if (obj->dt_val == 5) {
-        return PyUnicode_FromString("<class 'sail.int32'>");
-    } else if (obj->dt_val == 11) {
+    if (obj->dt_val == 11) {
         return PyUnicode_FromString("<class 'sail.float32'>");
     } else if (obj->dt_val == 12) {
         return PyUnicode_FromString("<class 'sail.float64'>");
+    } else if (obj->dt_val == 1) {
+        return PyUnicode_FromString("<class 'sail.int8'>");
+    } else if (obj->dt_val == 2) {
+        return PyUnicode_FromString("<class 'sail.uint8'>");
+    } else if (obj->dt_val == 3) {
+        return PyUnicode_FromString("<class 'sail.int16'>");
+    } else if (obj->dt_val == 4) {
+        return PyUnicode_FromString("<class 'sail.uint16'>");
+    } else if (obj->dt_val == 5) {
+        return PyUnicode_FromString("<class 'sail.int32'>");
+    } else if (obj->dt_val == 6) {
+        return PyUnicode_FromString("<class 'sail.uint32'>");
+    } else if (obj->dt_val == 7) {
+        return PyUnicode_FromString("<class 'sail.int64'>");
+    } else if (obj->dt_val == 8) {
+        return PyUnicode_FromString("<class 'sail.uint64'>");
     } else {
         return PyUnicode_FromString("<class 'sail.dtype'>");
     }

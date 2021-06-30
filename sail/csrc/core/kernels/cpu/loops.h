@@ -89,12 +89,23 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     int z = 0;
     for (int i = 0; i < outer_steps; i++) {
         int inner = 0;
+        int j = 0;
         if (scalar_0 && !scalar_1) {
             op.set_scalar_val(p1[test.d_ptrs[0]]);
         } else if (!scalar_0 && scalar_1) {
             op.set_scalar_val(p2[test.d_ptrs[1]]);
+        } else if (scalar_0 && scalar_1) {
+            T v;
+            op.call_base(p1[test.d_ptrs[0]], p2[test.d_ptrs[1]], v);
+            op.set_scalar_val(v);
+            for (; j < inner_steps; j += 1) {
+                op.store_scal(p3 + z);
+                z += jump;
+                inner += jump;
+                test.advance_d_ptr(jump);
+            }
         }
-        for (int j = 0; j < inner_steps; j += 1) {
+        for (; j < inner_steps; j += 1) {
             if (scalar_0 && !scalar_1) {
                 op.iterator_avx_first(p2 + test.d_ptrs[1], p3 + z);
             } else if (!scalar_0 && scalar_1) {

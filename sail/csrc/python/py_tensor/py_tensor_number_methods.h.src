@@ -9,6 +9,7 @@
 #include "core/Tensor.h"
 #include "core/dtypes.h"
 #include "core/exception.h"
+#include "core/numeric.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
 
@@ -22,14 +23,42 @@ static PyObject *PyTensor_$name$(PyObject *t1, PyObject *t2) {
     sail::Tensor tensor1;
     sail::Tensor tensor2;
 
-    NUMERIC_PROCESS(t1, t2);
-
     PyTensor *ret_class;
     ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    ret_class->tensor = tensor1 $op$ tensor2;
+    if (!PyObject_TypeCheck(t1, &PyTensorType) &&
+        !PyObject_TypeCheck(t2, &PyTensorType)) {
+        return nullptr;
+    }
 
-    // SET_BASE(t1, ret_class);
+    if (PyObject_TypeCheck(t1, &PyTensorType) &&
+        PyObject_TypeCheck(t2, &PyFloat_Type)) {
+        double val = (double)PyFloat_AsDouble(t2);
+        if (((PyTensor *)t1)->tensor.get_dtype() == Dtype::sFloat32) {
+            ret_class->tensor = ((PyTensor *)t1)->tensor $op$(float) val;
+        } else {
+            ret_class->tensor = ((PyTensor *)t1)->tensor $op$ val;
+        }
+    } else if (PyObject_TypeCheck(t1, &PyTensorType) &&
+               PyObject_TypeCheck(t2, &PyLong_Type)) {
+        long val = (long)PyLong_AsLong(t2);
+        ret_class->tensor = ((PyTensor *)t1)->tensor $op$ val;
+    } else if (PyObject_TypeCheck(t1, &PyFloat_Type) &&
+               PyObject_TypeCheck(t2, &PyTensorType)) {
+        double val = (double)PyFloat_AsDouble(t1);
+        if (((PyTensor *)t2)->tensor.get_dtype() == Dtype::sFloat32) {
+            ret_class->tensor = ((float)val)$op$((PyTensor *)t2)->tensor;
+        } else {
+            ret_class->tensor = val $op$((PyTensor *)t2)->tensor;
+        }
+    } else if (PyObject_TypeCheck(t1, &PyLong_Type) &&
+               PyObject_TypeCheck(t2, &PyTensorType)) {
+        long val = (long)PyLong_AsLong(t1);
+        ret_class->tensor = val $op$((PyTensor *)t2)->tensor;
+    } else {
+        ret_class->tensor =
+            ((PyTensor *)t1)->tensor $op$((PyTensor *)t2)->tensor;
+    }
 
     return (PyObject *)ret_class;
     END_EXCEPTION_HANDLING

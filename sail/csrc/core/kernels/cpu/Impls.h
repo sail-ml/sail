@@ -36,6 +36,8 @@ struct BinaryImpl {
         xsimd::store_aligned(out, c);
     }
 
+    inline void store_scal(T *out) { xsimd::store_unaligned(out, scal); }
+
     inline void iterator_avx_second(T *x2, T *out) {
         avx_type b = xsimd::load_unaligned(x2);
         auto c = avx_fcn(b, scal);
