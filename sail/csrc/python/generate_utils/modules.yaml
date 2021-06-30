@@ -1,0 +1,29 @@
+
+Linear:
+  init:
+    signature: Linear(int in_features, int out_features, bool use_bias=true)
+  properties:
+    weights: 
+      type: Tensor
+      write: True 
+    biases:
+      type: Tensor
+      write: True 
+  forward:
+    signature: (Tensor x1)
+
+Sigmoid:
+  init:
+    signature: ()
+  forward:
+    signature: (Tensor x1)
+ReLU:
+  init:
+    signature: ()
+  forward:
+    signature: (Tensor x1)
+Softmax:
+  init:
+    signature: (int axis=1)
+  forward:
+    signature: (Tensor x1)
