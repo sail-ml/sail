@@ -7,6 +7,7 @@
 #include "Tensor.h"
 #include "dtypes.h"
 #include "exception.h"
+#include "numeric.h"
 #include "types.h"
 
 namespace sail {
@@ -32,6 +33,8 @@ Tensor from_data(void* data, Dtype dt, TensorShape s);
 
 Tensor zeros(TensorShape size, Dtype dt);
 Tensor ones(TensorShape size, Dtype dt);
+
+Tensor full(Numeric n, TensorShape size);
 
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now

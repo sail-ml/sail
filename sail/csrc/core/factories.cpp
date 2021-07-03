@@ -217,6 +217,30 @@ Tensor ones(TensorShape size, Dtype dt) {
     return Tensor(b, false);
 }
 
+Tensor full(Numeric n, TensorShape size) {
+    Tensor v = Tensor(n.get(), false);
+
+    Dtype dt = v.get_dtype();
+
+    alignemnt_information info = getAlignment(dt);
+    int numel = size.numel();
+    void* new_data =
+        _malloc_align(size.numel(), info.alignment, info.dtype_size);
+    dispatch_all_types(dt, [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* data_fill = (T*)new_data;
+        T d = v.get<T>();
+
+        for (int i = 0; i < numel; i++) {
+            data_fill[i] = d;
+        }
+    });
+
+    TensorBody::pointer b = new TensorBody(new_data, dt, size);
+    return Tensor(b, false);
+}
+
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now
 

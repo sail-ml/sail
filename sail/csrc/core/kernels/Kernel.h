@@ -1,6 +1,7 @@
 #include "Activation.h"
 #include "Binary.h"
 #include "Compare.h"
+#include "Conv.h"
 #include "Copy.h"
 #include "Exponential.h"
 #include "Linalg.h"

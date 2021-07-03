@@ -1,12 +1,11 @@
-#include "kernels/Copy.h"
+#include "kernels/Conv.h"
 #include "kernels/dispatch.h"
 
 namespace sail {
 
 namespace internal {
 
-DEFINE_DISPATCH(cast_stub);
-DEFINE_DISPATCH(pad_stub);
+DEFINE_DISPATCH(im2col_stub);
 
 }  // namespace internal
 

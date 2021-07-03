@@ -1,8 +1,10 @@
 #include "kernels/Copy.h"
 #include "Tensor.h"
-#include "dtypes.h"
+#include "factories.h"
 #include "kernels/dispatch.h"
 #include "kernels/native/loops.h"
+#include "ops/broadcast.h"
+#include "slice.h"
 #include "tensor_shape.h"
 
 namespace sail {
@@ -57,9 +59,55 @@ void cast_kernel(const Tensor &t1, Tensor &out_tensor) {
         });
     });
 }
+// std::tuple<Tensor, std::vector<std::vector<long>>>
+Tensor _pad_simple(const Tensor &base, Tensor &pad_width) {
+    std::vector<long> new_shape;
+    long loop_size = pad_width.get_shape().shape[0];
+
+    for (long i = 0; i < loop_size; i += 1) {
+        Tensor x = pad_width[i];
+        new_shape.push_back(base.get_shape()[i] + x[0].get<long>() +
+                            x[1].get<long>());
+    }
+
+    Tensor padded = zeros(TensorShape(new_shape), base.get_dtype());
+
+    std::vector<std::vector<long>> original_area;
+    for (long i = 0; i < loop_size; i += 1) {
+        Tensor x = pad_width[i];
+        long left = x[0].get<long>();
+        long right = x[1].get<long>();
+        long size = base.get_shape()[i];
+        std::vector<long> slice = {left, left + size};
+        original_area.push_back(slice);
+    }
+
+    Slice s = Slice(original_area);
+    padded.slice(s).assign(base);
+    return padded;
+}
+
+Tensor pad_kernel(Tensor &t1, std::vector<std::vector<long>> pads) {
+    std::vector<long> flat;
+    for (std::vector<long> inner : pads) {
+        for (long i : inner) {
+            flat.push_back(i);
+        }
+    }
+
+    void *pads_ptr = (void *)flat.data();
+    Tensor pad_tensor_ = from_data(pads_ptr, Dtype::sInt64,
+                                   TensorShape({pads.size(), pads[0].size()}));
+    Tensor pad_tensor =
+        ops::broadcast_to(pad_tensor_, TensorShape({t1.get_ndim(), 2}));
+
+    Tensor o = _pad_simple(t1, pad_tensor);
+    return o;
+}
 
 }  // namespace
 REGISTER_ONLY_NATIVE_DISPATCH(cast_stub, &cast_kernel);
+REGISTER_ONLY_NATIVE_DISPATCH(pad_stub, &pad_kernel);
 
 }  // namespace internal
 

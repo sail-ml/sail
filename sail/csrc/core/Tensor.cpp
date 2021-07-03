@@ -12,7 +12,10 @@
 #include "exception.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
+#include "numeric.h"
 #include "ops/ops.h"
+#include "slice.h"
+#include "tensor_iterator.h"
 #include "tensor_shape.h"
 #include "types.h"
 #include "utils.h"
@@ -117,7 +120,33 @@ Tensor Tensor::cast(const Dtype dt) {
     return *this;
 }
 
-Tensor Tensor::slice(long start, long stop) {
+Tensor Tensor::assign(const Tensor& other) {
+    ops::copy(*this, other);
+    return *this;
+}
+
+Tensor Tensor::fill(const Numeric& fill_val) {
+    dispatch_all_types(get_dtype(), [&](auto pt) {
+        using T = typename decltype(pt)::type;
+        T numeric_val = ((T*)fill_val.get()->get_data())[0];
+        T* data = (T*)get_data();
+
+        MultiTensorIterator iter = MultiTensorIterator(get_shape());
+        int inner_loop_size = iter.inner_loop_size();
+        int outer_steps = iter.out_loop_size();
+        for (int i = 0; i < outer_steps; i++) {
+            for (int j = 0; j < inner_loop_size; j += 1) {
+                data[iter.d_ptrs[0]] = numeric_val;
+                iter.advance_d_ptr(1);
+            }
+            iter.backup_d_ptr();
+            iter.next();
+        }
+    });
+    return *this;
+}
+
+Tensor Tensor::slice(long start, long stop, long axis = 0) {
     void* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
@@ -131,6 +160,38 @@ Tensor Tensor::slice(long start, long stop) {
     new_shape.push_back(stop - start);
     new_strides.push_back(shape_details.strides[0]);
     for (int i = 1; i < shape_details.ndim(); i++) {
+        new_shape.push_back(shape_details.shape[i]);
+        new_strides.push_back(shape_details.strides[i]);
+    }
+
+    Tensor e =
+        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+
+    return e;
+}
+
+Tensor Tensor::slice(Slice slice) {
+    void* new_ptr;
+    TensorSize new_shape;
+    TensorSize new_strides;
+    alignemnt_information info = get_info();
+    TensorShape shape_details = get_shape();
+    long offset = 0;
+    int i = 0;
+    for (std::vector<long> s : slice.slices) {
+        if (s.size() != 0) {
+            offset += (shape_details.strides[i] * info.dtype_size) * (s[0]);
+            new_shape.push_back(s[1] - s[0]);
+            new_strides.push_back(shape_details.strides[i]);
+        } else {
+            new_shape.push_back(shape_details.shape[i]);
+            new_strides.push_back(shape_details.strides[i]);
+        }
+        i += 1;
+    }
+
+    new_ptr = get_data() + offset;
+    for (int i = slice.size(); i < shape_details.ndim(); i++) {
         new_shape.push_back(shape_details.shape[i]);
         new_strides.push_back(shape_details.strides[i]);
     }

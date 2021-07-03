@@ -4,6 +4,7 @@
 #include "Tensor.h"
 #include "dtypes.h"
 #include "kernels/Kernel.h"
+#include "tensor_iterator.h"
 #include "types.h"
 
 #include "factories.h"
@@ -20,6 +21,39 @@ Tensor copy(Tensor& tensor1) {
     sail::internal::cast_stub(tensor1, empty_tensor);  // change to basic copy
 
     return empty_tensor;
+}
+
+void copy(Tensor& dest, const Tensor& source) {
+    SAIL_CHECK(dest.get_shape().shape == source.get_shape().shape,
+               "shapes dont match ", getVectorString(dest.get_shape().shape),
+               " ", getVectorString(source.get_shape().shape));
+    SAIL_CHECK(dest.get_dtype() == source.get_dtype());
+
+    dispatch_all_types(dest.get_dtype(), [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        T* dst = static_cast<T*>(dest.get_data());
+        T* src = static_cast<T*>(source.get_data());
+
+        TensorShape d_shape = dest.get_shape();
+        TensorShape s_shape = source.get_shape();
+
+        MultiTensorIterator iter =
+            MultiTensorIterator(d_shape).add_input(s_shape);
+        int inner_loop_size = iter.inner_loop_size();
+        int outer_steps = iter.out_loop_size();
+
+        int z = 0;
+        for (int i = 0; i < outer_steps; i++) {
+            for (int j = 0; j < inner_loop_size; j += 1) {
+                dst[iter.d_ptrs[0]] = src[iter.d_ptrs[1]];
+                iter.advance_d_ptr(1);
+                z += 1;
+            }
+            iter.backup_d_ptr();
+            iter.next();
+        }
+    });
 }
 
 Tensor cast(Tensor& tensor1, Dtype dt) {
@@ -60,6 +94,12 @@ Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
         });
     });
     return ret;
+}
+
+Tensor pad(Tensor& t1,
+           std::vector<std::vector<long>>
+               x) {  // const std::vector<std::tuple<long, long>> pads
+    return sail::internal::pad_stub(t1, x);
 }
 
 /** end block **/

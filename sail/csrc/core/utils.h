@@ -68,14 +68,17 @@ inline int prod_size_vector(const TensorSize size) {
 }
 
 inline std::string getVectorString(const TensorSize vector) {
-    std::stringstream result;
-    std::copy(vector.begin(), vector.end(),
-              std::ostream_iterator<int>(result, ", "));
-    std::string x = result.str();
-    x.pop_back();
-    x.pop_back();
-    // std::string  shape_string("(");
-    return std::string("(") + x + std::string(")");
+    if (vector.size() != 0) {
+        std::stringstream result;
+        std::copy(vector.begin(), vector.end(),
+                  std::ostream_iterator<int>(result, ", "));
+        std::string x = result.str();
+        x.pop_back();
+        x.pop_back();
+        // std::string  shape_string("(");
+        return std::string("(") + x + std::string(")");
+    }
+    return std::string("()");
 }
 
 // inline bool

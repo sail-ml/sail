@@ -22,6 +22,6 @@ class Numeric {
     Numeric(int64_t i);
     Numeric(double i);
     Numeric(float i);
-    TensorBody::pointer get();
+    TensorBody::pointer get() const;
 };
 }  // namespace sail
