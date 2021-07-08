@@ -9,3 +9,6 @@
 #include "BinaryGrad.h"
 #include "ExponentialGrad.h"
 #include "LinalgGrad.h"
+#include "MutationGrad.h"
+
+#include "layers/ConvGrad.h"

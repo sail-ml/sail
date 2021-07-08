@@ -9,6 +9,7 @@
 #include "dtypes.h"
 #include "exception.h"
 #include "numeric.h"
+#include "slice.h"
 #include "tensor_shape.h"
 #include "types.h"
 
@@ -98,6 +99,22 @@ class Tensor {
     Tensor squeeze(const int dim);
     long getTotalSize();
 
+    template <typename T>
+    T get() {
+        T result;
+        if (is_scalar()) {
+            dispatch_all_types(get_dtype(), [&](auto pt) {
+                using TT = typename decltype(pt)::type;
+                result = static_cast<TT*>(get_data())[0];
+            });
+            return result;
+        } else {
+            THROW_ERROR_DETAILED(SailCError,
+                                 "Cannot get value from non scalar tensor");
+        }
+        return result;
+    }
+
     int get_body_ref_count() { return body.get()->get_ref_count(); }
 
     void free();
@@ -111,6 +128,7 @@ class Tensor {
     int get_np_type_num();
 
     void set_shape(const TensorShape& s) { body.get()->set_shape(s); }
+    void set_view() { body.get()->set_is_view(true); }
 
     int get_ndim() const { return get_shape().ndim(); }
     Tensor get_grad() const { return body.get()->get_grad(); }
@@ -119,7 +137,11 @@ class Tensor {
     void backward();
     void backward(Tensor& grad);
 
-    Tensor slice(long start, long stop);
+    Tensor slice(long start, long stop, long axis = 0);
+    Tensor slice(Slice slice);
+
+    Tensor assign(const Tensor& other);
+    Tensor fill(const Numeric& other);
 
     Tensor operator+(const Tensor& t);
     Tensor operator+(const Numeric n);

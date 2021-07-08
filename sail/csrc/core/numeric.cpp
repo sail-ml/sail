@@ -36,5 +36,5 @@ Numeric::Numeric(float i) {
     Dtype dt = min_type((double)i);
     t = from_single_value<float>(i, dt);
 }
-TensorBody::pointer Numeric::get() { return t; }  // namespace sail
+TensorBody::pointer Numeric::get() const { return t; }  // namespace sail
 }  // namespace sail

@@ -12,6 +12,73 @@ Linear:
   forward:
     signature: (Tensor x1)
 
+Conv2D:
+  init:
+    signature: Conv2D(int input_channels, int output_channels, sequence kernel_size, sequence strides, bool use_bias=true)
+    custom: |
+      int input_channels;
+      int output_channels;
+      int use_bias = 1;
+      PyObject * kernel_size;
+      PyObject * strides;
+      static char* kwlist[] = { "input_channels", "output_channels", "kernel_size", "strides", "use_bias", NULL };
+
+      if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiOO|p", kwlist, &input_channels, &output_channels, &kernel_size, &strides, &use_bias)) {
+          PyErr_SetString(PyExc_TypeError, "incorrect arguments");
+          return -1;
+      }
+
+      if (PyLong_Check(kernel_size) && PyLong_Check(strides)) {
+          self->module = (Module *)(new sail::modules::Conv2D(input_channels, output_channels, PyLong_AsLong(kernel_size), PyLong_AsLong(strides), "same", (bool)use_bias));
+      } else {
+        std::vector<long> kernel, stride;
+        if (PySequence_Check(kernel_size)) {
+          int size = PySequence_Size(kernel_size);
+          if (size == 1) {
+            long val = PyLong_AsLong(PySequence_GetItem(kernel_size, 0));
+            kernel.push_back(val);
+            kernel.push_back(val);
+          } else {
+            long val = PyLong_AsLong(PySequence_GetItem(kernel_size, 0));
+            kernel.push_back(val);
+            val = PyLong_AsLong(PySequence_GetItem(kernel_size, 1));
+            kernel.push_back(val);
+          }
+        } else {
+            long val = PyLong_AsLong(kernel_size);
+            kernel.push_back(val);
+            kernel.push_back(val);
+        }
+        if (PySequence_Check(strides)) {
+          int size = PySequence_Size(strides);
+          if (size == 1) {
+            long val = PyLong_AsLong(PySequence_GetItem(strides, 0));
+            stride.push_back(val);
+            stride.push_back(val);
+          } else {
+            long val = PyLong_AsLong(PySequence_GetItem(strides, 0));
+            stride.push_back(val);
+            val = PyLong_AsLong(PySequence_GetItem(strides, 1));
+            stride.push_back(val);
+          }
+        } else {
+            long val = PyLong_AsLong(strides);
+            stride.push_back(val);
+            stride.push_back(val);
+        }
+          self->module = (Module *)(new sail::modules::Conv2D(input_channels, output_channels, kernel, stride, "same", (bool)use_bias));
+      }
+      return 0;
+  properties:
+    weights: 
+      type: Tensor
+      write: True 
+    biases:
+      type: Tensor
+      write: True 
+  forward:
+    signature: (Tensor x1)
+
 Sigmoid:
   init:
     signature: ()

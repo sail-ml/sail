@@ -154,3 +154,25 @@ class ReLULayerTest(UnitTest):
             self.assert_true(check_gradients_vector(forward, dic, rtol=1e-2, atol=1e-4, eps=1e-8))
 
         return
+
+
+class Conv2DLayerTest(UnitTest):
+
+    def test_no_bias(self):
+        img = sail.random.uniform(0, 1, (64, 4, 277, 277))
+        lay = sail.modules.Conv2D(4, 32, 3, 1, use_bias=False)
+        y = lay(img)
+        self.assert_eq(y.shape, (64, 32, 277, 277))
+
+        z = sail.sum(y)
+        z.backward()
+
+
+    def test_bias(self):
+        img = sail.random.uniform(0, 1, (64, 4, 277, 277))
+        lay = sail.modules.Conv2D(4, 32, 3, 1, use_bias=True)
+        y = lay(img)
+        self.assert_eq(y.shape, (64, 32, 277, 277))
+
+        z = sail.sum(y)
+        z.backward()

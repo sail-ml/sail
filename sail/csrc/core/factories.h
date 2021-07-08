@@ -7,6 +7,7 @@
 #include "Tensor.h"
 #include "dtypes.h"
 #include "exception.h"
+#include "numeric.h"
 #include "types.h"
 
 namespace sail {
@@ -18,7 +19,10 @@ Tensor make_view(void* data, Dtype dt, TensorShape shape);
 Tensor make_view(const Tensor& t);
 Tensor copy(Tensor t);
 Tensor clone(const Tensor& t);
+Tensor clone_to(const Tensor& t, TensorShape shape);
 Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32);
+
+Tensor as_strided(const Tensor& t, TensorShape s);
 
 // template <typename T>
 // Tensor from_single_value(T value, Dtype dt);
@@ -33,6 +37,8 @@ Tensor from_data(void* data, Dtype dt, TensorShape s);
 Tensor zeros(TensorShape size, Dtype dt);
 Tensor ones(TensorShape size, Dtype dt);
 
+Tensor full(Numeric n, TensorShape size);
+
 namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now
 
@@ -40,9 +46,11 @@ namespace random {  // probably want to refactor factories to be in their own
 Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1);
 Tensor uniform(TensorShape size, double min = 0, double max = 1);
 Tensor uniform_like(Tensor tensor, double min = 0, double max = 1);
+Tensor uniform_fill(Tensor tensor, double min = 0, double max = 1);
 Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1);
 Tensor normal(TensorShape size, double mean = 0, double std = 1);
 Tensor normal_like(Tensor tensor, double mean = 0, double std = 1);
+Tensor normal_fill(Tensor tensor, double mean = 0, double std = 1);
 
 }  // namespace random
 

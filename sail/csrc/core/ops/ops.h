@@ -1,6 +1,7 @@
 #include "ActivationOps.h"
 #include "BinaryOps.h"
 #include "CompareOps.h"
+#include "ConvOps.h"
 #include "CopyOps.h"
 #include "ExponentialOps.h"
 #include "LinalgOps.h"

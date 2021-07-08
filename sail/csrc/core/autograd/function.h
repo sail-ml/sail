@@ -52,6 +52,8 @@ class Function {
     virtual void apply_no_forward(TensorVector& inputs);
     virtual TensorVector backward(Tensor& grad);
     virtual Tensor set_fcn(Tensor& t);
+
+    virtual ~Function(){};
 };
 
 }  // namespace autograd

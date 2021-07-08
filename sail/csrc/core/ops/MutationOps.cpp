@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Tensor.h"
+#include "autograd/autograd.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
 #include "tensor_iterator.h"
@@ -12,7 +13,7 @@
 namespace sail {
 
 namespace ops {
-
+using TensorVector = std::vector<Tensor>;
 Tensor expand_dims(const Tensor& tensor1, const int dim) {
     Tensor t2 = tensor1.expand_dims(dim);
     return t2;
@@ -23,6 +24,13 @@ Tensor squeeze(const Tensor& tensor1, const int dim) {
 }
 
 Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape) {
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        Tensor empty_tensor = (new autograd::Reshape(new_shape))->apply(vec);
+
+        return empty_tensor;
+    }
     int s = new_shape.numel();
     if (s != tensor1.numel()) {
         THROW_ERROR_DETAILED(DimensionError, "Cannot reshape tensor of shape ",
@@ -32,11 +40,11 @@ Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape) {
     Tensor new_tensor;
     if (tensor1.is_view()) {  // reshaping a view gets messy
         new_tensor = clone(tensor1);
-        new_tensor.set_shape(TensorShape(new_shape));
+        new_tensor.set_shape(new_shape);
     } else {
         TensorBody::pointer new_body = TensorBody::pointer(new TensorBody(
             tensor1.get_body()->get_data(), tensor1.get_body()->get_dtype(),
-            TensorShape(new_shape), /*is_view*/ true));
+            new_shape, /*is_view*/ true));
         new_tensor = Tensor(new_body, tensor1.requires_grad);
     }
     return new_tensor;

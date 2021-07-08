@@ -11,7 +11,8 @@
 
 // TEST(KernelTest, BaseKernelInstantiation) {
     
-//     sail::Kernel k = sail::Kernel();
+//     sail::Tensor t1 = sail::random::uniform(0, 1, sail::TensorShape({3, 3}));
+//     sail::ops::pad(t1, {{2, 2}});
 
     
 

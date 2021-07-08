@@ -44,6 +44,14 @@ static int Py{name}Module_init(PyModule *self, PyObject *args,
     END_EXCEPTION_HANDLING_INT
 }}
 """
+CUSTOM_INIT_CODE = """
+static int Py{name}Module_init(PyModule *self, PyObject *args,
+                               PyObject *kwargs) {{
+    START_EXCEPTION_HANDLING
+    {code}
+    END_EXCEPTION_HANDLING_INT
+}}
+"""
 EMPTY_INIT_CODE = """
 static int Py{name}Module_init(PyModule *self, PyObject *args,
                                PyObject *kwargs) {{
@@ -166,13 +174,15 @@ static PyTypeObject Py{name}ModuleType = {{
 """
 
 def create_init(name, init):
-    sig = init["signature"]
-    if (len(sig) == 2):
-        return EMPTY_INIT_CODE.format(name=name)
-    args = process_dispatch(name, sig)
-    return INIT_CODE.format(name=name, variables=args["variables"], names=args["names"],
-            codes=args["codes"], parse_args=args["parse_args"], basic_args=args["basic_args"])
-
+    if "custom" not in init:
+        sig = init["signature"]
+        if (len(sig) == 2):
+            return EMPTY_INIT_CODE.format(name=name)
+        args = process_dispatch(name, sig)
+        return INIT_CODE.format(name=name, variables=args["variables"], names=args["names"],
+                codes=args["codes"], parse_args=args["parse_args"], basic_args=args["basic_args"])
+    else:
+        return CUSTOM_INIT_CODE.format(name=name, code=init["custom"])
 def create_forward(name, sig):
     sig = sig["signature"]
     args = process_dispatch(name, sig)

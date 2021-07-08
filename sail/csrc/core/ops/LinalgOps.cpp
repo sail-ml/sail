@@ -147,18 +147,23 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
             THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
         }
     }
+    Tensor t1_, t2_;
 
-    if (t1.is_view() || t2.is_view()) {
-        // TODO(tgs266): This needs to not use clone. Instead, switch to
-        // tensorshape iterator in kernel
-        t1 = clone(t1);
-        t2 = clone(t2);
+    if (t1.is_view()) {
+        t1_ = clone(t1);
+    } else {
+        t1_ = t1;
     }
-    Dtype dt = promote_dtype(t1.get_dtype(), t2.get_dtype());
+    if (t2.is_view()) {
+        t2_ = clone(t2);
+    } else {
+        t2_ = t2;
+    }
+    Dtype dt = promote_dtype(t1_.get_dtype(), t2_.get_dtype());
 
     TensorSize new_shape;
-    TensorSize s1 = t1.get_shape().shape;
-    TensorSize s2 = t2.get_shape().shape;
+    TensorSize s1 = t1_.get_shape().shape;
+    TensorSize s2 = t2_.get_shape().shape;
 
     int r = s1[0];
     if (trans_a == TRANS) {
@@ -173,10 +178,10 @@ Tensor matmul(const Tensor& t1, const Tensor& t2,
     TensorShape s = TensorShape(new_shape);
     Tensor empty_tensor = empty(0, dt, s);
 
-    t1 = t1.cast(dt);
-    t2 = t2.cast(dt);
+    t1_ = t1_.cast(dt);
+    t2_ = t2_.cast(dt);
 
-    sail::internal::matmul_stub(t1, t2, empty_tensor, true, trans_a, trans_b);
+    sail::internal::matmul_stub(t1_, t2_, empty_tensor, true, trans_a, trans_b);
 
     return empty_tensor;
 }

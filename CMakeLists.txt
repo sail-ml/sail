@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 option(USE_AVX "USE_AVX" OFF)
-option(USE_AVX "USE_MKL" ON)
+option(USE_MKL "USE_MKL" ON)
 option(COVERAGE "COVERAGE" OFF)
 
 if (USE_AVX)
@@ -30,7 +30,6 @@ set(SAIL_BUILD_WITH "${SAIL_BUILD_WITH} Atlas")
 endif()
 if(USE_MKL)
 find_package(MKL)
-find_package(MKLDNN)
 
 if (MKL_FOUND)
 list(APPEND SAIL_LIBRARIES ${MKL_LIBRARIES})
@@ -41,13 +40,14 @@ else()
 message(WARNING "NO MKL FOUND")
 endif()
 
+endif()
+
+find_package(MKLDNN)
 if (MKLDNN_FOUND)
 ADD_DEFINITIONS(-DMKLDNN)
 list(APPEND SAIL_LIBRARIES ${MKLDNN_LIBRARIES})
 list(APPEND SAIL_INCLUDE_DIRS ${MKLDNN_INCLUDE_DIR})
 set(SAIL_BUILD_WITH "${SAIL_BUILD_WITH} MKLDNN")
-endif()
-
 endif()
 
 message("Building SAIL with${SAIL_BUILD_WITH}")

@@ -42,7 +42,6 @@ class TensorBody {
     bool view = false;
     bool _has_grad = false;
     Tensor* grad = NULL;
-    ;
 
    public:
     explicit TensorBody(){};
@@ -69,6 +68,7 @@ class TensorBody {
     inline alignemnt_information get_info() { return info; }
     inline bool is_view() { return view; }
     inline bool has_grad() { return _has_grad; }
+    inline void set_is_view(bool x) { view = x; }
 
     Tensor get_grad();
     void clear_grad();
@@ -80,7 +80,7 @@ class TensorBody {
 
     void set_shape(const TensorShape& s) {
         delete shape;
-        shape = new TensorShape(s);
+        shape = new TensorShape(s.shape, s.strides);
         // shape = s;
     }
 

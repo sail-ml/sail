@@ -26,6 +26,9 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
     if (PyType_Ready(&PyLinearModuleType) < 0) return NULL;
 
  
+    if (PyType_Ready(&PyConv2DModuleType) < 0) return NULL;
+
+ 
     if (PyType_Ready(&PySigmoidModuleType) < 0) return NULL;
 
  
@@ -46,6 +49,13 @@ PyMODINIT_FUNC PyInit_libmodules(void) {
     
 if (PyModule_AddObject(m, "Linear", (PyObject*)&PyLinearModuleType) < 0) {
         Py_DECREF(&PyLinearModuleType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+
+if (PyModule_AddObject(m, "Conv2D", (PyObject*)&PyConv2DModuleType) < 0) {
+        Py_DECREF(&PyConv2DModuleType);
         Py_DECREF(m);
         return NULL;
     }
