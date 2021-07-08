@@ -179,10 +179,14 @@ Tensor Tensor::slice(Slice slice) {
     long offset = 0;
     int i = 0;
     for (std::vector<long> s : slice.slices) {
-        if (s.size() != 0) {
+        if (s.size() == 2) {
             offset += (shape_details.strides[i] * info.dtype_size) * (s[0]);
             new_shape.push_back(s[1] - s[0]);
             new_strides.push_back(shape_details.strides[i]);
+        } else if (s.size() == 3) {
+            offset += (shape_details.strides[i] * info.dtype_size) * (s[0]);
+            new_shape.push_back((s[1] - s[0]) / s[2]);
+            new_strides.push_back(shape_details.strides[i] * s[2]);
         } else {
             new_shape.push_back(shape_details.shape[i]);
             new_strides.push_back(shape_details.strides[i]);

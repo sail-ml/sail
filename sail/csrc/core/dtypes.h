@@ -365,7 +365,7 @@ inline alignemnt_information getAlignment(Dtype dtype) {
 }
 
 inline Dtype promote_dtype(Dtype dt1, Dtype dt2, bool float_only = false) {
-    Dtype out_dt;
+    Dtype out_dt = dt1;
 
     if (float_only) {
         if (dt1 == dt2 && dt1 == Dtype::sFloat32) {

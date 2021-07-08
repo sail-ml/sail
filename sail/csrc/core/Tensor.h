@@ -128,6 +128,7 @@ class Tensor {
     int get_np_type_num();
 
     void set_shape(const TensorShape& s) { body.get()->set_shape(s); }
+    void set_view() { body.get()->set_is_view(true); }
 
     int get_ndim() const { return get_shape().ndim(); }
     Tensor get_grad() const { return body.get()->get_grad(); }
