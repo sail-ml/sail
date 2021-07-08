@@ -43,6 +43,26 @@ Attributes:
 """)
 add_docstring_fcn("Linear", "forward", "")
 
+add_docstring_class("Conv2D", r"""
+sail.modules.Conv2D(in_channels, out_channels, kernel_size, strides, use_bias=True)
+Computes Conv2D on data. ONLY DOES SAME PADDING
+
+Args:
+    in_channels (int): size of input feature space
+    out_channels (int): size of output feature space
+    kernel_size (int or tuple): kernel size
+    strides (int or tuple): strides
+    use_bias (bool): If ``True``, a bias term will be added to the function.
+        Default: ``True``
+
+Attributes:
+    weights: The trainable weights of the operation. The weights are initialized using Kaiming Uniform initialization.
+        The shape of the weights is ``(out_channels, in_channels, kernel_height, kernel_width)``.
+    bias: The trainable biases of the operation. The biases are initialized to zero, and 
+        have a shape of ``(out_channels,)``.
+""")
+add_docstring_fcn("Linear", "forward", "")
+
 add_docstring_class("Sigmoid", r"""
 sail.modules.Sigmoid()
 Applies the sigmoid function to the input data, which squashes the input to be between [0, 1]

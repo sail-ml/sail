@@ -19,6 +19,15 @@ Linear Layers
     :template: module_template.rst
 
     Linear
+
+Convolution Layers
+----------------------------------
+
+.. autosummary::
+    :toctree: generated
+    :template: module_template.rst
+
+    Conv2D
   
 Activations Layers
 ----------------------------------
