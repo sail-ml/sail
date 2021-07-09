@@ -17,6 +17,39 @@ def run(input, output):
         END_EXCEPTION_HANDLING
     }}
     """
+    NEW_FUNCTION_CODE = """
+    PyObject* sail_{function_name}(PyObject* self, PyObject* args, PyObject* kwargs) {{
+        START_EXCEPTION_HANDLING
+        {arg_parser}
+        PyTensor* ret_class;
+        ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
+        {dispatches}
+        {parent_set}
+        return (PyObject*)ret_class;
+        END_EXCEPTION_HANDLING
+    }}
+    """
+
+    PARENT_SET = """
+    ret_class->base_object = (PyObject*)parser.py_tensor({idx});
+    Py_INCREF(ret_class->base_object);
+    """
+
+    ARG_PARSER = """
+    PythonArgParser<{N}> parser = PythonArgParser<{N}>(
+        {{
+            {sigs}
+        }}, args, kwargs);
+
+    parser.parse();
+    
+    """
+
+    DISPATCHER = """
+    if (parser.at({idx})) {{
+        ret_class->tensor = {internal_call};
+    }}
+    """
 
     REDUCTION_DISPATCH_CODE = """
         PyTensor* t1;
@@ -83,6 +116,32 @@ def run(input, output):
     for f in functions:
 
         function_name = f 
+
+        if ("new" in functions[f]):
+            sigs = functions[f]["signatures"]
+            calls = functions[f]["internal_calls"]
+            sigs = ['"' + s + '"' for s in sigs]
+            n = 0
+            for s in sigs:
+                c = len(s.split(","))
+                if c > n:
+                    n = c
+            ap = ARG_PARSER.format(N=n, sigs=",\n".join(sigs))
+            calls_ = []
+            i = 0
+            for c in calls:
+                calls_.append(DISPATCHER.format(idx=i, internal_call=c))
+                i += 1
+
+            calls = " else ".join(calls_)
+            if ("set_base" in functions[f]):
+                parent = PARENT_SET.format(idx=functions[f]["set_base"]["index"])
+            else:
+                parent = ""
+            funcs.append(NEW_FUNCTION_CODE.format(function_name=function_name, arg_parser=ap, dispatches=calls, parent_set=parent))
+            used_funcs.append(FUNCS_MEMBER.format(name=function_name))
+            continue
+
         dispatches = []
         if "full_impl" in functions[f]:
             funcs.append(functions[f]["full_impl"])
@@ -132,6 +191,8 @@ def run(input, output):
     #include "core/ops/ops.h"
     #include "core/tensor_shape.h"
     #include "numpy/arrayobject.h"
+    #include "arg_parser.h"
+
 
     #define REDUCATION_ARGS(args, kwargs, kwlist, t1, axis, keepdims)           \\
         {                                                                       \\

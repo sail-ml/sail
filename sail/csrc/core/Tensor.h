@@ -6,15 +6,13 @@
 #include <vector>
 #include "TensorBody.h"
 
+#include "constants.h"
 #include "dtypes.h"
 #include "exception.h"
 #include "numeric.h"
 #include "slice.h"
 #include "tensor_shape.h"
 #include "types.h"
-
-#define MAXDIMS 25
-#define NULLDIM MAXDIMS + 1
 
 #define MAKE_PTR(value) std::shared_ptr<TensorBody>(new TensorBody(value));
 

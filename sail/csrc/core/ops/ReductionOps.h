@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Tensor.h"
+#include "constants.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
 

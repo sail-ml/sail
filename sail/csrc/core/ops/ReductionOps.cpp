@@ -4,6 +4,7 @@
 #include "ReductionOps.h"
 #include "Tensor.h"
 #include "autograd/autograd.h"
+#include "constants.h"
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
