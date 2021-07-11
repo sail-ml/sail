@@ -11,7 +11,8 @@
 using SCTensor = sail::Tensor;
 
 typedef struct {
-    PyObject_HEAD PyObject *base_object = NULL;
+    PyObject_HEAD;
+    PyObject *base_object = NULL;
     SCTensor tensor;
 } PyTensor;
 

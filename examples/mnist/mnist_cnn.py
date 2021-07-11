@@ -1,5 +1,6 @@
 import sail 
 import tensorflow as tf 
+import torch
 import numpy as np
 import time
 
@@ -86,7 +87,6 @@ for i in range(epochs):
 
         x_batch = sail.Tensor(x_batch)
         y_batch = sail.Tensor(y_batch)
-
 
         preds = mnist(x_batch)
 

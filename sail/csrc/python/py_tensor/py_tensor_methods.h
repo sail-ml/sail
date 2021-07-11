@@ -4,6 +4,7 @@
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
+#include "../arg_parser.h"
 #include "../py_dtypes/py_dtype.h"
 #include "core/Tensor.h"
 #include "core/TensorBody.h"

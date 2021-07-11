@@ -1,3 +1,4 @@
+#pragma once
 #include "Tensor.h"
 #include "modules/module.h"
 

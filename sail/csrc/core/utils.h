@@ -80,5 +80,18 @@ inline std::string getVectorString(const TensorSize vector) {
     }
     return std::string("()");
 }
+inline std::string getVectorString(const std::vector<std::string> vector) {
+    if (vector.size() != 0) {
+        std::stringstream result;
+        std::copy(vector.begin(), vector.end(),
+                  std::ostream_iterator<std::string>(result, ", "));
+        std::string x = result.str();
+        x.pop_back();
+        x.pop_back();
+        // std::string  shape_string("(");
+        return std::string("(") + x + std::string(")");
+    }
+    return std::string("()");
+}
 
 // inline bool

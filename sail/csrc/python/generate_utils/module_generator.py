@@ -249,6 +249,7 @@ def run(input, output, output2):
     file += "\n".join(mod_defs)
 
     moddef = """ 
+    #pragma once
         #include <Python.h>
 #include <structmember.h>
 #include <chrono>
@@ -262,19 +263,13 @@ def run(input, output, output2):
 #include "py_module/py_module.h"
 #include "py_tensor/py_tensor.h"
 
-static PyModuleDef module = {{PyModuleDef_HEAD_INIT, "modules",
-                             "Modules for SAIL", -1, 0}};
 
 
-PyMODINIT_FUNC PyInit_libmodules(void) {{
-    import_array();
-    PyObject* m;
+PyObject* get_modules(PyObject* m) {{
 
     if (PyType_Ready(&PyModuleType) < 0) return NULL;
-    if (PyType_Ready(&PyTensorType) < 0) return NULL;
     {readies}
 
-    m = PyModule_Create(&module);
     if (m == NULL) return NULL;
 
     if (PyModule_AddObject(m, "Module", (PyObject*)&PyModuleType) < 0) {{

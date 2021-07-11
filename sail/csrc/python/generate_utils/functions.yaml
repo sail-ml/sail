@@ -1,79 +1,106 @@
-
-
 add:
+  new: true
   signatures:
-    - add(Tensor x1, Tensor x2)
-  internal_func: sail::ops::add
+    - add(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::add(parser.tensor(0), parser.tensor(1))
 
 subtract:
+  new: true
   signatures:
-    - subtract(Tensor x1, Tensor x2)
-  internal_func: sail::ops::subtract
+    - subtract(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::subtract(parser.tensor(0), parser.tensor(1))
 
 divide:
+  new: true
   signatures:
-    - divide(Tensor x1, Tensor x2)
-  internal_func: sail::ops::divide
+    - divide(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::divide(parser.tensor(0), parser.tensor(1))
 
 multiply:
+  new: true
   signatures:
-    - multiply(Tensor x1, Tensor x2)
-  internal_func: sail::ops::multiply
-
+    - multiply(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::multiply(parser.tensor(0), parser.tensor(1))
+    
 power:
+  new: true
   signatures:
-    - power(Tensor x1, Tensor x2)
-  internal_func: sail::ops::power
+    - power(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::power(parser.tensor(0), parser.tensor(1))
+
 
 matmul:
+  new: true
   signatures:
-    - matmul(Tensor x1, Tensor x2)
-  internal_func: sail::ops::matmul
+    - matmul(Tensor x1,  Tensor x2)
+  internal_calls: 
+    - sail::ops::matmul(parser.tensor(0), parser.tensor(1))
 
 addmm:
+  new: true
   signatures:
     - addmm(Tensor x1, Tensor x2, Tensor x3)
-  internal_func: sail::ops::addmm
+  internal_calls: 
+    - sail::ops::addmm(parser.tensor(0), parser.tensor(1), parser.tensor(2))
 
 log:
+  new: true
   signatures:
     - log(Tensor x1)
-  internal_func: sail::ops::log
+  internal_calls: 
+    - sail::ops::log(parser.tensor(0))
 
 exp:
+  new: true
   signatures:
     - exp(Tensor x1)
-  internal_func: sail::ops::exp
+  internal_calls: 
+    - sail::ops::exp(parser.tensor(0))
 
 clip:
+  new: true
   signatures:
-    - clip(Tensor x1, double min, double max)
-  internal_func: sail::ops::clip
+    - clip(Tensor x1, float min, float max)
+  internal_calls: 
+    - sail::ops::clip(parser.tensor(0), parser.double_(1), parser.double_(2))
+
+mean:
+  new: true
+  signatures:
+    - mean(Tensor tensor, int axis = None, bool keepdims = false)
+  internal_calls:
+    - sail::ops::mean(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
 
 sum:
+  new: true
   signatures:
-    - sum(Tensor tensor, int axis=None, bool keepdims=false)
-  internal_func: sail::ops::sum
-  special_impl: reduction
-mean:
-  signatures:
-    - mean(Tensor tensor, int axis=None, bool keepdims=false)
-  internal_func: sail::ops::mean
-  special_impl: reduction
+    - sum(Tensor tensor, int axis = None, bool keepdims = false)
+  internal_calls:
+    - sail::ops::sum(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+
 max:
+  new: true
   signatures:
-    - max(Tensor tensor, int axis=None, bool keepdims=false)
-  internal_func: sail::ops::max
-  special_impl: reduction
+    - max(Tensor tensor, int axis = None, bool keepdims = false)
+  internal_calls:
+    - sail::ops::max(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+
 min:
+  new: true
   signatures:
-    - min(Tensor tensor, int axis=None, bool keepdims=false)
-  internal_func: sail::ops::min
-  special_impl: reduction
+    - min(Tensor tensor, int axis = None, bool keepdims = false)
+  internal_calls:
+    - sail::ops::min(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
 
 tensordot:
   full_impl: |
       static PyObject* sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
+
           START_EXCEPTION_HANDLING
           PyObject* t1;
           PyObject* t2;
@@ -150,184 +177,85 @@ tensordot:
       
       
 broadcast_to:
-  full_impl: |
-      static PyObject* sail_broadcast_to(PyObject* self, PyObject* args) {
-        START_EXCEPTION_HANDLING
-        PyTensor* t1;
-        PyObject* tuple;
-
-        if (!PyArg_ParseTuple(args, "OO", &t1, &tuple)) {
-            PyErr_SetString(PyExc_TypeError, "Inputs should be Sail Tensors");
-            return nullptr;
-        }
-
-        int len = PyTuple_Size(tuple);
-        if (len == -1) {
-            PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
-            return nullptr;
-        }
-        std::vector<long> shape;
-        while (len--) {
-            shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
-        }
-        std::reverse(shape.begin(), shape.end());
-
-        sail::TensorShape s = sail::TensorShape(shape);
-
-        PyTensor* ret_class;
-        ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-        ret_class->tensor = sail::ops::broadcast_to(t1->tensor, s);
-
-        // ret_class->dtype = t1- >ndim;
-        SET_BASE(t1, ret_class);
-        return (PyObject*)ret_class;
-        END_EXCEPTION_HANDLING
-      }
-
+  new: true
+  signatures:
+    - broadcast_to(Tensor t1, IntList new_shape)
+  internal_calls:
+    - sail::ops::broadcast_to(parser.tensor(0), parser.int_list(1))
+  set_base:
+    index: 0
 
 reshape:
+  new: true
   signatures:
-    - reshape(Tensor t1, sequence new_shape)
-  internal_func: sail::ops::reshape
-  custom_dispatch: 
-    - |
-        new_shape = PySequence_Tuple(new_shape);
-        int len = PyTuple_Size(new_shape);
-        if (len == -1) {
-            PyErr_SetString(PyExc_TypeError, "Shape must have atleat 1 element.");
-            return nullptr;
-        }
-        TensorSize size;
-        while (len--) {
-            size.push_back(PyLong_AsLong(PyTuple_GetItem(new_shape, len)));
-        }
-
-        std::reverse(size.begin(), size.end());
-
-        sail::TensorShape new_ = sail::TensorShape(size);
-
-        ret_class->tensor = t1->tensor.reshape(new_);
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(t1);
-
+    - reshape(Tensor t1, IntList new_shape)
+    - reshape(Tensor t1, int new_shape)
+  internal_calls:
+    - sail::ops::reshape(parser.tensor(0), parser.int_list(1))
+    - sail::ops::reshape(parser.tensor(0), parser.int_as_list(1))
+  set_base:
+    index: 0
+  
 transpose:
+  new: true
   signatures:
-    - transpose(Tensor t1, sequence tuple=NULL)
-  internal_func: sail::ops::transpose
-  custom_dispatch: 
-    - |
-        if (tuple == NULL) {
-            ret_class->tensor = sail::ops::transpose(t1->tensor);
-        } else {
-            tuple = PySequence_Tuple(tuple);
-            int len = PyTuple_Size(tuple);
-            if (len == -1) {
-                PyErr_SetString(PyExc_TypeError,
-                                "Shape must have atleat 1 element.");
-                return nullptr;
-            }
-            std::vector<long> shape;
-            while (len--) {
-                shape.push_back(PyLong_AsLong(PyTuple_GetItem(tuple, len)));
-            }
-            std::reverse(shape.begin(), shape.end());
-
-            ret_class->tensor = sail::ops::transpose(t1->tensor, shape);
-        }
-
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(ret_class->base_object);
+    - transpose(Tensor t1, IntList order = None)
+  internal_calls:
+    - sail::ops::transpose(parser.tensor(0), parser.int_list(1))
+  set_base:
+    index: 0
 
 expand_dims:
+  new: true
   signatures:
-    - expand_dims(Tensor t1, int dim)
-  internal_func: sail::ops::expand_dims
-  custom_dispatch: 
-    - |
-        ret_class->tensor = t1->tensor.expand_dims(dim);
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(t1);
-
-        return (PyObject*)ret_class;
+    - expand_dims(Tensor t1, int axis = 0)
+  internal_calls:
+    - sail::ops::expand_dims(parser.tensor(0), parser.integer(1))
+  set_base:
+    index: 0
 
 squeeze:
+  new: true
   signatures:
-    - squeeze(Tensor t1, int dim)
-  internal_func: sail::ops::expand_dims
-  custom_dispatch: 
-    - |
-        ret_class->tensor = t1->tensor.squeeze(dim);
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(t1);
+    - squeeze(Tensor t1, int axis = 0)
+  internal_calls:
+    - sail::ops::squeeze(parser.tensor(0), parser.integer(1))
+  set_base:
+    index: 0
 
-        return (PyObject*)ret_class;
 
 rollaxis:
+  new: true
   signatures:
-    - rollaxis(Tensor t1, int axis=0, int position=0)
-  internal_func: sail::ops::rollaxis
-  custom_dispatch: 
-    - |
-      ret_class->tensor =
-                sail::ops::rollaxis(t1->tensor, axis, position);
-
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(ret_class->base_object);
+    - rollaxis(Tensor t1, int axis = 0, int position = 0)
+  internal_calls:
+    - sail::ops::rollaxis(parser.tensor(0), parser.integer(1), parser.integer(2))
+  set_base:
+    index: 0
 
 moveaxis:
+  new: true
   signatures:
-    - moveaxis(Tensor t1, int axis=0, int position=0)
-  internal_func: sail::ops::moveaxis
-  custom_dispatch: 
-    - |
-        ret_class->tensor =
-                sail::ops::moveaxis(t1->tensor, axis, position);
-
-        ret_class->base_object = (PyObject*)t1;
-        Py_INCREF(ret_class->base_object);
+    - moveaxis(Tensor t1, int axis = 0, int position = 0)
+  internal_calls:
+    - sail::ops::moveaxis(parser.tensor(0), parser.integer(1), parser.integer(2))
+  set_base:
+    index: 0
 
 cat:
+  new: true
   signatures:
-    - cat(sequence tensors, int axis=1)
-  internal_func: sail::ops::cat
-  custom_dispatch: 
-    - |
-        int len = PySequence_Length(tensors);
-        std::vector<sail::Tensor> tensor_list;
-        if (len < 2) {
-          PyErr_SetString(PyExc_TypeError,
-                "Tensor list must have atleast 2 elements.");
-                return nullptr;
-        }
-        while(len--) {
-          PyObject* x = PySequence_GetItem(tensors, len);
-          tensor_list.push_back(((PyTensor*)x)->tensor);
-        }
-        std::reverse(tensor_list.begin(), tensor_list.end());
-
-        ret_class->tensor = sail::ops::cat(tensor_list, axis);
+    - cat(TensorList tensors, int axis = 0)
+  internal_calls:
+    - sail::ops::cat(parser.tensor_list(0), parser.integer(1))
+    
+    
 stack:
+  new: true
   signatures:
-    - stack(sequence tensors, int axis=1)
-  internal_func: sail::ops::stack
-  custom_dispatch: 
-    - |
-        int len = PySequence_Length(tensors);
-        std::vector<sail::Tensor> tensor_list;
-        if (len < 2) {
-          PyErr_SetString(PyExc_TypeError,
-                "Tensor list must have atleast 2 elements.");
-                return nullptr;
-        }
-        while(len--) {
-          PyObject* x = PySequence_GetItem(tensors, len);
-          tensor_list.push_back(((PyTensor*)x)->tensor);
-        }
-        std::reverse(tensor_list.begin(), tensor_list.end());
-
-        ret_class->tensor = sail::ops::stack(tensor_list, axis);
-
+    - stack(TensorList tensors, int axis = 1)
+  internal_calls:
+    - sail::ops::stack(parser.tensor_list(0), parser.integer(1))
 
 add_docstring:
   full_impl: |    
