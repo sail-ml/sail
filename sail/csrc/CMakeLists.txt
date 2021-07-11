@@ -53,29 +53,29 @@ endif()
 target_include_directories(sail_c PRIVATE "libs/xsimd/include")
 
 
-# file(GLOB_RECURSE TEST_FILES "test/*.cpp")
+file(GLOB_RECURSE TEST_FILES "test/*.cpp")
 
-# include(FetchContent)
-# FetchContent_Declare(
-#   googletest
-#   URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-# )
-# # For Windows: Prevent overriding the parent project's compiler/linker settings
-# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-# FetchContent_MakeAvailable(googletest)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-# enable_testing()
+enable_testing()
 
-# add_executable(test ${TEST_FILES})
-# target_link_libraries(test PUBLIC gtest_main)
-# target_include_directories(test PUBLIC ./)
-# target_link_libraries(test PUBLIC core)
-# target_include_directories(test PUBLIC "libs/xsimd/include")
-# TARGET_LINK_LIBRARIES( test LINK_PUBLIC ${Boost_LIBRARIES} )
-# # target_include_directories(test PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
-# if (COVERAGE)
-# target_link_libraries(test PUBLIC "-lgcov")
-# endif()
+add_executable(test ${TEST_FILES})
+target_link_libraries(test PUBLIC gtest_main)
+target_include_directories(test PUBLIC ./)
+target_link_libraries(test PUBLIC core)
+target_include_directories(test PUBLIC "libs/xsimd/include")
+TARGET_LINK_LIBRARIES( test LINK_PUBLIC ${Boost_LIBRARIES} )
+target_include_directories(test PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+if (COVERAGE)
+target_link_libraries(test PUBLIC "-lgcov")
+endif()
 
-# include(GoogleTest)
-# gtest_discover_tests(test)
+include(GoogleTest)
+gtest_discover_tests(test)
