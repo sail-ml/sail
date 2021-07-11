@@ -16,14 +16,14 @@ elif [ $1 = "python" ]; then
     python python_test/run.py
 elif [ $1 = "all" ]; then
     python python_test/run.py
-    cd build/t*/sail/csrc
-    ctest -V
-    cd ../../../../
-else
-    # cd build/temp.linux-x86_64-3.7/sail/csrc
+    # cd build/t*/sail/csrc
     # ctest -V
-    cd build/temp.linux-x86_64-3.7/sail/csrc
-    ./test
+    # cd ../../../../
+# else
+#     # cd build/temp.linux-x86_64-3.7/sail/csrc
+#     # ctest -V
+#     cd build/temp.linux-x86_64-3.7/sail/csrc
+#     ./test
 fi
 
 if [ $2 = "coverage-xml" ]; then 
