@@ -5,6 +5,7 @@ import time
 import unittest
 import faulthandler
 
+import init_test
 import basic_ops_test
 import loss_test
 import shape_test
