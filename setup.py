@@ -127,7 +127,7 @@ class CMakeBuild(build_ext):
 
         print (build_path)
 
-        copyfile("%s/libsail_c.so" % build_path, "sail/csrc/libsail_c.so")
+        copyfile("%s/libsail.so" % build_path, "sail/csrc/libsail.so")
 
         subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
         subprocess.run(["rm", "-rf", "module_def.h"], cwd="sail/csrc/python")

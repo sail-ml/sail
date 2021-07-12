@@ -42,15 +42,15 @@ include(FindBLAS)
 
 
 # BASE SAIL PACKAGE
-add_library(sail_c MODULE "python/sail_def.cpp" ${PYTHON_BIND_HEADERS})
-target_link_libraries(sail_c PRIVATE core)
-target_include_directories(sail_c PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
-target_include_directories(sail_c PUBLIC ./)
-TARGET_LINK_LIBRARIES( sail_c LINK_PUBLIC ${Boost_LIBRARIES} )
+add_library(sail MODULE "python/sail_def.cpp" ${PYTHON_BIND_HEADERS})
+target_link_libraries(sail PRIVATE core)
+target_include_directories(sail PUBLIC ${SAIL_PYTHON_INCLUDE_DIRS})
+target_include_directories(sail PUBLIC ./)
+TARGET_LINK_LIBRARIES(sail LINK_PUBLIC ${Boost_LIBRARIES} )
 if (COVERAGE)
-target_link_libraries(sail_c PUBLIC "-lgcov")
+target_link_libraries(sail PUBLIC "-lgcov")
 endif()
-target_include_directories(sail_c PRIVATE "libs/xsimd/include")
+target_include_directories(sail PRIVATE "libs/xsimd/include")
 
 
 file(GLOB_RECURSE TEST_FILES "test/*.cpp")

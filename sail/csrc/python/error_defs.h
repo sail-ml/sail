@@ -54,46 +54,46 @@ PyObject* PyTypeError =
                        NULL);
 
 #define START_EXCEPTION_HANDLING try {
-#define END_EXCEPTION_HANDLING                                        \
-    }                                                                 \
-    catch (const DimensionError& e) {                                 \
-        PyErr_SetString(PyDimensionError, e.what());                  \
-        return nullptr;                                               \
-    }                                                                 \
-    catch (const SailCError& e) {                                     \
-        PyErr_SetString(PySailError, e.what());                       \
-        return nullptr;                                               \
-    }                                                                 \
-    catch (const TypeError& e) {                                      \
-        PyErr_SetString(PyTypeError, e.what());                       \
-        return nullptr;                                               \
-    }                                                                 \
-    catch (const std::exception& e) {                                 \
-        PyErr_SetString(PySailError,                                  \
-                        ((std::string) "Unkown exception occured: " + \
-                         (std::string)e.what())                       \
-                            .c_str());                                \
-        return nullptr;                                               \
+#define END_EXCEPTION_HANDLING                                         \
+    }                                                                  \
+    catch (const DimensionError& e) {                                  \
+        PyErr_SetString(PyDimensionError, e.what());                   \
+        return nullptr;                                                \
+    }                                                                  \
+    catch (const SailCError& e) {                                      \
+        PyErr_SetString(PySailError, e.what());                        \
+        return nullptr;                                                \
+    }                                                                  \
+    catch (const TypeError& e) {                                       \
+        PyErr_SetString(PyTypeError, e.what());                        \
+        return nullptr;                                                \
+    }                                                                  \
+    catch (const std::exception& e) {                                  \
+        PyErr_SetString(PySailError,                                   \
+                        ((std::string) "Unknown exception occured: " + \
+                         (std::string)e.what())                        \
+                            .c_str());                                 \
+        return nullptr;                                                \
     }
 
-#define END_EXCEPTION_HANDLING_INT                                    \
-    }                                                                 \
-    catch (const DimensionError& e) {                                 \
-        PyErr_SetString(PyDimensionError, e.what());                  \
-        return -1;                                                    \
-    }                                                                 \
-    catch (const SailCError& e) {                                     \
-        PyErr_SetString(PySailError, e.what());                       \
-        return -1;                                                    \
-    }                                                                 \
-    catch (const TypeError& e) {                                      \
-        PyErr_SetString(PyTypeError, e.what());                       \
-        return -1;                                                    \
-    }                                                                 \
-    catch (const std::exception& e) {                                 \
-        PyErr_SetString(PySailError,                                  \
-                        ((std::string) "Unkown exception occured: " + \
-                         (std::string)e.what())                       \
-                            .c_str());                                \
-        return -1;                                                    \
+#define END_EXCEPTION_HANDLING_INT                                     \
+    }                                                                  \
+    catch (const DimensionError& e) {                                  \
+        PyErr_SetString(PyDimensionError, e.what());                   \
+        return -1;                                                     \
+    }                                                                  \
+    catch (const SailCError& e) {                                      \
+        PyErr_SetString(PySailError, e.what());                        \
+        return -1;                                                     \
+    }                                                                  \
+    catch (const TypeError& e) {                                       \
+        PyErr_SetString(PyTypeError, e.what());                        \
+        return -1;                                                     \
+    }                                                                  \
+    catch (const std::exception& e) {                                  \
+        PyErr_SetString(PySailError,                                   \
+                        ((std::string) "Unknown exception occured: " + \
+                         (std::string)e.what())                        \
+                            .c_str());                                 \
+        return -1;                                                     \
     }\

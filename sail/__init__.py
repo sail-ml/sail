@@ -10,6 +10,7 @@ from ._tensor_docs import *
 from ._module_docs import *
 from ._loss_docs import *
 from ._optimizer_docs import *
+from ._init_docs import *
 
 
 
