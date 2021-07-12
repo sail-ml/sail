@@ -58,55 +58,64 @@ std::tuple<std::vector<Tensor>, long, long> conv2d_impl(
             im2col_input, {{0, 0}, {0, 0}, {pad_x, pad_y}, {pad_x, pad_y}});
     }
 
+    // long new_height = (h + 2 * pad_y - k_h) / stride[0] + 1;
+    // long new_width = (w + 2 * pad_x - k_w) / stride[1] + 1;
+
+    // std::vector<std::vector<long>> slices = {
+    //     {},
+    //     {},
+    //     {0, im2col_input.get_shape()[2], stride[0]},
+    //     {0, im2col_input.get_shape()[3], stride[1]}};
+
+    // std::vector<long> strides_ = {(long)1, 1, stride[0], stride[1]};
+    // auto strides_tensor = from_data((void*)strides_.data(), Dtype::sInt64,
+    //                                 TensorShape({strides_.size()}));
+
+    // auto start = high_resolution_clock::now();
+
+    // auto index_strides_ =
+    // im2col_input.slice(Slice(slices)).get_shape().strides;
+
+    // auto window_shape =
+    //     from_data((void*)kernel.get_shape().shape.data(), Dtype::sInt64,
+    //               TensorShape({kernel.get_shape().shape.size()}));
+    // auto window_strides =
+    //     from_data((void*)im2col_input.get_shape().strides.data(),
+    //     Dtype::sInt64,
+    //               TensorShape({im2col_input.get_shape().shape.size()}));
+    // auto indexing_strides =
+    //     from_data((void*)index_strides_.data(), Dtype::sInt64,
+    //               TensorShape({index_strides_.size()}));
+    // auto in_shape =
+    //     from_data((void*)im2col_input.get_shape().shape.data(),
+    //     Dtype::sInt64,
+    //               TensorShape({im2col_input.get_shape().shape.size()}));
+
+    // auto win_indices_shape = ((in_shape - window_shape) / strides_tensor) +
+    // 1; auto c_win_indices_shape = ops::cast(win_indices_shape,
+    // Dtype::sInt64);
+
+    // auto new_shape = sail::ops::cat({c_win_indices_shape, window_shape});
+    // auto new_strides = sail::ops::cat({indexing_strides, window_strides});
+
+    // std::vector<long> ns((long*)new_shape.get_data(),
+    //                      (long*)new_shape.get_data() + new_shape.numel());
+    // std::vector<long> ns_((long*)new_strides.get_data(),
+    //                       (long*)new_strides.get_data() +
+    //                       new_strides.numel());
+
+    // auto cols2 = as_strided(im2col_input, sail::TensorShape(ns, ns_));
+
+    // auto cols = ops::reshape(
+    //     cols2,
+    //     sail::TensorShape({new_height * new_width * b, k_cin * k_w * k_h}));
+
     long new_height = (h + 2 * pad_y - k_h) / stride[0] + 1;
     long new_width = (w + 2 * pad_x - k_w) / stride[1] + 1;
 
-    std::vector<std::vector<long>> slices = {
-        {},
-        {},
-        {0, im2col_input.get_shape()[2], stride[0]},
-        {0, im2col_input.get_shape()[3], stride[1]}};
+    auto cols = sail::im2col(im2col_input, kernel, stride, pad_x, pad_y, b,
+                             new_height, new_width);
 
-    std::vector<long> strides_ = {(long)1, 1, stride[0], stride[1]};
-    auto strides_tensor = from_data((void*)strides_.data(), Dtype::sInt64,
-                                    TensorShape({strides_.size()}));
-
-    auto start = high_resolution_clock::now();
-
-    auto index_strides_ = im2col_input.slice(Slice(slices)).get_shape().strides;
-
-    auto window_shape =
-        from_data((void*)kernel.get_shape().shape.data(), Dtype::sInt64,
-                  TensorShape({kernel.get_shape().shape.size()}));
-    auto window_strides =
-        from_data((void*)im2col_input.get_shape().strides.data(), Dtype::sInt64,
-                  TensorShape({im2col_input.get_shape().shape.size()}));
-    auto indexing_strides =
-        from_data((void*)index_strides_.data(), Dtype::sInt64,
-                  TensorShape({index_strides_.size()}));
-    auto in_shape =
-        from_data((void*)im2col_input.get_shape().shape.data(), Dtype::sInt64,
-                  TensorShape({im2col_input.get_shape().shape.size()}));
-
-    auto win_indices_shape = ((in_shape - window_shape) / strides_tensor) + 1;
-    auto c_win_indices_shape = ops::cast(win_indices_shape, Dtype::sInt64);
-
-    auto new_shape = sail::ops::cat({c_win_indices_shape, window_shape});
-    auto new_strides = sail::ops::cat({indexing_strides, window_strides});
-
-    std::vector<long> ns((long*)new_shape.get_data(),
-                         (long*)new_shape.get_data() + new_shape.numel());
-    std::vector<long> ns_((long*)new_strides.get_data(),
-                          (long*)new_strides.get_data() + new_strides.numel());
-
-    auto cols2 = as_strided(im2col_input, sail::TensorShape(ns, ns_));
-
-    auto cols = ops::reshape(
-        cols2,
-        sail::TensorShape({new_height * new_width * b, k_cin * k_w * k_h}));
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
     // std::cout << duration.count() << std::endl;
     Tensor flat_kernel =
         kernel.reshape(TensorShape({k_cout, k_cin * k_w * k_h}));

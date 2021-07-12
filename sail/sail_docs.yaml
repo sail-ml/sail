@@ -115,8 +115,8 @@ sail:
         type: Tensor
         description: Input data
       axis:
-        type: int, optional
-        description: If provided, then `axis` represents the axis to be summed over
+        type: int or tuple of ints, optional
+        description: If provided, then `axis` represents the axis to be summed over. If `axis` is a tuple, then the axes provided will be summed over
       keepdims:
         type: boolean, optional
         description: If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
@@ -137,8 +137,8 @@ sail:
         type: Tensor
         description: Input data
       axis:
-        type: int, optional
-        description: If provided, then `axis` represents the axis to be summed over
+        type: int or tuple of ints, optional
+        description: If provided, then `axis` represents the axis the mean will be computed over. If `axis` is a tuple, then the axes provided will be used to compute the mean
       keepdims:
         type: boolean, optional
         description: If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
@@ -159,8 +159,8 @@ sail:
         type: Tensor
         description: Input data
       axis:
-        type: int, optional
-        description: If provided, then `axis` represents the axis to be summed over
+        type: int or tuple of ints, optional
+        description: If provided, then `axis` represents the axis the max will be computed over. If `axis` is a tuple, then the axes provided will be used to compute the max
       keepdims:
         type: boolean, optional
         description: If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
@@ -171,6 +171,28 @@ sail:
         >>> y.shape
         (12, 1, 4, 5)
         >>> z = sail.max(x, -2, False)
+        >>> z.shape
+        (12, 32, 5)
+  min:
+    header: sail.min(tensor, axis=None, keepdims=False) -> Tensor
+    description: Returns the minimum of `tensor` over specified axis.
+    args:
+      tensor:
+        type: Tensor
+        description: Input data
+      axis:
+        type: int or tuple of ints, optional
+        description: If provided, then `axis` represents the axis the min will be computed over. If `axis` is a tuple, then the axes provided will be used to compute the min
+      keepdims:
+        type: boolean, optional
+        description: If True, then the axes that are reduced will be replaced with 1, otherwise, those axes will be removed
+    notes:  If ``axis < 0``, then the axis that will be computed over is ``tensor.ndim + axis``.
+    examples: |
+        >>> x = sail.random.uniform(0, 1, (12, 32, 4, 5))
+        >>> y = sail.min(x, 1, True)
+        >>> y.shape
+        (12, 1, 4, 5)
+        >>> z = sail.min(x, -2, False)
         >>> z.shape
         (12, 32, 5)
 

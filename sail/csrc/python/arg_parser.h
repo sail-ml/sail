@@ -637,6 +637,25 @@ struct PythonArgParser {
         }
         return PyLong_AsLong(arg);
     }
+    std::vector<long> int_list_as_axis(int idx) {
+        PyObject* arg = args[use][idx];
+        std::vector<long> ret;
+        if (arg == nullptr || arg == Py_None) {
+            return {NULLDIM};
+        }
+
+        auto tuple = PyTuple_Check(arg);
+
+        auto size = tuple ? PyTuple_Size(arg) : PyList_Size(arg);
+        for (int i = 0; i < size; i++) {
+            PyObject* val =
+                tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
+            ret.push_back(PyLong_AsLong(val));
+        }
+        // std::reverse(ret.begin(), ret.end());
+
+        return ret;
+    }
     std::vector<long> int_as_list(int idx) {
         PyObject* arg = args[use][idx];
         if (arg == nullptr || arg == Py_None) {

@@ -189,6 +189,42 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
     }
 }
 
+template <typename T, typename Op>
+void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
+                                 std::vector<long> axis) {
+    TensorShape s = TensorShape(input.get_shape());
+    int numel = out.get_shape().numel();
+    long stop = 1;
+    s.recompute();
+    std::reverse(axis.begin(), axis.end());
+    for (long a : axis) {
+        s.move_axis(a, -1);
+        stop *= s.shape.back();
+    }
+
+    T __restrict__ *p1;
+    T __restrict__ *p2;
+
+    p1 = static_cast<T *>(input.get_data());
+    p2 = static_cast<T *>(out.get_data());
+
+    bool init = true;
+    int count = 0;
+    int idx = 0;
+
+    for (int i = 0; i < out.numel(); i++) {
+        count = 0;
+        p2[idx] = 0;
+        while (count != stop) {  // s.shape[last]) {  // s.numel_avoid(0)) {
+            op.call_base(p1[s.d_ptr], p2[idx]);
+            s.next();
+            count += 1;
+        }
+        idx += 1;
+        init = false;
+    }
+}
+
 }  // namespace inner_reduction
 
 template <typename T, typename Op>
@@ -202,6 +238,14 @@ void Reduction(Op op, const Tensor &input, const Tensor &out, int index) {
     bool allows_avx = false;
 
     inner_reduction::launch_reduction_axis<T>(op, input, out, index);
+}
+
+template <typename T, typename Op>
+void Reduction(Op op, const Tensor &input, const Tensor &out,
+               std::vector<long> axes) {
+    bool allows_avx = false;
+
+    inner_reduction::launch_reduction_multi_axis<T>(op, input, out, axes);
 }
 
 }  // namespace native

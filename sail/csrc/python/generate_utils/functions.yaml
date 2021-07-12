@@ -73,29 +73,37 @@ mean:
   new: true
   signatures:
     - mean(Tensor tensor, int axis = None, bool keepdims = false)
+    - mean(Tensor tensor, IntList axis = None, bool keepdims = false)
   internal_calls:
     - sail::ops::mean(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+    - sail::ops::mean(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
 
 sum:
   new: true
   signatures:
     - sum(Tensor tensor, int axis = None, bool keepdims = false)
+    - sum(Tensor tensor, IntList axis = None, bool keepdims = false)
   internal_calls:
     - sail::ops::sum(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+    - sail::ops::sum(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
 
 max:
   new: true
   signatures:
     - max(Tensor tensor, int axis = None, bool keepdims = false)
+    - max(Tensor tensor, IntList axis = None, bool keepdims = false)
   internal_calls:
     - sail::ops::max(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+    - sail::ops::max(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
 
 min:
   new: true
   signatures:
     - min(Tensor tensor, int axis = None, bool keepdims = false)
+    - min(Tensor tensor, IntList axis = None, bool keepdims = false)
   internal_calls:
     - sail::ops::min(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
+    - sail::ops::min(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
 
 tensordot:
   full_impl: |
