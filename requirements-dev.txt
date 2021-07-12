@@ -7,4 +7,5 @@ pydata_sphinx_theme
 gcovr
 tensorflow
 torch
+scipy
 pyyaml

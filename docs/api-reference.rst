@@ -8,5 +8,6 @@ SAIL Reference
    sail
    tensor
    modules
+   initializers
    losses
    optimizers

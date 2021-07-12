@@ -88,9 +88,9 @@ ParameterType name_to_type(std::string type_) {
     if (type_ == "FloatList") return ParameterType::FLOAT_LIST;
     if (type_ == "bool") return ParameterType::BOOL;
     if (type_ == "object") return ParameterType::PYOBJECT;
-    if (type_ == "str") return ParameterType::STRING;
+    if (type_ == "string") return ParameterType::STRING;
 
-    throw std::runtime_error("unknown parameter name");
+    throw std::runtime_error("unknown parameter name " + type_);
     return ParameterType::PYOBJECT;
 }
 
@@ -136,8 +136,14 @@ struct FunctionSignature {
                 boost::split(arg_with_default, arg, boost::is_any_of("="),
                              boost::token_compress_on);
                 boost::algorithm::trim(arg_with_default[1]);
-                args.insert({arg_no_extra, arg_with_default[1]});
                 size_kwargs += 1;
+                if (type == "string") {
+                    arg_with_default[1] = std::regex_replace(
+                        arg_with_default[1], std::regex("\""), "");
+                    arg_with_default[1] = std::regex_replace(
+                        arg_with_default[1], std::regex("\'"), "");
+                }
+                args.insert({arg_no_extra, arg_with_default[1]});
                 kwarg_order.push_back(arg_no_extra);
             } else {
                 args.insert({arg_no_extra, ""});
@@ -457,6 +463,13 @@ struct FunctionSignature {
 
         return (default_val == "true" || default_val == "True");
     }
+    std::string get_default_string(int i) {
+        std::string arg_name = arg_order[i];
+        std::string type = args_types[arg_name];
+        std::string default_val = args[arg_name];
+
+        return default_val;
+    }
 };
 
 template <int N>  // max number of params across all signatures
@@ -595,14 +608,14 @@ struct PythonArgParser {
     }
     bool boolean(int idx) {
         PyObject* arg = args[use][idx];
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return signatures[use].get_default_bool(idx);
         }
         return PyObject_IsTrue(arg);
     }
     double double_(int idx) {
         PyObject* arg = args[use][idx];
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return signatures[use].get_default_double(idx);
         }
         if (PyFloat_Check(arg)) {
@@ -612,7 +625,7 @@ struct PythonArgParser {
     }
     int64_t integer(int idx) {
         PyObject* arg = args[use][idx];
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return signatures[use].get_default_int(idx);
         }
         return PyLong_AsLong(arg);
@@ -626,13 +639,16 @@ struct PythonArgParser {
     }
     std::vector<long> int_as_list(int idx) {
         PyObject* arg = args[use][idx];
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return std::vector<long>(1, signatures[use].get_default_int(idx));
         }
         return std::vector<long>(1, PyLong_AsLong(arg));
     }
     std::string string(int idx) {
         PyObject* arg = args[use][idx];
+        if (arg == nullptr || arg == Py_None) {
+            return signatures[use].get_default_string(idx);
+        }
         return std::string(PyUnicode_AsUTF8(arg));
     }
 };
