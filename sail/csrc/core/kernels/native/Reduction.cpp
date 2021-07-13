@@ -44,7 +44,7 @@ void mean_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
             TensorShape t1_shape = t1.get_shape();
             int i = 0;
             for (long s : t1_shape.shape) {
-                if (std::find(axis.begin(), axis.end(), i) == axis.end()) {
+                if (std::find(axis.begin(), axis.end(), i) != axis.end()) {
                     numel *= s;
                 }
                 i += 1;

@@ -77,5 +77,5 @@ if (COVERAGE)
 target_link_libraries(test PUBLIC "-lgcov")
 endif()
 
-include(GoogleTest)
-gtest_discover_tests(test)
+# include(GoogleTest)
+# gtest_discover_tests(test)

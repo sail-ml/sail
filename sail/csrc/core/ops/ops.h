@@ -7,6 +7,7 @@
 #include "LinalgOps.h"
 #include "LossOps.h"
 #include "MutationOps.h"
+#include "PoolOps.h"
 #include "ReductionOps.h"
 #include "ReprOps.h"
 #include "UnaryOps.h"

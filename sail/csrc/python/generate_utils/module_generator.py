@@ -238,6 +238,7 @@ def run(input, output, output2):
     #pragma once
     #include "../error_defs.h"
     #include "../macros.h"
+#include "../arg_parser.h"
     #include "../py_tensor/py_tensor_def.h"
     #include "core/modules/modules.h"
 

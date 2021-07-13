@@ -437,7 +437,20 @@ struct FunctionSignature {
         std::string type = args_types[arg_name];
         std::string default_val = args[arg_name];
 
+        if (default_val == "None") {
+            return 0;
+        }
+
         return atoi(default_val.c_str());
+    }
+    std::vector<long> get_default_int_list(int i) {
+        std::string arg_name = arg_order[i];
+        std::string type = args_types[arg_name];
+        std::string default_val = args[arg_name];
+
+        std::vector<long> out = {};
+
+        return out;
     }
     int get_default_int_or_axis(int i) {
         std::string arg_name = arg_order[i];
@@ -554,7 +567,7 @@ struct PythonArgParser {
     std::vector<long> int_list(int idx) {
         PyObject* arg = args[use][idx];
         std::vector<long> ret;
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return ret;
         }
 
@@ -629,6 +642,9 @@ struct PythonArgParser {
             return signatures[use].get_default_int(idx);
         }
         return PyLong_AsLong(arg);
+    }
+    bool isNone(int idx) {
+        return (args[use][idx] == Py_None || args[use][idx] == nullptr);
     }
     int64_t int_as_axis(int idx) {
         PyObject* arg = args[use][idx];

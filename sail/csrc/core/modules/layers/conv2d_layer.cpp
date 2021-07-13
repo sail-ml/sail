@@ -67,6 +67,14 @@ Tensor Conv2D::forward(Tensor& input) {
         padding.push_back(0);
         padding.push_back(0);
 
+        long k_h = weights.get_shape()[2];
+        long k_w = weights.get_shape()[3];
+
+        new_height =
+            (input.get_shape()[0] + 2 * 0 - 1 * (k_h - 1)) / strides[0] + 1;
+        new_width =
+            (input.get_shape()[1] + 2 * 0 - 1 * (k_w - 1)) / strides[1] + 1;
+
         // calc nh nw
     }
 

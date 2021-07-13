@@ -12,3 +12,4 @@
 #include "MutationGrad.h"
 
 #include "layers/ConvGrad.h"
+#include "layers/PoolGrad.h"
