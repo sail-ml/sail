@@ -2,6 +2,10 @@
 
 #include <dnnl.hpp>
 #include "Tensor.h"
+
+#include <chrono>
+using namespace std::chrono;
+
 using namespace dnnl;
 using dnnl::inner_product_forward;
 using tag = memory::format_tag;
@@ -10,6 +14,42 @@ using dt = memory::data_type;
 namespace sail {
 
 namespace onednn {
+
+// struct OneDNNConv2DContext {
+
+//     memory::dims src_dims;
+//     memory::dims weight_dims;
+//     memory::dims bias_dims;
+//     memory::dims dest_dims;
+//     memory::dims dilation = {0, 0};
+
+//     tag src_tag;
+//     tag weight_tag;
+//     tag bias_tag = tag::a;
+//     tag dest_tag;
+
+//     memory::dims strides;
+//     memory::dims padding;
+
+//     OneDNNConv2D set_src_dims(TensorShape shape) {
+//         src_dims = shape.shape;
+//         return *this;
+//     }
+//     OneDNNConv2D set_kernel_dims(TensorShape shape) {
+//         src_dims = shape.shape;
+//         return *this;
+//     }
+//     OneDNNConv2D set_bias_dims(TensorShape shape) {
+//         src_dims = shape.shape;
+//         return *this;
+//     }
+//     OneDNNConv2D set_dest_dims(TensorShape shape) {
+//         src_dims = shape.shape;
+//         return *this;
+//     }
+
+// }
+
 // inline unsigned char* DummyData = nullptr;
 struct OneDNNConv2DParams {
     memory::dims src_dims;
@@ -43,12 +83,12 @@ struct OneDNNConv2DParams {
     OneDNNConv2DParams(Tensor& src, Tensor& kernel, TensorShape output_shape,
                        std::vector<long> strides_, std::vector<long> padding_,
                        bool back = false) {
-        const memory::dim N = src.get_shape().shape[0];
-        const memory::dim I_H = src.get_shape().shape[2];
-        const memory::dim I_W = src.get_shape().shape[3];
-        const memory::dim K_H = kernel.get_shape().shape[2];
-        const memory::dim K_W = kernel.get_shape().shape[3];
-        const memory::dim IC = kernel.get_shape().shape[1];
+        // const memory::dim N = src.get_shape().shape[0];
+        // const memory::dim I_H = src.get_shape().shape[2];
+        // const memory::dim I_W = src.get_shape().shape[3];
+        // const memory::dim K_H = kernel.get_shape().shape[2];
+        // const memory::dim K_W = kernel.get_shape().shape[3];
+        // const memory::dim IC = kernel.get_shape().shape[1];
         const memory::dim OC = kernel.get_shape().shape[0];
         const memory::dim pad_1 = padding_[0];
         const memory::dim pad_2 = padding_[1];
@@ -62,13 +102,11 @@ struct OneDNNConv2DParams {
                    "Output sizes must match, ", kernel.get_shape()[1], " and ",
                    src.get_shape()[1]);
 
-        src_dims = {N, IC, I_H, I_W};
-        weight_dims = {OC, IC, K_H, K_W};
+        src_dims = src.get_shape().shape;        //{N, IC, I_H, I_W};
+        weight_dims = kernel.get_shape().shape;  //{OC, IC, K_H, K_W};
         bias_dims = {OC};
-        dest_dims = {N, OC, O_H, O_W};
-        if (back) {
-            dest_dims = {N, IC, O_H, O_W};
-        }
+        dest_dims = output_shape.shape;  //{N, OC, O_H, O_W};
+
         strides = {stride_1, stride_2};
         padding = {pad_1, pad_2};
 
@@ -186,24 +224,14 @@ struct OneDNNConv2DBackwardParams {
     OneDNNConv2DBackwardParams(Tensor& src, Tensor& kernel, Tensor& grad,
                                std::vector<long> strides_,
                                std::vector<long> padding_, bool back = false) {
-        const memory::dim N = src.get_shape().shape[0];
-        const memory::dim I_H = src.get_shape().shape[2];
-        const memory::dim I_W = src.get_shape().shape[3];
-
-        const memory::dim K_H = kernel.get_shape().shape[2];
-        const memory::dim K_W = kernel.get_shape().shape[3];
-        const memory::dim IC = kernel.get_shape().shape[1];
         const memory::dim OC = kernel.get_shape().shape[0];
         const memory::dim pad_1 = padding_[0];
         const memory::dim pad_2 = padding_[1];
         const memory::dim stride_1 = strides_[0];
         const memory::dim stride_2 = strides_[1];
 
-        const memory::dim O_H = grad.get_shape()[2];
-        const memory::dim O_W = grad.get_shape()[3];
-
-        grad_dims = grad.get_shape().shape;  //{N, OC, I_H, I_W};
-        weight_dims = {IC, OC, K_H, K_W};    // kernel.get_shape().shape;  //;
+        grad_dims = grad.get_shape().shape;      //{N, OC, I_H, I_W};
+        weight_dims = kernel.get_shape().shape;  //{IC, OC, KH, KW};
         bias_dims = {OC};
         src_grad_dims = src.get_shape().shape;
 
@@ -215,11 +243,11 @@ struct OneDNNConv2DBackwardParams {
         padding = {pad_1, pad_2};
 
         src_tag = tag::nchw;
-        weight_tag = tag::iohw;
+        weight_tag = tag::oihw;
         grad_tag = tag::nchw;
 
         src_grad_tag = tag::nchw;
-        weight_grad_tag = tag::iohw;
+        weight_grad_tag = tag::oihw;
     }
 };
 
@@ -249,12 +277,15 @@ class OneDNNConv2DBackward {
 
     std::shared_ptr<convolution_backward_weights::desc>
         convolution_backward_weights_desc = nullptr;
-    std::shared_ptr<deconvolution_forward::desc> deconvolution_forward_desc =
-        nullptr;
+    std::shared_ptr<convolution_backward_data::desc>
+        deconvolution_forward_desc = nullptr;
 
     std::shared_ptr<convolution_backward_weights>
         convolution_backward_weights_prim = nullptr;
-    std::shared_ptr<deconvolution_forward> deconvolution_forward_prim = nullptr;
+    std::shared_ptr<convolution_backward_data> deconvolution_forward_prim =
+        nullptr;
+    std::shared_ptr<convolution_forward::desc> convolution_forward_desc =
+        nullptr;
     std::unordered_map<int, memory> convolution_backward_weights_args;
     std::unordered_map<int, memory> deconvolution_forward_args;
 
@@ -262,6 +293,7 @@ class OneDNNConv2DBackward {
         params = _params;
     }
     void initialize(convolution_forward::primitive_desc desc) {
+        // dnnl::set_verbose(2);
         src_grad_dest_md.reset(new memory::desc(params->src_grad_dims, dt::f32,
                                                 params->src_grad_tag));
         weight_md.reset(
@@ -276,21 +308,20 @@ class OneDNNConv2DBackward {
         bias_mem.reset(new memory(*bias_md, engine, nullptr));
         grad_mem.reset(new memory(*grad_md, engine, nullptr));
 
-        deconvolution_forward_desc.reset(new deconvolution_forward::desc(
-            prop_kind::forward_inference, algorithm::deconvolution_direct,
-            *grad_md, *weight_md, *src_grad_dest_md, params->strides,
-            params->dilation, params->padding, params->padding));
+        deconvolution_forward_desc.reset(new convolution_backward_data::desc(
+            algorithm::convolution_direct, *src_grad_dest_md, *weight_md,
+            *grad_md, params->strides, params->dilation, params->padding,
+            params->padding));
 
-        auto deconvolution_pd = deconvolution_forward::primitive_desc(
-            *deconvolution_forward_desc, engine);
+        auto deconvolution_pd = convolution_backward_data::primitive_desc(
+            *deconvolution_forward_desc, engine, desc);
         deconvolution_forward_prim.reset(
-            new deconvolution_forward(deconvolution_pd));
+            new convolution_backward_data(deconvolution_pd));
 
         // clang-format off
-        deconvolution_forward_args.insert({DNNL_ARG_SRC, *grad_mem});  // input
+        deconvolution_forward_args.insert({DNNL_ARG_DIFF_DST, *grad_mem});  // input
         deconvolution_forward_args.insert({DNNL_ARG_WEIGHTS, *weight_mem});  // weights
-        deconvolution_forward_args.insert({DNNL_ARG_BIAS, *bias_mem});  // bias
-        deconvolution_forward_args.insert({DNNL_ARG_DST, *src_grad_dest_mem});  // bias
+        deconvolution_forward_args.insert({DNNL_ARG_DIFF_SRC, *src_grad_dest_mem});  // bias
         // clang-format on
 
         src_md.reset(
@@ -330,41 +361,46 @@ class OneDNNConv2DBackward {
         // clang-format on
     }
 
-    void add_weights_data(void* data) { weight_mem->set_data_handle(data); }
-    void add_bias_data(void* data) { bias_mem->set_data_handle(data); }
+    void add_weights_data(void* data) {
+        weight_mem->set_data_handle(data, engine_stream);
+    }
+    void add_bias_data(void* data) {
+        bias_mem->set_data_handle(data, engine_stream);
+    }
 
     void add_grad_data(void* grad_data) {
-        grad_mem->set_data_handle(grad_data);
+        grad_mem->set_data_handle(grad_data, engine_stream);
     }
     void add_kernel_grad_loc(void* grad_data) {
-        kernel_grad_dest_mem->set_data_handle(grad_data);
+        kernel_grad_dest_mem->set_data_handle(grad_data, engine_stream);
     }
     void add_bias_grad_loc(void* grad_data) {
-        bias_grad_dest_mem->set_data_handle(grad_data);
+        bias_grad_dest_mem->set_data_handle(grad_data, engine_stream);
     }
     void add_src_grad_loc(void* grad_data) {
-        src_grad_dest_mem->set_data_handle(grad_data);
+        src_grad_dest_mem->set_data_handle(grad_data, engine_stream);
     }
 
     void add_base_data(void* weight_data, void* bias_data) {
-        weight_mem->set_data_handle(weight_data);
-        bias_mem->set_data_handle(bias_data);
+        weight_mem->set_data_handle(weight_data, engine_stream);
+        bias_mem->set_data_handle(bias_data, engine_stream);
     }
 
     void add_src_dest_data(void* src_data, void* dest_data) {
-        src_mem->set_data_handle(src_data);
+        src_mem->set_data_handle(src_data, engine_stream);
         // kernel_grad_dest_mem->set_data_handle(dest_data);
     }
 
     void forward() {
         try {
-            convolution_backward_weights_prim->execute(
-                engine_stream, convolution_backward_weights_args);
-            engine_stream.wait();
-
             deconvolution_forward_prim->execute(engine_stream,
                                                 deconvolution_forward_args);
+
+            convolution_backward_weights_prim->execute(
+                engine_stream, convolution_backward_weights_args);
+
             engine_stream.wait();
+
         } catch (dnnl::error& e) {
             std::cout << e.status << std::endl;
             std::cout << e.what() << std::endl;

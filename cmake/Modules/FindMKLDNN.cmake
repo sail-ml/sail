@@ -18,7 +18,7 @@ SET(MKLDNN_LIBRARIES)
 SET(MKLDNN_INCLUDE_DIR)
 
 IF (EXISTS "/opt/intel/oneapi/dnnl/latest/")
-SET(INTEL_DNNL_DIR "/opt/intel/oneapi/dnnl/latest/cpu_gomp")
+SET(INTEL_DNNL_DIR "/opt/intel/oneapi/dnnl/latest/cpu_iomp")
 SET(INTEL_DNNL_DIR_NOT_FOUND FALSE)
 ELSE()
 SET(INTEL_DNNL_DIR_NOT_FOUND TRUE)

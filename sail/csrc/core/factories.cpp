@@ -12,6 +12,7 @@
 #include "TensorBody.h"
 #include "dtypes.h"
 #include "exception.h"
+#include "kernels/Kernel.h"
 #include "tensor_iterator.h"
 #include "tensor_shape.h"
 #include "types.h"
@@ -52,26 +53,12 @@ Tensor empty_like(const Tensor& tensor, Dtype& dt) {
 Tensor clone(const Tensor& t) {
     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
-    TensorShape s = TensorShape(t.get_shape());
+    TensorShape s = t.get_shape();  // TensorShape(t.get_shape());
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
         int numel = s.numel();
         data = _malloc_align(numel, info.alignment, info.dtype_size);
-        dispatch_all_types(t.get_dtype(), [&](auto pt) {
-            using T = typename decltype(pt)::type;
-            // auto start = high_resolution_clock::now();
-            T* base_data = (T*)(t.get_data());
-            T* set_data = (T*)data;
-            s.recompute();
-            for (int i = 0; i < numel; i++) {
-                set_data[i] = base_data[s.d_ptr];
-                s.next();
-            }
-            s = TensorShape(s.shape);
-            // auto stop = high_resolution_clock::now();
-            // auto duration = duration_cast<microseconds>(stop - start);
-            // std::cout << duration.count() << std::endl;
-        });
+        s = TensorShape(s.shape);
     } else {
         data = _realloc_align(t.get_data(), t.numel(), info.alignment,
                               info.dtype_size);
@@ -80,6 +67,9 @@ Tensor clone(const Tensor& t) {
     TensorBody::pointer body = new TensorBody(data, t.get_dtype(), s);
 
     Tensor _empty = Tensor(body, t.requires_grad);
+    if (t.is_view()) {
+        sail::internal::copy_stub(t, _empty);
+    }
     return _empty;
 }
 Tensor clone_to(const Tensor& t, TensorShape shape) {
@@ -229,6 +219,11 @@ Tensor from_data(void* data, Dtype dt, TensorShape s) {
     void* new_data =
         _realloc_align(data, s.numel(), info.alignment, info.dtype_size);
     TensorBody::pointer b = new TensorBody(new_data, dt, s);
+    return Tensor(b, false);
+}
+
+Tensor from_data_no_realloc(void* data, Dtype dt, TensorShape s) {
+    TensorBody::pointer b = new TensorBody(data, dt, s);
     return Tensor(b, false);
 }
 

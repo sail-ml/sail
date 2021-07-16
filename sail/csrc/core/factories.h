@@ -33,6 +33,7 @@ Tensor empty_scalar(Dtype dt);
 Tensor one_scalar(Dtype dt);
 
 Tensor from_data(void* data, Dtype dt, TensorShape s);
+Tensor from_data_no_realloc(void* data, Dtype dt, TensorShape s);
 
 Tensor zeros(TensorShape size, Dtype dt);
 Tensor ones(TensorShape size, Dtype dt);

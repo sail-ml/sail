@@ -5,6 +5,7 @@ namespace sail {
 
 namespace internal {
 
+DEFINE_DISPATCH(copy_stub);
 DEFINE_DISPATCH(cast_stub);
 DEFINE_DISPATCH(pad_stub);
 

@@ -91,7 +91,7 @@ class Tensor {
 
     Tensor cast(const Dtype dt);
     Tensor reshape(const TensorShape& new_shape) const;
-    Tensor _inplace_reshape(const TensorShape& new_shape) const;
+    Tensor _inplace_reshape(const TensorShape& new_shape);
     Tensor expand_dims(const int dim);
     Tensor _expand_dims_inplace(const int dim);
     Tensor squeeze(const int dim);
@@ -127,8 +127,10 @@ class Tensor {
 
     void set_shape(const TensorShape& s) { body.get()->set_shape(s); }
     void set_view() { body.get()->set_is_view(true); }
+    void set_data(void* data) { body.get()->set_data(data); }
 
     int get_ndim() const { return get_shape().ndim(); }
+    int ndim() const { return get_shape().ndim(); }
     Tensor get_grad() const { return body.get()->get_grad(); }
     void set_grad(Tensor& g) { body.get()->set_grad(g); }
 

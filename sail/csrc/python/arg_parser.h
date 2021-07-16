@@ -488,7 +488,8 @@ struct FunctionSignature {
 template <int N>  // max number of params across all signatures
 struct PythonArgParser {
     std::vector<std::vector<PyObject*>> args;
-    // PyObject* args[N];
+    std::vector<std::string> allowed_args;
+
     PyObject* in_args;
     PyObject* in_kwargs;
     StringList passed_arg_list_names;
@@ -500,9 +501,21 @@ struct PythonArgParser {
 
     PythonArgParser(std::vector<std::string> signatures_, PyObject* _in_args,
                     PyObject* _in_kwargs) {
+        int i = 0;
         for (std::string sig : signatures_) {
             signatures.push_back(FunctionSignature<N>(sig));
+            allowed_args.insert(allowed_args.end(),
+                                signatures[i].arg_order.begin(),
+                                signatures[i].arg_order.end());
+            allowed_args.insert(allowed_args.end(),
+                                signatures[i].kwarg_order.begin(),
+                                signatures[i].kwarg_order.end());
+            i += 1;
         }
+        std::sort(allowed_args.begin(), allowed_args.end());
+        allowed_args.erase(
+            std::unique(allowed_args.begin(), allowed_args.end()),
+            allowed_args.end());
         in_args = _in_args;
         in_kwargs = _in_kwargs;
         merge();
@@ -524,6 +537,10 @@ struct PythonArgParser {
             int si = PyList_Size(list);
             for (int i = 0; i < si; i++) {
                 auto name = PyUnicode_AsUTF8(PyList_GetItem(list, i));
+                if (std::find(allowed_args.begin(), allowed_args.end(), name) ==
+                    allowed_args.end()) {
+                    throw_parse_error();
+                }
                 passed_arg_list_names.push_back(name);
             }
         }
@@ -546,10 +563,18 @@ struct PythonArgParser {
             }
             i += 1;
         }
-        THROW_ERROR_DETAILED(
-            TypeError, "Arguments do not match defined function signatures: \n",
-            sig_strings);
+        throw_parse_error();
         return false;
+    }
+
+    void throw_parse_error() {
+        std::string sig_strings;
+        for (auto sig : signatures) {
+            sig_strings += sig.generate_error_text() + "\n";
+        }
+        THROW_ERROR(TypeError,
+                    "Arguments do not match defined function signatures: \n",
+                    sig_strings);
     }
 
     bool at(int idx) { return matches[idx]; }
