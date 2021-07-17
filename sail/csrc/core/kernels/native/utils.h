@@ -109,6 +109,7 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
     //     input_i = 0;
 
     for (long i = 0; i < new_height; i++) {
+
         input_j = 0;
         for (long j = 0; j < new_width; j++) {
             sail::Tensor col_slice = cols2.slice(sail::Slice({z, z + 1}));
@@ -130,6 +131,7 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
     //     sail::Slice({{}, {}, {pad_y, nh - pad_y}, {pad_x, nw - pad_y}}));
 
     return img;
+
 }
 
 }  // namespace sail
