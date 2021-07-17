@@ -13,7 +13,7 @@ add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
 # apt install -y intel-oneapi-dnnl-devel intel-oneapi-mkl intel-oneapi-mpi-devel
 apt install -y intel-oneapi-dnnl-devel 
-apt install -y intel-oneapi-mkl intel-oneapi-mkl-devel intel-oneapi-mkl-common-2021.2.0 intel-oneapi-mkl-common-devel-2021.2.0 
+apt install -y intel-oneapi-mkl intel-oneapi-mkl-devel intel-oneapi-mkl-common-2021.3.0 intel-oneapi-mkl-common-devel-2021.3.0
 apt install -y intel-oneapi-mpi-devel intel-oneapi-openmp
 # apt install -y intel-basekit intel-oneapi-vtune*- intel-oneapi-python-
 

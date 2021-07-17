@@ -3,6 +3,7 @@
 #include "factories.h"
 #include "kernels/dispatch.h"
 #include "kernels/native/loops.h"
+#include "loops.h"
 #include "ops/broadcast.h"
 #include "slice.h"
 #include "tensor_shape.h"
@@ -12,6 +13,19 @@ namespace sail {
 namespace internal {
 
 namespace {
+
+void copy_kernel(const Tensor &t1, Tensor &out) {
+    int numel = t1.numel();
+    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+        using T = typename decltype(pt)::type;
+
+        struct Impl {
+            inline void call_base(T &x1, T &out) { out = x1; }
+        };
+
+        native::UnaryElementwise<T>(Impl{}, t1, out);
+    });
+}
 
 void cast_kernel(const Tensor &t1, Tensor &out_tensor) {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
@@ -106,6 +120,8 @@ Tensor pad_kernel(Tensor &t1, std::vector<std::vector<long>> pads) {
 }
 
 }  // namespace
+REGISTER_ARCH_DISPATCH(copy_stub, DEFAULT, &copy_kernel);
+// REGISTER_ONLY_NATIVE_DISPATCH(copy_stub, &copy_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(cast_stub, &cast_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(pad_stub, &pad_kernel);
 

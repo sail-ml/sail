@@ -2,6 +2,7 @@
 
 #include <dnnl.hpp>
 #include "Tensor.h"
+#include "onednn_utils.h"
 using namespace dnnl;
 using dnnl::inner_product_forward;
 using tag = memory::format_tag;
@@ -21,23 +22,11 @@ struct OneDNNLinearParams {
     tag bias_tag = tag::a;
     tag dest_tag;
 
-    OneDNNLinearParams(memory::dims src_dims, memory::dims weight_dims,
-                       memory::dims bias_dims, memory::dims dest_dims,
-                       tag src_tag = tag::any, tag weight_tag = tag::any,
-                       tag dest_tag = tag::any)
-        : src_dims(src_dims),
-          weight_dims(weight_dims),
-          bias_dims(bias_dims),
-          dest_dims(dest_dims),
-          src_tag(src_tag),
-          weight_tag(weight_tag),
-          dest_tag(dest_tag) {}
-
     OneDNNLinearParams(Tensor& src, int input_features, int output_features) {
-        const memory::dim N = src.get_shape().shape[0], IF = input_features,
+        const memory::dim N = src.get_shape()[0], IF = input_features,
                           OF = output_features;
 
-        src_dims = {N, IF};
+        src_dims = {N, IF};  // src.get_shape().shape;
         weight_dims = {OF, IF};
         bias_dims = {OF};
         dest_dims = {N, OF};
@@ -46,13 +35,23 @@ struct OneDNNLinearParams {
         weight_tag = tag::io;
         dest_tag = tag::nc;
     }
+
+    std::string get_key() {
+        auto key = KeyGenerator()
+                       .add("linear")
+                       .add(src_dims)
+                       .add(weight_dims)
+                       .add(dest_dims)
+                       .get_key();
+        return key;
+    }
 };
 
-class OneDNNLinear {
+class OneDNNLinear : public Primitive {
    public:
-    dnnl::engine engine = dnnl::engine(dnnl::engine::kind::cpu, 0);
-    dnnl::stream engine_stream = dnnl::stream(engine);
     std::shared_ptr<OneDNNLinearParams> params;
+    dnnl::engine engine;
+    dnnl::stream engine_stream;
 
     std::shared_ptr<memory::desc> src_md = nullptr;
     std::shared_ptr<memory::desc> weight_md = nullptr;
@@ -70,11 +69,17 @@ class OneDNNLinear {
 
     OneDNNLinear(std::shared_ptr<OneDNNLinearParams> _params) {
         params = _params;
+        engine = get_engine();
+        engine_stream = dnnl::stream(engine);
+    }
+    OneDNNLinear(OneDNNLinearParams _params) {
+        params.reset(new OneDNNLinearParams(_params));
+        engine = get_engine();
+        engine_stream = dnnl::stream(engine);
     }
     void initialize() {
         src_md.reset(
             new memory::desc(params->src_dims, dt::f32, params->src_tag));
-
         weight_md.reset(
             new memory::desc(params->weight_dims, dt::f32, params->weight_tag));
         bias_md.reset(
@@ -100,15 +105,10 @@ class OneDNNLinear {
         inner_product_args.insert({DNNL_ARG_DST, *dest_mem});
     }
 
-    void add_base_data(void* weight_data, void* bias_data) {
-        weight_mem->set_data_handle(weight_data);
-        bias_mem->set_data_handle(bias_data);
-    }
-
-    void add_src_dest_data(void* src_data, void* dest_data) {
-        src_mem->set_data_handle(src_data);
-        dest_mem->set_data_handle(dest_data);
-    }
+    void add_weight_data(void* data) { weight_mem->set_data_handle(data); }
+    void add_bias_data(void* data) { bias_mem->set_data_handle(data); }
+    void add_src_data(void* data) { src_mem->set_data_handle(data); }
+    void add_dest_data(void* data) { dest_mem->set_data_handle(data); }
 
     void forward() {
         inner_product_prim->execute(engine_stream, inner_product_args);
@@ -118,6 +118,49 @@ class OneDNNLinear {
         bias_mem->set_data_handle(nullptr);
         dest_mem->set_data_handle(nullptr);
     }
+};
+
+class LinearFactory : public PrimitiveFactory<OneDNNLinear> {
+   public:
+    OneDNNLinear* prim;
+    LinearFactory(Tensor& input_tensor, Tensor& weights, Tensor& output) {
+        auto p = OneDNNLinearParams(input_tensor, input_tensor.get_shape()[1],
+                                    output.get_shape()[1]);
+        std::string key = p.get_key();
+        prim = get(key);
+        if (prim == nullptr) {
+            prim = new OneDNNLinear(p);
+            prim->initialize();
+
+            add(key, prim);
+        }
+        fill(input_tensor.get_data(), weights.get_data(), nullptr,
+             output.get_data());
+    }
+    LinearFactory(Tensor& input_tensor, Tensor& weights, Tensor& biases,
+                  Tensor& output) {
+        auto p = OneDNNLinearParams(input_tensor, input_tensor.get_shape()[1],
+                                    output.get_shape()[1]);
+
+        std::string key = p.get_key();
+        prim = get(key);
+        if (prim == nullptr) {
+            prim = new OneDNNLinear(p);
+            prim->initialize();
+            add(key, prim);
+        }
+        fill(input_tensor.get_data(), weights.get_data(), biases.get_data(),
+             output.get_data());
+    }
+
+    void fill(void* d1, void* d2, void* d3, void* d4) {
+        prim->add_src_data(d1);
+        prim->add_weight_data(d2);
+        prim->add_bias_data(d3);
+        prim->add_dest_data(d4);
+    }
+
+    void forward() { prim->forward(); }
 };
 
 }  // namespace onednn

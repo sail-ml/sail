@@ -72,6 +72,8 @@ void softmax_backward_partial_kernel(Tensor& y, Tensor& targets,
 
             int i = 0;
 
+            long n = targets.get_shape()[0];
+
             T __restrict__* p1;
             T2* targ;
             T __restrict__* p3;
@@ -88,13 +90,13 @@ void softmax_backward_partial_kernel(Tensor& y, Tensor& targets,
             int j = 1;
             for (int i = 0; i < numel; i++) {
                 if (i == start) {
-                    p3[i] = p1[i] - 1;
+                    p3[i] = (p1[i] - 1) / n;
                     start += size - prev;
                     start += int(targ[j]);
                     prev = int(targ[j]);
                     j += 1;
                 } else {
-                    p3[i] = p1[i];
+                    p3[i] = p1[i] / n;
                 }
             }
         });

@@ -11,6 +11,7 @@
 // #include "module.h"
 #ifdef MKLDNN
 #include "onednn/conv2d.h"
+#include "onednn/conv2d_forward.h"
 #endif
 namespace sail {
 namespace modules {
@@ -47,35 +48,36 @@ void Conv2D::set_biases(Tensor& new_biases) {
 Tensor Conv2D::forward(Tensor& input) {
 #ifdef MKLDNN
     std::vector<long> padding;
+    std::vector<long> padding_r;
+    std::vector<long> padding_l;
     long new_width, new_height;
     if (padding_mode == "same") {
-        long pad_y = (long)(((1 - (float)1 - (float)strides[0] +
-                              (float)weights.get_shape().shape[2] * (float)1) /
-                             2) +
-                            (float)input.get_shape().shape[2] *
-                                ((-1 + (float)strides[0]) / 2));
-        long pad_x = (long)(((1 - (float)1 - (float)strides[1] +
-                              (float)weights.get_shape().shape[3] * (float)1) /
-                             2) +
-                            (float)input.get_shape().shape[3] *
-                                ((-1 + (float)strides[1]) / 2));
-        padding.push_back(pad_y);
-        padding.push_back(pad_x);
+        long total_height_p = 1 * (weights.get_shape().shape[2] - 1);
+        long top_pad = total_height_p / 2;
+        long bottom_pad = total_height_p - top_pad;
+
+        long total_width_p = 1 * (weights.get_shape().shape[3] - 1);
+        long left_pad = total_width_p / 2;
+        long right_pad = total_height_p - top_pad;
+
+        padding_l.push_back(top_pad);
+        padding_l.push_back(left_pad);
+
+        padding_r.push_back(bottom_pad);
+        padding_r.push_back(right_pad);
+
         new_width = input.get_shape()[3];
         new_height = input.get_shape()[2];
     } else {
-        padding.push_back(0);
-        padding.push_back(0);
+        padding_r = {0, 0};
+        padding_l = {0, 0};
 
         long k_h = weights.get_shape()[2];
         long k_w = weights.get_shape()[3];
 
-        new_height =
-            (input.get_shape()[0] + 2 * 0 - 1 * (k_h - 1)) / strides[0] + 1;
-        new_width =
-            (input.get_shape()[1] + 2 * 0 - 1 * (k_w - 1)) / strides[1] + 1;
+        new_height = (input.get_shape()[2] - (k_h)) / strides[0] + 1;
+        new_width = (input.get_shape()[3] - (k_w)) / strides[1] + 1;
 
-        // calc nh nw
     }
 
     long _batch_size = input.get_shape().shape[0];
@@ -85,13 +87,20 @@ Tensor Conv2D::forward(Tensor& input) {
     TensorShape output_shape = TensorShape(
         {batch_size, weights.get_shape()[0], new_height, new_width});
 
-    params.reset(new onednn::OneDNNConv2DParams(input, weights, output_shape,
-                                                strides, padding));
-    layer.reset(new onednn::OneDNNConv2D(params));
-    // layer2.reset(new onednn::OneDNNConv2DBackward(params));
-    // }
-    auto x = layer->initialize(use_bias);
+    // Tensor Tdest = zeros(output_shape, Dtype::sFloat32);
     Tensor Tdest = empty(0, Dtype::sFloat32, output_shape);
+
+    if (use_bias) {
+        auto L = onednn::Conv2DForwardFactory(input, weights, biases, Tdest,
+                                              strides, padding_l, padding_r);
+
+        L.forward();
+    } else {
+        auto L = onednn::Conv2DForwardFactory(input, weights, Tdest, strides,
+                                              padding_l, padding_r);
+
+        L.forward();
+    }
 
     TensorVector vec;
     vec.emplace_back(input);
@@ -101,18 +110,10 @@ Tensor Conv2D::forward(Tensor& input) {
     }
 
     autograd::Function* fcn =
-        (new autograd::Conv2DMKLDNN(padding[0], padding[1], strides, x));
+        (new autograd::Conv2DMKLDNN(padding_l, padding_r, strides));
     fcn->apply_no_forward(vec);
 
     fcn->set_fcn(Tdest);
-
-    void* biases_ = nullptr;
-    if (use_bias) {
-        biases_ = biases.get_data();
-    }
-    layer->add_base_data(weights.get_data(), biases_);
-    layer->add_src_dest_data(input.get_data(), Tdest.get_data());
-    layer->forward();
 
     return Tdest;
 

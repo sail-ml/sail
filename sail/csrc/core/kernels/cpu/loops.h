@@ -223,7 +223,7 @@ void launch_unary_elementwise_avx(Op op, const Tensor &t1, const Tensor &out) {
             iter.backup_d_ptr();
             iter.next();
         }
-    } else {
+    } else if (iter.contiguous_at(0)) {
         int z = 0;
         for (int i = 0; i < outer_steps; i++) {
             int inner = 0;
@@ -234,6 +234,17 @@ void launch_unary_elementwise_avx(Op op, const Tensor &t1, const Tensor &out) {
                 iter.advance_d_ptr(jump);
             }
             for (; inner < inner_loop_size; inner++) {
+                op.call_base(p1[iter.d_ptrs[0]], p2[z]);
+                iter.advance_d_ptr(1);
+                z += 1;
+            }
+            iter.backup_d_ptr();
+            iter.next();
+        }
+    } else {
+        int z = 0;
+        for (int i = 0; i < outer_steps; i++) {
+            for (int j = 0; j < inner_loop_size; j += 1) {
                 op.call_base(p1[iter.d_ptrs[0]], p2[z]);
                 iter.advance_d_ptr(1);
                 z += 1;

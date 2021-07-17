@@ -9,4 +9,6 @@ apt-get update
 apt-get install -y git
 apt-get install -y wget
 apt-get install -y curl
+apt-get install -y clang-tidy
+
 

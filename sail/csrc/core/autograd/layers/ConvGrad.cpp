@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ConvGrad.h"
+#include <chrono>
 #include <iostream>
 #include <vector>
 #include "Tensor.h"
@@ -10,10 +11,12 @@
 #include "factories.h"
 #include "kernels/Kernel.h"
 #include "ops/ops.h"
-
 #ifdef MKLDNN
 #include "onednn/conv2d.h"
+#include "onednn/conv2d_backward_data.h"
+#include "onednn/conv2d_backward_weights.h"
 #endif
+using namespace std::chrono;
 
 namespace sail {
 
@@ -117,31 +120,23 @@ TensorVector Conv2DMKLDNN::backward(Tensor& grad) {
     Tensor bias_grad = empty(0, Dtype::sFloat32, biases.get_shape());
     Tensor src_grad = empty(0, Dtype::sFloat32, input.get_shape());
 
-    std::shared_ptr<onednn::OneDNNConv2DBackwardParams> params;
-    params.reset(new onednn::OneDNNConv2DBackwardParams(
-        input, weights, grad, strides, {pad_y, pad_x}));
-    onednn::OneDNNConv2DBackward layer = onednn::OneDNNConv2DBackward(params);
-    layer.initialize(desc);
-    void* bias_data;
     if (use_bias) {
-        bias_data = biases.get_data();
-    } else {
-        bias_data = nullptr;
-    }
+        auto L = onednn::Conv2DBackwardWeightsFactory(
+            input, kernel_grad, bias_grad, grad, strides, padding_l, padding_r);
+        auto L2 = onednn::Conv2DBackwardDataFactory(
+            src_grad, weights, grad, strides, padding_l, padding_r);
 
-    layer.add_weights_data(weights.get_data());
-    layer.add_bias_data(bias_data);
-    layer.add_src_grad_loc(src_grad.get_data());
-    layer.add_grad_data(grad.get_data());
-    layer.add_src_dest_data(input.get_data(), nullptr);
-    layer.add_kernel_grad_loc(kernel_grad.get_data());
-    layer.add_bias_grad_loc(bias_grad.get_data());
+        L.forward();
+        L2.forward();
 
-    layer.forward();
-
-    if (use_bias) {
         return {src_grad, kernel_grad, bias_grad};
     } else {
+        auto L = onednn::Conv2DBackwardWeightsFactory(
+            input, kernel_grad, grad, strides, padding_l, padding_r);
+        auto L2 = onednn::Conv2DBackwardDataFactory(
+            src_grad, weights, grad, strides, padding_l, padding_r);
+        L.forward();
+        L2.forward();
         return {src_grad, kernel_grad};
     }
 }

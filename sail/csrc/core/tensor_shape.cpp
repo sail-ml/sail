@@ -173,6 +173,8 @@ TensorShape TensorShape::reorder(const LongVec& order) {
     LongVec new_shape;
     LongVec new_strides;
 
+    LongVec coverage(ndim(), 0);
+
     for (long i : order) {
         new_shape.push_back(shape[i]);
         new_strides.push_back(strides[i]);

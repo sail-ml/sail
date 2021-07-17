@@ -5,7 +5,7 @@ import time
 from scipy.stats import normaltest, ttest_1samp
 import unittest, random
 
-shapes = [(150, 150, 10), (200, 50, 30), (40, 50, 120, 3), (8000, 320), (3200, 10000)]
+shapes = [(150, 150, 10), (200, 50, 90), (40, 50, 120, 8), (8000, 320), (3200, 10000)]
 
 alpha = 0.05
 gain = np.sqrt(2)

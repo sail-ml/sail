@@ -44,7 +44,7 @@ long Tensor::getTotalSize() {
 Tensor Tensor::reshape(const TensorShape& new_shape) const {
     return ops::reshape(*this, new_shape);
 }
-Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) const {
+Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) {
     int s = new_shape.numel();
     if (s != numel()) {
         THROW_ERROR_DETAILED(DimensionError, "Cannot reshape tensor of shape ",

@@ -70,8 +70,6 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel,
 inline Tensor col2im(Tensor& cols, TensorShape kernel,
                      std::vector<long> strides, long pad_x, long pad_y, long b,
                      long old_height, long old_width) {
-    std::cout << cols.get_shape().get_string() << std::endl;
-
     // long d = 1;
 
     long k_cin = kernel[0];
@@ -111,7 +109,7 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
     //     input_i = 0;
 
     for (long i = 0; i < new_height; i++) {
-        std::cout << i << std::endl;
+
         input_j = 0;
         for (long j = 0; j < new_width; j++) {
             sail::Tensor col_slice = cols2.slice(sail::Slice({z, z + 1}));
@@ -134,49 +132,6 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
 
     return img;
 
-    // std::vector<std::vector<long>> slices = {
-    //     {},
-    //     {},
-    //     {0, im2col_input.get_shape()[2], stride[0]},
-    //     {0, im2col_input.get_shape()[3], stride[1]}};
-
-    // std::vector<long> strides_ = {(long)1, 1, stride[0], stride[1]};
-    // auto strides_tensor = from_data((void*)strides_.data(), Dtype::sInt64,
-    //                                 TensorShape({strides_.size()}));
-
-    // auto index_strides_ =
-    // im2col_input.slice(Slice(slices)).get_shape().strides;
-
-    // auto window_shape = from_data((void*)kernel.shape.data(), Dtype::sInt64,
-    //                               TensorShape({kernel.shape.size()}));
-    // auto window_strides =
-    //     from_data((void*)im2col_input.get_shape().strides.data(),
-    //     Dtype::sInt64,
-    //               TensorShape({im2col_input.get_shape().shape.size()}));
-    // auto indexing_strides =
-    //     from_data((void*)index_strides_.data(), Dtype::sInt64,
-    //               TensorShape({index_strides_.size()}));
-    // auto in_shape =
-    //     from_data((void*)im2col_input.get_shape().shape.data(),
-    //     Dtype::sInt64,
-    //               TensorShape({im2col_input.get_shape().shape.size()}));
-
-    // auto win_indices_shape = ((in_shape - window_shape) / strides_tensor) +
-    // 1; auto c_win_indices_shape = win_indices_shape.cast(Dtype::sInt64);
-    // // sail::ops::cast(win_indices_shape, Dtype::sInt64);
-
-    // auto new_shape = sail::ops::cat({c_win_indices_shape, window_shape});
-    // auto new_strides = sail::ops::cat({indexing_strides, window_strides});
-
-    // std::vector<long> ns((long*)new_shape.get_data(),
-    //                      (long*)new_shape.get_data() + new_shape.numel());
-    // std::vector<long> ns_((long*)new_strides.get_data(),
-    //                       (long*)new_strides.get_data() +
-    //                       new_strides.numel());
-
-    // auto cols2 = as_strided(im2col_input, sail::TensorShape(ns, ns_));
-
-    return cols;
 }
 
 }  // namespace sail

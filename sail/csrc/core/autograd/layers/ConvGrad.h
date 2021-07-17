@@ -47,11 +47,11 @@ class Conv2DMKLDNN : public Function {
     std::vector<long> strides;
 
     long kh, kw;
-    long pad_y, pad_x;
-    convolution_forward::primitive_desc desc;
-    Conv2DMKLDNN(long pad_y, long pad_x, std::vector<long> strides,
-                 convolution_forward::primitive_desc desc)
-        : pad_y(pad_y), pad_x(pad_x), strides(strides), desc(desc){};
+    std::vector<long> padding_l;
+    std::vector<long> padding_r;
+    Conv2DMKLDNN(std::vector<long> pad_y, std::vector<long> pad_x,
+                 std::vector<long> strides)
+        : padding_l(pad_y), padding_r(pad_x), strides(strides){};
     // RefTensorVector arg_storage;
     Tensor forward(TensorVector inputs);
     TensorVector backward(Tensor& grad);

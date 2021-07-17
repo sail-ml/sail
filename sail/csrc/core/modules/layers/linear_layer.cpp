@@ -11,6 +11,7 @@
 
 #ifdef MKLDNN
 #include "onednn/linear.h"
+#include "onednn/onednn_utils.h"
 #endif
 
 namespace sail {
@@ -56,19 +57,14 @@ Tensor Linear::forward(Tensor& input) {
     }
     if (use_bias) {
 #ifdef MKLDNN
-        long _batch_size = input.get_shape().shape[0];
-        if (_batch_size != batch_size) {
-            batch_size = _batch_size;
-            output_shape = TensorShape({batch_size, output_features});
+        batch_size = input.get_shape().shape[0];
 
-            params.reset(new onednn::OneDNNLinearParams(input, input_features,
-                                                        output_features));
-            layer.reset(new onednn::OneDNNLinear(params));
-
-            layer->initialize();
-        }
+        output_shape = TensorShape({batch_size, output_features});
 
         Tensor Tdest = empty(0, Dtype::sFloat32, output_shape);
+        auto L = onednn::LinearFactory(input, weights, biases, Tdest);
+
+        L.forward();
 
         TensorVector vec;
         vec.emplace_back(input);
@@ -80,10 +76,6 @@ Tensor Linear::forward(Tensor& input) {
 
         fcn->set_fcn(Tdest);
 
-        layer->add_base_data(weights.get_data(), biases.get_data());
-        layer->add_src_dest_data(input.get_data(), Tdest.get_data());
-
-        layer->forward();
         return Tdest;
 
 #endif

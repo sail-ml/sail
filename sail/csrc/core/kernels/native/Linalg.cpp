@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Tensor.h"
 #include "dtypes.h"
+#include "factories.h"
 #include "kernels/dispatch.h"
 #include "kernels/native/loops.h"
 
@@ -21,6 +22,13 @@ void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
                    std::string trans_b = "N") {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         auto name = decltype(pt)::GetName();
+
+        if (t1.is_view()) {
+            t1 = clone(t1);
+        }
+        if (t2.is_view()) {
+            t2 = clone(t2);
+        }
 
         std::vector<long> t1_shape = t1.get_shape().shape;
         std::vector<long> t2_shape = t2.get_shape().shape;

@@ -26,26 +26,26 @@ x_test = (x_test - mean)/std
 y_train = y_train.astype(np.int64)
 y_test = y_test.astype(np.int64)
 
-# define layers 
+# define model 
 
 class MnistModel(sail.modules.Module):
 
     def __init__(self):
         super().__init__()
-        self.linear1 = sail.modules.Conv2D(1, 16, (3, 3), (1, 1))
-        self.linear2 = sail.modules.Conv2D(16, 1, (3, 3), (1, 1))
-        self.relu = sail.modules.Sigmoid()
-        self.relu_ = sail.modules.ReLU()
-        self.linear = sail.modules.Linear(28 * 28, 10)
-# define forward function 
+        self.linear1 = sail.modules.Conv2D(1, 16, (3, 3), (2, 2))
+        self.linear2 = sail.modules.Conv2D(16, 32, (3, 3), (1, 1))
+        self.relu1 = sail.modules.ReLU()
+        self.relu2 = sail.modules.ReLU()
+
+        self.z = z = 11 * 11 * 32
+        self.linear = sail.modules.Linear(z, 10)
+
     def forward(self, x):
         y = self.linear1(x)
-        # print (y.shape)
-        y = self.relu_(y)
+        y = self.relu1(y)
         y = self.linear2(y)
-        # print (y.shape)
-        y = self.relu(y)
-        y = sail.reshape(y, (y.shape[0], 28 * 28))
+        y = self.relu2(y)
+        y = sail.reshape(y, (y.shape[0], self.z))
         y = self.linear(y)
         return y
 
@@ -81,21 +81,21 @@ for i in range(epochs):
     y_train = y_train[ar]
 
     u_time = 0
-    while end < len(x_train): #and steps < 100:
+    while end < len(x_train):
         x_batch = x_train[start:end]
-        y_batch = y_train[start:end]#[:, :10]
+        y_batch = y_train[start:end]
 
         x_batch = sail.Tensor(x_batch)
         y_batch = sail.Tensor(y_batch)
 
         preds = mnist(x_batch)
-
+       
         loss = loss_fcn(preds, y_batch)
         total_loss += loss.numpy()[0]
-
         loss.backward()
-        opt.update()
 
+        opt.update()
+        
         start += batch_size
         end += batch_size
         steps += 1
@@ -104,5 +104,3 @@ for i in range(epochs):
     acc = accuracy(pred_test, y_test)
 
     print ("E: %s | L: %s | ACC: %s" % ((i + 1), total_loss / steps, acc))
-
-    

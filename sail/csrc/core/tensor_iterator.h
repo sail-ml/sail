@@ -104,6 +104,18 @@ class MultiTensorIterator : public TensorIterator {
 
     MultiTensorIterator add_input(TensorShape& t_shape);
 
+    inline bool contiguous_at(int index) {
+        int v = 0;  // strides.at(index, 0);
+        for (int i = 1; i < shape.size(); i++) {
+            if (strides.at(index, i) > v) {
+                return false;
+            } else {
+                v = strides.at(index, i);
+            }
+        }
+        return true;
+    }
+
     inline void advance_d_ptr(int b) {
         if (tensor_count == 2) {
             d_ptrs[0] += lasts[0] * b;

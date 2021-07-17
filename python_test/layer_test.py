@@ -160,7 +160,7 @@ class Conv2DLayerTest(UnitTest):
 
     def test_no_bias(self):
         img = sail.random.uniform(0, 1, (64, 4, 60, 60))
-        lay = sail.modules.Conv2D(4, 32, 3, 1, use_bias=False)
+        lay = sail.modules.Conv2D(4, 32, 3, 1, padding_mode="same", use_bias=False)
         y = lay(img)
         self.assert_eq(y.shape, (64, 32, 60, 60))
 
@@ -170,7 +170,7 @@ class Conv2DLayerTest(UnitTest):
 
     def test_bias(self):
         img = sail.random.uniform(0, 1, (64, 4, 60, 60))
-        lay = sail.modules.Conv2D(4, 32, 3, 1, use_bias=True)
+        lay = sail.modules.Conv2D(4, 32, 3, 1, padding_mode="same", use_bias=True)
         y = lay(img)
         self.assert_eq(y.shape, (64, 32, 60, 60))
 
