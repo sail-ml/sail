@@ -79,6 +79,10 @@ class OneDNNConv2DBackwardWeights : public Primitive {
                 prop_kind::forward, algorithm::convolution_direct, *src_md,
                 *weight_md, *bias_md, *dest_md, params->strides,
                 params->dilation, params->padding_l, params->padding_r));
+
+            bias_mem.reset(new memory(*bias_md, engine, nullptr));
+            args.insert({DNNL_ARG_DIFF_BIAS, *bias_mem});
+
         } else {
             desc.reset(new convolution_backward_weights::desc(
                 algorithm::convolution_direct, *src_md, *weight_md, *dest_md,
@@ -98,14 +102,12 @@ class OneDNNConv2DBackwardWeights : public Primitive {
         src_mem.reset(new memory(backward_pd->src_desc(), engine, nullptr));
         weight_mem.reset(
             new memory(backward_pd->diff_weights_desc(), engine, nullptr));
-        bias_mem.reset(new memory(*bias_md, engine, nullptr));
         dest_mem.reset(
             new memory(backward_pd->diff_dst_desc(), engine, nullptr));
 
         primitive_desc.reset(new convolution_backward_weights(*backward_pd));
         args.insert({DNNL_ARG_SRC, *src_mem});
         args.insert({DNNL_ARG_DIFF_WEIGHTS, *weight_mem});
-        args.insert({DNNL_ARG_DIFF_BIAS, *bias_mem});
         args.insert({DNNL_ARG_DIFF_DST, *dest_mem});
     }
 
@@ -174,7 +176,9 @@ class OneDNNConv2DBackwardWeights : public Primitive {
 
         src_mem->set_data_handle(nullptr);
         weight_mem->set_data_handle(nullptr);
-        bias_mem->set_data_handle(nullptr);
+        if (use_bias) {
+            bias_mem->set_data_handle(nullptr);
+        }
         dest_mem->set_data_handle(nullptr);
     }
 };
@@ -220,6 +224,7 @@ class Conv2DBackwardWeightsFactory
         weights_tensor = weights;
 
         std::string key = p.get_key_backward_weights();
+        key.append("no_bias");
         prim = get(key);
         if (prim == nullptr) {
             prim = new OneDNNConv2DBackwardWeights(p, false);
@@ -234,7 +239,9 @@ class Conv2DBackwardWeightsFactory
     void fill(void* d1, void* d2, void* d3, void* d4) {
         prim->add_src_data(d1);
         prim->add_weight_data(d2);
-        prim->add_bias_data(d3);
+        if (d3 != nullptr) {
+            prim->add_bias_data(d3);
+        }
         prim->add_dest_data(d4);
     }
 

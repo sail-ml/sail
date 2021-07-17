@@ -44,7 +44,7 @@ Attributes:
 add_docstring_fcn("Linear", "forward", "")
 
 add_docstring_class("Conv2D", r"""
-sail.modules.Conv2D(in_channels, out_channels, kernel_size, strides, use_bias=True)
+sail.modules.Conv2D(in_channels, out_channels, kernel_size, strides, padding_mode="valid", use_bias=True)
 Computes Conv2D on data. ONLY DOES SAME PADDING
 
 Args:
@@ -52,7 +52,9 @@ Args:
     out_channels (int): size of output feature space
     kernel_size (int or tuple): kernel size
     strides (int or tuple): strides
-    use_bias (bool): If ``True``, a bias term will be added to the function.
+    padding_mode (string): If "valid", no padding is added. "same" will add padding so the output is the same shape as the input
+        Default: "valid"
+    use_bias (bool): If ``True``, a bias term will be added to the function
         Default: ``True``
 
 Attributes:

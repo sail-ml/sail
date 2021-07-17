@@ -65,7 +65,7 @@ class BasicMLP(UnitTest):
             return np.mean(y)
 
 
-        epochs = 5
+        epochs = 10
         batch_size = 64
         learning_rate = 1e-4
 
