@@ -47,9 +47,9 @@ using TensorVector = std::vector<Tensor>;
 
 class Reduction : public Function {
    public:
-    int axis;
+    std::vector<long> axis;
     bool keepdims;
-    Reduction(int _axis, bool _keepdims) {
+    Reduction(std::vector<long> _axis, bool _keepdims) {
         axis = _axis;
         keepdims = _keepdims;
     };

@@ -79,6 +79,36 @@ Conv2D:
   forward:
     signature: (Tensor x1)
 
+MaxPool2D:
+  init:
+    custom: |
+      PythonArgParser<3> parser = PythonArgParser<3>(
+        {
+            "MaxPool2D(int kernel_size, int strides = None, string padding_mode = \"valid\")",
+            "MaxPool2D(IntList kernel_size, IntList strides = None, string padding_mode = \"valid\")",
+        },
+      args, kwargs);
+
+      parser.parse();
+
+      if (parser.at(0)) {
+        if (parser.isNone(1)) {
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.integer(0), parser.string(2)));
+        } else {
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.integer(0), parser.integer(1), parser.string(2)));
+        }
+      } else if (parser.at(1)) {
+        if (parser.isNone(1)) {
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.int_list(0), parser.string(2)));
+        } else {
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.int_list(0), parser.int_list(1), parser.string(2)));
+        }
+      }
+
+      return 0;
+  forward:
+    signature: (Tensor x1)
+
 Sigmoid:
   init:
     signature: ()

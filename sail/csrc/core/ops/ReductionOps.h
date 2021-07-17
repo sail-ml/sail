@@ -11,9 +11,17 @@ namespace sail {
 namespace ops {
 
 Tensor sum(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
+Tensor sum(const Tensor& tensor1, std::vector<long> axis,
+           bool keepdims = false);
 Tensor mean(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
-Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
+Tensor mean(const Tensor& tensor1, std::vector<long> axis,
+            bool keepdims = false);
 Tensor min(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
+Tensor min(const Tensor& tensor1, std::vector<long> axis,
+           bool keepdims = false);
+Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false);
+Tensor max(const Tensor& tensor1, std::vector<long> axis,
+           bool keepdims = false);
 
 }  // namespace ops
 }  // namespace sail

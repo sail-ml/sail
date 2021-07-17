@@ -437,7 +437,20 @@ struct FunctionSignature {
         std::string type = args_types[arg_name];
         std::string default_val = args[arg_name];
 
+        if (default_val == "None") {
+            return 0;
+        }
+
         return atoi(default_val.c_str());
+    }
+    std::vector<long> get_default_int_list(int i) {
+        std::string arg_name = arg_order[i];
+        std::string type = args_types[arg_name];
+        std::string default_val = args[arg_name];
+
+        std::vector<long> out = {};
+
+        return out;
     }
     int get_default_int_or_axis(int i) {
         std::string arg_name = arg_order[i];
@@ -554,7 +567,7 @@ struct PythonArgParser {
     std::vector<long> int_list(int idx) {
         PyObject* arg = args[use][idx];
         std::vector<long> ret;
-        if (arg == nullptr) {
+        if (arg == nullptr || arg == Py_None) {
             return ret;
         }
 
@@ -630,12 +643,34 @@ struct PythonArgParser {
         }
         return PyLong_AsLong(arg);
     }
+    bool isNone(int idx) {
+        return (args[use][idx] == Py_None || args[use][idx] == nullptr);
+    }
     int64_t int_as_axis(int idx) {
         PyObject* arg = args[use][idx];
         if (arg == nullptr || arg == Py_None || arg == NULL) {
             return signatures[use].get_default_int_or_axis(idx);
         }
         return PyLong_AsLong(arg);
+    }
+    std::vector<long> int_list_as_axis(int idx) {
+        PyObject* arg = args[use][idx];
+        std::vector<long> ret;
+        if (arg == nullptr || arg == Py_None) {
+            return {NULLDIM};
+        }
+
+        auto tuple = PyTuple_Check(arg);
+
+        auto size = tuple ? PyTuple_Size(arg) : PyList_Size(arg);
+        for (int i = 0; i < size; i++) {
+            PyObject* val =
+                tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
+            ret.push_back(PyLong_AsLong(val));
+        }
+        // std::reverse(ret.begin(), ret.end());
+
+        return ret;
     }
     std::vector<long> int_as_list(int idx) {
         PyObject* arg = args[use][idx];
