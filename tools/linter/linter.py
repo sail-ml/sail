@@ -51,8 +51,8 @@ def launch(command, file):
     command.append(file)
 
     x = subprocess.check_output(command, stderr=subprocess.STDOUT).decode().strip() 
-    # print (x)
     clean_an_show(x)
+    
 def launch2(command):
     command = list(command)
 

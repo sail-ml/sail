@@ -98,7 +98,6 @@ class OneDNNMaxPooling {
         engine_stream.wait();
         src_mem->set_data_handle(nullptr);
         dest_mem->set_data_handle(nullptr);
-        // workspace_mem->set_data_handle(nullptr);
     }
 };
 
