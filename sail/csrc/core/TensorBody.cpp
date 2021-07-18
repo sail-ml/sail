@@ -48,10 +48,6 @@ TensorBody::~TensorBody() {
         if (!view) {
             //  #if defined(_ISOC11_SOURCE)
             std::free(data);  // NOLINT
-            // #else
-            // _aligned_free(data);
-            // std::free(data);
-            // #endif
         }
         delete shape;
         if (_has_grad) {
