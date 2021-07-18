@@ -25,18 +25,18 @@ def clean_an_show(string):
     out = []
     stop = False
     for line in string.split("\n"):
-        # if ("warnings generated" in line):
-        #     stop = True
-        # elif ("in non-user code" in line):
-        #     stop = True 
-        # elif ("Use -system-headers to display errors"):
-        #     stop = True
-        if (line.startswith("/") or line.startswith("../")):
+        if ("generated." in line):
+            stop = True
+        elif ("in non-user code" in line):
+            stop = True 
+        elif ("Use -system-headers to display errors" in line):
+            stop = True
+        elif (line.startswith("/") or line.startswith("../") or line.startswith(" ")):
             if ("libs/xsimd/include" in line or "c++" in line):
                 stop = True
             else:
                 stop = False
-        
+
         if (not stop):
             out.append(line)
 

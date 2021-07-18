@@ -54,7 +54,7 @@ TensorBody::~TensorBody() {
             delete grad;
         }
 
-        data = NULL;
+        data = nullptr;
         shape = nullptr;
         grad = nullptr;
     } else {
