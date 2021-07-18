@@ -1,6 +1,7 @@
 import os, subprocess
 import glob, json, yaml
 import time, signal
+import random
 
 def get_default_gcc_includes():
 
@@ -24,8 +25,8 @@ def clean_an_show(string):
     out = []
     stop = False
     for line in string.split("\n"):
-        if (line.startswith("/")):
-            if ("libs/xsimd/include" in line):
+        if (line.startswith("/") or line.startswith("../")):
+            if ("libs/xsimd/include" in line or "c++" in line):
                 stop = True
             else:
                 stop = False
@@ -38,6 +39,12 @@ def clean_an_show(string):
 def launch(command, file):
     command = list(command)
     command.append(file)
+
+    x = subprocess.check_output(command).decode().strip() 
+    # print (x)
+    clean_an_show(x)
+def launch2(command):
+    command = list(command)
 
     x = subprocess.check_output(command).decode().strip() 
     # print (x)
@@ -67,11 +74,12 @@ def execute(args):
     
     else:
         base_path_source = glob.glob(os.path.join(base_path, "**/*.cpp"), recursive=True)
+        random.shuffle(base_path_source)
 
         for file in base_path_source:
-            # command.append(file)
+            command.append(file)
 
-            launch(command, file)
+        launch2(command)
 
 
   

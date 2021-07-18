@@ -7,7 +7,7 @@ namespace modules {
 
 class Sigmoid : public Module {
    public:
-    explicit Sigmoid(){};
+    explicit Sigmoid() = default;
 
     Tensor forward(Tensor& input);
 };

@@ -30,9 +30,9 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     int i = 0;
     int jump = op.size;  // t1.get_info().jump;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
-    T __restrict__ *p3;
+    T *p1;
+    T *p2;
+    T *p3;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(t2.get_data());
@@ -65,9 +65,9 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     int i = 0;
     const int jump = op.size;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
-    T __restrict__ *p3;
+    T *p1;
+    T *p2;
+    T *p3;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(t2.get_data());
@@ -136,9 +136,9 @@ void launch_binary_elementwise_avx_contiguous(Op op, const Tensor &t1,
     int jump = op.size;  // t1.get_info().jump;
     int i = 0;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
-    T __restrict__ *p3;
+    T *p1;
+    T *p2;
+    T *p3;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(t2.get_data());
@@ -164,8 +164,8 @@ void launch_unary_elementwise_avx_contiguous(Op op, const Tensor &t1,
     int jump = op.size;
     int i = 0;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(out.get_data());
@@ -191,8 +191,8 @@ void launch_unary_elementwise_avx(Op op, const Tensor &t1, const Tensor &out) {
     int jump = op.size;
     int i = 0;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(out.get_data());

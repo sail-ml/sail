@@ -7,7 +7,7 @@ namespace modules {
 
 class ReLU : public Module {
    public:
-    explicit ReLU(){};
+    explicit ReLU() = default;
 
     Tensor forward(Tensor& input);
 };

@@ -51,7 +51,7 @@ TensorIterator::TensorIterator(TensorShape& t_shape) {
 
     _ndim = shape.size();
     _numel =
-        std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<long>());
+        std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<>());
 
     std::vector<long> co(i2, 0);
     coordinates = co;
@@ -66,7 +66,7 @@ long TensorIterator::inner_loop_size() const { return shape.back(); }
 
 long TensorIterator::out_loop_size() const { return _numel / shape.back(); }
 
-void TensorIterator::advance_d_ptr(int times = 1) { d_ptr += lasts[0] * times; }
+void TensorIterator::advance_d_ptr(int times) { d_ptr += lasts[0] * times; }
 void TensorIterator::backup_d_ptr() { d_ptr -= lasts[0]; }
 
 long TensorIterator::next() {
@@ -88,14 +88,13 @@ long TensorIterator::next() {
 MultiTensorIterator::MultiTensorIterator(TensorShape t_shape) {
     std::vector<long> old_shape = t_shape.shape;
     std::vector<long> old_strides = t_shape.strides;
-    std::vector<long> temp_strides_back;
-
     TensorIterator::shape = old_shape;
+    TensorIterator::_ndim = old_shape.size();
+    std::vector<long> temp_strides_back(_ndim);
+
     shape = old_shape;
     strides = Vec2D(old_strides);
     lasts.emplace_back(old_strides.back());
-
-    TensorIterator::_ndim = old_shape.size();
 
     std::vector<long> co(TensorIterator::_ndim, 0);
     coordinates = Vec2D(co);
@@ -103,7 +102,7 @@ MultiTensorIterator::MultiTensorIterator(TensorShape t_shape) {
     for (int i = 0; i < _ndim; i++) {
         TensorIterator::_numel *= old_shape[i];
         shape_m1.emplace_back(old_shape[i] - 1);
-        temp_strides_back.emplace_back(shape_m1[i] * old_strides[i]);
+        temp_strides_back[i] = shape_m1[i] * old_strides[i];
     }
 
     strides_back = Vec2D(temp_strides_back);
@@ -114,7 +113,7 @@ MultiTensorIterator MultiTensorIterator::add_input(TensorShape& t_shape) {
     tensor_count += 1;
 
     std::vector<long> old_strides = t_shape.strides;
-    std::vector<long> temp_strides_back;
+    std::vector<long> temp_strides_back(_ndim);
 
     strides.push_back(old_strides);
     lasts.emplace_back(old_strides.back());
@@ -123,7 +122,7 @@ MultiTensorIterator MultiTensorIterator::add_input(TensorShape& t_shape) {
     coordinates.push_back(co);
 
     for (int i = 0; i < TensorIterator::_ndim; i++) {
-        temp_strides_back.emplace_back(shape_m1[i] * old_strides[i]);
+        temp_strides_back[i] = shape_m1[i] * old_strides[i];
     }
 
     strides_back.push_back(temp_strides_back);

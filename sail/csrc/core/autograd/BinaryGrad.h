@@ -15,34 +15,34 @@ using TensorVector = std::vector<Tensor>;
 
 class Add : public Function {
    public:
-    explicit Add(){};
+    explicit Add() = default;
     // TensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Subtract : public Function {
    public:
-    explicit Subtract(){};
+    explicit Subtract() = default;
     // TensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Divide : public Function {
    public:
-    explicit Divide(){};
+    explicit Divide() = default;
     // TensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Multiply : public Function {
    public:
-    explicit Multiply(){};
+    explicit Multiply() = default;
     // TensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

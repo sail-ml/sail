@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdio.h>
 #include <cmath>
+#include <cstdio>
 #include <vector>
 #include "Tensor.h"
 #include "exception.h"

@@ -1,5 +1,5 @@
 #include "conv2d_layer.h"
-#include <math.h> /* pow */
+#include <cmath> /* pow */
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
@@ -19,7 +19,7 @@ using TensorVector = std::vector<Tensor>;
 
 Conv2D::Conv2D(long _input_channels, long _output_channels,
                std::vector<long> _kernel_size, std::vector<long> _strides,
-               std::string _padding_mode, bool _bias = true) {
+               std::string _padding_mode, bool _bias) {
     strides = _strides;
     weights = empty(0, default_dtype,
                     TensorShape({_output_channels, _input_channels,

@@ -18,8 +18,8 @@ class ClipMinOnly : public Function {
     Tensor stored_log;
     double min;
     explicit ClipMinOnly(double _min) : min(_min){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Clip : public Function {
@@ -27,8 +27,8 @@ class Clip : public Function {
     Tensor stored_log;
     double min, max;
     explicit Clip(double _min, double _max) : min(_min), max(_max){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

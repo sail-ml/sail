@@ -118,9 +118,11 @@ class CMakeBuild(build_ext):
 
         os.chdir(str(build_temp))
         print ("executing build")
-        self.spawn(['cmake', str(cwd)] + cmake_args)
+        self.spawn(['cmake', "-G", "Ninja", str(cwd)] + cmake_args)
         if not self.dry_run:
-            self.spawn(['cmake', '--build', '.'] + build_args)
+            self.spawn(['cmake', '--GNinja', '.'])# + build_args)
+            self.spawn(['ninja'])# + build_args)
+            # self.spawn(['cmake', '--build', '.'] + build_args)
         # Troubleshooting: if fail on line above then delete all possible 
         # temporary CMake files including "CMakeCache.txt" in top level dir.
         os.chdir(str(cwd))

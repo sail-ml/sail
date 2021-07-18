@@ -21,11 +21,6 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel,
                      long new_height, long new_width) {
     long d = 1;
 
-    long k_cin = kernel[0];
-    long k_cout = kernel[1];
-    long k_h = kernel[2];
-    long k_w = kernel[3];
-
     std::vector<std::vector<long>> slices = {
         {},
         {},
@@ -34,21 +29,25 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel,
 
     std::vector<long> strides_ = {(long)1, 1, stride[0], stride[1]};
     auto strides_tensor = from_data((void*)strides_.data(), Dtype::sInt64,
-                                    TensorShape({strides_.size()}));
+                                    TensorShape({static_cast<long>(4)}));
 
     auto index_strides_ = im2col_input.slice(Slice(slices)).get_shape().strides;
 
+    long index_strides_size = static_cast<long>(index_strides_.size());
+    long im2col_size = im2col_input.ndim();
+    long kernel_size = kernel.ndim();
+
     auto window_shape = from_data((void*)kernel.shape.data(), Dtype::sInt64,
-                                  TensorShape({kernel.shape.size()}));
+                                  TensorShape({kernel_size}));
+
     auto window_strides =
         from_data((void*)im2col_input.get_shape().strides.data(), Dtype::sInt64,
-                  TensorShape({im2col_input.get_shape().shape.size()}));
+                  TensorShape({im2col_size}));
     auto indexing_strides =
         from_data((void*)index_strides_.data(), Dtype::sInt64,
-                  TensorShape({index_strides_.size()}));
-    auto in_shape =
-        from_data((void*)im2col_input.get_shape().shape.data(), Dtype::sInt64,
-                  TensorShape({im2col_input.get_shape().shape.size()}));
+                  TensorShape({index_strides_size}));
+    auto in_shape = from_data((void*)im2col_input.get_shape().shape.data(),
+                              Dtype::sInt64, TensorShape({im2col_size}));
 
     auto win_indices_shape = ((in_shape - window_shape) / strides_tensor) + 1;
     auto c_win_indices_shape = win_indices_shape.cast(Dtype::sInt64);
@@ -70,14 +69,11 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel,
 inline Tensor col2im(Tensor& cols, TensorShape kernel,
                      std::vector<long> strides, long pad_x, long pad_y, long b,
                      long old_height, long old_width) {
-    // long d = 1;
-
     long k_cin = kernel[0];
-    long k_cout = kernel[1];
     long k_h = kernel[2];
     long k_w = kernel[3];
 
-    auto block_size = kernel;
+    const auto& block_size = kernel;
     // clone because both matmul will run clone, so why not do it once
     long n = b;
     long c = cols.get_shape()[1];

@@ -7,7 +7,7 @@
 #include "TensorBody.h"
 
 #include "autograd/autograd.h"
-// #include "cuda/cuda_math.h"
+// #include "cuda/cuda_cmath"
 #include "dtypes.h"
 #include "exception.h"
 #include "factories.h"
@@ -146,17 +146,18 @@ Tensor Tensor::fill(const Numeric& fill_val) {
     return *this;
 }
 
-Tensor Tensor::slice(long start, long stop, long axis = 0) {
-    void* new_ptr;
+Tensor Tensor::slice(long start, long stop, long axis) {
+    char* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
     alignemnt_information info = get_info();
     TensorShape shape_details = get_shape();
-    long dim = shape_details.shape[0];
     long offset = 0;
 
+    char* data = (char*)get_data();
+
     offset += (shape_details.strides[0] * info.dtype_size) * (start);
-    new_ptr = get_data() + offset;
+    new_ptr = data + offset;
     new_shape.push_back(stop - start);
     new_strides.push_back(shape_details.strides[0]);
     for (int i = 1; i < shape_details.ndim(); i++) {
@@ -164,20 +165,22 @@ Tensor Tensor::slice(long start, long stop, long axis = 0) {
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    Tensor e =
-        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+    Tensor e = make_view((void*)new_ptr, get_dtype(),
+                         TensorShape(new_shape, new_strides));
 
     return e;
 }
 
 Tensor Tensor::slice(Slice slice) {
-    void* new_ptr;
+    char* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
     alignemnt_information info = get_info();
     TensorShape shape_details = get_shape();
     long offset = 0;
     int i = 0;
+    char* data = (char*)get_data();
+
     for (std::vector<long> s : slice.slices) {
         if (s.size() == 2) {
             offset += (shape_details.strides[i] * info.dtype_size) * (s[0]);
@@ -194,40 +197,40 @@ Tensor Tensor::slice(Slice slice) {
         i += 1;
     }
 
-    new_ptr = get_data() + offset;
+    new_ptr = data + offset;
     for (int i = slice.size(); i < shape_details.ndim(); i++) {
         new_shape.push_back(shape_details.shape[i]);
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    Tensor e =
-        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+    Tensor e = make_view((void*)new_ptr, get_dtype(),
+                         TensorShape(new_shape, new_strides));
 
     return e;
 }
 
 Tensor Tensor::operator[](const int index) const {
-    void* new_ptr;
+    char* new_ptr;
     TensorSize new_shape;
     TensorSize new_strides;
     alignemnt_information info = get_info();
     TensorShape shape_details = get_shape();
+    char* data = (char*)get_data();
 
     if (is_scalar()) {
         THROW_ERROR_DETAILED(SailCError, "Cannot index a single value.");
     }
-    long dim = shape_details.shape[0];
     long offset = 0;
 
     offset += (shape_details.strides[0] * info.dtype_size) * (index);
-    new_ptr = get_data() + offset;
+    new_ptr = data + offset;
     for (int i = 1; i < shape_details.ndim(); i++) {
         new_shape.push_back(shape_details.shape[i]);
         new_strides.push_back(shape_details.strides[i]);
     }
 
-    Tensor e =
-        make_view(new_ptr, get_dtype(), TensorShape(new_shape, new_strides));
+    Tensor e = make_view((void*)new_ptr, get_dtype(),
+                         TensorShape(new_shape, new_strides));
 
     return e;
 }

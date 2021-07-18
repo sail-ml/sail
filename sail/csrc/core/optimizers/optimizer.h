@@ -10,13 +10,13 @@ using TensorVector = std::vector<Tensor>;
 class Optimizer {
    public:
     TensorVector params;
-    long steps;
+    long steps = 0;
 
-    virtual explicit Optimizer(){};
+    explicit Optimizer() = default;
     virtual void update(){};
 
-    void track_module(modules::Module &mod) {
-        for (Tensor t : mod.params) {
+    void track_module(modules::Module& mod) {
+        for (const auto& t : mod.params) {
             params.push_back(t);
         }
     }

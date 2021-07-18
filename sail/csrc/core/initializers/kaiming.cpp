@@ -1,6 +1,6 @@
 #include "kaiming.h"
-#include <stdio.h>
 #include <cmath>
+#include <cstdio>
 #include <vector>
 #include "Tensor.h"
 #include "exception.h"
@@ -11,8 +11,7 @@ namespace sail {
 
 namespace initializers {
 
-Tensor kaiming_uniform(Tensor input, std::string mode = "fan_in",
-                       std::string nonlin = "leaky_relu") {
+Tensor kaiming_uniform(Tensor input, std::string mode, std::string nonlin) {
     std::tuple<long, long> fans = calculate_fan_in_out(input);
     long fan;
     if (mode == "fan_in") {
@@ -32,8 +31,7 @@ Tensor kaiming_uniform(Tensor input, std::string mode = "fan_in",
     return input;
 }
 
-Tensor kaiming_normal(Tensor input, std::string mode = "fan_in",
-                      std::string nonlin = "leaky_relu") {
+Tensor kaiming_normal(Tensor input, std::string mode, std::string nonlin) {
     std::tuple<long, long> fans = calculate_fan_in_out(input);
     long fan;
     if (mode == "fan_in") {

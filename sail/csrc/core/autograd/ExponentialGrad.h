@@ -15,24 +15,25 @@ using TensorVector = std::vector<Tensor>;
 
 class Pow : public Function {
    public:
-    explicit Pow(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit Pow() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Exp : public Function {
    public:
-    explicit Exp(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit Exp() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Log : public Function {
    public:
     Tensor stored_log;
-    explicit Log(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit Log() = default;
+    ~Log() override = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

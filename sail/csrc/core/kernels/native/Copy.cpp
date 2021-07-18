@@ -15,7 +15,6 @@ namespace internal {
 namespace {
 
 void copy_kernel(const Tensor &t1, Tensor &out) {
-    int numel = t1.numel();
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
 
@@ -41,8 +40,8 @@ void cast_kernel(const Tensor &t1, Tensor &out_tensor) {
                 }
             };
 
-            T_in __restrict__ *p1;
-            T_out __restrict__ *p2;
+            T_in *p1;
+            T_out *p2;
 
             p1 = static_cast<T_in *>(t1.get_data());
             p2 = static_cast<T_out *>(out_tensor.get_data());
@@ -90,7 +89,6 @@ Tensor _pad_simple(const Tensor &base, Tensor &pad_width) {
     for (long i = 0; i < loop_size; i += 1) {
         Tensor x = pad_width[i];
         long left = x[0].get<long>();
-        long right = x[1].get<long>();
         long size = base.get_shape()[i];
         std::vector<long> slice = {left, left + size};
         original_area.push_back(slice);
@@ -110,8 +108,10 @@ Tensor pad_kernel(Tensor &t1, std::vector<std::vector<long>> pads) {
     }
 
     void *pads_ptr = (void *)flat.data();
-    Tensor pad_tensor_ = from_data(pads_ptr, Dtype::sInt64,
-                                   TensorShape({pads.size(), pads[0].size()}));
+    long pad_size = static_cast<long>(pads.size());
+    long pad_0_size = static_cast<long>(pads[0].size());
+    Tensor pad_tensor_ =
+        from_data(pads_ptr, Dtype::sInt64, TensorShape({pad_size, pad_0_size}));
     Tensor pad_tensor =
         ops::broadcast_to(pad_tensor_, TensorShape({t1.get_ndim(), 2}));
 

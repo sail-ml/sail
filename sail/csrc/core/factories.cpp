@@ -51,7 +51,6 @@ Tensor empty_like(const Tensor& tensor, Dtype& dt) {
 }
 
 Tensor clone(const Tensor& t) {
-    auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
     TensorShape s = t.get_shape();  // TensorShape(t.get_shape());
     alignemnt_information info = getAlignment(t.get_dtype());
@@ -73,7 +72,6 @@ Tensor clone(const Tensor& t) {
     return _empty;
 }
 Tensor clone_to(const Tensor& t, TensorShape shape) {
-    auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
@@ -119,7 +117,7 @@ Tensor as_strided(const Tensor& t, TensorShape s) {
     return make_view(t.get_data(), t.get_dtype(), s);
 }
 
-Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32) {
+Tensor one_hot(const Tensor& t, const int size, Dtype dt) {
     // if (t.get_ndim() != 1) {
     //     throw SailCError("Inputs to one_hot must 1d");
     // }
@@ -183,7 +181,6 @@ Tensor make_view(const Tensor& t) {
 // }
 
 Tensor empty_scalar(Dtype dt) {
-    alignemnt_information info = getAlignment(dt);
     TensorSize shape = {};
     TensorShape ts = TensorShape(shape);
     TensorBody::pointer b = new TensorBody(dt, ts);
@@ -281,7 +278,7 @@ namespace random {  // probably want to refactor factories to be in their own
                     // namespace but rolling with this for now
 
 // need to be able to instantiate random tensors
-Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
+Tensor uniform(TensorShape size, Dtype dt, double min, double max) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
@@ -300,18 +297,17 @@ Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
-Tensor uniform(TensorShape size, double min = 0, double max = 1) {
+Tensor uniform(TensorShape size, double min, double max) {
     return uniform(size, default_dtype, min, max);
 }
-Tensor uniform_like(Tensor tensor, double min = 0, double max = 1) {
+Tensor uniform_like(Tensor tensor, double min, double max) {
     TensorShape s = tensor.get_shape();
     Tensor ret = uniform(s, tensor.get_dtype(), min, max);
     ret.requires_grad = tensor.requires_grad;
     return ret;
 }
-Tensor uniform_fill(Tensor tensor, double min = 0, double max = 1) {
+Tensor uniform_fill(Tensor tensor, double min, double max) {
     Dtype dt = tensor.get_dtype();
-    alignemnt_information info = getAlignment(dt);
     int numel = tensor.numel();
     void* data = tensor.get_data();
     dispatch_all_types(dt, [&](auto pt) {
@@ -328,7 +324,7 @@ Tensor uniform_fill(Tensor tensor, double min = 0, double max = 1) {
     return tensor;
 }
 
-Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
+Tensor normal(TensorShape size, Dtype dt, double mean, double std) {
     if (std < 0) {
         throw SailCError("Standard deviation cannot be less than 0");
     }
@@ -350,18 +346,17 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
-Tensor normal(TensorShape size, double mean = 0, double std = 1) {
+Tensor normal(TensorShape size, double mean, double std) {
     return normal(size, default_dtype, mean, std);
 }
-Tensor normal_like(Tensor tensor, double mean = 0, double std = 1) {
+Tensor normal_like(Tensor tensor, double mean, double std) {
     TensorShape s = tensor.get_shape();
     Tensor ret = normal(s, tensor.get_dtype(), mean, std);
     ret.requires_grad = tensor.requires_grad;
     return ret;
 }
-Tensor normal_fill(Tensor tensor, double mean = 0, double std = 1) {
+Tensor normal_fill(Tensor tensor, double mean, double std) {
     Dtype dt = tensor.get_dtype();
-    alignemnt_information info = getAlignment(dt);
     int numel = tensor.numel();
     void* data = tensor.get_data();
     dispatch_all_types(dt, [&](auto pt) {

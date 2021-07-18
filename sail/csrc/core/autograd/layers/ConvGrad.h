@@ -28,15 +28,17 @@ class Conv2D : public Function {
     std::vector<long> strides;
     std::string padding_mode;
 
-    long kh, kw;
-    long pad_y, pad_x;
+    long kh = 0;
+    long kw = 0;
+    long pad_y = 0;
+    long pad_x = 0;
 
     Conv2D(std::vector<long> strides, std::string padding_mode)
-        : strides(strides), padding_mode(padding_mode){};
+        : strides(std::move(strides)), padding_mode(std::move(padding_mode)){};
+    ~Conv2D() override = default;
     // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-    ~Conv2D() {}
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 #ifdef MKLDNN
@@ -46,16 +48,19 @@ class Conv2DMKLDNN : public Function {
     Tensor flat_kernel;
     std::vector<long> strides;
 
-    long kh, kw;
+    long kh = 0;
+    long kw = 0;
     std::vector<long> padding_l;
     std::vector<long> padding_r;
     Conv2DMKLDNN(std::vector<long> pad_y, std::vector<long> pad_x,
                  std::vector<long> strides)
-        : padding_l(pad_y), padding_r(pad_x), strides(strides){};
+        : padding_l(std::move(pad_y)),
+          padding_r(std::move(pad_x)),
+          strides(std::move(strides)){};
+    ~Conv2DMKLDNN() override = default;
     // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-    ~Conv2DMKLDNN() {}
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 #endif

@@ -41,12 +41,11 @@ std::vector<long> process_axes(const long ndim, std::vector<long> axes) {
     return axes;
 }
 
-Tensor sum(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor sum(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return sum(tensor1, axes, keepdims);
 }
-Tensor sum(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor sum(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
@@ -76,12 +75,11 @@ Tensor sum(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor mean(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor mean(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return mean(tensor1, axes, keepdims);
 }
-Tensor mean(const Tensor& tensor1, std::vector<long> axis,
-            bool keepdims = false) {
+Tensor mean(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
@@ -112,12 +110,11 @@ Tensor mean(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor min(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor min(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return min(tensor1, axes, keepdims);
 }
-Tensor min(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor min(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
@@ -148,12 +145,11 @@ Tensor min(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor max(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return max(tensor1, axes, keepdims);
 }
-Tensor max(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor max(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);

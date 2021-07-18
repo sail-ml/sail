@@ -6,6 +6,7 @@
 
 namespace sail {
 using LongVec = std::vector<long>;
+
 class TensorShape {
    public:
     // int jump = 1;
@@ -20,7 +21,7 @@ class TensorShape {
     int enforced = -1;
     bool is_single = false;
 
-    explicit TensorShape(){};
+    explicit TensorShape() = default;
 
     TensorShape(LongVec shape_, LongVec size_);
     TensorShape(LongVec shape_);
@@ -57,8 +58,8 @@ class TensorShape {
     long numel() const;
     long numel_avoid(int dim) const;
     long getTotalSize(int mod);
-    int ndim();
+    long ndim() const;
 
-    std::string get_string();
+    std::string get_string() const;
 };
 }  // namespace sail

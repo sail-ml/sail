@@ -14,8 +14,8 @@ namespace {
 
 template <typename T, typename avx_type>
 struct CopyImpl : cpu::UnaryImpl<T, avx_type> {
-    inline void call_base(T& x1, T& out) { out = x1; }
-    inline avx_type avx_fcn(avx_type& a) { return a; }
+    inline void call_base(T& x1, T& out) override { out = x1; }
+    inline avx_type avx_fcn(avx_type& a) override { return a; }
 };
 void copy_kernel(const Tensor& t1, Tensor& out) {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {

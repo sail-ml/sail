@@ -37,7 +37,7 @@ class Vec2D {
     size_t cols = 0;
     size_t last_loc = 0;
 
-    explicit Vec2D(){};
+    explicit Vec2D() = default;
     Vec2D(std::vector<T> vect) {
         vec = vect;
         cols = vec.size();
@@ -72,7 +72,7 @@ class TensorIterator {
     std::vector<long> coordinates;
     std::vector<long> lasts;
 
-    explicit TensorIterator(){};
+    explicit TensorIterator() = default;
     TensorIterator(TensorShape& t_shape);
 
     long numel() const;
@@ -116,7 +116,7 @@ class MultiTensorIterator : public TensorIterator {
         return true;
     }
 
-    inline void advance_d_ptr(int b) {
+    inline void advance_d_ptr(int b) override {
         if (tensor_count == 2) {
             d_ptrs[0] += lasts[0] * b;
             d_ptrs[1] += lasts[1] * b;
@@ -126,7 +126,7 @@ class MultiTensorIterator : public TensorIterator {
             d_ptrs[a] += lasts[a] * b;
         }
     }
-    inline void backup_d_ptr() {
+    inline void backup_d_ptr() override {
         if (tensor_count == 2) {
             d_ptrs[0] -= lasts[0];
             d_ptrs[1] -= lasts[1];
@@ -160,9 +160,9 @@ class MultiTensorIterator : public TensorIterator {
     }
 
     inline std::vector<long> get_strides() {
-        std::vector<long> return_;
+        std::vector<long> return_(tensor_count);
         for (int a = 0; a < tensor_count; a++) {
-            return_.emplace_back(strides.at_back(a));
+            return_[a] = strides.at_back(a);
         }
         return return_;
     }

@@ -8,7 +8,7 @@
 namespace sail {
 
 TensorBody::TensorBody(void* _data, Dtype _dtype, TensorShape _shape,
-                       bool _view = false)
+                       bool _view)
     : data(_data),
       dtype(_dtype),
       // shape(_shape),
@@ -25,7 +25,7 @@ TensorBody::TensorBody(void* _data, Dtype _dtype, TensorShape _shape,
 //       view(_view),
 //       info(getAlignment(_dtype)),
 //       refcount_(0){};
-TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view = false) {
+TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view) {
     dtype = _dtype;
     // shape = _shape;
     shape = new TensorShape(_shape);
@@ -36,7 +36,6 @@ TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view = false) {
 };
 
 TensorBody::pointer TensorBody::create_owner() {
-    void* _data = data;
     TensorBody::pointer a = new TensorBody(data, dtype, get_shape(), view);
     int temp_ref = get_ref_count();
     refcount_ = a->get_ref_count();  // a->refcount_;
@@ -45,10 +44,10 @@ TensorBody::pointer TensorBody::create_owner() {
 }
 
 TensorBody::~TensorBody() {
-    if (data != 0) {
+    if (data != nullptr) {
         if (!view) {
             //  #if defined(_ISOC11_SOURCE)
-            std::free(data);
+            std::free(data);  // NOLINT
             // #else
             // _aligned_free(data);
             // std::free(data);
@@ -59,9 +58,12 @@ TensorBody::~TensorBody() {
             delete grad;
         }
 
-        data = 0;
-        shape = NULL;
-        grad = NULL;
+        data = nullptr;
+        shape = nullptr;
+        grad = nullptr;
+    } else {
+        THROW_ERROR(SailCError,
+                    "Cannot free a tensor that does not have any data");
     }
 }
 

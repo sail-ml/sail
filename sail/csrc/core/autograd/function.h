@@ -46,14 +46,14 @@ class Function {
    public:
     TensorVector arg_storage;
     TensorVector result_storage;
-    explicit Function(){};
+    explicit Function() = default;
     virtual Tensor forward(TensorVector inputs);
     virtual Tensor apply(TensorVector& inputs);
     virtual void apply_no_forward(TensorVector& inputs);
     virtual TensorVector backward(Tensor& grad);
     virtual Tensor set_fcn(Tensor& t);
 
-    virtual ~Function(){};
+    virtual ~Function() = default;
 };
 
 }  // namespace autograd

@@ -15,8 +15,10 @@ namespace internal {
 
 template <typename T, typename avx_type>
 struct LogImpl : cpu::UnaryImpl<T, avx_type> {
-    inline void call_base(T& x1, T& out) { out = (T)std::log((double)x1); }
-    inline avx_type avx_fcn(avx_type& a) { return xsimd::log(a); }
+    inline void call_base(T& x1, T& out) override {
+        out = (T)std::log((double)x1);
+    }
+    inline avx_type avx_fcn(avx_type& a) override { return xsimd::log(a); }
 };
 template <typename T>
 struct LogImplNoFP {

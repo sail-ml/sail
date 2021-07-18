@@ -1,5 +1,5 @@
 #include "linear_layer.h"
-#include <math.h> /* pow */
+#include <cmath> /* pow */
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
@@ -18,7 +18,7 @@ namespace sail {
 namespace modules {
 using TensorVector = std::vector<Tensor>;
 
-Linear::Linear(long _input_features, long _output_features, bool _bias = true)
+Linear::Linear(long _input_features, long _output_features, bool _bias)
     : input_features(_input_features),
       output_features(_output_features),
       use_bias(_bias) {

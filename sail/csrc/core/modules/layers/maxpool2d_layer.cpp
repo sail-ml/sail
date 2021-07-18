@@ -1,5 +1,5 @@
 #include "maxpool2d_layer.h"
-#include <math.h> /* pow */
+#include <cmath> /* pow */
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"

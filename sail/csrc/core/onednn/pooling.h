@@ -2,6 +2,8 @@
 
 #include <dnnl.hpp>
 #include "Tensor.h"
+#include "onednn_utils.h"
+
 using namespace dnnl;
 using dnnl::inner_product_forward;
 using tag = memory::format_tag;
@@ -24,31 +26,16 @@ struct OneDNNMaxPoolingParams {
 
     std::shared_ptr<memory> workspace_mem = nullptr;
 
-    OneDNNMaxPoolingParams(Tensor& src, TensorShape kernel,
+    OneDNNMaxPoolingParams(Tensor src, TensorShape kernel,
                            TensorShape output_shape, std::vector<long> strides_,
-                           std::vector<long> padding_, bool back = false) {
-        const memory::dim N = src.get_shape().shape[0];
-        const memory::dim I_H = src.get_shape().shape[2];
-        const memory::dim I_W = src.get_shape().shape[3];
-        const memory::dim K_H = kernel.shape[2];
-        const memory::dim K_W = kernel.shape[3];
-        const memory::dim IC = kernel.shape[1];
-        const memory::dim OC = kernel.shape[0];
-
-        const memory::dim O_H = output_shape[2];
-        const memory::dim O_W = output_shape[3];
-
-        src_dims = src.get_shape().shape;  //{N, IC, I_H, I_W};
-        dest_dims = output_shape.shape;
-
-        strides = strides_;
-        padding = padding_;
-
-        kernel_shape = kernel.shape;
-
-        src_tag = tag::nchw;
-        dest_tag = tag::nchw;
-    }
+                           std::vector<long> padding_, bool back = false)
+        : src_dims(std::move(src).get_shape().shape),
+          dest_dims(std::move(output_shape).shape),
+          strides(std::move(strides_)),
+          padding(std::move(padding_)),
+          kernel_shape(std::move(kernel).shape),
+          src_tag(tag::nchw),
+          dest_tag(tag::nchw){};
 };
 
 class OneDNNMaxPooling {
@@ -66,7 +53,8 @@ class OneDNNMaxPooling {
 
     std::shared_ptr<pooling_v2_forward::desc> pooling_v2_forward_desc = nullptr;
     std::shared_ptr<pooling_v2_forward> pooling_v2_forward_prim = nullptr;
-    std::unordered_map<int, memory> forward_args;
+    std::unordered_map<int, memory> forward_args =
+        std::unordered_map<int, memory>();
 
     OneDNNMaxPooling(std::shared_ptr<OneDNNMaxPoolingParams> _params) {
         params = _params;
@@ -133,13 +121,14 @@ class OneDNNMaxPoolingBackward {
         nullptr;
 
     std::shared_ptr<pooling_v2_backward> pooling_v2_backward_prim = nullptr;
-    std::unordered_map<int, memory> backward_args;
+    std::unordered_map<int, memory> backward_args =
+        std::unordered_map<int, memory>();
 
-    pooling_v2_forward::primitive_desc forward_prim;
+    pooling_v2_forward::primitive_desc forward_prim =
+        pooling_v2_forward::primitive_desc();
 
-    OneDNNMaxPoolingBackward(std::shared_ptr<OneDNNMaxPoolingParams> _params) {
-        params = _params;
-    }
+    OneDNNMaxPoolingBackward(std::shared_ptr<OneDNNMaxPoolingParams> _params)
+        : params(std::move(_params)) {}
     void store_forward_desc(pooling_v2_forward::primitive_desc desc) {
         forward_prim = desc;
     }

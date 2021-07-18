@@ -1,5 +1,5 @@
 #include "softmax.h"
-#include <math.h> /* pow */
+#include <cmath> /* pow */
 #include "Tensor.h"
 #include "dtypes.h"
 #include "factories.h"

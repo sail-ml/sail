@@ -20,12 +20,12 @@ class TensorBody {
    public:
     typedef boost::intrusive_ptr<TensorBody> pointer;
     // TensorBody() : refcount_(0) {}
-    mutable std::atomic<int> refcount_;
+    mutable std::atomic<int> refcount_ = 0;
     // mutable boost::atomic<int> refcount_;
 
    private:
     friend void intrusive_ptr_add_ref(const TensorBody* x) {
-        auto res = x->refcount_.fetch_add(1, std::memory_order_relaxed);
+        x->refcount_.fetch_add(1, std::memory_order_relaxed);
     }
     friend void intrusive_ptr_release(const TensorBody* x) {
         if (x->refcount_.fetch_sub(1, std::memory_order_release) == 1) {
@@ -35,16 +35,16 @@ class TensorBody {
     }
 
    private:
-    void* data = NULL;
-    Dtype dtype;
-    TensorShape* shape = NULL;
-    alignemnt_information info;
+    void* data = nullptr;
+    Dtype dtype = default_dtype;
+    TensorShape* shape = nullptr;
+    alignemnt_information info = {0, 0, 0};
     bool view = false;
     bool _has_grad = false;
-    Tensor* grad = NULL;
+    Tensor* grad = nullptr;
 
    public:
-    explicit TensorBody(){};
+    explicit TensorBody() = default;
 
     TensorBody(const TensorBody&) = delete;
     TensorBody& operator=(const TensorBody&) = delete;

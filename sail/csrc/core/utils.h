@@ -1,17 +1,20 @@
 #pragma once
 
 #include <malloc.h>
-#include <stdlib.h>
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include <iterator>
+#include <limits>
+#include <type_traits>
 #include <vector>
 
+#include <boost/range/counting_range.hpp>
+#include <boost/range/irange.hpp>
 #include "exception.h"
 #include "types.h"
 
-inline bool isAlignedAs(const void* p, const int8_t alignment) {
-    return ((int8_t)(p) & ((alignment)-1)) == 0;
-}
+namespace sail {
 
 inline long roundUp(long numToRound, long multiple) {
     if (multiple == 0) return numToRound;
@@ -34,7 +37,7 @@ inline void* _malloc_align(long numel, long alignment, long dtype_size) {
     pv = memalign(alignment, size);
 #endif
 
-    if (pv == NULL) {
+    if (pv == nullptr) {
         throw SailCError("Allocation failed");
     }
 
@@ -44,7 +47,7 @@ inline void* _malloc_align(long numel, long alignment, long dtype_size) {
 inline void* _realloc_align(void* src, long numel, long alignment,
                             long dtype_size) {
     void* aligned = _malloc_align(numel, alignment, dtype_size);
-    if (aligned == NULL) {
+    if (aligned == nullptr) {
         throw SailCError("Allocation failed");
     }
     memcpy(aligned, src, dtype_size * numel);
@@ -52,7 +55,7 @@ inline void* _realloc_align(void* src, long numel, long alignment,
 }
 inline void* _calloc_align(long numel, long alignment, long dtype_size) {
     void* aligned = _malloc_align(numel, alignment, dtype_size);
-    if (aligned == NULL) {
+    if (aligned == nullptr) {
         std::cout << "ALLOC FAIL" << std::endl;
     }
     memset(aligned, 0, dtype_size * numel);
@@ -94,4 +97,10 @@ inline std::string getVectorString(const std::vector<std::string> vector) {
     return std::string("()");
 }
 
-// inline bool
+template <typename Integer>
+boost::integer_range<Integer> irange(Integer first, Integer last) {
+    SAIL_CHECK(first <= last);
+    return boost::integer_range<Integer>(first, last);
+}
+
+}  // namespace sail

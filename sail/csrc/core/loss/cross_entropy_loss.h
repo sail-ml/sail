@@ -7,7 +7,7 @@ namespace loss {
 
 class SoftmaxCrossEntropyLoss : public sail::modules::Module {
    public:
-    explicit SoftmaxCrossEntropyLoss(){};
+    explicit SoftmaxCrossEntropyLoss() = default;
 
     Tensor forward(Tensor& logits, Tensor& targets);
 };

@@ -127,7 +127,7 @@ class LinearFactory : public PrimitiveFactory<OneDNNLinear> {
         auto p = OneDNNLinearParams(input_tensor, input_tensor.get_shape()[1],
                                     output.get_shape()[1]);
         std::string key = p.get_key();
-        prim = get(key);
+        prim = static_cast<OneDNNLinear*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNLinear(p);
             prim->initialize();
@@ -143,7 +143,7 @@ class LinearFactory : public PrimitiveFactory<OneDNNLinear> {
                                     output.get_shape()[1]);
 
         std::string key = p.get_key();
-        prim = get(key);
+        prim = static_cast<OneDNNLinear*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNLinear(p);
             prim->initialize();

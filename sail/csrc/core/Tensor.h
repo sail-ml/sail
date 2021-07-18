@@ -19,7 +19,7 @@ class Function;
 
 class Tensor {
    public:
-    explicit Tensor(){};
+    explicit Tensor() = default;
 
     TensorBody::pointer body;
 
@@ -47,7 +47,6 @@ class Tensor {
         t.fcn = t_fcn;
         t.requires_grad = t_rq;
         t.is_grad = t_is_grad;
-        return t;
     }
 
     Tensor(Tensor& old, bool _requires_grad)
@@ -58,15 +57,15 @@ class Tensor {
     Tensor(const Tensor&) = default;
     Tensor(Tensor&&) = default;
 
-    Tensor& operator=(const Tensor& x) & {
+    Tensor& operator=(const Tensor& x) & {  // NOLINT
         body = x.body;
         requires_grad = x.requires_grad;
         fcn = x.fcn;
         return *this;
     }
-    Tensor& operator=(Tensor&& x) & {
+    Tensor& operator=(Tensor&& x) & {  // NOLINT
         body = std::move(x.body);
-        requires_grad = std::move(x.requires_grad);
+        requires_grad = x.requires_grad;
         fcn = std::move(x.fcn);
         return *this;
     }
@@ -112,7 +111,7 @@ class Tensor {
     int get_body_ref_count() { return body.get()->get_ref_count(); }
 
     void free();
-    void Tensor::swap_body(Tensor& t);
+    void swap_body(Tensor& t);
 
     TensorBody::pointer get_body() { return body; }
 
@@ -125,8 +124,8 @@ class Tensor {
     void set_view() { body.get()->set_is_view(true); }
     void set_data(void* data) { body.get()->set_data(data); }
 
-    int get_ndim() const { return get_shape().ndim(); }
-    int ndim() const { return get_shape().ndim(); }
+    long get_ndim() const { return get_shape().ndim(); }
+    long ndim() const { return get_shape().ndim(); }
     Tensor get_grad() const { return body.get()->get_grad(); }
     void set_grad(Tensor& g) { body.get()->set_grad(g); }
 

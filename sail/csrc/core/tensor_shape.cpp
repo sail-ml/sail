@@ -26,7 +26,7 @@ TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     std::vector<long> co(shape.size(), 0);
     coordinates = co;
 
-    for (int i; i < shape_.size(); i++) {
+    for (int i = 0; i < shape_.size(); i++) {
         // if (i > 0) {
         //     strides[i] = strides[i] * strides[i - 1];
         // }
@@ -48,7 +48,7 @@ TensorShape::TensorShape(LongVec shape_) {
         std::vector<long> co(shape.size(), 0);
         coordinates = co;
 
-        for (int i; i < shape_.size(); i++) {
+        for (int i = 0; i < shape_.size(); i++) {
             if (i > 0) {
                 strides[i] = strides[i] * strides[i - 1];
             }
@@ -63,7 +63,7 @@ TensorShape::TensorShape(LongVec shape_) {
 void ignore_innermost() {}
 
 int TensorShape::next() {
-    int i;
+    int i = 0;
     // if (contiguous) {
     //     d_ptr += 1;
     //     return d_ptr;
@@ -134,7 +134,7 @@ void TensorShape::recompute_strides() {
     std::reverse(strides.begin(), strides.end());
 
     if (shape.size() > 0) {
-        for (int i; i < shape.size(); i++) {
+        for (int i = 0; i < shape.size(); i++) {
             if (i > 0) {
                 strides[i] = strides[i] * strides[i - 1];
             }
@@ -144,12 +144,12 @@ void TensorShape::recompute_strides() {
         std::reverse(strides.begin(), strides.end());
     }
 }
-void TensorShape::recompute(bool strides_too = false) {
+void TensorShape::recompute(bool strides_too) {
     if (strides_too) {
         recompute_strides();
     } else {
         LongVec new_s_m1, n_b_s;
-        for (int i; i < shape.size(); i++) {
+        for (int i = 0; i < shape.size(); i++) {
             new_s_m1.push_back(shape[i] - 1);
             n_b_s.push_back(strides[i] * new_s_m1[i]);
         }
@@ -275,7 +275,7 @@ long TensorShape::getTotalSize(int mod) {
     return s;
 }
 
-std::string TensorShape::get_string() {
+std::string TensorShape::get_string() const {
     if (numel() == 0) {
         return std::string("()");
     }
@@ -354,5 +354,5 @@ TensorShape TensorShape::move_axis(long axis, long position) {
 }
 
 long int* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
-int TensorShape::ndim() { return shape.size(); }
+long TensorShape::ndim() const { return shape.size(); }
 }  // namespace sail

@@ -17,7 +17,7 @@ using TensorVector = std::vector<Tensor>;
 
 std::tuple<std::vector<Tensor>, long, long> conv2d_impl(
     Tensor& input, Tensor& kernel, std::vector<long> stride,
-    std::string padding_mode = "same") {
+    std::string padding_mode) {
     // Tensor conv2d(Tensor& input, Tensor& kernel, std::vector<long> stride,
     //               std::string padding_mode = "same") {
 
@@ -81,7 +81,7 @@ std::tuple<std::vector<Tensor>, long, long> conv2d_impl(
 }
 
 Tensor conv2d(Tensor& input, Tensor& kernel, std::vector<long> stride,
-              std::string padding_mode = "same") {
+              std::string padding_mode) {
     if (input.requires_grad || kernel.requires_grad) {
         TensorVector vec;
         vec.emplace_back(input);

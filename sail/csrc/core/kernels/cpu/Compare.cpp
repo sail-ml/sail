@@ -14,14 +14,15 @@ namespace {
 
 template <typename T, typename avx_type>
 struct ClipMinImpl : cpu::UnaryImpl<T, avx_type> {
-    ClipMinImpl(T min) {
-        min_base = min;
-        min_avx = avx_type::broadcast(min);
-    }
     T min_base;
     avx_type min_avx;
-    inline void call_base(T& x1, T& out) { out = std::max(x1, min_base); }
-    inline avx_type avx_fcn(avx_type& a) { return xsimd::max(a, min_avx); }
+    ClipMinImpl(T min) : min_base(min), min_avx(avx_type::broadcast(min)){};
+    inline void call_base(T& x1, T& out) override {
+        out = std::max(x1, min_base);
+    }
+    inline avx_type avx_fcn(avx_type& a) override {
+        return xsimd::max(a, min_avx);
+    }
 };
 void clip_min_kernel(const Tensor& t1, const double min, Tensor& out) {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
@@ -37,14 +38,15 @@ void clip_min_kernel(const Tensor& t1, const double min, Tensor& out) {
 
 template <typename T, typename avx_type>
 struct ClipMaxImpl : cpu::UnaryImpl<T, avx_type> {
-    ClipMaxImpl(T max) {
-        max_base = max;
-        max_avx = avx_type::broadcast(max);
-    }
+    ClipMaxImpl(T max) : max_base(max), max_avx(avx_type::broadcast(max)){};
     T max_base;
     avx_type max_avx;
-    inline void call_base(T& x1, T& out) { out = std::min(x1, max_base); }
-    inline avx_type avx_fcn(avx_type& a) { return xsimd::min(a, max_avx); }
+    inline void call_base(T& x1, T& out) override {
+        out = std::min(x1, max_base);
+    }
+    inline avx_type avx_fcn(avx_type& a) override {
+        return xsimd::min(a, max_avx);
+    }
 };
 void clip_max_kernel(const Tensor& t1, const double max, Tensor& out) {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
@@ -60,20 +62,19 @@ void clip_max_kernel(const Tensor& t1, const double max, Tensor& out) {
 
 template <typename T, typename avx_type>
 struct ClipImpl : cpu::UnaryImpl<T, avx_type> {
-    ClipImpl(T min, T max) {
-        max_base = max;
-        max_avx = avx_type::broadcast(max);
-        min_base = min;
-        min_avx = avx_type::broadcast(min);
-    }
     T max_base;
-    avx_type max_avx;
     T min_base;
+    avx_type max_avx;
     avx_type min_avx;
-    inline void call_base(T& x1, T& out) {
+    ClipImpl(T min, T max)
+        : min_base(min),
+          max_base(max),
+          min_avx(avx_type::broadcast(min)),
+          max_avx(avx_type::broadcast(max)){};
+    inline void call_base(T& x1, T& out) override {
         out = std::clamp(x1, min_base, max_base);
     }
-    inline avx_type avx_fcn(avx_type& a) {
+    inline avx_type avx_fcn(avx_type& a) override {
         return xsimd::clip(a, min_avx, max_avx);
     }
 };

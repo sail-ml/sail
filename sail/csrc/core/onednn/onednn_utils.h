@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <dnnl.hpp>
 #include <list>
 #include <memory>
@@ -8,8 +9,8 @@
 #include <utility>
 #include <vector>
 #include "Tensor.h"
+#include "utils.h"
 
-#include <chrono>
 using namespace std::chrono;
 
 using namespace dnnl;
@@ -107,8 +108,8 @@ class LRUCache {
 
 class Primitive {
    public:
-    virtual ~Primitive() {}
-    Primitive() {}
+    virtual ~Primitive() = default;
+    Primitive() = default;
     Primitive(const engine& cpu_engine) { cpu_engine_ = cpu_engine; }
     // Dummy data which MKL DNN never operates on
     unsigned char* DummyData = nullptr;
@@ -119,9 +120,9 @@ class Primitive {
 template <typename T>
 class PrimitiveFactory {
    public:
-    PrimitiveFactory() {}
+    PrimitiveFactory() = default;
 
-    ~PrimitiveFactory() {}
+    ~PrimitiveFactory() = default;
 
     Primitive* get(const std::string& key) {
         auto& lru_cache = PrimitiveFactory<T>::get_cache();
@@ -143,7 +144,7 @@ class PrimitiveFactory {
 
 class KeyGenerator {
    public:
-    KeyGenerator(){};
+    KeyGenerator() = default;
 
     KeyGenerator add(std::string data) {
         append(data);
@@ -163,7 +164,9 @@ class KeyGenerator {
     }
 
     KeyGenerator add(memory::dims dims) {
-        for (int i = 0; i < dims.size(); i++) {
+        for (int i : sail::irange(
+                 0, static_cast<int>(
+                        dims.size()))) {  // int i = 0; i < dims.size(); i++) {
             add(dims[i]);
         }
         return *this;
