@@ -25,7 +25,13 @@ def clean_an_show(string):
     out = []
     stop = False
     for line in string.split("\n"):
-        if (line.startswith("/") or line.startswith("../")):
+        if ("warnings generated" in line):
+            stop = True
+        elif ("in non-user code" in line):
+            stop = True 
+        elif ("Use -system-headers to display errors"):
+            stop = True
+        elif (line.startswith("/") or line.startswith("../")):
             if ("libs/xsimd/include" in line or "c++" in line):
                 stop = True
             else:
@@ -36,19 +42,27 @@ def clean_an_show(string):
 
     print ("\n".join(out))
 
+    if (out == []):
+        exit(0)
+    exit(1)
+
 def launch(command, file):
     command = list(command)
     command.append(file)
 
-    x = subprocess.check_output(command).decode().strip() 
+    x = subprocess.check_output(command, stderr=subprocess.STDOUT).decode().strip() 
     # print (x)
     clean_an_show(x)
 def launch2(command):
     command = list(command)
 
-    x = subprocess.check_output(command).decode().strip() 
-    # print (x)
+    x = subprocess.check_output(command, stderr=subprocess.STDOUT).decode().strip() 
     clean_an_show(x)
+
+def check_file(f):
+    if (f.endswith(".cpp") or f.endswith(".cc") or f.endswith(".c")):
+        return True
+    return False
 
 def execute(args):
 
@@ -70,15 +84,21 @@ def execute(args):
         if (str(args.include).endswith(".h")):
             raise Exception("Cannot lint header files")
         command.append(args.include)
-        launch(command, args.include)
-    
+
+    elif (args.diff_file):
+        with open(args.diff_file) as f:
+            print ("linting the following files:")
+            for file in f.read().split("\n"):
+                if (check_file(file)):
+                    print ("    " + file)
+                    command.append(file)
     else:
         base_path_source = glob.glob(os.path.join(base_path, "**/*.cpp"), recursive=True)
 
         for file in base_path_source:
-            # command.append(file)
+            command.append(file)
 
-            launch(command, file)
+    launch2(command)
 
 
   

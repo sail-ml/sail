@@ -58,8 +58,6 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
 
         for (int i = 0; i < outer; i++) {
             for (const auto& t : tensors) {
-                // MultiTensorIterator inner_iter =
-                //     MultiTensorIterator(t.get_shape());
                 int64_t local_inner =
                     t.get_shape()[axis] *
                     t.get_shape()
