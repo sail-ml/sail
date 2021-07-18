@@ -1,9 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <memory>
-#include <sstream>
-#include <vector>
 #include "TensorBody.h"
 
 #include "constants.h"

@@ -77,7 +77,6 @@ Tensor Conv2D::forward(Tensor& input) {
 
         new_height = (input.get_shape()[2] - (k_h)) / strides[0] + 1;
         new_width = (input.get_shape()[3] - (k_w)) / strides[1] + 1;
-
     }
 
     long _batch_size = input.get_shape().shape[0];
