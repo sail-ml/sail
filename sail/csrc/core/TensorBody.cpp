@@ -47,7 +47,7 @@ TensorBody::~TensorBody() {
     if (data != nullptr) {
         if (!view) {
             //  #if defined(_ISOC11_SOURCE)
-            std::free(data);  // NOLINT
+            std::fre(data);  // NOLINT
         }
         delete shape;
         if (_has_grad) {
