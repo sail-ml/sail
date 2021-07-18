@@ -8,7 +8,7 @@ namespace sail {
 
 template <typename T>
 TensorBody::pointer from_single_value(T value, Dtype dt) {
-    TensorShape shape = TensorShape({1.35});
+    TensorShape shape = TensorShape({1});
     TensorBody::pointer body =
         TensorBody::pointer(new TensorBody(dt, shape), true);
     dispatch_all_types(dt, [&](auto pt) {
