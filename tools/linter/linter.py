@@ -74,12 +74,11 @@ def execute(args):
     
     else:
         base_path_source = glob.glob(os.path.join(base_path, "**/*.cpp"), recursive=True)
-        random.shuffle(base_path_source)
 
         for file in base_path_source:
-            command.append(file)
+            # command.append(file)
 
-        launch2(command)
+            launch(command, file)
 
 
   

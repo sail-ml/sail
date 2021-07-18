@@ -9,25 +9,25 @@
         i.was_requires_grad = i.requires_grad; \
         i.requires_grad = false;               \
     }
-#define DISABLE_GRAD(inputs)                      \
-    {                                             \
-        for (int i = 0; i < inputs.size(); i++) { \
-            DISABLE_GRAD_IND(inputs[i])           \
-        }                                         \
+#define DISABLE_GRAD(inputs)     \
+    {                            \
+        for (auto& t : inputs) { \
+            DISABLE_GRAD_IND(t)  \
+        }                        \
     }
 #define ENABLE_GRAD_IND(i) \
     { i.requires_grad = i.was_requires_grad; }
-#define ENABLE_GRAD(inputs)                       \
-    {                                             \
-        for (int i = 0; i < inputs.size(); i++) { \
-            ENABLE_GRAD_IND(inputs[i]);           \
-        }                                         \
+#define ENABLE_GRAD(inputs)      \
+    {                            \
+        for (auto& t : inputs) { \
+            ENABLE_GRAD_IND(t);  \
+        }                        \
     }
-#define COPY_INPUTS(inputs, storage)              \
-    {                                             \
-        for (int i = 0; i < inputs.size(); i++) { \
-            storage.push_back(inputs[i]);         \
-        }                                         \
+#define COPY_INPUTS(inputs, storage) \
+    {                                \
+        for (auto& t : inputs) {     \
+            storage.push_back(t);    \
+        }                            \
     }
 
 namespace sail {

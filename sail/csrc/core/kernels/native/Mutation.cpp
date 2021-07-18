@@ -6,6 +6,7 @@
 #include "kernels/dispatch.h"
 #include "kernels/native/loops.h"
 #include "tensor_shape.h"
+#include "utils.h"
 
 namespace sail {
 
@@ -22,7 +23,8 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
     std::vector<long> combined = check.shape;
     Dtype dt = tensors[0].get_dtype();
     combined[axis] = 0;
-    for (int i = 0; i < tensors.size(); i++) {
+
+    for (auto i : sail::irange(0, (int)tensors.size())) {
         if (tensors[i].get_ndim() != ndim) {
             THROW_ERROR_DETAILED(DimensionError,
                                  "Number of dimensions must match");
@@ -55,7 +57,7 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
         T* result_ptr = (T*)(out.get_data());
 
         for (int i = 0; i < outer; i++) {
-            for (Tensor t : tensors) {
+            for (const auto& t : tensors) {
                 // MultiTensorIterator inner_iter =
                 //     MultiTensorIterator(t.get_shape());
                 int64_t local_inner =
@@ -77,12 +79,10 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
 Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
     SAIL_CHECK(tensors.size() > 1, "Must pass more than one tensor");
 
-    int ndim = tensors[0].get_ndim();
-
     TensorShape check = tensors[0].get_shape();
     std::vector<long> combined = check.shape;
     Dtype dt = tensors[0].get_dtype();
-    for (int i = 0; i < tensors.size(); i++) {
+    for (auto i : sail::irange(0, (int)tensors.size())) {
         if (tensors[i].is_view()) {
             tensors[i] = clone(tensors[i]);
         }
@@ -104,7 +104,7 @@ Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
         T* result_ptr = (T*)(out.get_data());
 
         for (int i = 0; i < outer; i++) {
-            for (Tensor t : tensors) {
+            for (const auto& t : tensors) {
                 TensorShape x = t.get_shape();
                 x.insert_one(axis);
                 int64_t local_inner =

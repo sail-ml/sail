@@ -84,12 +84,12 @@ class Tensor {
     alignemnt_information get_info() const { return body.get()->get_info(); }
     bool is_view() const { return body.get()->is_view(); }
 
-    Tensor cast(const Dtype dt);
+    Tensor cast(const Dtype dt) const;
     Tensor reshape(const TensorShape& new_shape) const;
     Tensor _inplace_reshape(const TensorShape& new_shape);
-    Tensor expand_dims(const int dim);
+    Tensor expand_dims(const int dim) const;
     Tensor _expand_dims_inplace(const int dim);
-    Tensor squeeze(const int dim);
+    Tensor squeeze(const int dim) const;
     long getTotalSize();
 
     template <typename T>
@@ -113,7 +113,7 @@ class Tensor {
     void free();
     void swap_body(Tensor& t);
 
-    TensorBody::pointer get_body() { return body; }
+    TensorBody::pointer get_body() const { return body; }
 
     long int* get_shape_ptr();
     bool is_scalar() const;

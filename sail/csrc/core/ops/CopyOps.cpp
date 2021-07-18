@@ -56,12 +56,9 @@ void copy(Tensor& dest, const Tensor& source) {
     });
 }
 
-Tensor cast(Tensor& tensor1, Dtype dt) {
+Tensor cast(const Tensor& tensor1, Dtype dt) {
     TensorSize new_strides;
-    long dt_size = GetDtypeSize(dt);
-    // for (long s : tensor1.get_shape().shape) {
-    //     new_strides.push_back(dt_size * s);
-    // }
+
     Tensor empty_tensor =
         empty(tensor1.get_ndim(), dt, TensorShape(tensor1.get_shape().shape));
 

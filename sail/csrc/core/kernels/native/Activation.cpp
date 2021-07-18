@@ -74,9 +74,9 @@ void softmax_backward_partial_kernel(Tensor& y, Tensor& targets,
 
             long n = targets.get_shape()[0];
 
-            T __restrict__* p1;
+            T* p1;
             T2* targ;
-            T __restrict__* p3;
+            T* p3;
 
             p1 = static_cast<T*>(y.get_data());
             targ = static_cast<T2*>(targets.get_data());
@@ -111,9 +111,9 @@ void softmax_mul_sum_kernel(Tensor& t1, Tensor& targets, Tensor& out_tensor) {
 
             int i = 0;
 
-            T __restrict__* p1;
+            T* p1;
             T2* targ;
-            T __restrict__* p3;
+            T* p3;
 
             p1 = static_cast<T*>(t1.get_data());
             targ = static_cast<T2*>(targets.get_data());

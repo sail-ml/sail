@@ -23,12 +23,8 @@ void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
         auto name = decltype(pt)::GetName();
 
-        if (t1.is_view()) {
-            t1 = clone(t1);
-        }
-        if (t2.is_view()) {
-            t2 = clone(t2);
-        }
+        SAIL_CHECK(!t1.is_view(), "Cannot pass views to matmul");
+        SAIL_CHECK(!t2.is_view(), "Cannot pass views to matmul");
 
         std::vector<long> t1_shape = t1.get_shape().shape;
         std::vector<long> t2_shape = t2.get_shape().shape;

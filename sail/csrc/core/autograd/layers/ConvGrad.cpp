@@ -12,7 +12,6 @@
 #include "kernels/Kernel.h"
 #include "ops/ops.h"
 #ifdef MKLDNN
-#include "onednn/conv2d.h"
 #include "onednn/conv2d_backward_data.h"
 #include "onednn/conv2d_backward_weights.h"
 #endif

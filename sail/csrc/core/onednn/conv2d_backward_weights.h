@@ -203,7 +203,7 @@ class Conv2DBackwardWeightsFactory
         bias_tensor = biases;
 
         std::string key = p.get_key_backward_weights();
-        prim = get(key);
+        prim = static_cast<OneDNNConv2DBackwardWeights*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNConv2DBackwardWeights(p, true);
             prim->initialize();
@@ -225,7 +225,7 @@ class Conv2DBackwardWeightsFactory
 
         std::string key = p.get_key_backward_weights();
         key.append("no_bias");
-        prim = get(key);
+        prim = static_cast<OneDNNConv2DBackwardWeights*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNConv2DBackwardWeights(p, false);
             prim->initialize();

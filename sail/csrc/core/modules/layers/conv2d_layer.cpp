@@ -10,7 +10,6 @@
 #include "tensor_shape.h"
 // #include "module.h"
 #ifdef MKLDNN
-#include "onednn/conv2d.h"
 #include "onednn/conv2d_forward.h"
 #endif
 namespace sail {
@@ -20,16 +19,20 @@ using TensorVector = std::vector<Tensor>;
 Conv2D::Conv2D(long _input_channels, long _output_channels,
                std::vector<long> _kernel_size, std::vector<long> _strides,
                std::string _padding_mode, bool _bias) {
+
+    input_channels = _input_channels;
+    output_channels = _output_channels;
+
     strides = _strides;
     weights = empty(0, default_dtype,
-                    TensorShape({_output_channels, _input_channels,
+                    TensorShape({output_channels, input_channels,
                                  _kernel_size[0], _kernel_size[1]}));
     weights.requires_grad = true;
     weights = initializers::kaiming_uniform(weights);
     register_param(weights);
     padding_mode = _padding_mode;
     if (_bias) {
-        biases = zeros(TensorShape({_output_channels}), default_dtype);
+        biases = zeros(TensorShape({output_channels}), default_dtype);
         biases.requires_grad = true;
         register_param(biases);
     }

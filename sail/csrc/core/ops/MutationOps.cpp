@@ -50,7 +50,7 @@ Tensor reshape(const Tensor& tensor1, const TensorShape& new_shape) {
     return new_tensor;
 }
 
-Tensor rollaxis(const Tensor& tensor1, const int axis, const int position = 0) {
+Tensor rollaxis(const Tensor& tensor1, const int axis, const int position) {
     TensorShape new_shape = TensorShape(tensor1.get_shape());
     new_shape = new_shape.roll_axis(axis, position);
     new_shape.contiguous = false;
@@ -60,7 +60,7 @@ Tensor rollaxis(const Tensor& tensor1, const int axis, const int position = 0) {
     Tensor new_tensor = Tensor(new_body, tensor1.requires_grad);
     return new_tensor;
 }
-Tensor moveaxis(const Tensor& tensor1, const int axis, const int position = 0) {
+Tensor moveaxis(const Tensor& tensor1, const int axis, const int position) {
     TensorShape new_shape = TensorShape(tensor1.get_shape());
     new_shape = new_shape.move_axis(axis, position);
     new_shape.contiguous = false;
@@ -99,16 +99,15 @@ Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
     return new_tensor;
 }
 
-Tensor cat(std::vector<Tensor> tensors, const int axis = 0) {
+Tensor cat(std::vector<Tensor> tensors, const int axis) {
     Tensor out = sail::internal::cat_stub(tensors, axis, 1);
     return out;
 }
 
-Tensor stack(std::vector<Tensor> tensors, const int axis = 0) {
+Tensor stack(std::vector<Tensor> tensors, const int axis) {
     TensorShape check = tensors[0].get_shape();
-    for (int i = 0; i < tensors.size(); i++) {
-        SAIL_CHECK(check.shape == tensors[i].get_shape().shape,
-                   "Shapes must match");
+    for (const auto& t : tensors) {
+        SAIL_CHECK(check.shape == t.get_shape().shape, "Shapes must match");
     }
     Tensor out = sail::internal::stack_stub(tensors, axis);
     return out;

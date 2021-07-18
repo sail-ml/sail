@@ -8,6 +8,7 @@
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
+#include "utils.h"
 
 namespace sail {
 namespace ops {
@@ -20,7 +21,7 @@ TensorShape shape_process(const Tensor& tensor1, std::vector<long> axis) {
         new_shape = TensorShape({1});
     } else {
         std::vector<long> sh;
-        int i;
+        int i = 0;
         for (long s : tensor1.get_shape().shape) {
             if (std::find(axis.begin(), axis.end(), i) == axis.end()) {
                 sh.push_back(s);
@@ -33,7 +34,8 @@ TensorShape shape_process(const Tensor& tensor1, std::vector<long> axis) {
 }
 
 std::vector<long> process_axes(const long ndim, std::vector<long> axes) {
-    for (int i = 0; i < axes.size(); i++) {
+    // for (int i = 0; i < axes.size(); i++) {
+    for (const auto i : sail::irange(0, (int)axes.size())) {
         if (axes[i] < 0) {
             axes[i] = axes[i] + ndim;
         }

@@ -273,7 +273,7 @@ class Conv2DForwardFactory : public PrimitiveFactory<OneDNNConv2DForward> {
 
         output_tensor = output;
         std::string key = p.get_key();
-        prim = get(key);
+        prim = static_cast<OneDNNConv2DForward*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNConv2DForward(p, true);
             prim->initialize();
@@ -294,7 +294,7 @@ class Conv2DForwardFactory : public PrimitiveFactory<OneDNNConv2DForward> {
         output_tensor = output;
         std::string key = p.get_key();
         key.append("no_bias");
-        prim = get(key);
+        prim = static_cast<OneDNNConv2DForward*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNConv2DForward(p, false);
             prim->initialize();

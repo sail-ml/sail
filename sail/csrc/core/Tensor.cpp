@@ -60,14 +60,9 @@ Tensor Tensor::transpose(const LongVec& axes) {
     return ops::transpose(*this, axes);
 }
 
-Tensor Tensor::expand_dims(const int dim) {
+Tensor Tensor::expand_dims(const int dim) const {
     int new_dim = dim;
-    // if (dim < 0) {
-    //     new_dim = dim + get_ndim() + 1;
-    // }
-    // if (new_dim < 0 || new_dim > get_ndim()) {
-    //     throw DimensionError("dim must be in the range of [-ndim, ndim]");
-    // }
+
     TensorShape s = body->get_shape();
     s.insert_one(new_dim);
     TensorShape x = TensorShape(s.shape);  // this is a super hacky fix
@@ -84,7 +79,7 @@ Tensor Tensor::_expand_dims_inplace(const int dim) {
     return *this;
 }
 
-Tensor Tensor::squeeze(const int dim) {
+Tensor Tensor::squeeze(const int dim) const {
     int new_dim = dim;
     TensorShape s = body->get_shape();
     s.remove_one(new_dim);
@@ -112,7 +107,7 @@ long int* Tensor::get_shape_ptr() { return body->get_shape_ptr(); }
 int Tensor::get_np_type_num() { return get_np_type_numFromDtype(get_dtype()); }
 
 // todo - move to op
-Tensor Tensor::cast(const Dtype dt) {
+Tensor Tensor::cast(const Dtype dt) const {
     if (dt != get_dtype()) {
         Tensor casted = ops::cast(*this, dt);
         return casted;

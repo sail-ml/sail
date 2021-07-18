@@ -100,7 +100,7 @@ class ReorderFactory : public PrimitiveFactory<OneDNNReorder> {
     ReorderFactory(const memory* from, const memory* to) {
         // auto p = OneDNNReorder(from, to);
         std::string key = OneDNNReorder::get_key(from, to);
-        prim = get(key);
+        prim = static_cast<OneDNNReorder*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNReorder(from, to);
 

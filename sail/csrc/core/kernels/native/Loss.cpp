@@ -16,7 +16,7 @@ void mse_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
-        bool broadcast;
+        bool broadcast = false;
         if (t1.is_view() || t2.is_view()) {
             broadcast = true;
         }
