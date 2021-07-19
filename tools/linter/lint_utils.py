@@ -18,7 +18,7 @@ def get_files(args, whitelist=[".c", ".cpp", ".cc"], throw=True):
         files = []
         with open(args.diff_file) as f:
             for file in f.read().split("\n"):
-                if (check_against_whitelist(file)):
+                if (check_against_whitelist(file, whitelist)):
                     files.append(file)
         return files
     else:

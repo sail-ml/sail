@@ -22,7 +22,10 @@ def execute(args):
         res = True
         if (not args.no_clang and ".h" not in file):
             res = (launch_clang(command, file) and res)
+            print (res)
         if (not args.no_custom):
             res = (launch_custom(file) and res)
+    print (res)
+    # exit(0)
     if (not res):
         exit(1)

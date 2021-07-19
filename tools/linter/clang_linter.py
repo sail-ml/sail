@@ -81,7 +81,7 @@ def execute_clang(args):
     res = True 
     for file in files:
         print ("Linting " + file)   
-        r = launch_clang(command, file)
+        r = (launch_clang(command, file))
         
 
     # command += files
