@@ -2,7 +2,6 @@
 #pragma once
 
 #include <iostream>
-
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"
