@@ -1,3 +1,5 @@
+// allow-impl-in-header
+
 #pragma once
 #include "Tensor.h"
 #include "dtypes.h"

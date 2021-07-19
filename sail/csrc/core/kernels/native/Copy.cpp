@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Copy.h"
 #include "Tensor.h"
 #include "factories.h"
@@ -72,7 +74,7 @@ void cast_kernel(const Tensor &t1, Tensor &out_tensor) {
         });
     });
 }
-// std::tuple<Tensor, std::vector<std::vector<long>>>
+
 Tensor _pad_simple(const Tensor &base, Tensor &pad_width) {
     std::vector<long> new_shape;
     long loop_size = pad_width.get_shape().shape[0];
@@ -121,7 +123,6 @@ Tensor pad_kernel(Tensor &t1, std::vector<std::vector<long>> pads) {
 
 }  // namespace
 REGISTER_ARCH_DISPATCH(copy_stub, DEFAULT, &copy_kernel);
-// REGISTER_ONLY_NATIVE_DISPATCH(copy_stub, &copy_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(cast_stub, &cast_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(pad_stub, &pad_kernel);
 

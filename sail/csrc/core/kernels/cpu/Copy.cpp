@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Copy.h"
 #include "Tensor.h"
 #include "dtypes.h"

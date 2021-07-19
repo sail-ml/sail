@@ -43,7 +43,7 @@ TensorVector Divide::backward(Tensor& grad) {
 
     Tensor gx0 = grad / b;
 
-    Tensor gx1 = -gx0 * a / b;  // * a;  //((a / b) / b);
+    Tensor gx1 = -gx0 * a / b;
 
     TensorVector o = {gx0, gx1};
     return o;

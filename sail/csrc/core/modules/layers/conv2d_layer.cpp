@@ -1,5 +1,5 @@
 #include "conv2d_layer.h"
-#include <cmath> /* pow */
+#include <cmath>
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
@@ -8,7 +8,7 @@
 #include "initializers/kaiming.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
-// #include "module.h"
+
 #ifdef MKLDNN
 #include "onednn/conv2d_forward.h"
 #endif
@@ -19,7 +19,6 @@ using TensorVector = std::vector<Tensor>;
 Conv2D::Conv2D(long _input_channels, long _output_channels,
                std::vector<long> _kernel_size, std::vector<long> _strides,
                std::string _padding_mode, bool _bias) {
-
     input_channels = _input_channels;
     output_channels = _output_channels;
 
@@ -84,12 +83,10 @@ Tensor Conv2D::forward(Tensor& input) {
 
     long _batch_size = input.get_shape().shape[0];
 
-    // if (_batch_size != batch_size) {
     batch_size = _batch_size;
     TensorShape output_shape = TensorShape(
         {batch_size, weights.get_shape()[0], new_height, new_width});
 
-    // Tensor Tdest = zeros(output_shape, Dtype::sFloat32);
     Tensor Tdest = empty(0, Dtype::sFloat32, output_shape);
 
     if (use_bias) {

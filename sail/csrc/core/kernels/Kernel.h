@@ -1,3 +1,5 @@
+// allow-no-source
+
 #include "Activation.h"
 #include "Binary.h"
 #include "Compare.h"

@@ -92,13 +92,13 @@ MaxPool2D:
 
       if (parser.at(0)) {
         if (parser.isNone(1)) {
-          self->module = (Module *)(new sail::modules::MaxPool2D(parser.integer(0), parser.string(2)));
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.integer(0), parser.integer(0), parser.string(2)));
         } else {
           self->module = (Module *)(new sail::modules::MaxPool2D(parser.integer(0), parser.integer(1), parser.string(2)));
         }
       } else if (parser.at(1)) {
         if (parser.isNone(1)) {
-          self->module = (Module *)(new sail::modules::MaxPool2D(parser.int_list(0), parser.string(2)));
+          self->module = (Module *)(new sail::modules::MaxPool2D(parser.int_list(0), parser.int_list(0), parser.string(2)));
         } else {
           self->module = (Module *)(new sail::modules::MaxPool2D(parser.int_list(0), parser.int_list(1), parser.string(2)));
         }

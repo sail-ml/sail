@@ -1,14 +1,12 @@
+// allow-impl-in-header allow-no-source
 #pragma once
 
 #include <immintrin.h>
 #include <cstring>
 #include <iostream>
 
-// #include "Tensor.h"
 #include "exception.h"
 #include "utils.h"
-
-// using Tensor = sail::Tensor;
 
 enum class Dtype {
     sBool = 1,
@@ -257,7 +255,6 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
         default:
             break;
     }
-    // throw DtypeError{"unsupported NumPy dtype"};
     THROW_ERROR_DETAILED(DtypeError, "Dtype not found np int");
 }
 inline int get_np_type_numFromDtype(Dtype dtype) {
@@ -285,8 +282,6 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
         default:
             break;
     }
-    // std::cout << dtype << std::endl;
-    // throw DtypeError{"unsupported NumPy dtype"};
     THROW_ERROR_DETAILED(DtypeError, "Dtype not found NP DTYPE");
 }
 
@@ -297,7 +292,6 @@ inline long GetDtypeSize(Dtype dtype) {
     };
 
     static const Pair sMapping[] = {
-        // full name
         {Dtype::sBool, sizeof(bool)},     {Dtype::sUInt8, sizeof(uint8_t)},
         {Dtype::sInt8, sizeof(int8_t)},
 
@@ -479,5 +473,3 @@ inline Dtype min_type(long d) {
 
     return Dtype::sInt64;
 }
-// inline bool can_cast(Dtype from, Dtype to){};
-// #include "Tensor.h"

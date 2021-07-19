@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Reduction.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -13,7 +15,6 @@ namespace {
 
 void sum_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
     dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        // std::cout << decltype(pt)::type << std::endl;
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {
@@ -98,7 +99,6 @@ void max_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
 
 }  // namespace
 REGISTER_ONLY_NATIVE_DISPATCH(sum_stub, &sum_kernel);
-// REGISTER_ONLY_NATIVE_DISPATCH(sum_stub2, &sum_kernel2);
 REGISTER_ONLY_NATIVE_DISPATCH(mean_stub, &mean_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(min_stub, &min_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(max_stub, &max_kernel);

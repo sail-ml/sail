@@ -181,7 +181,7 @@ class MaxPool2D(UnitTest):
 
     def test(self):
         img = sail.random.uniform(0, 1, (64, 4, 60, 60))
-        lay = sail.modules.MaxPool2D((2,2))
+        lay = sail.modules.MaxPool2D(2)#(2,2))
         y = lay(img)
         self.assert_eq(y.shape, (64, 4, 30, 30))
 

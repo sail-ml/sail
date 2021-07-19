@@ -57,7 +57,6 @@ class Sum : public Reduction {
    public:
     using Reduction::Reduction;
 
-    // RefTensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -65,7 +64,6 @@ class Mean : public Reduction {
    public:
     using Reduction::Reduction;
 
-    // RefTensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -75,7 +73,6 @@ class Max : public Reduction {
     using Reduction::Reduction;
     Tensor stored_output;
 
-    // RefTensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -84,7 +81,6 @@ class Min : public Reduction {
     using Reduction::Reduction;
     Tensor stored_output;
 
-    // RefTensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };

@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <immintrin.h>
@@ -41,8 +43,7 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator iter =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator iter = MultiTensorIterator(s1).add_input(s2);
 
     int inner_loop_size = iter.inner_loop_size();
     int outer_steps = iter.out_loop_size();
@@ -72,8 +73,7 @@ void launch_binary_elementwise_inplace(Op op, Tensor &t1, Tensor &t2) {
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator iter =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator iter = MultiTensorIterator(s1).add_input(s2);
 
     int inner_loop_size = iter.inner_loop_size();
     int outer_steps = iter.out_loop_size();
@@ -137,8 +137,6 @@ void UnaryElementwise(Op op, const Tensor &t1, const Tensor &t3) {
     inner_elementwise::launch_unary_elementwise<T>(op, t1, t3);
 }
 
-/// reduction loops ///
-
 namespace inner_reduction {
 
 template <typename T, typename Op>
@@ -179,7 +177,7 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
         p2[idx] = 0;
-        while (count != s.shape[s.ndim() - 1]) {  // s.numel_avoid(0)) {
+        while (count != s.shape[s.ndim() - 1]) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
             count += 1;
@@ -215,7 +213,7 @@ void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
         p2[idx] = 0;
-        while (count != stop) {  // s.shape[last]) {  // s.numel_avoid(0)) {
+        while (count != stop) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
             count += 1;

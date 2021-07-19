@@ -45,7 +45,7 @@ Tensor power(const Tensor& tensor1, const Tensor& tensor2) {
         Tensor empty_tensor = (new autograd::Pow())->apply(vec);
         return empty_tensor;
     }
-    Tensor empty_tensor;  //= empty_like(tensor1);
+    Tensor empty_tensor;
     Tensor t1, t2;
 
     Dtype dt = promote_dtype(tensor1.get_dtype(), tensor2.get_dtype());

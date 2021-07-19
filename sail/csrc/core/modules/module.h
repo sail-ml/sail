@@ -1,3 +1,4 @@
+// allow-no-source
 #pragma once
 #include "Tensor.h"
 #include "dtypes.h"

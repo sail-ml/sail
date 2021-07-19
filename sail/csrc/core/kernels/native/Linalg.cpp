@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Linalg.h"
 #include <iostream>
 #include "Tensor.h"
@@ -35,9 +37,9 @@ void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
         } else {
             beta = 1.0;
         }
-        int M_b = t1_shape[0];  // ROWS IN A
-        int K_b = t1_shape[1];  // COLS IN A AND ROWS IN B
-        int N_b = t2_shape[1];  // COLS IN B
+        int M_b = t1_shape[0];
+        int K_b = t1_shape[1];
+        int N_b = t2_shape[1];
 
         int M = M_b;
         int N = N_b;
@@ -81,21 +83,12 @@ void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
             cblas_sgemm(CblasRowMajor, cblas_transa, cblas_transb, M, N, K, 1,
                         (T*)t1.get_data(), lda, (T*)t2.get_data(), ldb, beta,
                         (T*)out_tensor.get_data(), N);
-            //
         } else {
             using T = typename decltype(pt)::type;
-            // if (trans_a == TRANS) {
-            //     t1 = clone(t1.transpose({1, 0}));
-            // }
-            // if (trans_b == TRANS) {
-            //     t2 = clone(t2.transpose({1, 0}));
-            // }
 
             T* matA = (T*)t1.get_data();
             T* matB = (T*)t2.get_data();
             T* matC = (T*)out_tensor.get_data();
-
-            // TODO: TRANS
 
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {

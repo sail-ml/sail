@@ -62,7 +62,7 @@ Tensor log_softmax(Tensor& input, const int axis) {
         TensorVector vec;
         vec.emplace_back(input);
         return (new autograd::Softmax(axis))->apply(vec);
-    }  /////
+    }
 
     Tensor max = ops::max(input, axis, true);
     input = input - max;

@@ -16,11 +16,6 @@ namespace ops {
 using TensorVector = std::vector<Tensor>;
 
 Tensor negate(const Tensor& tensor1) {
-    // if (tensor1.requires_grad) {
-    //     TensorVector vec;
-    //     vec.emplace_back(tensor1);
-    //     return (new autograd::Exp())->apply(vec);
-    // }
     Tensor empty_tensor = empty_like(tensor1);
     sail::internal::negate_stub(tensor1, empty_tensor);
     return empty_tensor;

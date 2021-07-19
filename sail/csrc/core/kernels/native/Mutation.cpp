@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Mutation.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -59,9 +61,7 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
         for (int i = 0; i < outer; i++) {
             for (const auto& t : tensors) {
                 int64_t local_inner =
-                    t.get_shape()[axis] *
-                    t.get_shape()
-                        .strides[axis];  // inner_iter.inner_loop_size();
+                    t.get_shape()[axis] * t.get_shape().strides[axis];
                 T* input_ptr = (T*)(t.get_data()) + i * local_inner;
                 int64_t d = 0;
                 for (; d < local_inner; d++) {
@@ -105,8 +105,7 @@ Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
             for (const auto& t : tensors) {
                 TensorShape x = t.get_shape();
                 x.insert_one(axis);
-                int64_t local_inner =
-                    x[axis] * x.strides[axis];  // inner_iter.inner_loop_size();
+                int64_t local_inner = x[axis] * x.strides[axis];
                 T* input_ptr = (T*)(t.get_data()) + i * local_inner;
                 int64_t d = 0;
                 for (; d < local_inner; d++) {

@@ -19,16 +19,13 @@ using TensorVector = std::vector<Tensor>;
 Tensor Sigmoid::forward(TensorVector inputs) {
     Tensor return_ = ops::sigmoid(inputs[0]);
     Function::result_storage.push_back(Tensor(return_.get_body(), false));
-    return return_;  // Tensor(sigmoid_stored);
+    return return_;
 }
 TensorVector Sigmoid::backward(Tensor& grad) {
     Tensor stored = Function::result_storage[0];
     Tensor result_tensor = empty(0, stored.get_dtype(), stored.get_shape());
     sail::internal::sigmoid_backward_stub(stored, result_tensor);
     return {grad * result_tensor};
-    // return {grad *
-    //         (stored * (ones(stored.get_shape(), stored.get_dtype()) -
-    //         stored))};
 }
 
 Tensor Softmax::forward(TensorVector inputs) {

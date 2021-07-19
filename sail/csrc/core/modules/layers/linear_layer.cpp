@@ -7,7 +7,6 @@
 #include "factories.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
-// #include "module.h"
 
 #ifdef MKLDNN
 #include "onednn/linear.h"
@@ -23,7 +22,7 @@ Linear::Linear(long _input_features, long _output_features, bool _bias)
       output_features(_output_features),
       use_bias(_bias) {
     double variance = 1.0 / (double)output_features;
-    // double variance = 1.0 / pow(((double)output_features), 2.0);
+
     weights = random::uniform(TensorShape({input_features, output_features}),
                               default_dtype, -variance, variance);
     weights.requires_grad = true;
@@ -43,13 +42,6 @@ void Linear::set_biases(Tensor& new_biases) {
     new_biases.requires_grad = true;
     biases = new_biases;
 }
-
-// Linear::~Linear() {
-// #ifdef MKLDNN
-//     delete layer;
-//     delete params;
-// #endif
-// }
 
 Tensor Linear::forward(Tensor& input) {
     if (input.get_dtype() != Dtype::sFloat32) {

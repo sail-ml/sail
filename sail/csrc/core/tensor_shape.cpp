@@ -17,19 +17,13 @@ bool is_one(LongVec& shape, int dim) { return shape[dim] == 1; }
 TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     shape = shape_;
     strides = strides_;
-    // if (shape.size() != 0) {
-    //     strides.erase(strides.begin());
-    // }
-    // strides.push_back(1);
+
     std::reverse(strides.begin(), strides.end());
 
     std::vector<long> co(shape.size(), 0);
     coordinates = co;
 
     for (int i = 0; i < shape_.size(); i++) {
-        // if (i > 0) {
-        //     strides[i] = strides[i] * strides[i - 1];
-        // }
         shape_m1.push_back(shape_[i] - 1);
         back_strides.push_back(strides[i] * shape_m1[i]);
     }
@@ -60,14 +54,9 @@ TensorShape::TensorShape(LongVec shape_) {
     recompute();
 }
 
-void ignore_innermost() {}
-
 int TensorShape::next() {
     int i = 0;
-    // if (contiguous) {
-    //     d_ptr += 1;
-    //     return d_ptr;
-    // }
+
     if (enforced == -1) {
         if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
             return d_ptr;
@@ -166,7 +155,6 @@ TensorShape TensorShape::reverse() {
     return *this;
 }
 
-// template <class T>
 TensorShape TensorShape::reorder(const LongVec& order) {
     LongVec Order = order;
 
@@ -237,7 +225,7 @@ void TensorShape::remove(const int dim) {
     if (new_dim < 0) {
         new_dim = new_dim + ndim();
     }
-    // std::cout << new_dim << ", " << ndim() << ", " << dim << std::endl;
+
     if (new_dim > shape.size()) {
         THROW_ERROR_DETAILED(DimensionError,
                              "Dimension value is too large for squeeze");
@@ -285,7 +273,7 @@ std::string TensorShape::get_string() const {
     std::string x = result.str();
     x.pop_back();
     x.pop_back();
-    // std::string  shape_string("(");
+
     return std::string("(") + x + std::string(")");
 }
 
@@ -355,4 +343,10 @@ TensorShape TensorShape::move_axis(long axis, long position) {
 
 long int* TensorShape::get_shape_ptr() { return (long*)shape.data(); }
 long TensorShape::ndim() const { return shape.size(); }
+
+long TensorShape::operator[](const int index) const { return shape[index]; }
+bool TensorShape::operator==(const TensorShape& other) const {
+    return other.shape == shape;
+}
+
 }  // namespace sail

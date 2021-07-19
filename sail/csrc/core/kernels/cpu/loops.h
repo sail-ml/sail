@@ -1,9 +1,11 @@
+// allow-no-source
+
 #pragma once
 
 #include <immintrin.h>
 #include <omp.h>
 #include <algorithm>
-#include <cassert>  // needed for xsimd
+#include <cassert>
 #include <vector>
 #include "Tensor.h"
 #include "dtypes.h"
@@ -28,7 +30,7 @@ template <typename T, typename Op>
 void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
                                const Tensor &out) {
     int i = 0;
-    int jump = op.size;  // t1.get_info().jump;
+    int jump = op.size;
 
     T *p1;
     T *p2;
@@ -41,8 +43,7 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator iter =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator iter = MultiTensorIterator(s1).add_input(s2);
 
     int inner_loop_size = iter.inner_loop_size();
     int inner_steps = inner_loop_size / jump;
@@ -76,8 +77,7 @@ void launch_binary_elementwise_avx(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator test =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator test = MultiTensorIterator(s1).add_input(s2);
 
     bool scalar_0 = (test.strides.at_back(0) == 0) ? true : false;
     bool scalar_1 = (test.strides.at_back(1) == 0) ? true : false;
@@ -133,7 +133,7 @@ void launch_binary_elementwise_avx_contiguous(Op op, const Tensor &t1,
                                               const Tensor &t2,
                                               const Tensor &out) {
     int numel = t1.get_shape().numel();
-    int jump = op.size;  // t1.get_info().jump;
+    int jump = op.size;
     int i = 0;
 
     T *p1;
@@ -144,7 +144,7 @@ void launch_binary_elementwise_avx_contiguous(Op op, const Tensor &t1,
     p2 = static_cast<T *>(t2.get_data());
     p3 = static_cast<T *>(out.get_data());
 
-    bool aligned = true;  // is_aligned_vec(vec);
+    bool aligned = true;
 
     if (aligned) {
         for (int i = 0; i < numel; i += jump) {
@@ -170,7 +170,7 @@ void launch_unary_elementwise_avx_contiguous(Op op, const Tensor &t1,
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(out.get_data());
 
-    bool aligned = true;  // is_aligned_vec(vec);
+    bool aligned = true;
 
     if (aligned) {
         for (int i = 0; i < numel; i += jump) {
@@ -181,7 +181,6 @@ void launch_unary_elementwise_avx_contiguous(Op op, const Tensor &t1,
             op.call_avx_non_aligned(p1 + i, p2 + i);
         }
     }
-    // }
 }
 
 template <typename T, typename Op>
@@ -198,7 +197,6 @@ void launch_unary_elementwise_avx(Op op, const Tensor &t1, const Tensor &out) {
     p2 = static_cast<T *>(out.get_data());
 
     MultiTensorIterator iter = MultiTensorIterator(s);
-    // TensorIterator iter = TensorIterator(s);
     int inner_loop_size = iter.inner_loop_size();
     int inner_steps = inner_loop_size / jump;
     int outer_steps = iter.out_loop_size();
@@ -275,7 +273,6 @@ void BinaryElementwise(Op op, bool broadcast, const Tensor &t1,
     inner_elementwise::launch_binary_elementwise_avx_contiguous<T>(op, t1, t2,
                                                                    t3);
     return;
-// #else
 #endif
     inner_elementwise::launch_binary_elementwise<T>(op, t1, t2, t3);
 }
@@ -297,7 +294,6 @@ void UnaryElementwise(Op op, bool view, const Tensor &t1, Tensor &t2,
 
     inner_elementwise::launch_unary_elementwise_avx_contiguous<T>(op, t1, t2);
     return;
-// #else
 #endif
     sail::internal::native::inner_elementwise::launch_unary_elementwise<T>(
         op, t1, t2);

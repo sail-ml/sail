@@ -17,8 +17,7 @@ Tensor softmax_cross_entropy(Tensor& logits, Tensor& targets) {
         TensorVector vec;
         vec.emplace_back(logits);
         vec.emplace_back(targets);
-        result = (new autograd::SoftmaxCrossEntropyLoss())
-                     ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        result = (new autograd::SoftmaxCrossEntropyLoss())->apply(vec);
         return result;
     }
     Tensor softmax = ops::softmax(logits);
@@ -45,8 +44,7 @@ Tensor mean_squared_error(Tensor& logits, Tensor& targets) {
         TensorVector vec;
         vec.emplace_back(logits);
         vec.emplace_back(targets);
-        result = (new autograd::MeanSquaredErrorLoss())
-                     ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        result = (new autograd::MeanSquaredErrorLoss())->apply(vec);
         return result;
     }
 

@@ -18,8 +18,7 @@ Tensor copy(Tensor& tensor1) {
     empty_tensor =
         empty(tensor1.get_ndim(), tensor1.get_dtype(), tensor1.get_shape());
 
-    sail::internal::cast_stub(tensor1, empty_tensor);  // change to basic copy
-
+    sail::internal::cast_stub(tensor1, empty_tensor);
     return empty_tensor;
 }
 
@@ -69,12 +68,8 @@ Tensor cast(const Tensor& tensor1, Dtype dt) {
 
 Tensor view(Tensor& t1) {
     Tensor new_;
-    // new_.set_data(t1.get_data());
-    // new_.get_dtype() = t1.get_dtype();
     new_.fcn = t1.fcn;
     new_.requires_grad = t1.requires_grad;
-    // new_.get_shape() = t1.get_shape();
-    // new_.is_view()_base_shape = t1.get_shape();
     return new_;
 }
 
@@ -93,13 +88,9 @@ Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
     return ret;
 }
 
-Tensor pad(Tensor& t1,
-           std::vector<std::vector<long>>
-               x) {  // const std::vector<std::tuple<long, long>> pads
+Tensor pad(Tensor& t1, std::vector<std::vector<long>> x) {
     return sail::internal::pad_stub(t1, x);
 }
-
-/** end block **/
 
 }  // namespace ops
 

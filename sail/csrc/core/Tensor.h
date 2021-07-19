@@ -1,3 +1,5 @@
+// allow-impl-in-header
+
 #pragma once
 
 #include "TensorBody.h"
@@ -25,29 +27,11 @@ class Tensor {
 
     bool requires_grad = false;
     bool was_requires_grad = false;
-    // std::shared_ptr<Tensor> grad;
-    // std::unique_ptr<Tensor> grad;
-    // Tensor* grad = nullptr;
     std::shared_ptr<autograd::Function> fcn = nullptr;
 
     bool is_grad = false;
 
-    void swap(Tensor& t) {
-        bool t_rq = requires_grad;
-        bool t_is_grad = is_grad;
-        std::shared_ptr<autograd::Function> t_fcn = fcn;
-        TensorBody::pointer t_body = body;
-
-        body = t.body;
-        fcn = t.fcn;
-        requires_grad = t.requires_grad;
-        is_grad = t.is_grad;
-
-        t.body = t_body;
-        t.fcn = t_fcn;
-        t.requires_grad = t_rq;
-        t.is_grad = t_is_grad;
-    }
+    void swap(Tensor& t);
 
     Tensor(Tensor& old, bool _requires_grad)
         : body(old.body.get(), false), requires_grad(_requires_grad){};
@@ -70,19 +54,19 @@ class Tensor {
         return *this;
     }
 
-    void clear_grad() { body.get()->clear_grad(); }
-    void clear_function() { fcn = nullptr; }
+    void clear_grad();
+    void clear_function();
 
-    long numel() const { return body.get()->get_shape().numel(); }
-    long len() const { return body.get()->get_shape().shape[0]; }
+    long numel() const;
+    long len() const;
 
-    Dtype get_dtype() const { return body.get()->get_dtype(); }
+    Dtype get_dtype() const;
 
-    TensorShape get_shape() const { return body.get()->get_shape(); }
+    TensorShape get_shape() const;
 
-    void* get_data() const { return body.get()->get_data(); }
-    alignemnt_information get_info() const { return body.get()->get_info(); }
-    bool is_view() const { return body.get()->is_view(); }
+    void* get_data() const;
+    alignemnt_information get_info() const;
+    bool is_view() const;
 
     Tensor cast(const Dtype dt) const;
     Tensor reshape(const TensorShape& new_shape) const;
@@ -108,26 +92,25 @@ class Tensor {
         return result;
     }
 
-    int get_body_ref_count() { return body.get()->get_ref_count(); }
-
+    int get_body_ref_count();
     void free();
     void swap_body(Tensor& t);
 
-    TensorBody::pointer get_body() const { return body; }
+    TensorBody::pointer get_body() const;
 
     long int* get_shape_ptr();
     bool is_scalar() const;
-    inline bool has_grad() { return body.get()->has_grad(); }
+    bool has_grad();
     int get_np_type_num();
 
-    void set_shape(const TensorShape& s) { body.get()->set_shape(s); }
-    void set_view() { body.get()->set_is_view(true); }
-    void set_data(void* data) { body.get()->set_data(data); }
+    void set_shape(const TensorShape& s);
+    void set_view();
+    void set_data(void* data);
 
-    long get_ndim() const { return get_shape().ndim(); }
-    long ndim() const { return get_shape().ndim(); }
-    Tensor get_grad() const { return body.get()->get_grad(); }
-    void set_grad(Tensor& g) { body.get()->set_grad(g); }
+    long get_ndim() const;
+    long ndim() const;
+    Tensor get_grad() const;
+    void set_grad(Tensor& g);
 
     void backward();
     void backward(Tensor& grad);
@@ -170,8 +153,6 @@ class Tensor {
     Tensor sum();
 
     void register_op(autograd::Function* new_func);
-
-    //    private:
 };
 
 std::ostream& operator<<(std::ostream& os, const Tensor& tensor);
@@ -180,12 +161,6 @@ Tensor operator/(Numeric n, Tensor& te);
 Tensor operator-(Numeric n, Tensor& te);
 Tensor operator*(Numeric n, Tensor& te);
 
-inline int _numel(TensorSize _shape) {
-    auto size = 1;
-    for (long value : _shape) {
-        size = size * value;
-    }
-    return size;
-}
+int _numel(TensorSize _shape);
 
 }  // namespace sail

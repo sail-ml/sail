@@ -26,8 +26,6 @@ TensorVector AddMM::backward(Tensor& grad) {
 
     Tensor ga, gb, u, v;
     if (a.requires_grad) {
-        // DISABLE_GRAD_IND(a)
-
         if (b_is_vector) {
             u = grad;
             v = b;
@@ -43,17 +41,10 @@ TensorVector AddMM::backward(Tensor& grad) {
             ga = ops::tensordot(bt, grad, grad.get_ndim());
         } else {
             ga = ops::matmul(grad, b, NO_TRANS, TRANS);
-            // ga = ops::matmul(grad, b.transpose({1, 0}), NO_TRANS, NO_TRANS);
-            // ga = ops::broadcast_to(ga, a.get_shape());
-            // std::cout << ga << std::endl;
         }
-        // ENABLE_GRAD_IND(a)
-        // ga.requires_grad = true;
     }
 
     if (b.requires_grad) {
-        // DISABLE_GRAD_IND(b)
-
         if (a_is_vector) {
             u = a;
             v = grad;
@@ -68,12 +59,8 @@ TensorVector AddMM::backward(Tensor& grad) {
             Tensor at = ops::rollaxis(a, -2);
             gb = ops::tensordot(at, grad, grad.get_ndim());
         } else {
-            // gb = ops::matmul(a.transpose({1, 0}), grad, NO_TRANS, NO_TRANS);
             gb = ops::matmul(a, grad, TRANS, NO_TRANS);
-            // gb = ops::broadcast_to(gb, b.get_shape());
         }
-        // ENABLE_GRAD_IND(b)
-        // gb.requires_grad = true;
     }
 
     return {ga, gb, grad};

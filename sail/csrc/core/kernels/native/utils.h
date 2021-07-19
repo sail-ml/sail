@@ -1,3 +1,4 @@
+// allow-no-source
 #pragma once
 #include <algorithm>
 #include <cstdint>
@@ -51,7 +52,6 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel,
 
     auto win_indices_shape = ((in_shape - window_shape) / strides_tensor) + 1;
     auto c_win_indices_shape = win_indices_shape.cast(Dtype::sInt64);
-    // sail::ops::cast(win_indices_shape, Dtype::sInt64);
 
     auto new_shape = sail::ops::cat({c_win_indices_shape, window_shape});
     auto new_strides = sail::ops::cat({indexing_strides, window_strides});
@@ -84,7 +84,7 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
     long sx = strides[0];
     long sy = strides[1];
 
-    long dx = 1;  // later
+    long dx = 1;
     long dy = 1;
 
     long new_height = (old_height + 2 * 0 - k_h) / sy + 1;
@@ -96,20 +96,14 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
         cols,
         sail::TensorShape({new_height * new_width * b, k_cin * k_w * k_h}));
 
-    // new_height = old_height;  // new_height * strides[0] - strides[0] + 3;
-    // new_width = old_height;   // new_width * strides[1] - strides[1] + 3;
     long z = 0;
     int input_i = 0;
     int input_j = 0;
-    // for (long k = 0; k < n; k++) {
-    //     input_i = 0;
 
     for (long i = 0; i < new_height; i++) {
         input_j = 0;
         for (long j = 0; j < new_width; j++) {
             sail::Tensor col_slice = cols2.slice(sail::Slice({z, z + 1}));
-
-            // std::cout << col_slice << std::endl;
 
             auto col_slice2 = col_slice.reshape(block_size);
             auto s = sail::Slice(
@@ -121,9 +115,6 @@ inline Tensor col2im(Tensor& cols, TensorShape kernel,
         }
         input_i += strides[0];
     }
-    // }
-    // auto img2 = img.slice(
-    //     sail::Slice({{}, {}, {pad_y, nh - pad_y}, {pad_x, nw - pad_y}}));
 
     return img;
 }

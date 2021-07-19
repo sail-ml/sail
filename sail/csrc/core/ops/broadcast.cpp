@@ -34,9 +34,6 @@ Tensor broadcast_to(const Tensor& input_tensor, TensorShape shape) {
     }
 
     auto& t2 = tensor;
-    // while (t2.get_ndim() < shape.ndim()) {
-    //     t2 = t2.expand_dims(0);
-    // }
 
     TensorSize expand_shape, expand_strides;
     expand_shape = shape.shape;
@@ -74,7 +71,6 @@ Tensor broadcast_to(const Tensor& input_tensor, TensorShape shape) {
     shape_new = TensorShape(expand_shape, expand_strides);
 
     shape_new.recompute();
-    // shape_new.contiguous = false;
     new_.set_shape(shape_new);
 
     return new_;
@@ -83,10 +79,6 @@ TensorShape broadcast_to_shape_only(const TensorShape shape_in,
                                     TensorShape shape) {
     TensorShape shape_base = shape_in;
     TensorShape shape_new = shape;
-
-    // while (t2.get_ndim() < shape.ndim()) {
-    //     t2 = t2.expand_dims(0);
-    // }
 
     TensorSize expand_shape, expand_strides;
     expand_shape = shape.shape;
@@ -124,7 +116,6 @@ TensorShape broadcast_to_shape_only(const TensorShape shape_in,
     shape_new = TensorShape(expand_shape, expand_strides);
 
     shape_new.recompute();
-    // shape_new.contiguous = false;
 
     return shape_new;
 }

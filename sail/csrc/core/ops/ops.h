@@ -1,3 +1,5 @@
+// allow-no-source
+
 // clang-format off
 #include "ActivationOps.h"
 #include "BinaryOps.h"

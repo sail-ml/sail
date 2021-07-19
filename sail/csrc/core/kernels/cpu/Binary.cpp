@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Binary.h"
 #include "Tensor.h"
 #include "dtypes.h"

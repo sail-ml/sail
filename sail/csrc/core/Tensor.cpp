@@ -7,7 +7,6 @@
 #include "TensorBody.h"
 
 #include "autograd/autograd.h"
-// #include "cuda/cuda_cmath"
 #include "dtypes.h"
 #include "exception.h"
 #include "factories.h"
@@ -65,7 +64,7 @@ Tensor Tensor::expand_dims(const int dim) const {
 
     TensorShape s = body->get_shape();
     s.insert_one(new_dim);
-    TensorShape x = TensorShape(s.shape);  // this is a super hacky fix
+    TensorShape x = TensorShape(s.shape);
     TensorBody::pointer new_body = TensorBody::pointer(
         new TensorBody(body->get_data(), body->get_dtype(), x,
                        /*is_view*/ true));
@@ -91,6 +90,52 @@ Tensor Tensor::squeeze(const int dim) const {
     return new_tensor;
 }
 
+void Tensor::set_shape(const TensorShape& s) { body.get()->set_shape(s); }
+void Tensor::set_view() { body.get()->set_is_view(true); }
+void Tensor::set_data(void* data) { body.get()->set_data(data); }
+
+long Tensor::get_ndim() const { return get_shape().ndim(); }
+long Tensor::ndim() const { return get_shape().ndim(); }
+Tensor Tensor::get_grad() const { return body.get()->get_grad(); }
+void Tensor::set_grad(Tensor& g) { body.get()->set_grad(g); }
+
+void Tensor::swap(Tensor& t) {
+    bool t_rq = requires_grad;
+    bool t_is_grad = is_grad;
+    std::shared_ptr<autograd::Function> t_fcn = fcn;
+    TensorBody::pointer t_body = body;
+
+    body = t.body;
+    fcn = t.fcn;
+    requires_grad = t.requires_grad;
+    is_grad = t.is_grad;
+
+    t.body = t_body;
+    t.fcn = t_fcn;
+    t.requires_grad = t_rq;
+    t.is_grad = t_is_grad;
+}
+
+void Tensor::clear_grad() { body.get()->clear_grad(); }
+void Tensor::clear_function() { fcn = nullptr; }
+
+long Tensor::numel() const { return body.get()->get_shape().numel(); }
+long Tensor::len() const { return body.get()->get_shape().shape[0]; }
+
+int Tensor::get_body_ref_count() { return body.get()->get_ref_count(); }
+TensorBody::pointer Tensor::get_body() const { return body; }
+bool Tensor::has_grad() { return body.get()->has_grad(); }
+
+Dtype Tensor::get_dtype() const { return body.get()->get_dtype(); }
+
+TensorShape Tensor::get_shape() const { return body.get()->get_shape(); }
+
+void* Tensor::get_data() const { return body.get()->get_data(); }
+alignemnt_information Tensor::get_info() const {
+    return body.get()->get_info();
+}
+bool Tensor::is_view() const { return body.get()->is_view(); }
+
 bool Tensor::is_scalar() const {
     if (get_shape().shape.size() == 0) {
         return true;
@@ -106,7 +151,6 @@ long int* Tensor::get_shape_ptr() { return body->get_shape_ptr(); }
 
 int Tensor::get_np_type_num() { return get_np_type_numFromDtype(get_dtype()); }
 
-// todo - move to op
 Tensor Tensor::cast(const Dtype dt) const {
     if (dt != get_dtype()) {
         Tensor casted = ops::cast(*this, dt);
@@ -295,7 +339,6 @@ Tensor Tensor::operator<(const Tensor& other) {
 Tensor Tensor::sum() { return ops::sum(*this); }
 
 void Tensor::backward() {
-    // if (requires_grad) {
     Tensor t = one_scalar(get_dtype());
     backward(t);
 }
@@ -307,7 +350,7 @@ void Tensor::backward(Tensor& _grad) {
         } else {
             set_grad(_grad);
         }
-        if (fcn != nullptr) {  ////// THIS NEEDS TO CHANGE
+        if (fcn != nullptr) {
             TensorVector grad_arglist = fcn->arg_storage;
             std::vector<Tensor> new_grads = fcn->backward(_grad);
 
@@ -336,6 +379,14 @@ Tensor operator/(Numeric n, Tensor& te) {
 Tensor operator*(Numeric n, Tensor& te) {
     Tensor t = Tensor(n.get(), te.requires_grad);
     return t * te;
+}
+
+int _numel(TensorSize _shape) {
+    auto size = 1;
+    for (long value : _shape) {
+        size = size * value;
+    }
+    return size;
 }
 
 }  // namespace sail

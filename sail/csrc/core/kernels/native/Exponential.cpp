@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "Tensor.h"
 #include "dtypes.h"
 #include "exception.h"

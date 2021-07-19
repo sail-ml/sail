@@ -9,7 +9,6 @@ using LongVec = std::vector<long>;
 
 class TensorShape {
    public:
-    // int jump = 1;
     LongVec shape;
     LongVec strides;
     LongVec shape_m1;
@@ -28,7 +27,6 @@ class TensorShape {
 
     TensorShape reverse();
 
-    // template <class T>
     TensorShape reorder(const LongVec& order);
 
     TensorShape roll_axis(long axis, long position);
@@ -44,10 +42,8 @@ class TensorShape {
     void enforce_axis(int axis);
     std::vector<long> generate_all_indexes();
 
-    bool operator==(const TensorShape& other) const {
-        return other.shape == shape;
-    }
-    long operator[](const int index) const { return shape[index]; }
+    bool operator==(const TensorShape& other) const;
+    long operator[](const int index) const;
 
     int next();
     int next(int n);

@@ -1,3 +1,6 @@
+// allow-no-source allow-impl-in-header
+#pragma once
+
 #include <iostream>
 
 #include "Tensor.h"

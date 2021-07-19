@@ -1,3 +1,5 @@
+// allow-impl-in-header
+
 #pragma once
 #include "tensor_shape.h"
 
@@ -97,15 +99,13 @@ class MultiTensorIterator : public TensorIterator {
     Vec2D<long> strides;
     Vec2D<long> strides_back;
     Vec2D<long> coordinates;
-    // std::vector<std::vector<long>> strides_back;
-    // std::vector<std::vector<long>> coordinates;
 
     MultiTensorIterator(TensorShape t_shape);
 
     MultiTensorIterator add_input(TensorShape& t_shape);
 
     inline bool contiguous_at(int index) {
-        int v = 0;  // strides.at(index, 0);
+        int v = 0;
         for (int i = 1; i < shape.size(); i++) {
             if (strides.at(index, i) > v) {
                 return false;
@@ -147,14 +147,14 @@ class MultiTensorIterator : public TensorIterator {
             for (int i = TensorIterator::_ndim - 2; i >= 0; i--) {
                 if (coordinates.at(a, i) < shape_m1[i]) {
                     coordinates.at(a, i) += 1;
-                    d_ptrs[a] += strides.at(a, i);  //[a][i];
+                    d_ptrs[a] += strides.at(a, i);
                     break;
                 } else {
                     coordinates.at(a, i) = 0;
-                    d_ptrs[a] -= strides_back.at(a, i);  //[a][i];
+                    d_ptrs[a] -= strides_back.at(a, i);
                 }
             }
-            d_ptrs[a] -= strides_back.at_back(a);  //[a].back();
+            d_ptrs[a] -= strides_back.at_back(a);
         }
         return d_ptrs;
     }
@@ -169,7 +169,6 @@ class MultiTensorIterator : public TensorIterator {
     long tensor_count = 1;
 
     std::vector<long> d_ptrs;
-    //    private:
 };
 
 }  // namespace sail

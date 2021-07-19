@@ -18,9 +18,6 @@ using TensorVector = std::vector<Tensor>;
 std::tuple<std::vector<Tensor>, long, long> conv2d_impl(
     Tensor& input, Tensor& kernel, std::vector<long> stride,
     std::string padding_mode) {
-    // Tensor conv2d(Tensor& input, Tensor& kernel, std::vector<long> stride,
-    //               std::string padding_mode = "same") {
-
     SAIL_CHECK(input.get_ndim() == 4,
                "Input to Conv2D must have ndim == 4, [NCHW]")
     SAIL_CHECK(
@@ -68,7 +65,6 @@ std::tuple<std::vector<Tensor>, long, long> conv2d_impl(
         cols2,
         sail::TensorShape({new_height * new_width * b, k_cin * k_w * k_h}));
 
-    // std::cout << duration.count() << std::endl;
     Tensor flat_kernel =
         kernel.reshape(TensorShape({k_cout, k_cin * k_w * k_h}));
 

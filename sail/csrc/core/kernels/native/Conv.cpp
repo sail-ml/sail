@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Conv.h"
 #include "Tensor.h"
 #include "dtypes.h"

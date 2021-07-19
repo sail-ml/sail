@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -26,7 +28,7 @@ struct OneDNNLinearParams {
         const memory::dim N = src.get_shape()[0], IF = input_features,
                           OF = output_features;
 
-        src_dims = {N, IF};  // src.get_shape().shape;
+        src_dims = {N, IF};
         weight_dims = {OF, IF};
         bias_dims = {OF};
         dest_dims = {N, OF};

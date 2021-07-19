@@ -1,3 +1,5 @@
+// allow-no-header allow-class-definitions
+
 #include "kernels/Repr.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -50,26 +52,12 @@ class FloatFormatter {
             ++b_digits;
             value = -value;
         }
-        // if (IsInf(value) || IsNan(value)) {
-        //     b_digits += 3;
-        //     if (digits_before_point_ < b_digits) {
-        //         digits_before_point_ = b_digits;
-        //     }
-        //     return;
-        // }
         if (value >= 100'000'000) {
             int e_digits = GetNDigits(static_cast<int64_t>(std::log10(value)));
             if (digits_after_e_ < e_digits) {
                 digits_after_e_ = e_digits;
             }
         }
-        // if (value <= 0.0001) {
-        //     int e_digits =
-        //     GetNDigits(static_cast<int64_t>(std::log10(value))); if
-        //     (digits_after_e_ < e_digits) {
-        //         digits_after_e_ = e_digits;
-        //     }
-        // }
         if (digits_after_e_ > 0) {
             return;
         }
@@ -97,13 +85,6 @@ class FloatFormatter {
             os << std::scientific << std::left << std::setw(width)
                << std::setprecision(8) << value;
         } else {
-            // if (IsInf(value) || IsNan(value)) {
-            //     os << std::right
-            //        << std::setw(digits_before_point_ + digits_after_point_ +
-            //        1)
-            //        << value;
-            //     return;
-            // }
             const auto int_frac_parts = IntFracPartsToPrint(value);
             const int a_digits = GetNDigits(int_frac_parts.second) - 1;
             os << std::fixed << std::right
@@ -114,9 +95,7 @@ class FloatFormatter {
     }
 
    private:
-    // Returns the integral part and fractional part as integers.
-    // Note that the fractional part is prefixed by 1 so that the information of
-    // preceding zeros is not missed.
+    // code comment
     static std::pair<int64_t, int64_t> IntFracPartsToPrint(double value) {
         double int_part;
         const double frac_part = std::modf(value, &int_part);
@@ -201,10 +180,6 @@ class ReprKernel {
                 os << ", shape=" << t1.get_shape().get_string();
             }
             os << ")";
-
-            // } else {
-            //     ArrayReprRecursive<T>(t1, formatter, 8, os, false);
-            // }
         });
     }
 
@@ -241,7 +216,7 @@ class ReprKernel {
 
         long size = tensor.get_shape().shape[0];
         T* data = (T*)tensor.get_data();
-        // if (tensor.broadcasted) {
+
         TensorShape shape = tensor.get_shape();
 
         if (abbreviate && size > kEdgeItems * 2) {

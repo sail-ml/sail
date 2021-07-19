@@ -21,7 +21,7 @@ using TensorVector = std::vector<Tensor>;
 std::tuple<LongVec, TensorShape> GetTensorDotRollAxes(
     const TensorShape& shape, const LongVec& reduce_axes,
     bool reduced_axes_first) {
-    bool to_reduce[25]{};  // Initialized with false.
+    bool to_reduce[25]{};
     LongVec remain_dims;
     LongVec remain_dims2;
     LongVec roll_axes;
@@ -29,7 +29,6 @@ std::tuple<LongVec, TensorShape> GetTensorDotRollAxes(
     LongVec not_in;
     for (auto i : sail::irange(0, (int)reduce_axes.size())) {
         to_reduce[reduce_axes[i]] = true;
-        // gsl::at(to_reduce, reduce_axes[i]) = true;
     }
 
     for (auto i : sail::irange((long)0, shape.ndim())) {
@@ -72,7 +71,6 @@ Tensor tensordot(const Tensor& input1, const Tensor& input2, LongVec t1_dim,
         throw SailCError("Size of axes must match");
     }
 
-    // int64_t csize = 1;  // total size of the contracted dimensions
     Tensor t1 = input1;
     Tensor t2 = input2;
 
@@ -96,17 +94,12 @@ Tensor tensordot(const Tensor& input1, const Tensor& input2, LongVec t1_dim,
     TensorShape a_shape = TensorShape({a_remain_total_size, axis_total_size});
     TensorShape b_shape = TensorShape({axis_total_size, b_remain_total_size});
 
-    // if (a_shape.numel() != b_shape.numel()) {
-    //     throw SailCError("Shape mismatch for tensordot");
-    // }
-
     TensorShape dot_shape =
         TensorShape({a_remain_total_size, b_remain_total_size});
     Tensor dot_out = zeros(dot_shape, dt);
     t1 = t1.cast(dt);
     t2 = t2.cast(dt);
 
-    // DotTTKernel().execute
     sail::internal::matmul_stub(t1.transpose(a_roll_axes).reshape(a_shape),
                                 t2.transpose(b_roll_axes).reshape(b_shape),
                                 dot_out, true, "N", "N");
@@ -115,12 +108,7 @@ Tensor tensordot(const Tensor& input1, const Tensor& input2, LongVec t1_dim,
               std::back_inserter(out_shape));
     TensorShape ret_shape = TensorShape(out_shape);
     dot_out._inplace_reshape(ret_shape);
-    // ret_shape.reset();
     return dot_out;
-
-    // auto out_ = matmul(t1, t2, "N", "N");
-    // out_._inplace_reshape(TensorShape({rsizes}));
-    // return matmul(t1, t2, "N", "N");
 }
 
 Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
@@ -199,9 +187,6 @@ Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
 }
 
 Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
-    // NEED TO CHECK NDIM, TYPE, AND SHAPES SO THAT IT WORKS
-    // ALSO NO SCALARS
-
     if (t1.requires_grad || t2.requires_grad || add.requires_grad) {
         TensorVector vec;
         vec.emplace_back(t1);

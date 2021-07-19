@@ -1,5 +1,5 @@
 #include "maxpool2d_layer.h"
-#include <cmath> /* pow */
+#include <cmath>
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
@@ -8,7 +8,7 @@
 #include "initializers/kaiming.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
-// #include "module.h"
+
 #ifdef MKLDNN
 #include "onednn/pooling.h"
 #endif
@@ -50,7 +50,6 @@ Tensor MaxPool2D::forward(Tensor& input) {
 
     long batch_size = input.get_shape().shape[0];
 
-    // if (_batch_size != batch_size) {
     TensorShape output_shape =
         TensorShape({batch_size, input.get_shape()[1], new_height, new_width});
 

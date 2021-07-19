@@ -36,7 +36,7 @@ class Conv2D : public Function {
     Conv2D(std::vector<long> strides, std::string padding_mode)
         : strides(std::move(strides)), padding_mode(std::move(padding_mode)){};
     ~Conv2D() override = default;
-    // RefTensorVector arg_storage;
+
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -58,7 +58,7 @@ class Conv2DMKLDNN : public Function {
           padding_r(std::move(pad_x)),
           strides(std::move(strides)){};
     ~Conv2DMKLDNN() override = default;
-    // RefTensorVector arg_storage;
+
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };

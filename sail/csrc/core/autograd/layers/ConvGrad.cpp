@@ -54,7 +54,7 @@ TensorVector Conv2D::backward(Tensor& grad) {
     long sx = strides[0];
     long sy = strides[1];
 
-    long dx = 1;  // later
+    long dx = 1;
     long dy = 1;
 
     long new_height = (h + 2 * pad_y - kh) / sy + 1;
@@ -74,7 +74,6 @@ TensorVector Conv2D::backward(Tensor& grad) {
             input_j = 0;
             for (long j = 0; j < new_width; j++) {
                 sail::Tensor col_slice = dcol.slice(sail::Slice({z, z + 1}));
-                // std::cout << col_slice << std::endl;
 
                 auto col_slice2 = col_slice.reshape(block_size);
                 auto s = sail::Slice({{k, k + 1},

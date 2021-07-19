@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -167,8 +169,6 @@ class OneDNNConv2DBackwardWeights : public Primitive {
     }
 
     void forward(Tensor& weights_tensor) {
-        // dnnl::set_verbose(2);
-
         primitive_desc->execute(engine_stream, args);
         engine_stream.wait();
 

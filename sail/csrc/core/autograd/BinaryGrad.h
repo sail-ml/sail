@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -16,7 +15,6 @@ using TensorVector = std::vector<Tensor>;
 class Add : public Function {
    public:
     explicit Add() = default;
-    // TensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -24,7 +22,6 @@ class Add : public Function {
 class Subtract : public Function {
    public:
     explicit Subtract() = default;
-    // TensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -32,7 +29,6 @@ class Subtract : public Function {
 class Divide : public Function {
    public:
     explicit Divide() = default;
-    // TensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };
@@ -40,7 +36,6 @@ class Divide : public Function {
 class Multiply : public Function {
    public:
     explicit Multiply() = default;
-    // TensorVector arg_storage;
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };

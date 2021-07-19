@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -50,8 +52,8 @@ struct OneDNNConv2DForwardParams {
                               std::vector<long> padding_l_,
                               std::vector<long> padding_r_, bool back = false) {
         auto tags = identify_tags(src_shape, kernel_shape);
-        src_dims = src_shape.shape;        //{N, IC, I_H, I_W};
-        weight_dims = kernel_shape.shape;  //{OC, IC, K_H, K_W};
+        src_dims = src_shape.shape;
+        weight_dims = kernel_shape.shape;
         dest_dims = output_shape.shape;
         auto OC = kernel_shape[0];
         bias_dims = {OC};
@@ -145,7 +147,6 @@ class OneDNNConv2DForward : public Primitive {
         engine_stream = dnnl::stream(engine);
     }
     void initialize() {
-        // dnnl::set_verbose(2);
         src_md.reset(new memory::desc({params->src_dims}, dt::f32, tag::any));
         weight_md.reset(
             new memory::desc({params->weight_dims}, dt::f32, tag::any));

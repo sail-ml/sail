@@ -31,16 +31,11 @@
     }
 
 namespace sail {
-// class Tensor {
-//     bool requires_grad;
-//     void register_op(Function* new_func);
-// };  // let compiler know Tensor exists. Forward declaration
 
 namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 using RefTensorVector = std::vector<Tensor*>;
-// using RefTensorVector = std::vector<Tensor*>;
 
 class Function {
    public:

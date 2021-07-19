@@ -52,7 +52,7 @@ Tensor empty_like(const Tensor& tensor, Dtype& dt) {
 
 Tensor clone(const Tensor& t) {
     void* data;
-    TensorShape s = t.get_shape();  // TensorShape(t.get_shape());
+    TensorShape s = t.get_shape();
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
         int numel = s.numel();
@@ -118,9 +118,6 @@ Tensor as_strided(const Tensor& t, TensorShape s) {
 }
 
 Tensor one_hot(const Tensor& t, const int size, Dtype dt) {
-    // if (t.get_ndim() != 1) {
-    //     throw SailCError("Inputs to one_hot must 1d");
-    // }
     if (t.get_dtype() != Dtype::sInt16 && t.get_dtype() != Dtype::sInt32 &&
         t.get_dtype() != Dtype::sInt64) {
         throw SailCError("inputs must be integers");
@@ -155,31 +152,6 @@ Tensor make_view(const Tensor& t) {
     return _empty;
 }
 
-// template <typename T>
-// Tensor from_single_value(T value, Dtype dt) {
-//     TensorShape shape = TensorShape({1});
-//     Tensor empty_tensor = empty(0, dt, shape);
-//     dispatch_all_types(dt, [&](auto pt) {
-//         using Tensor_T = typename decltype(pt)::type;
-//         Tensor_T val = static_cast<Tensor_T>(value);
-//         Tensor_T* data = static_cast<Tensor_T*>(empty_tensor.get_data());
-//         data[0] = val;
-//     });
-//     return empty_tensor;
-// }
-
-// Tensor copy(Tensor t) {
-//     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
-
-//     alignemnt_information info = getAlignment(t.get_dtype());
-//     void* data = _realloc_align(t.get_data(), t.numel(), info.alignment,
-//                                 info.dtype_size);
-
-//     Tensor _empty = Tensor(t.ndim, data, t.get_dtype(), t.get_shape());
-
-//     return _empty;
-// }
-
 Tensor empty_scalar(Dtype dt) {
     TensorSize shape = {};
     TensorShape ts = TensorShape(shape);
@@ -195,12 +167,10 @@ Tensor one_scalar(Dtype dt) {
 
     dispatch_all_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
-        // T data2 = (T)1;
-        // memcpy(data, (void*)(&data2), sizeof(T));
         T x = (T)1;
         *(T*)data = x;
     });
-    // memset(data, 1, info.get_dtype()_size);
+
     int zero = 0;
     TensorSize shape = {1};
     TensorShape ts = TensorShape(shape);
@@ -274,10 +244,8 @@ Tensor full(Numeric n, TensorShape size) {
     return Tensor(b, false);
 }
 
-namespace random {  // probably want to refactor factories to be in their own
-                    // namespace but rolling with this for now
+namespace random {
 
-// need to be able to instantiate random tensors
 Tensor uniform(TensorShape size, Dtype dt, double min, double max) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();

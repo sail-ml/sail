@@ -12,16 +12,12 @@
 
 namespace sail {
 
-// namespace ptr
-
 class Tensor;
 
 class TensorBody {
    public:
     typedef boost::intrusive_ptr<TensorBody> pointer;
-    // TensorBody() : refcount_(0) {}
     mutable std::atomic<int> refcount_ = 0;
-    // mutable boost::atomic<int> refcount_;
 
    private:
     friend void intrusive_ptr_add_ref(const TensorBody* x) {
@@ -61,30 +57,26 @@ class TensorBody {
 
     TensorBody::pointer create_owner();
 
-    inline void* get_data() { return data; }
-    inline void set_data(void* d) { data = d; }
-    inline Dtype get_dtype() { return dtype; }
-    inline TensorShape get_shape() { return *shape; }
-    inline alignemnt_information get_info() { return info; }
-    inline bool is_view() { return view; }
-    inline bool has_grad() { return _has_grad; }
-    inline void set_is_view(bool x) { view = x; }
+    void* get_data();
+    void set_data(void* d);
+    Dtype get_dtype();
+    TensorShape get_shape();
+    alignemnt_information get_info();
+    bool is_view();
+    bool has_grad();
+    void set_is_view(bool x);
 
     Tensor get_grad();
     void clear_grad();
     void set_grad(Tensor& t);
 
-    inline int get_ref_count() { return (int)refcount_; }
+    int get_ref_count();
 
-    void force_incref() { refcount_.fetch_add(1, std::memory_order_relaxed); }
+    void force_incref();
 
-    void set_shape(const TensorShape& s) {
-        delete shape;
-        shape = new TensorShape(s.shape, s.strides);
-        // shape = s;
-    }
+    void set_shape(const TensorShape& s);
 
-    long int* get_shape_ptr() { return shape->get_shape_ptr(); }
+    long int* get_shape_ptr();
 };
 
 }  // namespace sail

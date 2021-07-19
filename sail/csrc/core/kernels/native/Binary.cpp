@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Binary.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -66,7 +68,6 @@ void divide_kernel(const Tensor& t1, const Tensor& t2, Tensor& out,
 REGISTER_ARCH_DISPATCH(add_stub, DEFAULT, &add_kernel);
 REGISTER_ARCH_DISPATCH(subtract_stub, DEFAULT, &subtract_kernel);
 REGISTER_ARCH_DISPATCH(multiply_stub, DEFAULT, &multiply_kernel);
-// REGISTER_ARCH_DISPATCH(divide_stub, DEFAULT, &divide_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(divide_stub, &divide_kernel);
 
 }  // namespace internal

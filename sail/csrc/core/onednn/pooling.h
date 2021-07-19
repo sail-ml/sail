@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -12,7 +14,7 @@ using dt = memory::data_type;
 namespace sail {
 
 namespace onednn {
-// inline unsigned char* DummyData = nullptr;
+
 struct OneDNNMaxPoolingParams {
     memory::dims src_dims;
     memory::dims dest_dims;

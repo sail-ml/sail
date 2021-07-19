@@ -37,7 +37,7 @@ class MaxPool2D : public Function {
               pooling_v2_forward::primitive_desc desc)
         : params(std::move(params)), desc(std::move(desc)){};
     ~MaxPool2D() override = default;
-    // RefTensorVector arg_storage;
+
     Tensor forward(TensorVector inputs) override;
     TensorVector backward(Tensor& grad) override;
 };

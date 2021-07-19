@@ -1,3 +1,5 @@
+// allow-impl-in-header allow-no-source
+
 #pragma once
 
 #include <malloc.h>
@@ -78,7 +80,6 @@ inline std::string getVectorString(const TensorSize vector) {
         std::string x = result.str();
         x.pop_back();
         x.pop_back();
-        // std::string  shape_string("(");
         return std::string("(") + x + std::string(")");
     }
     return std::string("()");
@@ -91,7 +92,6 @@ inline std::string getVectorString(const std::vector<std::string> vector) {
         std::string x = result.str();
         x.pop_back();
         x.pop_back();
-        // std::string  shape_string("(");
         return std::string("(") + x + std::string(")");
     }
     return std::string("()");
