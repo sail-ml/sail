@@ -77,7 +77,7 @@ Tensor clone_to(const Tensor& t, TensorShape shape) {
     if (t.is_view()) {
         int numel = shape.numel();
         data = _malloc_align(numel, info.alignment, info.dtype_size);
-        dispatch_all_types(t.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(t.get_dtype(), [&](auto pt) {
             using T = typename decltype(pt)::type;
             T* base_data = (T*)(t.get_data());
             T* set_data = (T*)data;
@@ -125,7 +125,7 @@ Tensor one_hot(const Tensor& t, const int size, Dtype dt) {
     long total_data = size * t.numel();
     alignemnt_information info = getAlignment(dt);
     void* data = _calloc_align(total_data, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* t_data = (T*)data;
@@ -165,7 +165,7 @@ Tensor one_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
 
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
         T x = (T)1;
         *(T*)data = x;
@@ -206,7 +206,7 @@ Tensor ones(TensorShape size, Dtype dt) {
     int numel = size.numel();
     void* new_data =
         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_fill = (T*)new_data;
@@ -229,7 +229,7 @@ Tensor full(Numeric n, TensorShape size) {
     int numel = size.numel();
     void* new_data =
         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_fill = (T*)new_data;
@@ -250,7 +250,7 @@ Tensor uniform(TensorShape size, Dtype dt, double min, double max) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -278,7 +278,7 @@ Tensor uniform_fill(Tensor tensor, double min, double max) {
     Dtype dt = tensor.get_dtype();
     int numel = tensor.numel();
     void* data = tensor.get_data();
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -299,7 +299,7 @@ Tensor normal(TensorShape size, Dtype dt, double mean, double std) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -327,7 +327,7 @@ Tensor normal_fill(Tensor tensor, double mean, double std) {
     Dtype dt = tensor.get_dtype();
     int numel = tensor.numel();
     void* data = tensor.get_data();
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;

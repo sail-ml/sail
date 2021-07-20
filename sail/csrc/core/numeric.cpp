@@ -11,7 +11,7 @@ TensorBody::pointer from_single_value(T value, Dtype dt) {
     TensorShape shape = TensorShape({1});
     TensorBody::pointer body =
         TensorBody::pointer(new TensorBody(dt, shape), true);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using Tensor_T = typename decltype(pt)::type;
         Tensor_T val = static_cast<Tensor_T>(value);
         Tensor_T* data = static_cast<Tensor_T*>(body->get_data());

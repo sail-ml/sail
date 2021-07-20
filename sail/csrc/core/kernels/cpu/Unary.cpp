@@ -20,7 +20,7 @@ struct NegateImpl : cpu::UnaryImpl<T, avx_type> {
     inline avx_type avx_fcn(avx_type& a) override { return -a; }
 };
 void negate_kernel(const Tensor& t1, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         using avx_type = xsimd::simd_type<T>;

@@ -17,7 +17,7 @@ namespace internal {
 namespace {
 
 void copy_kernel(const Tensor &t1, Tensor &out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         struct Impl {
@@ -101,7 +101,7 @@ Tensor _pad_simple(const Tensor &base, Tensor &pad_width) {
     return padded;
 }
 
-Tensor pad_kernel(Tensor &t1, std::vector<std::vector<long>> pads) {
+Tensor pad_kernel(const Tensor &t1, std::vector<std::vector<long>> pads) {
     std::vector<long> flat;
     for (std::vector<long> inner : pads) {
         for (long i : inner) {

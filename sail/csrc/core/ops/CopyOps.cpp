@@ -28,7 +28,7 @@ void copy(Tensor& dest, const Tensor& source) {
                " ", getVectorString(source.get_shape().shape));
     SAIL_CHECK(dest.get_dtype() == source.get_dtype());
 
-    dispatch_all_types(dest.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(dest.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* dst = static_cast<T*>(dest.get_data());
@@ -75,8 +75,8 @@ Tensor view(Tensor& t1) {
 
 Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
     Tensor ret;
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        dispatch_all_types(dt, [&](auto pt2) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(dt, [&](auto pt2) {
             using T_in = typename decltype(pt)::type;
             using T_out = typename decltype(pt2)::type;
 
@@ -88,7 +88,7 @@ Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
     return ret;
 }
 
-Tensor pad(Tensor& t1, std::vector<std::vector<long>> x) {
+Tensor pad(const Tensor& t1, std::vector<std::vector<long>> x) {
     return sail::internal::pad_stub(t1, x);
 }
 

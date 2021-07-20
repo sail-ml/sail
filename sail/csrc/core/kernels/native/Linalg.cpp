@@ -22,7 +22,7 @@ namespace {
 void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
                    bool empty = false, std::string trans_a = "N",
                    std::string trans_b = "N") {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         auto name = decltype(pt)::GetName();
 
         SAIL_CHECK(!t1.is_view(), "Cannot pass views to matmul");

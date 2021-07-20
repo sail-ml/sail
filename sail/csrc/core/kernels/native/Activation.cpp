@@ -14,7 +14,7 @@ namespace internal {
 namespace {
 
 void sigmoid_kernel(const Tensor& t1, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -32,7 +32,7 @@ void sigmoid_kernel(const Tensor& t1, Tensor& out) {
 }
 
 void sigmoid_backward_kernel(const Tensor& t1, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -45,7 +45,7 @@ void sigmoid_backward_kernel(const Tensor& t1, Tensor& out) {
 }
 
 void softmax_kernel(Tensor& t1, const int axis, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
@@ -66,8 +66,8 @@ void softmax_kernel(Tensor& t1, const int axis, Tensor& out) {
 
 void softmax_backward_partial_kernel(Tensor& y, Tensor& targets,
                                      Tensor& out_tensor) {
-    dispatch_all_types(y.get_dtype(), [&](auto pt) {
-        dispatch_all_types(targets.get_dtype(), [&](auto pt2) {
+    dispatch_all_numeric_types(y.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(targets.get_dtype(), [&](auto pt2) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
             using T2 = typename decltype(pt2)::type;
@@ -105,8 +105,8 @@ void softmax_backward_partial_kernel(Tensor& y, Tensor& targets,
     });
 }
 void softmax_mul_sum_kernel(Tensor& t1, Tensor& targets, Tensor& out_tensor) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        dispatch_all_types(targets.get_dtype(), [&](auto pt2) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(targets.get_dtype(), [&](auto pt2) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
             using T2 = typename decltype(pt2)::type;

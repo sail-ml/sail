@@ -9,6 +9,7 @@ CLASS_FIND_REGEX = "class \w* {"
 
 
 ALLOW_NO_HEADER = "allow-no-header"
+ALLOW_COMMENTS = "allow-comments"
 ALLOW_NO_SOURCE = "allow-no-source"
 ALLOW_CLASS_DEFS = "allow-class-definitions"
 ALLOW_HEADER_IMPL = "allow-impl-in-header"
@@ -54,12 +55,13 @@ def loop(file_data, source=True):
 
     errors = {}
 
+    allow_comments = ALLOW_COMMENTS in file_data
     allow_class = ALLOW_CLASS_DEFS in file_data
     allow_header_impl = ALLOW_HEADER_IMPL in file_data
     allow_no_source = ALLOW_NO_SOURCE in file_data
 
     for l in file_data.split("\n"):
-        if ("//" in l and "NOLINT" not in l and "namespace" not in l):
+        if ("//" in l and "NOLINT" not in l and "namespace" not in l and not allow_comments):
             l_ = "//" + l.split("//")[1]
             if (not re.match(ACCEPT_COMMENT_REGEX, l_)):
                 errors = add_error(errors, line, Error.COMMENT, [line, line])
@@ -181,6 +183,6 @@ def launch_custom(file):
             print (ErrorText.CLASS_DEF_IN_SOURCE.format(file=file, line=meta[0]))
 
     if (errors == {}):
-        return False 
-    return True
+        return True 
+    return False
 

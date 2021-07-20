@@ -52,7 +52,7 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
 
     Tensor out = empty(0, dt, TensorShape(combined));
 
-    dispatch_all_types(out.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(out.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         long outer = out.numel() /
                      (out.get_shape()[axis] * out.get_shape().strides[axis]);
@@ -95,7 +95,7 @@ Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
     TensorShape x = TensorShape(combined);
     Tensor out = empty(0, dt, x);
 
-    dispatch_all_types(out.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(out.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         long outer = out.numel() /
                      (out.get_shape()[axis] * out.get_shape().strides[axis]);

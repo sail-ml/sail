@@ -27,7 +27,7 @@ struct ClipMinImpl : cpu::UnaryImpl<T, avx_type> {
     }
 };
 void clip_min_kernel(const Tensor& t1, const double min, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         using avx_type = xsimd::simd_type<T>;
@@ -51,7 +51,7 @@ struct ClipMaxImpl : cpu::UnaryImpl<T, avx_type> {
     }
 };
 void clip_max_kernel(const Tensor& t1, const double max, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         using avx_type = xsimd::simd_type<T>;
@@ -83,8 +83,8 @@ struct ClipImpl : cpu::UnaryImpl<T, avx_type> {
 
 void clip_kernel(const Tensor& t1, const double min, const double max,
                  Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
             using DtypeType = decltype(pt);
             using T = typename DtypeType::type;
             using avx_type = xsimd::simd_type<T>;

@@ -1,5 +1,3 @@
-# from C import *
-# from .sail_c import *
 import sys 
 
 from .libsail import Tensor
@@ -10,7 +8,7 @@ from .libsail import broadcast_to, transpose, rollaxis, moveaxis
 from .libsail import int8, uint8, int16, uint16, int32, uint32, int64, uint64
 from .libsail import float32 
 from .libsail import float64 
-from .libsail import cat, stack
+from .libsail import cat, stack, pad
 from .libsail import power, exp, log, SailError, DimensionError
 
 from .libsail import init
@@ -25,13 +23,7 @@ sys.modules['sail.modules'] = modules
 sys.modules['sail.losses'] = losses
 sys.modules['sail.optimizers'] = optimizers
 
-# print (dir(libsail))
-# exit(0)
-
-
-
-
-__all__ = ["Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "squeeze", "sum",
+__all__ = ["pad", "Tensor", "add", "subtract", "divide", "multiply", "matmul", "reshape", "expand_dims", "squeeze", "sum",
             "broadcast_to", "transpose", "tensordot", "rollaxis", "add_docstring", "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64",
            "float32", "float64", "power", "exp", "min", "stack", "cat", "addmm", "max", "mean", "log", "SailError", "DimensionError", "moveaxis", "clip"]
 

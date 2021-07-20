@@ -165,7 +165,7 @@ Tensor Tensor::assign(const Tensor& other) {
 }
 
 Tensor Tensor::fill(const Numeric& fill_val) {
-    dispatch_all_types(get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         T numeric_val = ((T*)fill_val.get()->get_data())[0];
         T* data = (T*)get_data();

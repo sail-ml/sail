@@ -65,3 +65,17 @@ static PyObject *PyTensor_$name$(PyObject *t1, PyObject *t2) {
 }
 
 /** end block **/
+
+static PyObject *PyTensor_negate(PyObject *t1) {
+    START_EXCEPTION_HANDLING
+    sail::Tensor tensor1;
+
+    PyTensor *ret_class;
+    ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
+
+    tensor1 = ((PyTensor *)t1)->tensor;
+    ret_class->tensor = -tensor1;
+
+    return (PyObject *)ret_class;
+    END_EXCEPTION_HANDLING
+}

@@ -13,7 +13,7 @@ namespace internal {
 namespace {
 
 void negate_kernel(const Tensor& t1, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 

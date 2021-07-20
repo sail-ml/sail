@@ -195,7 +195,6 @@ class UnitTest():
         
         assert (not np.array_equal(arr1, arr2)), (arr1, arr2)
 
-    @assertion
     def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
         sail_np = sail_arr.numpy()
         self.assert_eq_np(np_arr, sail_np, eps=eps)

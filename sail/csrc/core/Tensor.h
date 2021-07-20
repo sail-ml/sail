@@ -80,7 +80,7 @@ class Tensor {
     T get() {
         T result;
         if (is_scalar()) {
-            dispatch_all_types(get_dtype(), [&](auto pt) {
+            dispatch_all_numeric_types(get_dtype(), [&](auto pt) {
                 using TT = typename decltype(pt)::type;
                 result = static_cast<TT*>(get_data())[0];
             });

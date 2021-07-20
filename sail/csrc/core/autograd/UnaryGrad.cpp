@@ -20,6 +20,7 @@ TensorVector ClipMinOnly::backward(Tensor& grad) {
     Tensor cond_check =
         from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
     Tensor cond = ops::elementwise_lte(cond_check, Function::arg_storage[0]);
+
     return {grad * cond};
 }
 

@@ -1,6 +1,6 @@
 # import subprocess
 # subprocess.run(["python", "setup.py", "develop"], cwd="sail/csrc")
-
+import argparse
 import os
 import re
 import sys
@@ -28,24 +28,28 @@ build_path = ""
 allow_avx = True
 coverage = False
 
-class CICommand(distutils.cmd.Command):
+COVERAGE = False
+CI_MODE = False
+USE_AVX = True
 
-    description = 'build for ci (as in no avx)'
-    user_options = [
-    ]
+# class CICommand(distutils.cmd.Command):
 
-    def initialize_options(self):
-        pass
+#     description = 'build for ci (as in no avx)'
+#     user_options = [
+#     ]
 
-    def finalize_options(self):
-        pass
+#     def initialize_options(self):
+#         pass
+
+#     def finalize_options(self):
+#         pass
 
 
-    def run(self):
-        global allow_avx
-        global coverage
-        allow_avx = False
-        coverage = True
+#     def run(self):
+#         global COVERAGE
+#         global USE_AVX
+#         USE_AVX = False
+#         COVERAGE = True
 
 
 class CMakeExtension(Extension):
@@ -63,6 +67,9 @@ class CMakeBuild(build_ext):
         super().run()
 
     def build_cmake(self, ext):
+
+        global COVERAGE, USE_AVX
+
         subprocess.run(["rm", "-rf", "build/*"])
         subprocess.run(["python", "process_docs.py"], cwd="sail")
         subprocess.run(["python", "generate.py"], cwd="sail/csrc/python")
@@ -96,7 +103,7 @@ class CMakeBuild(build_ext):
         print (cmake_args)
 
         print (cpufeature.CPUFeature)
-        if (cpufeature.CPUFeature["AVX2"] and allow_avx):
+        if (cpufeature.CPUFeature["AVX2"] and USE_AVX):
             print ("Compiling Sail with AVX2 Support")
             cmake_args.append("-DUSE_AVX=ON")
             cmake_args.append("-DUSE_MKL=ON")
@@ -105,7 +112,7 @@ class CMakeBuild(build_ext):
             cmake_args.append("-DUSE_AVX=OFF")
             cmake_args.append("-DUSE_MKL=OFF")
 
-        if (coverage):
+        if (COVERAGE):
             cmake_args.append("-DCOVERAGE=ON")
         else:
             cmake_args.append("-DCOVERAGE=OFF")
@@ -135,13 +142,33 @@ class CMakeBuild(build_ext):
         subprocess.run(["rm", "-rf", "module_def.h"], cwd="sail/csrc/python")
         subprocess.run(["rm", "-rf", "py_module/module.h"], cwd="sail/csrc/python")
 
+def parser():
+
+    global COVERAGE, USE_AVX
+
+    filtered_args = []
+    for i, arg in enumerate(sys.argv):
+        if arg == 'coverage':
+            COVERAGE = True
+            continue
+        if arg == 'ci':
+            USE_AVX = False
+            COVERAGE = True
+            continue
+        if arg == 'install':
+            arg = 'install' 
+        filtered_args.append(arg)
+    sys.argv = filtered_args
 
 def s():
    
+    parser()
+
     save_gen = False
     if "save-gen" in sys.argv:
         save_gen = True
         sys.argv.remove("save-gen")
+    
 
     files = glob.glob("sail/csrc/core/**/*.cpp*", recursive=True)
     files = list(files) + list(glob.glob("sail/csrc/core/**/*.h*", recursive=True))
@@ -177,7 +204,7 @@ def s():
             # "sail.rand",
             ],#setuptools.find_packages(),
         ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-        cmdclass={'build_ext': CMakeBuild, "ci": CICommand},
+        cmdclass={'build_ext': CMakeBuild},
         install_requires=REQUIREMENTS
         # cmdclass=dict(build_ext=CMakeBuild),
     )

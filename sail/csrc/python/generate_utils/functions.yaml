@@ -106,83 +106,23 @@ min:
     - sail::ops::min(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
 
 tensordot:
-  full_impl: |
-      static PyObject* sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
-
-          START_EXCEPTION_HANDLING
-          PyObject* t1;
-          PyObject* t2;
-          PyObject* tuple = Py_None;
-          int v = 2;
-
-          sail::Tensor tensor1;
-          sail::Tensor tensor2;
-
-          static char* kwlist[] = {"a", "b", "axes", NULL};
-
-          if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
-                                          &tuple)) {
-              PyErr_SetString(PyExc_TypeError, "incorrect arguments");
-              return nullptr;
-          }
-
-          tensor1 = ((PyTensor*)t1)->tensor;
-          tensor2 = ((PyTensor*)t2)->tensor;
-
-          std::vector<long> axes_1;
-          std::vector<long> axes_2;
-
-          if (PyTuple_Check(tuple)) {
-              PyObject* tuple1 = PyTuple_GetItem(tuple, 0);
-              PyObject* tuple2 = PyTuple_GetItem(tuple, 1);
-
-              tuple1 = PySequence_Tuple(tuple1);
-              tuple2 = PySequence_Tuple(tuple2);
-
-              int len = PyTuple_Size(tuple1);
-              if (len == -1) {
-                  axes_1 = {PyLong_AsLong(tuple1)};
-              } else {
-                  while (len--) {
-                      axes_1.push_back(PyLong_AsLong(PyTuple_GetItem(tuple1, len)));
-                  }
-                  std::reverse(axes_1.begin(), axes_1.end());
-              }
-              len = PyTuple_Size(tuple2);
-              if (len == -1) {
-                  axes_2 = {PyLong_AsLong(tuple2)};
-              } else {
-                  while (len--) {
-                      axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
-                  }
-                  std::reverse(axes_2.begin(), axes_2.end());
-              }
-          } else {
-              if (PyLong_Check(tuple)) {
-                  v = PyLong_AsLong(tuple);
-              }
-              for (int i = tensor1.get_ndim() - 1; i > (tensor1.get_ndim() - v - 1);
-                  i--) {
-                  axes_1.insert(axes_1.begin(), i);
-              }
-
-              for (int i = 0; i < v; i++) {
-                  axes_2.push_back(i);
-              }
-          }
-
-          PyTensor* ret_class;
-          ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-          sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
-
-          ret_class->tensor = res;
-
-          return (PyObject*)ret_class;
-          END_EXCEPTION_HANDLING
-      }
-      
-      
+  new: true 
+  signatures:
+    - tensordot(Tensor t1, Tensor t2, int axes = 2)
+    - tensordot(Tensor t1, Tensor t2, ListOfIntList axes = None)
+  internal_calls:
+    - sail::ops::tensordot(parser.tensor(0), parser.tensor(1), parser.integer(2))
+    - sail::ops::tensordot(parser.tensor(0), parser.tensor(1), parser.list_of_int_list(2)[0], parser.list_of_int_list(2)[1])
+ 
+pad:
+  new: true 
+  signatures:
+    - pad(Tensor t1, ListOfIntList sizes)
+    - pad(Tensor t1, IntList sizes)
+  internal_calls:
+    - sail::ops::pad(parser.tensor(0), parser.list_of_int_list(1))
+    - sail::ops::pad(parser.tensor(0), {parser.int_list(1)})
+ 
       
 broadcast_to:
   new: true

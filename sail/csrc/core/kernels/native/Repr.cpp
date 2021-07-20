@@ -137,9 +137,26 @@ class IntFormatter {
     int max_digits_ = 1;
 };
 
+class BoolFormatter {
+   public:
+    void Scan(int64_t value) { max_digits_ = 5; }
+
+    void Print(std::ostream& os, int64_t value) const {
+        std::string print_val = "True";
+        if (value == 0) {
+            print_val = "False";
+        }
+        os << std::setw(max_digits_) << std::right << print_val;
+    }
+
+   private:
+    int max_digits_ = 1;
+};
+
 template <typename T>
-using Formatter =
-    std::conditional_t<IsFloatingPointV<T>, FloatFormatter, IntFormatter>;
+using Formatter = std::conditional_t<
+    IsFloatingPointV<T>, FloatFormatter,
+    std::conditional_t<IsIntegerV<T>, IntFormatter, BoolFormatter>>;
 
 class ReprKernel {
    public:
