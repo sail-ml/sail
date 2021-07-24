@@ -116,30 +116,28 @@ Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
     bool prepend = false;
     bool postpend = false;
 
-    if (t1.requires_grad || t2.requires_grad) {
+    auto t1_e = t1;
+    auto t2_e = t2;
+
+    if (t1_e.requires_grad || t2_e.requires_grad) {
         TensorVector vec;
-        vec.emplace_back(t1);
-        vec.emplace_back(t2);
+        vec.emplace_back(t1_e);
+        vec.emplace_back(t2_e);
         Tensor empty_tensor =
             (new autograd::Matmul(trans_a, trans_b))->apply(vec);
         return empty_tensor;
     }
 
-    if (t1.is_single() && t2.is_single()) {
+    if (t1_e.is_single() && t2_e.is_single()) {
         THROW_ERROR_DETAILED(SailCError, "Cannot pass single values to matmul");
     }
 
-    Tensor t1_e, t2_e;
-
-    if (t1.get_ndim() == 1) {
-        t1_e = t1.expand_dims(0); // NOLINT
+    if (t1_e.get_ndim() == 1) {
+        t1_e = t1_e.expand_dims(0);  // NOLINT
         prepend = true;
-    } else if (t2.get_ndim() == 1) {
-        t2_e = t2.expand_dims(1); // NOLINT
+    } else if (t2_e.get_ndim() == 1) {
+        t2_e = t2_e.expand_dims(1);  // NOLINT
         postpend = true;
-    } else {
-        t1_e = t1;
-        t2_e = t2;
     }
 
     if (t1_e.get_ndim() != t2_e.get_ndim()) {

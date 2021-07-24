@@ -14,6 +14,9 @@ namespace sail {
 
 bool is_one(LongVec& shape, int dim) { return shape[dim] == 1; }
 
+TensorShape::TensorShape(std::initializer_list<long> shape_)
+    : TensorShape(std::vector<long>(shape_)) {}
+
 TensorShape::TensorShape(LongVec shape_, LongVec strides_) {
     shape = shape_;
     strides = strides_;

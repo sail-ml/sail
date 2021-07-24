@@ -6,6 +6,7 @@
 #include "exception.h"
 #include "factories.h"
 #include "initializers/kaiming.h"
+#include "kernels/utils.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
 
@@ -49,36 +50,21 @@ void Conv2D::set_biases(Tensor& new_biases) {
 
 Tensor Conv2D::forward(Tensor& input) {
 #ifdef MKLDNN
-    std::vector<long> padding;
     std::vector<long> padding_r;
     std::vector<long> padding_l;
-    long new_width, new_height;
+
+    auto nh_nw = calculate_nh_nw(input.get_shape(), weights.get_shape(),
+                                 strides, padding_mode);
+    auto new_height = nh_nw[0];
+    auto new_width = nh_nw[1];
+
     if (padding_mode == "same") {
-        long total_height_p = 1 * (weights.get_shape().shape[2] - 1);
-        long top_pad = total_height_p / 2;
-        long bottom_pad = total_height_p - top_pad;
-
-        long total_width_p = 1 * (weights.get_shape().shape[3] - 1);
-        long left_pad = total_width_p / 2;
-        long right_pad = total_height_p - top_pad;
-
-        padding_l.push_back(top_pad);
-        padding_l.push_back(left_pad);
-
-        padding_r.push_back(bottom_pad);
-        padding_r.push_back(right_pad);
-
-        new_width = input.get_shape()[3];
-        new_height = input.get_shape()[2];
+        auto padding = calc_2d_same_padding(weights.get_shape());
+        padding_l = padding[0];
+        padding_r = padding[1];
     } else {
-        padding_r = {0, 0};
         padding_l = {0, 0};
-
-        long k_h = weights.get_shape()[2];
-        long k_w = weights.get_shape()[3];
-
-        new_height = (input.get_shape()[2] - (k_h)) / strides[0] + 1;
-        new_width = (input.get_shape()[3] - (k_w)) / strides[1] + 1;
+        padding_r = {0, 0};
     }
 
     long _batch_size = input.get_shape().shape[0];

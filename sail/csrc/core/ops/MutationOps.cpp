@@ -85,6 +85,9 @@ Tensor transpose(const Tensor& tensor1, const LongVec& dims) {
     if (dims.size() == 0) {
         return transpose(tensor1);
     }
+    if (tensor1.get_ndim() == 1) {
+        return transpose(tensor1);
+    }
     if (tensor1.get_ndim() != dims.size()) {
         throw SailCError("Transpose axes must have same length as tensor");
     }

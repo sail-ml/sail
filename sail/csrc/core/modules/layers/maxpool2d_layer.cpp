@@ -6,6 +6,7 @@
 #include "exception.h"
 #include "factories.h"
 #include "initializers/kaiming.h"
+#include "kernels/utils.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
 
@@ -19,33 +20,21 @@ using TensorVector = std::vector<Tensor>;
 Tensor MaxPool2D::forward(Tensor& input) {
 #ifdef MKLDNN
     std::vector<long> padding;
-    long new_width, new_height;
+
+    std::vector<long> padding_r;
+    std::vector<long> padding_l;
+
+    auto nh_nw =
+        calculate_nh_nw(input.get_shape(), kernel_size, strides, padding_mode);
+    auto new_height = nh_nw[0];
+    auto new_width = nh_nw[1];
+
     if (padding_mode == "same") {
-        long pad_y = (long)(((1 - (float)1 - (float)strides[0] +
-                              (float)kernel_size[0] * (float)1) /
-                             2) +
-                            (float)input.get_shape().shape[2] *
-                                ((-1 + (float)strides[0]) / 2));
-        long pad_x = (long)(((1 - (float)1 - (float)strides[1] +
-                              (float)(float)kernel_size[1] * (float)1) /
-                             2) +
-                            (float)input.get_shape().shape[3] *
-                                ((-1 + (float)strides[1]) / 2));
-        padding.push_back(pad_y);
-        padding.push_back(pad_x);
-        new_width = input.get_shape()[3];
-        new_height = input.get_shape()[2];
+        THROW_ERROR(SailCError, "Same padding not supported");
+
     } else {
-        padding.push_back(0);
-        padding.push_back(0);
-
-        long k_h = kernel_size[0];
-        long k_w = kernel_size[1];
-        long h = input.get_shape()[2];
-        long w = input.get_shape()[3];
-
-        new_height = (h + 2 * 0 - 1 * (k_h - 1) - 1) / strides[0] + 1;
-        new_width = (w + 2 * 0 - 1 * (k_w - 1) - 1) / strides[1] + 1;
+        padding_l = {0, 0};
+        padding_r = {0, 0};
     }
 
     long batch_size = input.get_shape().shape[0];
@@ -54,7 +43,8 @@ Tensor MaxPool2D::forward(Tensor& input) {
         TensorShape({batch_size, input.get_shape()[1], new_height, new_width});
 
     params.reset(new onednn::OneDNNMaxPoolingParams(
-        input, TensorShape(kernel_size), output_shape, strides, padding));
+        input, TensorShape(kernel_size), output_shape, strides, padding_l,
+        padding_r));
     layer.reset(new onednn::OneDNNMaxPooling(params));
 
     auto desc = layer->initialize();

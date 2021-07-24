@@ -10,6 +10,7 @@
 #include <iostream>
 
 #define EPS 0.00001
+#define EPS_C 0.01
 
 using namespace sail;
 TEST(ForceBinary, Add) {
@@ -81,7 +82,7 @@ TEST(ForceBinary, Divide) {
 
 }
 TEST(ForceBinary, Conv) {
-    auto x1 = random::uniform(TensorShape({1, 1, 6, 6}), 1, 2);
+    auto x1 = random::uniform(TensorShape({1, 1, 6, 6}), 1,2);
     auto x2 = random::uniform(TensorShape({1, 1, 3, 3}), 1,2);
 
     x1.requires_grad = true;
@@ -97,11 +98,11 @@ TEST(ForceBinary, Conv) {
 
     for (int i = 0; i < y.numel(); i++) {
         auto error = y_d[i] - z_d[i];
-        ASSERT_LE(error, EPS);
+        ASSERT_LE(error, EPS_C);
     }
 }
 TEST(ForceBinary, Conv2) {
-    auto x1 = random::uniform(TensorShape({1, 1, 6, 6}), 1, 2);
+    auto x1 = random::uniform(TensorShape({1, 1, 6, 6}), 1,2);
     auto x2 = random::uniform(TensorShape({1, 1, 3, 3}), 1,2);
 
     x2.requires_grad = true;
@@ -117,6 +118,6 @@ TEST(ForceBinary, Conv2) {
 
     for (int i = 0; i < y.numel(); i++) {
         auto error = y_d[i] - z_d[i];
-        ASSERT_LE(error, EPS);
+        ASSERT_LE(error, EPS_C);
     }
 }

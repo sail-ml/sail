@@ -31,7 +31,11 @@ Tensor inner_backward(Tensor u, Tensor v, std::string trans,
     }
     auto out = clone(nu * nv);
     if (transpose) {
-        out = clone(out.transpose({1, 0, 2}));
+        if (out.get_ndim() == 3) {
+            out = clone(out.transpose({1, 0, 2}));
+        } else {
+            out = clone(out.transpose());
+        }
     }
     return out;
 }
@@ -57,7 +61,7 @@ TensorVector AddMM::backward(Tensor& grad) {
         Tensor bt = ops::rollaxis(b, roll);
         ga = ops::matmul(bt, grad);
     } else {
-        auto use_trans = trans_b; //NOLINT
+        auto use_trans = trans_b;  // NOLINT
         if (trans_b == TRANS) {
             use_trans = NO_TRANS;
         } else {
@@ -74,7 +78,7 @@ TensorVector AddMM::backward(Tensor& grad) {
         Tensor at = ops::rollaxis(a, roll);
         gb = ops::matmul(at, grad);
     } else {
-        auto use_trans = trans_a; //NOLINT
+        auto use_trans = trans_a;  // NOLINT
         if (trans_a == TRANS) {
             use_trans = NO_TRANS;
         } else {

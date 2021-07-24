@@ -25,15 +25,11 @@ std::vector<Tensor> conv2d_kernel(Tensor& input, Tensor& kernel,
     long k_h = kernel.get_shape()[2];
     long k_w = kernel.get_shape()[3];
 
-    long new_height, new_width;
+    auto nh_nw = calculate_nh_nw(input.get_shape(), kernel.get_shape(), strides,
+                                 padding_mode);
 
-    if (padding_mode == "same") {
-        new_height = input.get_shape()[2];
-        new_width = input.get_shape()[3];
-    } else {
-        new_height = (input.get_shape()[2] - (k_h)) / strides[0] + 1;
-        new_width = (input.get_shape()[3] - (k_w)) / strides[1] + 1;
-    }
+    auto new_height = nh_nw[0];
+    auto new_width = nh_nw[1];
 
     auto cols2 = im2col(input, kernel.get_shape(), strides, padding_mode);
     auto cols = sail::ops::reshape(

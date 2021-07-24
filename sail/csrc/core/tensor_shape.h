@@ -24,6 +24,7 @@ class TensorShape {
 
     TensorShape(LongVec shape_, LongVec size_);
     TensorShape(LongVec shape_);
+    TensorShape(std::initializer_list<long> shape_);
 
     TensorShape reverse();
 

@@ -23,18 +23,20 @@ struct OneDNNMaxPoolingParams {
     tag dest_tag;
 
     memory::dims strides;
-    memory::dims padding;
+    memory::dims padding_l, padding_r;
     memory::dims kernel_shape;
 
     std::shared_ptr<memory> workspace_mem = nullptr;
 
     OneDNNMaxPoolingParams(Tensor src, TensorShape kernel,
                            TensorShape output_shape, std::vector<long> strides_,
-                           std::vector<long> padding_, bool back = false)
+                           std::vector<long> padding_l,
+                           std::vector<long> padding_r, bool back = false)
         : src_dims(std::move(src).get_shape().shape),
           dest_dims(std::move(output_shape).shape),
           strides(std::move(strides_)),
-          padding(std::move(padding_)),
+          padding_l(std::move(padding_l)),
+          padding_r(std::move(padding_r)),
           kernel_shape(std::move(kernel).shape),
           src_tag(tag::nchw),
           dest_tag(tag::nchw){};
@@ -74,7 +76,7 @@ class OneDNNMaxPooling {
         pooling_v2_forward_desc.reset(new pooling_v2_forward::desc(
             prop_kind::forward_training, algorithm::pooling_max, *src_md,
             *dest_md, params->strides, params->kernel_shape, params->dilation,
-            params->padding, params->padding));
+            params->padding_l, params->padding_r));
 
         auto pooling_pd = pooling_v2_forward::primitive_desc(
             *pooling_v2_forward_desc, engine);
@@ -145,12 +147,12 @@ class OneDNNMaxPoolingBackward {
         pooling_v2_backward_desc.reset(new pooling_v2_backward::desc(
             algorithm::pooling_max, *src_grad_dest_md, *grad_md,
             params->strides, params->kernel_shape, params->dilation,
-            params->padding, params->padding));
+            params->padding_l, params->padding_r));
 
         pooling_v2_forward_desc.reset(new pooling_v2_forward::desc(
             prop_kind::forward_training, algorithm::pooling_max,
             *src_grad_dest_md, *grad_md, params->strides, params->kernel_shape,
-            params->dilation, params->padding, params->padding));
+            params->dilation, params->padding_l, params->padding_r));
 
         auto pooling_pd = pooling_v2_forward::primitive_desc(
             *pooling_v2_forward_desc, engine);

@@ -18,6 +18,60 @@
 
 namespace sail {
 
+inline std::vector<std::vector<long>> calc_2d_same_padding(
+    TensorShape kernel_shape) {
+    int k_idx_1 = 2;
+    int k_idx_2 = 3;
+
+    if (kernel_shape.ndim() == 2) {
+        k_idx_1 = 0;
+        k_idx_2 = 1;
+    }
+
+    std::vector<long> padding_l, padding_r;
+    long total_height_p = 1 * (kernel_shape[k_idx_1] - 1);
+    long top_pad = total_height_p / 2;
+    long bottom_pad = total_height_p - top_pad;
+
+    long total_width_p = 1 * (kernel_shape[k_idx_2] - 1);
+    long left_pad = total_width_p / 2;
+    long right_pad = total_height_p - top_pad;
+
+    padding_l.push_back(top_pad);
+    padding_l.push_back(left_pad);
+
+    padding_r.push_back(bottom_pad);
+    padding_r.push_back(right_pad);
+
+    return {padding_l, padding_r};
+}
+
+inline std::vector<long> calculate_nh_nw(TensorShape input_shape,
+                                         TensorShape kernel_shape,
+                                         std::vector<long> strides,
+                                         std::string padding_mode) {
+    long k_h, k_w;
+    if (kernel_shape.ndim() == 4) {
+        k_h = kernel_shape[2];
+        k_w = kernel_shape[3];
+    } else {
+        k_h = kernel_shape[0];
+        k_w = kernel_shape[1];
+    }
+
+    long new_height, new_width;
+
+    if (padding_mode == "same") {
+        new_height = input_shape[2];
+        new_width = input_shape[3];
+    } else {
+        new_height = (input_shape[2] - (k_h)) / strides[0] + 1;
+        new_width = (input_shape[3] - (k_w)) / strides[1] + 1;
+    }
+
+    return {new_height, new_width};
+}
+
 inline Tensor im2col(Tensor& im2col_input, TensorShape kernel_shape,
                      std::vector<long> strides, std::string padding_mode) {
     long d = 1;
@@ -42,7 +96,6 @@ inline Tensor im2col(Tensor& im2col_input, TensorShape kernel_shape,
     } else {
         padding_r = {0, 0};
         padding_l = {0, 0};
-
     }
 
     auto im2col_input2 = im2col_input;

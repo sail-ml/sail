@@ -210,8 +210,5 @@ class MaxPool2D(UnitTest):
     def test2(self):
         img = sail.random.uniform(0, 1, (64, 4, 60, 60))
         lay = sail.modules.MaxPool2D(2, padding_mode="same")
-        y = lay(img)
-        self.assert_eq(y.shape, (64, 4, 60, 60))
-
-        z = sail.sum(y)
-        z.backward()
+        self.assert_throws(lay, (img, ), sail.SailError)
+       
