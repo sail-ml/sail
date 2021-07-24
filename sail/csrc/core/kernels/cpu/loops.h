@@ -17,8 +17,6 @@
 #include "xsimd/xsimd.hpp"
 
 using Tensor = sail::Tensor;
-template <std::size_t N, typename... Args>
-using get = typename get_Nth_type<N, Args...>::type;
 
 namespace sail {
 

@@ -117,7 +117,7 @@ Tensor Conv2D::forward(Tensor& input) {
     return Tdest;
 
 #endif
-    return ops::conv2d(input, weights, strides);
+    return ops::conv2d(input, weights, strides, padding_mode);
 }
 
 }  // namespace modules

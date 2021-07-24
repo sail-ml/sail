@@ -99,78 +99,6 @@ PyObject* get_optimizers(PyObject* m) {
     return m;
 }
 
-PyMODINIT_FUNC PyInit_libsail_c(void) {
-    import_array();
-    PyObject* m;
-    if (PyType_Ready(&PyTensorType) < 0) return NULL;
-
-    if (PyType_Ready(&PyDtypeBase) < 0) return NULL;
-
-    m = PyModule_Create(&module);
-    if (m == NULL) return NULL;
-
-    if (PyModule_AddObject(m, "Tensor", (PyObject*)&PyTensorType) < 0) {
-        Py_DECREF(&PyTensorType);
-        Py_DECREF(m);
-        return NULL;
-    }
-
-    PyObject* int8 = (PyObject*)generate_dtype(Dtype::sInt8, 1);
-    PyObject* uint8 = (PyObject*)generate_dtype(Dtype::sUInt8, 2);
-    PyObject* int16 = (PyObject*)generate_dtype(Dtype::sInt16, 3);
-    PyObject* uint16 = (PyObject*)generate_dtype(Dtype::sUInt16, 4);
-    PyObject* int32 = (PyObject*)generate_dtype(Dtype::sInt32, 5);
-    PyObject* uint32 = (PyObject*)generate_dtype(Dtype::sUInt32, 6);
-    PyObject* int64 = (PyObject*)generate_dtype(Dtype::sInt64, 7);
-    PyObject* uint64 = (PyObject*)generate_dtype(Dtype::sUInt64, 8);
-    PyObject* float32 = (PyObject*)generate_dtype(Dtype::sFloat32, 11);
-    PyObject* float64 = (PyObject*)generate_dtype(Dtype::sFloat64, 12);
-
-    Py_INCREF(int8);
-    Py_INCREF(uint8);
-    Py_INCREF(int16);
-    Py_INCREF(uint16);
-    Py_INCREF(int32);
-    Py_INCREF(uint32);
-    Py_INCREF(int64);
-    Py_INCREF(uint64);
-    Py_INCREF(float32);
-    Py_INCREF(float64);
-
-    PyModule_AddObject(m, "DimensionError", PyDimensionError);
-    PyModule_AddObject(m, "SailError", PySailError);
-
-    PyModule_AddObject(m, "int8", int8);
-    PyModule_AddObject(m, "uint8", uint8);
-    PyModule_AddObject(m, "int16", int16);
-    PyModule_AddObject(m, "uint16", uint16);
-    PyModule_AddObject(m, "int32", int32);
-    PyModule_AddObject(m, "uint32", uint32);
-    PyModule_AddObject(m, "int64", int64);
-    PyModule_AddObject(m, "uint64", uint64);
-    PyModule_AddObject(m, "float32", float32);
-    PyModule_AddObject(m, "float64", float64);
-
-    PyModule_AddFunctions(m, SailOpsMethods);
-
-    PyObject *m_rand, *m_loss, *m_opt, *m_mods, *m_init;
-
-    m_rand = PyModule_Create(&random_module);
-    m_loss = PyModule_Create(&loss_module);
-    m_opt = PyModule_Create(&optimizer_module);
-    m_mods = PyModule_Create(&modules_module);
-    m_init = PyModule_Create(&init_module);
-
-    PyModule_AddObject(m, "init", get_inits(m_init));
-    PyModule_AddObject(m, "random", get_random(m_rand));
-    PyModule_AddObject(m, "losses", get_loss(m_loss));
-    PyModule_AddObject(m, "optimizers", get_optimizers(m_opt));
-    PyModule_AddObject(m, "modules", get_modules(m_mods));
-
-    /// RANDOM MODULE
-
-    return m;
-}
 PyMODINIT_FUNC PyInit_libsail(void) {
     import_array();
     PyObject* m;
@@ -187,6 +115,7 @@ PyMODINIT_FUNC PyInit_libsail(void) {
         return NULL;
     }
 
+    PyObject* boolean = (PyObject*)generate_dtype(Dtype::sBool, 0);
     PyObject* int8 = (PyObject*)generate_dtype(Dtype::sInt8, 1);
     PyObject* uint8 = (PyObject*)generate_dtype(Dtype::sUInt8, 2);
     PyObject* int16 = (PyObject*)generate_dtype(Dtype::sInt16, 3);
@@ -198,6 +127,7 @@ PyMODINIT_FUNC PyInit_libsail(void) {
     PyObject* float32 = (PyObject*)generate_dtype(Dtype::sFloat32, 11);
     PyObject* float64 = (PyObject*)generate_dtype(Dtype::sFloat64, 12);
 
+    Py_INCREF(boolean);
     Py_INCREF(int8);
     Py_INCREF(uint8);
     Py_INCREF(int16);
@@ -212,6 +142,7 @@ PyMODINIT_FUNC PyInit_libsail(void) {
     PyModule_AddObject(m, "DimensionError", PyDimensionError);
     PyModule_AddObject(m, "SailError", PySailError);
 
+    PyModule_AddObject(m, "bool_", boolean);
     PyModule_AddObject(m, "int8", int8);
     PyModule_AddObject(m, "uint8", uint8);
     PyModule_AddObject(m, "int16", int16);

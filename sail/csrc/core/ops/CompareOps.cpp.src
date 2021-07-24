@@ -45,9 +45,9 @@ Tensor clip_max(const Tensor& tensor1, const double max) {
 
 // clang-format off
 /** begin block
- * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
- * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub]
- * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
+ * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte, elementwise_ne]
+ * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub, not_equal_stub]
+ * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual, ElementwiseNotEqual]
  */
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {

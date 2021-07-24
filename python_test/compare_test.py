@@ -20,6 +20,28 @@ class EqTest(UnitTest):
             arr3 = x1.numpy() == x2.numpy()
 
             self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 == 0.5 
+
+            arr3 = x1.numpy() == 0.5
+
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_pre_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 =  0.5 == x1 
+
+            arr3 = 0.5 == x1.numpy()
+
+            self.assert_eq_np_sail(arr3, x3)
 
 class GTTest(UnitTest):
 
@@ -34,6 +56,26 @@ class GTTest(UnitTest):
 
             arr3 = x1.numpy() > x2.numpy()
 
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 > 0.5
+
+            arr3 = x1.numpy() > 0.5
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_pre_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = 0.5 > x1
+
+            arr3 = 0.5 > x1.numpy()
             self.assert_eq_np_sail(arr3, x3)
 
 class LTTest(UnitTest):
@@ -50,6 +92,26 @@ class LTTest(UnitTest):
             arr3 = x1.numpy() < x2.numpy()
 
             self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 < 0.5
+
+            arr3 = x1.numpy() < 0.5
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_pre_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = 0.5 < x1
+
+            arr3 = 0.5 < x1.numpy()
+            self.assert_eq_np_sail(arr3, x3)
 
 class GTETest(UnitTest):
 
@@ -65,6 +127,28 @@ class GTETest(UnitTest):
             arr3 = x1.numpy() >= x2.numpy()
 
             self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 >= 0.5 
+
+            arr3 = x1.numpy() >= 0.5
+
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_pre_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = 0.5 >= x1
+
+            arr3 = 0.5 >= x1.numpy()
+
+            self.assert_eq_np_sail(arr3, x3)
 
 class LTETest(UnitTest):
 
@@ -78,6 +162,65 @@ class LTETest(UnitTest):
             x3 = x1 <= x2 
 
             arr3 = x1.numpy() <= x2.numpy()
+
+            self.assert_eq_np_sail(arr3, x3)
+   
+    def test_bas_numerice(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 <= 0.5
+
+            arr3 = x1.numpy() <= 0.5 
+
+            self.assert_eq_np_sail(arr3, x3)
+   
+    def test_bas__prenumerice(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = 0.5 <= x1
+
+            arr3 = 0.5 <= x1.numpy()
+
+            self.assert_eq_np_sail(arr3, x3)
+
+class NETest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    def test_base(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+            x2 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 != x2 
+
+            arr3 = x1.numpy() != x2.numpy()
+
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = x1 != 0.5 
+
+            arr3 = x1.numpy() != 0.5
+
+            self.assert_eq_np_sail(arr3, x3)
+    
+    def test_base_pre_numeric(self):
+        times = []
+        for c in choices:
+            x1 = sail.random.uniform(0, 1, c)
+
+            x3 = 0.5 != x1
+
+            arr3 = 0.5 != x1.numpy()
 
             self.assert_eq_np_sail(arr3, x3)
 

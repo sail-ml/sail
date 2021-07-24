@@ -55,8 +55,6 @@ class TensorBody {
 
     ~TensorBody();
 
-    TensorBody::pointer create_owner();
-
     void* get_data();
     void set_data(void* d);
     Dtype get_dtype();
@@ -73,6 +71,7 @@ class TensorBody {
     int get_ref_count();
 
     void force_incref();
+    void force_decref();
 
     void set_shape(const TensorShape& s);
 

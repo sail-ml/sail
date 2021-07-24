@@ -57,40 +57,23 @@ TensorShape::TensorShape(LongVec shape_) {
 int TensorShape::next() {
     int i = 0;
 
-    if (enforced == -1) {
-        if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
-            return d_ptr;
-        }
-        if (shape.size() == 1) {
-            d_ptr += strides[0];
-            coordinates[0]++;
-        } else if (shape.size() == 2) {
-            if (coordinates[1] < shape_m1[1]) {
-                coordinates[1]++;
-                d_ptr += strides[1];
-            } else {
-                coordinates[1] = 0;
-                coordinates[0]++;
-                d_ptr += strides[0] - back_strides[1];
-            }
-        } else {
-            for (i = shape.size() - 1; i >= 0; i--) {
-                if (coordinates[i] < shape_m1[i]) {
-                    coordinates[i] += 1;
-                    d_ptr += strides[i];
-                    at = i;
-                    break;
-                } else {
-                    coordinates[i] = 0;
-                    d_ptr -= back_strides[i];
-                    at = i;
-                }
-            }
-        }
+    if (shape.size() == 0 || (shape.size() == 1 && shape[0] == 1)) {
         return d_ptr;
     }
-    for (i = shape.size() - 1; i >= 0; i--) {
-        if (i == enforced) {
+    if (shape.size() == 1) {
+        d_ptr += strides[0];
+        coordinates[0]++;
+    } else if (shape.size() == 2) {
+        if (coordinates[1] < shape_m1[1]) {
+            coordinates[1]++;
+            d_ptr += strides[1];
+        } else {
+            coordinates[1] = 0;
+            coordinates[0]++;
+            d_ptr += strides[0] - back_strides[1];
+        }
+    } else {
+        for (i = shape.size() - 1; i >= 0; i--) {
             if (coordinates[i] < shape_m1[i]) {
                 coordinates[i] += 1;
                 d_ptr += strides[i];
@@ -103,6 +86,7 @@ int TensorShape::next() {
             }
         }
     }
+    return d_ptr;
 
     return d_ptr;
 }
@@ -181,13 +165,6 @@ void TensorShape::reset() {
     at = -1;
 }
 
-void TensorShape::enforce_axis(int axis) {
-    if (axis < 0) {
-        axis = ndim() + axis;
-    }
-    enforced = axis;
-}
-
 void TensorShape::insert_one(const int dim) {
     int new_dim = dim;
     if (dim < 0) {
@@ -220,19 +197,6 @@ void TensorShape::remove_one(const int dim) {
 
     recompute(true);
 }
-void TensorShape::remove(const int dim) {
-    int new_dim = dim;
-    if (new_dim < 0) {
-        new_dim = new_dim + ndim();
-    }
-
-    if (new_dim > shape.size()) {
-        THROW_ERROR_DETAILED(DimensionError,
-                             "Dimension value is too large for squeeze");
-    }
-    shape.erase(shape.begin() + new_dim);
-    recompute(true);
-}
 
 long TensorShape::numel() const {
     if (shape.size() == 0) {
@@ -241,24 +205,6 @@ long TensorShape::numel() const {
     long s = 1;
     for (long a : shape) {
         s *= a;
-    }
-    return s;
-}
-long TensorShape::numel_avoid(int dim) const {
-    long s = 1;
-    int c = 0;
-    for (long a : shape) {
-        if (c != dim) {
-            s *= a;
-        }
-        c += 1;
-    }
-    return s;
-}
-long TensorShape::getTotalSize(int mod) {
-    long s = 1;
-    for (long a : shape) {
-        s *= (a * mod);
     }
     return s;
 }
@@ -275,16 +221,6 @@ std::string TensorShape::get_string() const {
     x.pop_back();
 
     return std::string("(") + x + std::string(")");
-}
-
-std::vector<long> TensorShape::generate_all_indexes() {
-    std::vector<long> out;
-    for (int i = 0; i < numel(); i++) {
-        out.push_back(d_ptr);
-        next();
-    }
-    reset();
-    return out;
 }
 
 TensorShape TensorShape::roll_axis(long axis, long position) {

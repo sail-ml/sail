@@ -32,8 +32,11 @@ Tensor log(const Tensor& tensor1) {
         vec.emplace_back(tensor1);
         return (new autograd::Log())->apply(vec);
     }
-    Tensor empty_tensor = empty_like(tensor1);
-    sail::internal::log_stub(tensor1, empty_tensor);
+    auto dt = promote_dtype(tensor1.get_dtype(), tensor1.get_dtype(), true);
+    Tensor empty_tensor = empty(0, dt, tensor1.get_shape());
+    empty_tensor.requires_grad = tensor1.requires_grad;
+    auto tensor1_ = tensor1.cast(dt);
+    sail::internal::log_stub(tensor1_, empty_tensor);
     return empty_tensor;
 }
 

@@ -35,8 +35,8 @@ class BasicCNN(UnitTest):
         x_test = x_test[ar]
         y_test = y_test[ar]
 
-        x_train = x_train[:10000]
-        y_train = y_train[:10000]
+        x_train = x_train[:5000]
+        y_train = y_train[:5000]
         x_test = x_test[:500]
         y_test = y_test[:500]
 
@@ -46,13 +46,13 @@ class BasicCNN(UnitTest):
 
             def __init__(self):
                 super().__init__()
-                self.linear1 = sail.modules.Conv2D(1, 4, (3, 3), (1, 1))
-                self.linear2 = sail.modules.Conv2D(4, 8, (3, 3), (2, 2))
+                self.linear1 = sail.modules.Conv2D(1, 4, (5, 5), (1, 1))
+                self.linear2 = sail.modules.Conv2D(4, 8, (5, 5), (2, 2))
                 self.maxpool2d = sail.modules.MaxPool2D(2)
                 self.relu1 = sail.modules.ReLU()
                 self.relu2 = sail.modules.ReLU()
 
-                self.z = z = 8 * 6 * 6
+                self.z = z = 8 * 4 * 4
                 self.linear = sail.modules.Linear(z, 10)
 
             def forward(self, x):
@@ -75,7 +75,7 @@ class BasicCNN(UnitTest):
             return np.mean(y)
 
         epochs = 10
-        batch_size = 16
+        batch_size = 32
         learning_rate = 1e-4
 
         # define optimizer
@@ -127,6 +127,5 @@ class BasicCNN(UnitTest):
 
 
         self.assert_gt(losses[0], losses[-1])
-        self.assert_lt(accs[0], accs[-1])
 
         return

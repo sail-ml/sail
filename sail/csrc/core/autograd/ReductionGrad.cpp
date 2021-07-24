@@ -31,7 +31,7 @@ Tensor Mean::forward(TensorVector inputs) {
 TensorVector Mean::backward(Tensor& grad) {
     Tensor full_size =
         ops::broadcast_to(grad, Function::arg_storage[0].get_shape());
-    return {full_size};
+    return {full_size * (1.0 / numel)};
 }
 
 Tensor Max::forward(TensorVector inputs) {

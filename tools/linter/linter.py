@@ -19,10 +19,14 @@ def execute(args):
 
     res = True
     for file in files:
-        print ("Linting " + file)  
-        if (not args.no_clang and ".h" not in file):
-            res = (launch_clang(command, file) and res)
-        if (not args.no_custom):
-            res = (launch_custom(file) and res)
+        try:
+            if ("test" not in file and "python" not in file):
+                print ("Linting " + file)  
+                if (not args.no_clang and ".h" not in file):
+                    res = (launch_clang(command, file) and res)
+                if (not args.no_custom):
+                    res = (launch_custom(file) and res)
+        except FileNotFoundError:
+            pass
     if (not res):
         exit(1)

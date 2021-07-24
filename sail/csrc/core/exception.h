@@ -83,5 +83,4 @@ class TypeError : public SailCError {
     }
 
 #define THROW_ERROR(err_t, ...) throw err_t(__VA_ARGS__)
-#define THROW_ERROR_DETAILED(err_t, ...) \
-    throw err_t(__VA_ARGS__, "\n", "File: ", __FILE__, "\nLine: ", __LINE__)
+#define THROW_ERROR_DETAILED(err_t, ...) throw err_t(__VA_ARGS__)

@@ -54,8 +54,8 @@ Tensor Tensor::_inplace_reshape(const TensorShape& new_shape) {
     return *this;
 }
 
-Tensor Tensor::transpose() { return ops::transpose(*this); }
-Tensor Tensor::transpose(const LongVec& axes) {
+Tensor Tensor::transpose() const { return ops::transpose(*this); }
+Tensor Tensor::transpose(const LongVec& axes) const {
     return ops::transpose(*this, axes);
 }
 
@@ -91,30 +91,12 @@ Tensor Tensor::squeeze(const int dim) const {
 }
 
 void Tensor::set_shape(const TensorShape& s) { body.get()->set_shape(s); }
-void Tensor::set_view() { body.get()->set_is_view(true); }
-void Tensor::set_data(void* data) { body.get()->set_data(data); }
+void Tensor::set_view(bool val) { body.get()->set_is_view(val); }
 
 long Tensor::get_ndim() const { return get_shape().ndim(); }
 long Tensor::ndim() const { return get_shape().ndim(); }
 Tensor Tensor::get_grad() const { return body.get()->get_grad(); }
 void Tensor::set_grad(Tensor& g) { body.get()->set_grad(g); }
-
-void Tensor::swap(Tensor& t) {
-    bool t_rq = requires_grad;
-    bool t_is_grad = is_grad;
-    std::shared_ptr<autograd::Function> t_fcn = fcn;
-    TensorBody::pointer t_body = body;
-
-    body = t.body;
-    fcn = t.fcn;
-    requires_grad = t.requires_grad;
-    is_grad = t.is_grad;
-
-    t.body = t_body;
-    t.fcn = t_fcn;
-    t.requires_grad = t_rq;
-    t.is_grad = t_is_grad;
-}
 
 void Tensor::clear_grad() { body.get()->clear_grad(); }
 void Tensor::clear_function() { fcn = nullptr; }
@@ -143,6 +125,14 @@ bool Tensor::is_scalar() const {
     return false;
 }
 
+bool Tensor::is_single() const {
+    if ((get_shape().shape.size() == 0) ||
+        (get_shape().shape.size() == 1 && get_shape().shape[0] == 1)) {
+        return true;
+    }
+    return false;
+}
+
 void Tensor::register_op(autograd::Function* new_func) {
     fcn = std::shared_ptr<autograd::Function>(new_func);
 }
@@ -164,50 +154,8 @@ Tensor Tensor::assign(const Tensor& other) {
     return *this;
 }
 
-Tensor Tensor::fill(const Numeric& fill_val) {
-    dispatch_all_numeric_types(get_dtype(), [&](auto pt) {
-        using T = typename decltype(pt)::type;
-        T numeric_val = ((T*)fill_val.get()->get_data())[0];
-        T* data = (T*)get_data();
-
-        MultiTensorIterator iter = MultiTensorIterator(get_shape());
-        int inner_loop_size = iter.inner_loop_size();
-        int outer_steps = iter.out_loop_size();
-        for (int i = 0; i < outer_steps; i++) {
-            for (int j = 0; j < inner_loop_size; j += 1) {
-                data[iter.d_ptrs[0]] = numeric_val;
-                iter.advance_d_ptr(1);
-            }
-            iter.backup_d_ptr();
-            iter.next();
-        }
-    });
-    return *this;
-}
-
-Tensor Tensor::slice(long start, long stop, long axis) {
-    char* new_ptr;
-    TensorSize new_shape;
-    TensorSize new_strides;
-    alignemnt_information info = get_info();
-    TensorShape shape_details = get_shape();
-    long offset = 0;
-
-    char* data = (char*)get_data();
-
-    offset += (shape_details.strides[0] * info.dtype_size) * (start);
-    new_ptr = data + offset;
-    new_shape.push_back(stop - start);
-    new_strides.push_back(shape_details.strides[0]);
-    for (int i = 1; i < shape_details.ndim(); i++) {
-        new_shape.push_back(shape_details.shape[i]);
-        new_strides.push_back(shape_details.strides[i]);
-    }
-
-    Tensor e = make_view((void*)new_ptr, get_dtype(),
-                         TensorShape(new_shape, new_strides));
-
-    return e;
+Tensor Tensor::slice(long start, long stop, long step) {
+    return slice(Slice({start, stop, step}));
 }
 
 Tensor Tensor::slice(Slice slice) {
@@ -274,12 +222,6 @@ Tensor Tensor::operator[](const int index) const {
     return e;
 }
 
-void Tensor::swap_body(Tensor& t) {
-    TensorBody::pointer temp = body;
-    body = t.body;
-    t.body = temp;
-}
-
 Tensor Tensor::operator+(const Tensor& other) { return ops::add(*this, other); }
 Tensor Tensor::operator+(const Numeric other) {
     Tensor t = Tensor(other.get(), requires_grad);
@@ -320,6 +262,9 @@ Tensor Tensor::operator/(const Numeric other) {
 
 Tensor Tensor::operator-() { return ops::negate(*this); }
 
+Tensor Tensor::operator!=(const Tensor& other) {
+    return ops::elementwise_ne(*this, other);
+}
 Tensor Tensor::operator==(const Tensor& other) {
     return ops::elementwise_equal(*this, other);
 }
@@ -336,7 +281,34 @@ Tensor Tensor::operator<(const Tensor& other) {
     return ops::elementwise_lt(*this, other);
 }
 
-Tensor Tensor::sum() { return ops::sum(*this); }
+Tensor Tensor::operator!=(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_ne(*this, t);
+}
+Tensor Tensor::operator==(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_equal(*this, t);
+}
+Tensor Tensor::operator>=(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_gte(*this, t);
+}
+Tensor Tensor::operator<=(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_lte(*this, t);
+}
+Tensor Tensor::operator>(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_gt(*this, t);
+}
+Tensor Tensor::operator<(const Numeric& other) {
+    Tensor t = Tensor(other.get(), requires_grad);
+    return ops::elementwise_lt(*this, t);
+}
+
+Tensor Tensor::sum(int axis, bool keepdims) {
+    return ops::sum(*this, axis, keepdims);
+}
 
 void Tensor::backward() {
     Tensor t = one_scalar(get_dtype());
@@ -381,12 +353,29 @@ Tensor operator*(Numeric n, Tensor& te) {
     return t * te;
 }
 
-int _numel(TensorSize _shape) {
-    auto size = 1;
-    for (long value : _shape) {
-        size = size * value;
-    }
-    return size;
+Tensor operator!=(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_ne(t, te);
+}
+Tensor operator==(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_equal(t, te);
+}
+Tensor operator>=(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_gte(t, te);
+}
+Tensor operator<=(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_lte(t, te);
+}
+Tensor operator>(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_gt(t, te);
+}
+Tensor operator<(Numeric n, Tensor& te) {
+    Tensor t = Tensor(n.get(), te.requires_grad);
+    return ops::elementwise_lt(t, te);
 }
 
 }  // namespace sail

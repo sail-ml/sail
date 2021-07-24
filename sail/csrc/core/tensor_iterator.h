@@ -75,7 +75,7 @@ class TensorIterator {
     std::vector<long> lasts;
 
     explicit TensorIterator() = default;
-    TensorIterator(TensorShape& t_shape);
+    TensorIterator(TensorShape t_shape);
 
     long numel() const;
     long ndim() const;

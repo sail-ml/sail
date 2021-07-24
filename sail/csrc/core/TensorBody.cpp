@@ -25,14 +25,6 @@ TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view) {
     data = _malloc_align(shape->numel(), info.alignment, info.dtype_size);
 };
 
-TensorBody::pointer TensorBody::create_owner() {
-    TensorBody::pointer a = new TensorBody(data, dtype, get_shape(), view);
-    int temp_ref = get_ref_count();
-    refcount_ = a->get_ref_count();
-    a->refcount_ = temp_ref;
-    return a;
-}
-
 TensorBody::~TensorBody() {
     if (data != nullptr) {
         if (!view) {
@@ -46,9 +38,6 @@ TensorBody::~TensorBody() {
         data = nullptr;
         shape = nullptr;
         grad = nullptr;
-    } else {
-        THROW_ERROR(SailCError,
-                    "Cannot free a tensor that does not have any data");
     }
 }
 
@@ -69,7 +58,6 @@ void TensorBody::clear_grad() {
 }
 
 void* TensorBody::get_data() { return data; }
-void TensorBody::set_data(void* d) { data = d; }
 Dtype TensorBody::get_dtype() { return dtype; }
 TensorShape TensorBody::get_shape() { return *shape; }
 alignemnt_information TensorBody::get_info() { return info; }
@@ -80,6 +68,9 @@ void TensorBody::set_is_view(bool x) { view = x; }
 int TensorBody::get_ref_count() { return (int)refcount_; }
 void TensorBody::force_incref() {
     refcount_.fetch_add(1, std::memory_order_relaxed);
+}
+void TensorBody::force_decref() {
+    refcount_.fetch_sub(1, std::memory_order_release);
 }
 
 void TensorBody::set_shape(const TensorShape& s) {

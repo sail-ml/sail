@@ -20,10 +20,9 @@
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string.hpp> 
-#include <boost/algorithm/string/classification.hpp>  
-#include <boost/algorithm/string/split.hpp>  
-
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #define NONE_CHECK_FAIL(v) \
     if (v == Py_None) {    \
@@ -33,7 +32,6 @@
     if (v == Py_None) {    \
         return true;       \
     }
-
 
 using StringList = typename std::vector<std::string>;
 using StringMap = typename std::unordered_map<std::string, std::string>;
@@ -248,40 +246,31 @@ struct FunctionSignature {
             try {
                 switch (type_) {
                     case ParameterType::INT64:
-                        is_good = (verify_int(
-                            arg, allow_none)); 
+                        is_good = (verify_int(arg, allow_none));
                         break;
                     case ParameterType::FLOAT:
-                        is_good = (verify_float(
-                            arg, allow_none)); 
+                        is_good = (verify_float(arg, allow_none));
                         break;
                     case ParameterType::TENSOR:
-                        is_good = (verify_Tensor(
-                            arg, allow_none)); 
+                        is_good = (verify_Tensor(arg, allow_none));
                         break;
                     case ParameterType::INT_LIST:
-                        is_good = (verify_int_list(
-                            arg, allow_none)); 
+                        is_good = (verify_int_list(arg, allow_none));
                         break;
                     case ParameterType::FLOAT_LIST:
-                        is_good = (verify_float_list(
-                            arg, allow_none)); 
+                        is_good = (verify_float_list(arg, allow_none));
                         break;
                     case ParameterType::LIST_OF_INT_LIST:
-                        is_good = (verify_list_of_int_list(
-                            arg, allow_none)); 
+                        is_good = (verify_list_of_int_list(arg, allow_none));
                         break;
                     case ParameterType::TENSOR_LIST:
-                        is_good = (verify_tensor_list(
-                            arg, allow_none)); 
+                        is_good = (verify_tensor_list(arg, allow_none));
                         break;
                     case ParameterType::BOOL:
-                        is_good = (verify_bool(
-                            arg, allow_none)); 
+                        is_good = (verify_bool(arg, allow_none));
                         break;
                     case ParameterType::STRING:
-                        is_good = (verify_string(
-                            arg, allow_none)); 
+                        is_good = (verify_string(arg, allow_none));
                         break;
                     case ParameterType::PYOBJECT:
                         is_good = true;

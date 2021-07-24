@@ -149,6 +149,9 @@ def parser():
     filtered_args = []
     for i, arg in enumerate(sys.argv):
         if arg == 'coverage':
+            file = list(glob.glob("**/*.gcda")) + list(glob.glob("**/*.gcno"))
+            for f in file:
+                os.remove(file)
             COVERAGE = True
             continue
         if arg == 'ci':

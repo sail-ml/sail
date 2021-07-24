@@ -13,6 +13,13 @@ namespace autograd {
 
 using TensorVector = std::vector<Tensor>;
 
+class Negate : public Function {
+   public:
+    explicit Negate() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
+};
+
 class ClipMinOnly : public Function {
    public:
     Tensor stored_log;

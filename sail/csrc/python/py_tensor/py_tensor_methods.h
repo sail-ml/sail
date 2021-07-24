@@ -115,8 +115,7 @@ inline PyObject *inner_numpy(sail::Tensor &tensor) {
 
     PyObject *array;
     if (tensor.is_scalar()) {
-        void *data =
-            malloc(tensor.get_info().dtype_size); 
+        void *data = malloc(tensor.get_info().dtype_size);
 
         memcpy(data, tensor.get_data(), tensor.get_info().dtype_size);
         long shape = 0;
@@ -259,7 +258,7 @@ static PyObject *PyTensor_backward(PyTensor *self, void *closure) {
 
 static long PyTensor_len(PyTensor *self) { return self->tensor.len(); }
 
-static PyObject *PyTensor_RichCompare(PyTensor *self, PyObject *other, int op) {
+static PyObject *PyTensor_RichCompare(PyObject *self, PyObject *other, int op) {
     START_EXCEPTION_HANDLING
     sail::Tensor tensor1;
     sail::Tensor tensor2;
@@ -268,24 +267,108 @@ static PyObject *PyTensor_RichCompare(PyTensor *self, PyObject *other, int op) {
         !PyObject_TypeCheck(other, &PyTensorType)) {
         return nullptr;
     }
-    tensor1 = ((PyTensor *)self)->tensor;
-    tensor2 = ((PyTensor *)other)->tensor;
 
     PyTensor *ret_class;
     ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
 
-    if (op == Py_LT) {
-        ret_class->tensor = tensor1 < tensor2;
-    } else if (op == Py_LE) {
-        ret_class->tensor = tensor1 <= tensor2;
-    } else if (op == Py_EQ) {
-        ret_class->tensor = tensor1 == tensor2;
-    } else if (op == Py_NE) {
-        throw SailCError("nope");
-    } else if (op == Py_GT) {
-        ret_class->tensor = tensor1 > tensor2;
-    } else if (op == Py_GE) {
-        ret_class->tensor = tensor1 >= tensor2;
+    if (PyObject_TypeCheck(self, &PyTensorType) &&
+        PyObject_TypeCheck(other, &PyTensorType)) {
+        tensor1 = ((PyTensor *)self)->tensor;
+        tensor2 = ((PyTensor *)other)->tensor;
+
+        if (op == Py_LT) {
+            ret_class->tensor = tensor1 < tensor2;
+        } else if (op == Py_LE) {
+            ret_class->tensor = tensor1 <= tensor2;
+        } else if (op == Py_EQ) {
+            ret_class->tensor = tensor1 == tensor2;
+        } else if (op == Py_NE) {
+            ret_class->tensor = tensor1 != tensor2;
+        } else if (op == Py_GT) {
+            ret_class->tensor = tensor1 > tensor2;
+        } else if (op == Py_GE) {
+            ret_class->tensor = tensor1 >= tensor2;
+        }
+    }
+
+    if (PyObject_TypeCheck(self, &PyTensorType) &&
+        PyObject_TypeCheck(other, &PyLong_Type)) {
+        tensor1 = ((PyTensor *)self)->tensor;
+        long val = PyLong_AsLong(other);
+
+        if (op == Py_LT) {
+            ret_class->tensor = tensor1 < val;
+        } else if (op == Py_LE) {
+            ret_class->tensor = tensor1 <= val;
+        } else if (op == Py_EQ) {
+            ret_class->tensor = tensor1 == val;
+        } else if (op == Py_NE) {
+            ret_class->tensor = tensor1 != val;
+        } else if (op == Py_GT) {
+            ret_class->tensor = tensor1 > val;
+        } else if (op == Py_GE) {
+            ret_class->tensor = tensor1 >= val;
+        }
+    }
+
+    if (PyObject_TypeCheck(self, &PyLong_Type) &&
+        PyObject_TypeCheck(other, &PyTensorType)) {
+        long val = PyLong_AsLong(self);
+        tensor2 = ((PyTensor *)other)->tensor;
+
+        if (op == Py_LT) {
+            ret_class->tensor = val < tensor2;
+        } else if (op == Py_LE) {
+            ret_class->tensor = val <= tensor2;
+        } else if (op == Py_EQ) {
+            ret_class->tensor = val == tensor2;
+        } else if (op == Py_NE) {
+            ret_class->tensor = val != tensor2;
+        } else if (op == Py_GT) {
+            ret_class->tensor = val > tensor2;
+        } else if (op == Py_GE) {
+            ret_class->tensor = val >= tensor2;
+        }
+    }
+
+    if (PyObject_TypeCheck(self, &PyTensorType) &&
+        PyObject_TypeCheck(other, &PyFloat_Type)) {
+        tensor1 = ((PyTensor *)self)->tensor;
+        double val = (double)PyFloat_AsDouble(other);
+
+        if (op == Py_LT) {
+            ret_class->tensor = tensor1 < val;
+        } else if (op == Py_LE) {
+            ret_class->tensor = tensor1 <= val;
+        } else if (op == Py_EQ) {
+            ret_class->tensor = tensor1 == val;
+        } else if (op == Py_NE) {
+            ret_class->tensor = tensor1 != val;
+        } else if (op == Py_GT) {
+            ret_class->tensor = tensor1 > val;
+        } else if (op == Py_GE) {
+            ret_class->tensor = tensor1 >= val;
+        }
+    }
+
+    if (PyObject_TypeCheck(self, &PyFloat_Type) &&
+        PyObject_TypeCheck(other, &PyTensorType)) {
+        double val = (double)PyFloat_AsDouble(self);
+        tensor2 = ((PyTensor *)other)->tensor;
+
+        if (op == Py_LT) {
+            ret_class->tensor = val < tensor2;
+        } else if (op == Py_LE) {
+            ret_class->tensor = val <= tensor2;
+        } else if (op == Py_EQ) {
+            ret_class->tensor = val == tensor2;
+        } else if (op == Py_NE) {
+            ret_class->tensor = val != tensor2;
+        } else if (op == Py_GT) {
+            ret_class->tensor = val > tensor2;
+        } else if (op == Py_GE) {
+            ret_class->tensor = val >= tensor2;
+        }
     }
 
     return (PyObject *)ret_class;

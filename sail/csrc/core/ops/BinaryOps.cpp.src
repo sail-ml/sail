@@ -86,7 +86,6 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
  */
 
 Tensor $name$(Tensor& tensor1, const Tensor& tensor2) {
-    // std::cout << &tensor1 << std::endl;
     // TensorShape s = tensor1.get_shape();
     // Tensor empty_tensor = empty(s.ndim(), tensor1.get_dtype(), s);
 

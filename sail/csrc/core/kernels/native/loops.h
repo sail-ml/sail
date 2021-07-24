@@ -15,8 +15,6 @@
 #include "xsimd/xsimd.hpp"
 
 using Tensor = sail::Tensor;
-template <std::size_t N, typename... Args>
-using get = typename get_Nth_type<N, Args...>::type;
 
 namespace sail {
 
@@ -158,7 +156,7 @@ void launch_reduction(Op op, const Tensor &input, const Tensor &out) {
 
 template <typename T, typename Op>
 void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
-                           int axis) {
+                           int axis, T initial = 0) {
     TensorShape s = TensorShape(input.get_shape());
     int numel = out.get_shape().numel();
     s.recompute();
@@ -176,7 +174,7 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
 
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
-        p2[idx] = 0;
+        p2[idx] = initial;
         while (count != s.shape[s.ndim() - 1]) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
@@ -189,7 +187,7 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
 
 template <typename T, typename Op>
 void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
-                                 std::vector<long> axis) {
+                                 std::vector<long> axis, T initial = 0) {
     TensorShape s = TensorShape(input.get_shape());
     int numel = out.get_shape().numel();
     long stop = 1;
@@ -212,7 +210,7 @@ void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
 
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
-        p2[idx] = 0;
+        p2[idx] = initial;
         while (count != stop) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
@@ -232,18 +230,20 @@ void Reduction(Op op, const Tensor &input, const Tensor &out) {
     inner_reduction::launch_reduction<T>(op, input, out);
 }
 template <typename T, typename Op>
-void Reduction(Op op, const Tensor &input, const Tensor &out, int index) {
+void Reduction(Op op, const Tensor &input, const Tensor &out, int index,
+               T initial = 0) {
     bool allows_avx = false;
 
-    inner_reduction::launch_reduction_axis<T>(op, input, out, index);
+    inner_reduction::launch_reduction_axis<T>(op, input, out, index, initial);
 }
 
 template <typename T, typename Op>
 void Reduction(Op op, const Tensor &input, const Tensor &out,
-               std::vector<long> axes) {
+               std::vector<long> axes, T initial = 0) {
     bool allows_avx = false;
 
-    inner_reduction::launch_reduction_multi_axis<T>(op, input, out, axes);
+    inner_reduction::launch_reduction_multi_axis<T>(op, input, out, axes,
+                                                    initial);
 }
 
 }  // namespace native

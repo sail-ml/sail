@@ -41,28 +41,25 @@ inline std::ostream& operator<<(std::ostream& os, const Dtype& dt) {
             os << "int16";
             break;
         case Dtype::sUInt16:
-            os << "int16";
+            os << "uint16";
             break;
         case Dtype::sInt32:
             os << "int32";
             break;
         case Dtype::sUInt32:
-            os << "int32";
+            os << "uint32";
             break;
         case Dtype::sInt64:
             os << "int64";
             break;
         case Dtype::sUInt64:
-            os << "int64";
+            os << "uint64";
             break;
         case Dtype::sFloat32:
             os << "float32";
             break;
-        case Dtype::sFloat64:
-            os << "float64";
-            break;
         default:
-            os << "unknown dtype";
+            os << "float64";
             break;
     }
     return os;
@@ -167,17 +164,16 @@ inline auto dispatch_all_types(Dtype dtype, F&& f, Args&&... args) {
         case Dtype::sFloat32:
             return std::forward<F>(f)(PrimitiveType<float>{},
                                       std::forward<Args>(args)...);
-        case Dtype::sFloat64:
+        default:
             return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
-        default:
-            THROW_ERROR_DETAILED(DtypeError,
-                                 "Dtype error in launch arithmetic");
     }
 }
 template <typename F, typename... Args>
 inline auto dispatch_all_numeric_types(Dtype dtype, F&& f, Args&&... args) {
     switch (dtype) {
+        case Dtype::sBool:
+            THROW_ERROR_DETAILED(DtypeError, "Boolean is not a numeric type");
         case Dtype::sUInt8:
             return std::forward<F>(f)(PrimitiveType<uint8_t>{},
                                       std::forward<Args>(args)...);
@@ -207,12 +203,9 @@ inline auto dispatch_all_numeric_types(Dtype dtype, F&& f, Args&&... args) {
         case Dtype::sFloat32:
             return std::forward<F>(f)(PrimitiveType<float>{},
                                       std::forward<Args>(args)...);
-        case Dtype::sFloat64:
+        default:
             return std::forward<F>(f)(PrimitiveType<double>{},
                                       std::forward<Args>(args)...);
-        default:
-            THROW_ERROR_DETAILED(DtypeError,
-                                 "Dtype error in launch arithmetic");
     }
 }
 template <typename F, typename... Args>
@@ -228,10 +221,13 @@ inline auto dispatch_fp_types(Dtype dtype, F&& f, Args&&... args) {
             return;
     }
 }
+
 template <typename F_float, typename F_int, typename... Args>
 inline auto dispatch_fp_int_types(Dtype dtype, F_float&& f, F_int&& fi,
                                   Args&&... args) {
     switch (dtype) {
+        case Dtype::sBool:
+            THROW_ERROR_DETAILED(DtypeError, "Boolean is not a numeric type");
         case Dtype::sUInt8:
             return std::forward<F_int>(fi)(PrimitiveType<uint8_t>{},
                                            std::forward<Args>(args)...);
@@ -263,17 +259,10 @@ inline auto dispatch_fp_int_types(Dtype dtype, F_float&& f, F_int&& fi,
         case Dtype::sFloat32:
             return std::forward<F_float>(f)(PrimitiveType<float>{},
                                             std::forward<Args>(args)...);
-        case Dtype::sFloat64:
+        default:
             return std::forward<F_float>(f)(PrimitiveType<double>{},
                                             std::forward<Args>(args)...);
-        default:
-            return;
     }
-}
-
-inline char GetCharCode(Dtype dtype) {
-    return dispatch_all_numeric_types(
-        dtype, [](auto pt) { return decltype(pt)::sCharCode; });
 }
 
 template <typename T>
@@ -309,7 +298,7 @@ inline Dtype GetDtypeFromNumpyInt(int npdtype) {
         default:
             break;
     }
-    THROW_ERROR_DETAILED(DtypeError, "Dtype not found np int");
+    THROW_ERROR_DETAILED(DtypeError, npdtype, " is not a supported dtype");
 }
 inline int get_np_type_numFromDtype(Dtype dtype) {
     switch (dtype) {
@@ -335,10 +324,7 @@ inline int get_np_type_numFromDtype(Dtype dtype) {
             return 11;
         case Dtype::sFloat64:
             return 12;
-        default:
-            break;
     }
-    THROW_ERROR_DETAILED(DtypeError, "Dtype not found NP DTYPE");
 }
 
 inline long GetDtypeSize(Dtype dtype) {
@@ -366,7 +352,6 @@ inline long GetDtypeSize(Dtype dtype) {
             return pair.size;
         }
     }
-    THROW_ERROR_DETAILED(DtypeError, "Dtype not found get size");
 }
 
 typedef struct {
@@ -408,11 +393,9 @@ inline alignemnt_information getAlignment(Dtype dtype) {
         case Dtype::sFloat32:
             info = {32, 4, 8};
             return info;
-        case Dtype::sFloat64:
+        default:
             info = {32, 8, 4};
             return info;
-        default:
-            THROW_ERROR_DETAILED(DtypeError, "Dtype not found GET ALIGNMENT");
     }
 }
 
@@ -520,7 +503,7 @@ inline Dtype min_type(long d) {
             return Dtype::sUInt16;
         } else if (d < 4294967295) {
             return Dtype::sUInt32;
-        } else if (d < 18446744073709551615) {
+        } else {  // 18446744073709551615
             return Dtype::sUInt64;
         }
     } else {

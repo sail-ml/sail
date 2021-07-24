@@ -80,19 +80,34 @@ Tensor mean(const Tensor& tensor1, int axis, bool keepdims) {
 Tensor mean(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
+
     axis = process_axes(tensor1.get_ndim(), axis);
+
+    long numel = 1;
+    if (axis[0] != NULLDIM) {
+        TensorShape t1_shape = tensor1.get_shape();
+        int i = 0;
+        for (long s : t1_shape.shape) {
+            if (std::find(axis.begin(), axis.end(), i) != axis.end()) {
+                numel *= s;
+            }
+            i += 1;
+        }
+    } else {
+        numel = tensor1.numel();
+    }
 
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        empty_tensor = (new autograd::Mean(axis, keepdims))->apply(vec);
+        empty_tensor = (new autograd::Mean(axis, keepdims, numel))->apply(vec);
         return empty_tensor;
     }
 
     auto new_shape = shape_process(tensor1, axis);
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
 
-    sail::internal::mean_stub(tensor1, axis, empty_tensor);
+    sail::internal::mean_stub(tensor1, axis, empty_tensor, numel);
     if (keepdims) {
         if (axis[0] == NULLDIM) {
             empty_tensor._inplace_reshape(input_shape);
@@ -122,7 +137,8 @@ Tensor min(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     }
 
     auto new_shape = shape_process(tensor1, axis);
-    empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
+    empty_tensor =
+        zeros(TensorShape(new_shape), tensor1.get_dtype()) + ops::max(tensor1);
 
     sail::internal::min_stub(tensor1, axis, empty_tensor);
     if (keepdims) {

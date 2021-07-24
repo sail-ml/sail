@@ -24,6 +24,9 @@ TensorVector ClipMinOnly::backward(Tensor& grad) {
     return {grad * cond};
 }
 
+Tensor Negate::forward(TensorVector inputs) { return ops::negate(inputs[0]); }
+TensorVector Negate::backward(Tensor& grad) { return {-grad}; }
+
 Tensor Clip::forward(TensorVector inputs) {
     return ops::clip(inputs[0], min, max);
 }

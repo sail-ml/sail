@@ -1,4 +1,4 @@
-// allow-no-source allow-comments 
+// allow-no-source allow-comments
 #pragma once
 
 #include <Python.h>
@@ -27,7 +27,7 @@ static void PyTensor_dealloc(PyTensor *self);
 static PyObject *PyTensor_new(PyTypeObject *type, PyObject *args,
                               PyObject *kwds);
 static PyObject *PyTensor_repr(PyTensor *self);
-static PyObject *PyTensor_RichCompare(PyTensor *self, PyObject *other, int op);
+static PyObject *PyTensor_RichCompare(PyObject *self, PyObject *other, int op);
 
 /////////////// ARITHMETIC /////////////////
 static PyObject *PyTensor_add(PyObject *self, PyObject *other);

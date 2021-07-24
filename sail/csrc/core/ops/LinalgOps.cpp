@@ -113,6 +113,9 @@ Tensor tensordot(const Tensor& input1, const Tensor& input2, LongVec t1_dim,
 
 Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
               std::string trans_b) {
+    bool prepend = false;
+    bool postpend = false;
+
     if (t1.requires_grad || t2.requires_grad) {
         TensorVector vec;
         vec.emplace_back(t1);
@@ -122,42 +125,62 @@ Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
         return empty_tensor;
     }
 
-    if (t1.is_scalar() || t2.is_scalar()) {
-        THROW_ERROR_DETAILED(SailCError, "Cannot pass scalars to matmul");
+    if (t1.is_single() && t2.is_single()) {
+        THROW_ERROR_DETAILED(SailCError, "Cannot pass single values to matmul");
     }
 
-    if (t1.get_ndim() != t2.get_ndim()) {
-        THROW_ERROR_DETAILED(SailCError, "Number of dimensions must match");
-    }
+    Tensor t1_e, t2_e;
 
-    if (trans_a == NO_TRANS && trans_b == NO_TRANS) {
-        if (t1.get_shape().shape[1] != t2.get_shape().shape[0]) {
-            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
-        }
-    } else if (trans_a == TRANS && trans_b == NO_TRANS) {
-        if (t1.get_shape().shape[0] != t2.get_shape().shape[0]) {
-            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
-        }
-    } else if (trans_a == NO_TRANS && trans_b == TRANS) {
-        if (t1.get_shape().shape[1] != t2.get_shape().shape[1]) {
-            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
-        }
+    if (t1.get_ndim() == 1) {
+        t1_e = t1.expand_dims(0); // NOLINT
+        prepend = true;
+    } else if (t2.get_ndim() == 1) {
+        t2_e = t2.expand_dims(1); // NOLINT
+        postpend = true;
     } else {
-        if (t1.get_shape().shape[0] != t2.get_shape().shape[1]) {
-            THROW_ERROR_DETAILED(SailCError, "Inner dimensions must match");
+        t1_e = t1;
+        t2_e = t2;
+    }
+
+    if (t1_e.get_ndim() != t2_e.get_ndim()) {
+        if (!(t1_e.get_ndim() == 1 && t2_e.get_ndim() == 2) &&
+            !(t2_e.get_ndim() == 1 && t1_e.get_ndim() == 2)) {
+            THROW_ERROR_DETAILED(
+                SailCError, "Incorrect number of dimensions passed to matmul");
         }
     }
+
+    long inner_1, inner_2;
+
+    if (t1_e.get_ndim() == 1) {
+        inner_1 = t1_e.get_shape()[0];
+    } else if (trans_a == NO_TRANS) {
+        inner_1 = t1_e.get_shape()[1];
+    } else {
+        inner_1 = t1_e.get_shape()[0];
+    }
+
+    if (t2_e.get_ndim() == 1) {
+        inner_2 = t2_e.get_shape()[0];
+    } else if (trans_b == NO_TRANS) {
+        inner_2 = t2_e.get_shape()[0];
+    } else {
+        inner_2 = t2_e.get_shape()[1];
+    }
+
+    SAIL_CHECK(inner_1 == inner_2, "Inner dimensions must match");
+
     Tensor t1_, t2_;
 
-    if (t1.is_view()) {
-        t1_ = clone(t1);
+    if (t1_e.is_view()) {
+        t1_ = clone(t1_e);
     } else {
-        t1_ = t1;
+        t1_ = t1_e;
     }
-    if (t2.is_view()) {
-        t2_ = clone(t2);
+    if (t2_e.is_view()) {
+        t2_ = clone(t2_e);
     } else {
-        t2_ = t2;
+        t2_ = t2_e;
     }
     Dtype dt = promote_dtype(t1_.get_dtype(), t2_.get_dtype());
 
@@ -183,6 +206,10 @@ Tensor matmul(const Tensor& t1, const Tensor& t2, std::string trans_a,
 
     sail::internal::matmul_stub(t1_, t2_, empty_tensor, true, trans_a, trans_b);
 
+    if (prepend || postpend) {
+        empty_tensor._inplace_reshape(TensorShape({empty_tensor.numel()}));
+    }
+
     return empty_tensor;
 }
 
@@ -196,8 +223,8 @@ Tensor addmm(const Tensor& t1, const Tensor& t2, const Tensor& add) {
         return empty_tensor;
     }
 
-    if (t1.is_scalar() || t2.is_scalar()) {
-        throw SailCError("Cannot pass scalars to matmul");
+    if (t1.is_single() && t2.is_single()) {
+        THROW_ERROR_DETAILED(SailCError, "Cannot pass single values to matmul");
     }
 
     if (t1.get_ndim() != t2.get_ndim()) {

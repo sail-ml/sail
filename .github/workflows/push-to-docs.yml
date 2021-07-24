@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Package
-        run: python setup.py ci install
+        run: python setup.py install coverage
         
       - name: Deploy 1
         run: |

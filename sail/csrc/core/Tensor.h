@@ -1,5 +1,4 @@
 // allow-impl-in-header
-
 #pragma once
 
 #include "TensorBody.h"
@@ -30,8 +29,6 @@ class Tensor {
     std::shared_ptr<autograd::Function> fcn = nullptr;
 
     bool is_grad = false;
-
-    void swap(Tensor& t);
 
     Tensor(Tensor& old, bool _requires_grad)
         : body(old.body.get(), false), requires_grad(_requires_grad){};
@@ -79,7 +76,7 @@ class Tensor {
     template <typename T>
     T get() {
         T result;
-        if (is_scalar()) {
+        if (is_scalar() || numel() == 1) {
             dispatch_all_numeric_types(get_dtype(), [&](auto pt) {
                 using TT = typename decltype(pt)::type;
                 result = static_cast<TT*>(get_data())[0];
@@ -94,18 +91,17 @@ class Tensor {
 
     int get_body_ref_count();
     void free();
-    void swap_body(Tensor& t);
 
     TensorBody::pointer get_body() const;
 
     long int* get_shape_ptr();
     bool is_scalar() const;
+    bool is_single() const;
     bool has_grad();
     int get_np_type_num();
 
     void set_shape(const TensorShape& s);
-    void set_view();
-    void set_data(void* data);
+    void set_view(bool val = true);
 
     long get_ndim() const;
     long ndim() const;
@@ -119,7 +115,6 @@ class Tensor {
     Tensor slice(Slice slice);
 
     Tensor assign(const Tensor& other);
-    Tensor fill(const Numeric& other);
 
     Tensor operator+(const Tensor& t);
     Tensor operator+(const Numeric n);
@@ -139,18 +134,26 @@ class Tensor {
 
     Tensor operator[](const int t) const;
 
+    Tensor operator!=(const Tensor& other);
     Tensor operator==(const Tensor& other);
     Tensor operator>=(const Tensor& other);
     Tensor operator<=(const Tensor& other);
     Tensor operator>(const Tensor& other);
     Tensor operator<(const Tensor& other);
 
-    Tensor transpose();
-    Tensor transpose(const LongVec& axes);
+    Tensor operator!=(const Numeric& other);
+    Tensor operator==(const Numeric& other);
+    Tensor operator>=(const Numeric& other);
+    Tensor operator<=(const Numeric& other);
+    Tensor operator>(const Numeric& other);
+    Tensor operator<(const Numeric& other);
+
+    Tensor transpose() const;
+    Tensor transpose(const LongVec& axes) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Tensor& dt);
 
-    Tensor sum();
+    Tensor sum(int axis = NULLDIM, bool keepdims = false);
 
     void register_op(autograd::Function* new_func);
 };
@@ -160,7 +163,11 @@ Tensor operator+(Numeric n, Tensor& te);
 Tensor operator/(Numeric n, Tensor& te);
 Tensor operator-(Numeric n, Tensor& te);
 Tensor operator*(Numeric n, Tensor& te);
-
-int _numel(TensorSize _shape);
+Tensor operator!=(Numeric n, Tensor& te);
+Tensor operator==(Numeric n, Tensor& te);
+Tensor operator>=(Numeric n, Tensor& te);
+Tensor operator<=(Numeric n, Tensor& te);
+Tensor operator>(Numeric n, Tensor& te);
+Tensor operator<(Numeric n, Tensor& te);
 
 }  // namespace sail

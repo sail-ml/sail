@@ -49,8 +49,11 @@ class Reduction : public Function {
    public:
     std::vector<long> axis = {NULLDIM};
     bool keepdims = false;
+    long numel = 1;
     Reduction(std::vector<long> axis, bool keepdims)
         : axis(std::move(axis)), keepdims(keepdims){};
+    Reduction(std::vector<long> axis, bool keepdims, long numel)
+        : axis(std::move(axis)), keepdims(keepdims), numel(numel){};
 };
 
 class Sum : public Reduction {

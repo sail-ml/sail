@@ -115,6 +115,27 @@ void native_compare_launch_binary_elementwise(Op op, const Tensor& t1,
     }
 }
 
+void not_equal_kernel(const Tensor& t1, const Tensor& t2,
+                      const Tensor& out_tensor, bool broadcast) {
+    check_type(out_tensor);
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        using DtypeType = decltype(pt);
+        using T = typename DtypeType::type;
+
+        struct Impl {
+            inline void call_base(T& x1, T& x2, bool& out) {
+                if (x1 != x2) {
+                    out = true;
+                } else {
+                    out = false;
+                }
+            }
+        };
+
+        native_compare_launch_binary_elementwise<T>(Impl{}, t1, t2, out_tensor);
+    });
+}
+
 void equal_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
                   bool broadcast) {
     check_type(out_tensor);
@@ -204,7 +225,7 @@ void gte_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 
         struct Impl {
             inline void call_base(T& x1, T& x2, bool& out) {
-                if (x1 > x2) {
+                if (x1 >= x2) {
                     out = true;
                 } else {
                     out = false;
@@ -217,6 +238,7 @@ void gte_kernel(const Tensor& t1, const Tensor& t2, const Tensor& out_tensor,
 }
 }  // namespace
 
+REGISTER_ONLY_NATIVE_DISPATCH(not_equal_stub, &not_equal_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(equal_stub, &equal_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(lt_stub, &lt_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(gt_stub, &gt_kernel);

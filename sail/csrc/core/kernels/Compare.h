@@ -17,6 +17,7 @@ DECLARE_DISPATCH(clip_both, clip_stub);
 
 using elementwise_equal = void (*)(const Tensor& t1, const Tensor& t2,
                                    const Tensor& out_tensor, bool broadcast);
+DECLARE_DISPATCH(elementwise_equal, not_equal_stub);
 DECLARE_DISPATCH(elementwise_equal, equal_stub);
 DECLARE_DISPATCH(elementwise_equal, lte_stub);
 DECLARE_DISPATCH(elementwise_equal, gte_stub);

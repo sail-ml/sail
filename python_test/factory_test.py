@@ -71,6 +71,11 @@ class RandomNormal(UnitTest):
 
         return
 
+    def test_error(self):
+        self.assert_throws(sail.random.uniform, (0, -1, (10, 20)), sail.SailError)
+
+        return
+
 class RandomNormalLike(UnitTest):
 
     def test_base(self):

@@ -112,6 +112,26 @@ class SoftmaxLayerTest(UnitTest):
                 
         return
 
+    def test_grad(self):
+        times = []
+
+        def forward(a):
+            c = sail.modules.Softmax()(a)
+            d = sail.sum(c)
+            return d
+
+        for c in [(3, 3), (12, 18), (2, 33), (32, 64)]:
+            
+            arr1 = np.random.uniform(-1, 1, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic, rtol=1e-2, atol=1e-4, eps=1e-8))
+
+        return
+
 
 class ReLULayerTest(UnitTest):
 
@@ -184,6 +204,14 @@ class MaxPool2D(UnitTest):
         lay = sail.modules.MaxPool2D(2)#(2,2))
         y = lay(img)
         self.assert_eq(y.shape, (64, 4, 30, 30))
+
+        z = sail.sum(y)
+        z.backward()
+    def test2(self):
+        img = sail.random.uniform(0, 1, (64, 4, 60, 60))
+        lay = sail.modules.MaxPool2D(2, padding_mode="same")
+        y = lay(img)
+        self.assert_eq(y.shape, (64, 4, 60, 60))
 
         z = sail.sum(y)
         z.backward()

@@ -45,3 +45,12 @@ TEST(FactoriesTest, Ones) {
     }
 
 }
+TEST(FactoriesTest, Full) {
+
+    sail::Tensor one_tensor = sail::full((double)10.3, sail::TensorShape({32, 32, 32}));
+    double* data = (double*)one_tensor.get_data();
+    for (int i = 0; i < 32 * 32 * 32; i++) {
+        ASSERT_EQ(data[i], 10.3);
+    }
+
+}

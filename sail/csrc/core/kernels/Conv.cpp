@@ -5,7 +5,7 @@ namespace sail {
 
 namespace internal {
 
-DEFINE_DISPATCH(im2col_stub);
+DEFINE_DISPATCH(conv2d_stub);
 
 }  // namespace internal
 

@@ -34,10 +34,10 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Package
-        run: python setup.py ci install
+        run: python setup.py install coverage
 
       - name: Test and generate coverage
-        run: ./test.sh all coverage-xml
+        run: python test.py -a --xml
 
       - uses: codecov/codecov-action@v1
         with:

@@ -12,7 +12,7 @@
 
 namespace sail {
 
-TensorIterator::TensorIterator(TensorShape& t_shape) {
+TensorIterator::TensorIterator(TensorShape t_shape) {
     std::vector<long> old_shape = t_shape.shape;
     std::vector<long> old_strides = t_shape.strides;
 

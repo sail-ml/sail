@@ -86,8 +86,21 @@ void matmul_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor,
         } else {
             using T = typename decltype(pt)::type;
 
-            T* matA = (T*)t1.get_data();
-            T* matB = (T*)t2.get_data();
+            Tensor t1_, t2_;
+
+            if (trans_a == TRANS) {
+                t1_ = clone(t1.transpose());
+            } else {
+                t1_ = t1;
+            }
+            if (trans_b == TRANS) {
+                t2_ = clone(t2.transpose());
+            } else {
+                t2_ = t2;
+            }
+
+            T* matA = (T*)t1_.get_data();
+            T* matB = (T*)t2_.get_data();
             T* matC = (T*)out_tensor.get_data();
 
             for (int i = 0; i < M; i++) {
