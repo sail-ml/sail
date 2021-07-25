@@ -171,6 +171,8 @@ def s():
     if "save-gen" in sys.argv:
         save_gen = True
         sys.argv.remove("save-gen")
+
+    subprocess.run(["python", "tools/pyi/"])
     
 
     files = glob.glob("sail/csrc/core/**/*.cpp*", recursive=True)
@@ -201,21 +203,48 @@ def s():
         packages = [
             "sail", 
             "sail.csrc",
-            # "sail.modules",
-            # "sail.losses",
-            # "sail.optimizers",
-            # "sail.rand",
             ],#setuptools.find_packages(),
-        ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
+        package_data={
+            'sail': [
+                'py.typed',
+                '*.pyi',
+                'csrc/*.pyi',
+                'csrc/*.so',
+                'csrc/python/*.h',
+                'csrc/core/*.h',
+                'csrc/core/autograd/*.h',
+                'csrc/core/initializers/*.h',
+                'csrc/core/kernels/*.h',
+                'csrc/core/loss/*.h',
+                'csrc/core/modules/*.h',
+                'csrc/core/onednn/*.h',
+                'csrc/core/ops/*.h',
+                'csrc/core/optimizers/*.h',
+                'csrc/python/*.h',
+                'csrc/python/*.h',
+                'csrc/python/initializers/*.h',
+                'csrc/python/py_dtypes/*.h',
+                'csrc/python/py_loss/*.h',
+                'csrc/python/py_module/*.h',
+                'csrc/python/py_optimizer/*.h',
+                'csrc/python/py_tensor/*.h',
+                'csrc/python/random/*.h',
+            ],
+        },
+        ext_modules=[CMakeExtension('sail.csrc.libsail')],
         cmdclass={'build_ext': CMakeBuild},
-        install_requires=REQUIREMENTS
-        # cmdclass=dict(build_ext=CMakeBuild),
+        install_requires=REQUIREMENTS,
+        zip_safe=False
+        # cmdclass=dict(build_ext=CMakeBuild),,
     )
 
     if (not save_gen):
         for f in created_names:
             os.remove(f)
             print (f)
+
+    subprocess.run(["rm", "-rf", "sail/csrc/libsail.pyi"])
+    
 
 s()
 

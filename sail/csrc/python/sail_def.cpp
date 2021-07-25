@@ -114,6 +114,11 @@ PyMODINIT_FUNC PyInit_libsail(void) {
         Py_DECREF(m);
         return NULL;
     }
+    if (PyModule_AddObject(m, "dtype", (PyObject*)&PyDtypeBase) < 0) {
+        Py_DECREF(&PyDtypeBase);
+        Py_DECREF(m);
+        return NULL;
+    }
 
     PyObject* boolean = (PyObject*)generate_dtype(Dtype::sBool, 0);
     PyObject* int8 = (PyObject*)generate_dtype(Dtype::sInt8, 1);
