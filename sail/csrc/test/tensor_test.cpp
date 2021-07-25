@@ -1,18 +1,16 @@
-#include "gtest/gtest.h"
-#include "core/exception.h"
-#include "core/tensor_shape.h"
 #include "core/Tensor.h"
+#include "core/exception.h"
 #include "core/numeric.h"
 #include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "gtest/gtest.h"
 
 #include <iostream>
 
-
-
 using namespace sail;
 TEST(TensorTest, BodyCount) {
-    
-    sail::Tensor x = sail::random::uniform(sail::TensorShape({4, 5, 3, 2}), 0, 1);
+    sail::Tensor x =
+        sail::random::uniform(sail::TensorShape({4, 5, 3, 2}), 0, 1);
     sail::Tensor y = x;
     sail::Tensor z = y;
 
@@ -22,7 +20,6 @@ TEST(TensorTest, BodyCount) {
 }
 
 TEST(TensorTest, SetShape) {
-    
     sail::Tensor x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
     sail::TensorShape sh = sail::TensorShape({3, 2, 1});
     x.set_shape(sh);
@@ -30,13 +27,11 @@ TEST(TensorTest, SetShape) {
     ASSERT_EQ(x.get_shape().shape, sh.shape);
 }
 TEST(TensorTest, Numeric) {
-    
     sail::Tensor x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
     sail::Tensor y = x + 1;
 }
 
 TEST(TensorTest, sum) {
-    
     sail::Tensor x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     auto y = x.sum();
     auto z = sail::ops::sum(x);
@@ -48,7 +43,6 @@ TEST(TensorTest, sum) {
 }
 
 TEST(TensorTest, iadd) {
-    
     sail::Tensor x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     auto em = sail::ops::max(x);
     x += 1.0;
@@ -56,7 +50,6 @@ TEST(TensorTest, iadd) {
 }
 
 TEST(TensorTest, iadd2) {
-    
     sail::Tensor x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     auto em = sail::ops::max(x);
     x += x;
@@ -66,7 +59,6 @@ TEST(TensorTest, iadd2) {
 }
 
 TEST(TensorTest, ndim) {
-    
     auto x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     ASSERT_EQ(x.ndim(), 3);
 
@@ -81,7 +73,6 @@ TEST(TensorTest, ndim) {
 }
 
 TEST(TensorTest, set_view) {
-    
     auto x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     x.set_view();
 
@@ -89,7 +80,6 @@ TEST(TensorTest, set_view) {
 }
 
 TEST(TensorTest, transpose1) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
     x = x.transpose();
     std::vector<long> shape = {3, 2, 1};
@@ -98,7 +88,6 @@ TEST(TensorTest, transpose1) {
 }
 
 TEST(TensorTest, transpose2) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
     x = x.transpose({1, 0, 2});
     std::vector<long> shape = {2, 1, 3};
@@ -107,42 +96,40 @@ TEST(TensorTest, transpose2) {
 }
 
 TEST(TensorTest, inplace_reshape_fail) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
-    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({2, 3, 5})), DimensionError);
-    
+    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({2, 3, 5})),
+                 DimensionError);
+
     x = sail::random::uniform(sail::TensorShape({30}), 0, 1);
     ASSERT_THROW(x._inplace_reshape(sail::TensorShape({2})), DimensionError);
-    
+
     x = sail::random::uniform(sail::TensorShape({13}), 0, 1);
     ASSERT_THROW(x._inplace_reshape(sail::TensorShape({20})), DimensionError);
-    
+
     x = sail::random::uniform(sail::TensorShape({1, 2, 3, 2, 1}), 0, 1);
-    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({1, 2, 4, 2, 1})), DimensionError);
-    
+    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({1, 2, 4, 2, 1})),
+                 DimensionError);
+
     x = sail::random::uniform(sail::TensorShape({100, 2, 3}), 0, 1);
-    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({2, 3, 5})), DimensionError);
-    
+    ASSERT_THROW(x._inplace_reshape(sail::TensorShape({2, 3, 5})),
+                 DimensionError);
+
     x = sail::random::uniform(sail::TensorShape({1, 22, 30}), 0, 1);
     ASSERT_THROW(x._inplace_reshape(sail::TensorShape({25})), DimensionError);
-
 }
 
 TEST(TensorTest, index_fail) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
 
     ASSERT_THROW(x[0][0][0][0][0], SailCError);
 }
 TEST(TensorTest, get_fail) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 2, 3}), 0, 1);
 
     ASSERT_THROW(x.get<long>(), SailCError);
 }
 
 TEST(TensorTest, slice_empty) {
-    
     auto x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     std::vector<long> empty = {};
     auto y = x.slice(sail::Slice(empty));
@@ -154,13 +141,11 @@ TEST(TensorTest, slice_empty) {
 }
 
 TEST(TensorTest, constructor) {
-    
     auto x = sail::random::uniform(sail::TensorShape({2, 2, 3}), 0, 1);
     auto y = sail::Tensor(x, x.requires_grad);
 }
 
 TEST(TensorShapeTest, next) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 20, 3}), 0, 1);
     auto y = ops::broadcast_to(x, TensorShape({20, 20, 3}));
 
@@ -171,7 +156,6 @@ TEST(TensorShapeTest, next) {
 }
 
 TEST(TensorShapeTest, next2) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1, 20, 1, 1}), 0, 1);
     auto y = ops::broadcast_to(x, TensorShape({20, 20, 3, 4}));
 
@@ -182,7 +166,6 @@ TEST(TensorShapeTest, next2) {
 }
 
 TEST(TensorShapeTest, next_single_value) {
-    
     auto x = sail::random::uniform(sail::TensorShape({1}), 0, 1);
 
     auto z = x.get_shape();
@@ -191,7 +174,6 @@ TEST(TensorShapeTest, next_single_value) {
     }
 }
 TEST(TensorShapeTest, next_flat) {
-    
     auto x = sail::random::uniform(sail::TensorShape({10}), 0, 1);
 
     auto z = x.get_shape();
@@ -201,7 +183,6 @@ TEST(TensorShapeTest, next_flat) {
 }
 
 TEST(TensorShapeTest, compare) {
-    
     auto x = sail::random::uniform(sail::TensorShape({10}), 0, 1);
     auto y = sail::random::uniform(sail::TensorShape({10}), 0, 1);
     auto z = sail::random::uniform(sail::TensorShape({1}), 0, 1);
@@ -211,7 +192,6 @@ TEST(TensorShapeTest, compare) {
 }
 
 TEST(TensorShapeTest, getString) {
-    
     std::vector<long> emp = {};
     auto x = sail::TensorShape(emp);
 

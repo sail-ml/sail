@@ -1,9 +1,9 @@
-#include "gtest/gtest.h"
-#include "core/exception.h"
-#include "core/tensor_shape.h"
 #include "core/Tensor.h"
-#include "core/utils.h"
+#include "core/exception.h"
 #include "core/ops/ops.h"
+#include "core/tensor_shape.h"
+#include "core/utils.h"
+#include "gtest/gtest.h"
 
 #include <iostream>
 
@@ -13,7 +13,6 @@ TEST(Misc, GetVectorString) {
     ASSERT_EQ(getVectorString(vec), "(1, 2)");
     std::vector<long> vec2 = {};
     ASSERT_EQ(getVectorString(vec2), "()");
-
 }
 
 TEST(Misc, Copy) {

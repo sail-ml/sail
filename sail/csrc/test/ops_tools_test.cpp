@@ -1,12 +1,12 @@
-#include "gtest/gtest.h"
-#include "core/factories.h"
-#include "core/ops/ops.h"
-#include "core/ops/tools.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "core/modules/modules.h"
+#include "core/factories.h"
 #include "core/kernels/Kernel.h"
+#include "core/modules/modules.h"
+#include "core/ops/ops.h"
+#include "core/ops/tools.h"
 #include "core/tensor_shape.h"
+#include "gtest/gtest.h"
 
 #include <iostream>
 

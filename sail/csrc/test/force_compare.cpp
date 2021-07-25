@@ -1,11 +1,11 @@
-#include "gtest/gtest.h"
-#include "core/factories.h"
-#include "core/ops/ops.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
-#include "core/modules/modules.h"
+#include "core/factories.h"
 #include "core/kernels/Kernel.h"
+#include "core/modules/modules.h"
+#include "core/ops/ops.h"
 #include "core/tensor_shape.h"
+#include "gtest/gtest.h"
 
 #include <iostream>
 
@@ -26,7 +26,6 @@ TEST(ForceCompare, clip_min) {
         auto error = y_d[i] - z_d[i];
         ASSERT_LE(error, EPS);
     }
-
 }
 TEST(ForceCompare, clip_max) {
     auto x1 = random::uniform(TensorShape({10, 10}), -1, 1);
@@ -42,7 +41,6 @@ TEST(ForceCompare, clip_max) {
         auto error = y_d[i] - z_d[i];
         ASSERT_LE(error, EPS);
     }
-
 }
 TEST(ForceCompare, clip) {
     auto x1 = random::uniform(TensorShape({10, 10}), -1, 1);
@@ -58,5 +56,4 @@ TEST(ForceCompare, clip) {
         auto error = y_d[i] - z_d[i];
         ASSERT_LE(error, EPS);
     }
-
 }

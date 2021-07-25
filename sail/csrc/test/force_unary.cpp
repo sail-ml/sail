@@ -1,10 +1,10 @@
-#include "gtest/gtest.h"
-#include "core/factories.h"
-#include "core/ops/ops.h"
 #include "core/Tensor.h"
 #include "core/dtypes.h"
+#include "core/factories.h"
 #include "core/kernels/Kernel.h"
+#include "core/ops/ops.h"
 #include "core/tensor_shape.h"
+#include "gtest/gtest.h"
 
 #include <iostream>
 
@@ -25,7 +25,6 @@ TEST(ForceUnary, Negate) {
         auto error = y_d[i] - z_d[i];
         ASSERT_LE(error, EPS);
     }
-
 }
 TEST(ForceUnary, log) {
     auto x = random::uniform(TensorShape({10, 10}), 1, 2);
@@ -41,5 +40,4 @@ TEST(ForceUnary, log) {
         auto error = y_d[i] - z_d[i];
         ASSERT_LE(error, EPS);
     }
-
 }
