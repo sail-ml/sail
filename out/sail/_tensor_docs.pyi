@@ -1,0 +1,3 @@
+from sail import add_docstring as add_docstring
+
+def add_docstring_fcn(method, descr) -> None: ...

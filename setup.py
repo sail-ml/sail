@@ -203,11 +203,12 @@ def s():
         packages = [
             "sail", 
             "sail.csrc",
-            ],#setuptools.find_packages(),
+            ],
         package_data={
             'sail': [
                 'py.typed',
                 '*.pyi',
+                'stubs/*.pyi',
                 'csrc/*.pyi',
                 'csrc/*.so',
                 'csrc/python/*.h',

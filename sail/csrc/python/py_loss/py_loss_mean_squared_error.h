@@ -42,7 +42,7 @@ static PyMethodDef PyMSELoss_methods[] = {
 };
 
 static PyTypeObject PyMSELossType = {
-    PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.MeanSquaredError", /* tp_name */
+    PyVarObject_HEAD_INIT(NULL, 0) "sail.losses.MeanSquaredError", /* tp_name */
     sizeof(PyLoss),             /* tp_basicsize */
     0,                          /* tp_itemsize */
     (destructor)PyLoss_dealloc, /* tp_dealloc */

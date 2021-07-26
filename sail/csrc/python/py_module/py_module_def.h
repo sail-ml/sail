@@ -43,24 +43,24 @@ static PyMethodDef PyModule_methods[] = {
 
 //////////////// TYPE DEF ////////////////////
 static PyTypeObject PyModuleType = {
-    PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.Module", /* tp_name */
-    sizeof(PyModule),                                  /* tp_basicsize */
-    0,                                                 /* tp_itemsize */
-    (destructor)PyModule_dealloc,                      /* tp_dealloc */
-    0,                                                 /* tp_print */
-    0,                                                 /* tp_getattr */
-    0,                                                 /* tp_setattr */
-    0,                                                 /* tp_reserved */
-    0,                                                 /* tp_repr */
-    0,                                                 /* tp_as_number */
-    0,                                                 /* tp_as_sequence */
-    0,                                                 /* tp_as_mapping */
-    0,                                                 /* tp_hash */
-    PyModule_call,                                     /* tp_call */
-    0,                                                 /* tp_str */
-    PyObject_GenericGetAttr,                           /* tp_getattro */
-    PyModule_setattr,                                  /* tp_setattro */
-    0,                                                 /* tp_as_buffer */
+    PyVarObject_HEAD_INIT(NULL, 0) "sail.losses.Module", /* tp_name */
+    sizeof(PyModule),                                    /* tp_basicsize */
+    0,                                                   /* tp_itemsize */
+    (destructor)PyModule_dealloc,                        /* tp_dealloc */
+    0,                                                   /* tp_print */
+    0,                                                   /* tp_getattr */
+    0,                                                   /* tp_setattr */
+    0,                                                   /* tp_reserved */
+    0,                                                   /* tp_repr */
+    0,                                                   /* tp_as_number */
+    0,                                                   /* tp_as_sequence */
+    0,                                                   /* tp_as_mapping */
+    0,                                                   /* tp_hash */
+    PyModule_call,                                       /* tp_call */
+    0,                                                   /* tp_str */
+    PyObject_GenericGetAttr,                             /* tp_getattro */
+    PyModule_setattr,                                    /* tp_setattro */
+    0,                                                   /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,          /* tp_flags */
     NULL,                            /* tp_doc */

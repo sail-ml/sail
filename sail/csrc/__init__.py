@@ -1,7 +1,7 @@
 import sys 
 
-from .libsail import dtype
-from .libsail import Tensor
+from .libsail import dtype # type: ignore[attr-defined]
+from .libsail import Tensor # type: ignore[attr-defined]
 from .libsail import add, subtract, divide, multiply, matmul, tensordot, addmm # type: ignore[attr-defined]
 from .libsail import reshape, expand_dims, squeeze, clip  # type: ignore[attr-defined]
 from .libsail import sum, add_docstring, max, mean, min # type: ignore[attr-defined]
