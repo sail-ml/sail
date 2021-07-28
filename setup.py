@@ -12,7 +12,7 @@ import cpufeature
 import subprocess
 import glob, pathlib
 from shutil import copyfile
-import numpy as np 
+from numpy import get_include 
 
 import distutils
 from distutils.version import LooseVersion
@@ -95,7 +95,7 @@ class CMakeBuild(build_ext):
             '-DPYTHON_INCLUDE_DIR=' + get_python_inc(),
             '-DPYTHON_LIBRARY=' + sysconfig.get_config_var('LIBDIR'),
             '-DPYTHON_EXECUTABLE=' + sys.executable + "P",
-            '-DPYTHON_NUMPY_INCLUDE_DIR=' + np.get_include()
+            '-DPYTHON_NUMPY_INCLUDE_DIR=' + get_include()
             # '-DCMAKE_C_COMPILER=/usr/bin/gcc',
             # '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
         ]
@@ -137,6 +137,8 @@ class CMakeBuild(build_ext):
         print (build_path)
 
         copyfile("%s/libsail.so" % build_path, "sail/csrc/libsail.so")
+
+        # os.link("%s/libsail.so" % build_path, "sail/rand/libsail.so")
 
         subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
         subprocess.run(["rm", "-rf", "module_def.h"], cwd="sail/csrc/python")
@@ -203,39 +205,30 @@ def s():
         packages = [
             "sail", 
             "sail.csrc",
+            "sail.init",
+            "sail.random",
+            "sail.losses",
+            "sail.optimizers",
+            "sail.modules",
             ],
         package_data={
             'sail': [
                 'py.typed',
                 '*.pyi',
-                'stubs/*.pyi',
                 'csrc/*.pyi',
+                'stubs/*.pyi',
+                'init/*.pyi',
+                'random/*.pyi',
+                'losses/*.pyi',
+                'modules/*.pyi',
+                'optimizers/*.pyi',
                 'csrc/*.so',
-                'csrc/python/*.h',
-                'csrc/core/*.h',
-                'csrc/core/autograd/*.h',
-                'csrc/core/initializers/*.h',
-                'csrc/core/kernels/*.h',
-                'csrc/core/loss/*.h',
-                'csrc/core/modules/*.h',
-                'csrc/core/onednn/*.h',
-                'csrc/core/ops/*.h',
-                'csrc/core/optimizers/*.h',
-                'csrc/python/*.h',
-                'csrc/python/*.h',
-                'csrc/python/initializers/*.h',
-                'csrc/python/py_dtypes/*.h',
-                'csrc/python/py_loss/*.h',
-                'csrc/python/py_module/*.h',
-                'csrc/python/py_optimizer/*.h',
-                'csrc/python/py_tensor/*.h',
-                'csrc/python/random/*.h',
-            ],
+            ]
         },
         ext_modules=[CMakeExtension('sail.csrc.libsail')],
         cmdclass={'build_ext': CMakeBuild},
         install_requires=REQUIREMENTS,
-        zip_safe=False
+        zip_safe=False,
         # cmdclass=dict(build_ext=CMakeBuild),,
     )
 

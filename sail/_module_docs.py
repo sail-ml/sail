@@ -63,7 +63,7 @@ Attributes:
     bias: The trainable biases of the operation. The biases are initialized to zero, and 
         have a shape of ``(out_channels,)``.
 """)
-add_docstring_fcn("Linear", "forward", "")
+add_docstring_fcn("Conv2D", "forward", "")
 
 add_docstring_class("Sigmoid", r"""
 sail.modules.Sigmoid()

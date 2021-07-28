@@ -1,4 +1,4 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, ModuleType
 from typing import overload
 from typing import List, Set, Dict, Tuple, Optional
 
@@ -16,6 +16,8 @@ uint16: sail.dtype
 uint32: sail.dtype
 uint64: sail.dtype
 uint8: sail.dtype
+
+random: ModuleType
 
 class DimensionError(sail.SailError): ...
 

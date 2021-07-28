@@ -1,6 +1,4 @@
 import yaml
-import sail 
-from sail import add_docstring
 
 def parse_args(args):
     out = ""

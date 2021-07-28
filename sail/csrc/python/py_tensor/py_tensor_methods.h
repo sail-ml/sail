@@ -20,6 +20,7 @@
 
 #include "../error_defs.h"
 #include "../macros.h"
+#include "py_tensor_def.h"
 
 #define CAST_TYPE_CHECK(args, x)                              \
     {                                                         \

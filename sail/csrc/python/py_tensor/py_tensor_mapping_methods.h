@@ -8,6 +8,7 @@
 #include "core/dtypes.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
+#include "py_tensor_def.h"
 
 #include "../error_defs.h"
 #include "../macros.h"
