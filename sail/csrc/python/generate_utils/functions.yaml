@@ -4,6 +4,7 @@ add:
     - add(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::add(parser.tensor(0), parser.tensor(1))
+  return: Tensor
 
 subtract:
   new: true
@@ -11,6 +12,7 @@ subtract:
     - subtract(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::subtract(parser.tensor(0), parser.tensor(1))
+  return: Tensor
 
 divide:
   new: true
@@ -18,6 +20,7 @@ divide:
     - divide(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::divide(parser.tensor(0), parser.tensor(1))
+  return: Tensor
 
 multiply:
   new: true
@@ -25,6 +28,7 @@ multiply:
     - multiply(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::multiply(parser.tensor(0), parser.tensor(1))
+  return: Tensor
     
 power:
   new: true
@@ -32,6 +36,7 @@ power:
     - power(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::power(parser.tensor(0), parser.tensor(1))
+  return: Tensor
 
 
 matmul:
@@ -40,6 +45,7 @@ matmul:
     - matmul(Tensor x1,  Tensor x2)
   internal_calls: 
     - sail::ops::matmul(parser.tensor(0), parser.tensor(1))
+  return: Tensor
 
 addmm:
   new: true
@@ -47,6 +53,7 @@ addmm:
     - addmm(Tensor x1, Tensor x2, Tensor x3)
   internal_calls: 
     - sail::ops::addmm(parser.tensor(0), parser.tensor(1), parser.tensor(2))
+  return: Tensor
 
 log:
   new: true
@@ -54,6 +61,7 @@ log:
     - log(Tensor x1)
   internal_calls: 
     - sail::ops::log(parser.tensor(0))
+  return: Tensor
 
 exp:
   new: true
@@ -61,6 +69,7 @@ exp:
     - exp(Tensor x1)
   internal_calls: 
     - sail::ops::exp(parser.tensor(0))
+  return: Tensor
 
 clip:
   new: true
@@ -68,6 +77,7 @@ clip:
     - clip(Tensor x1, float min, float max)
   internal_calls: 
     - sail::ops::clip(parser.tensor(0), parser.double_(1), parser.double_(2))
+  return: Tensor
 
 mean:
   new: true
@@ -77,6 +87,7 @@ mean:
   internal_calls:
     - sail::ops::mean(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
     - sail::ops::mean(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
+  return: Tensor
 
 sum:
   new: true
@@ -86,6 +97,7 @@ sum:
   internal_calls:
     - sail::ops::sum(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
     - sail::ops::sum(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
+  return: Tensor
 
 max:
   new: true
@@ -95,6 +107,7 @@ max:
   internal_calls:
     - sail::ops::max(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
     - sail::ops::max(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
+  return: Tensor
 
 min:
   new: true
@@ -104,85 +117,28 @@ min:
   internal_calls:
     - sail::ops::min(parser.tensor(0), parser.int_as_axis(1), parser.boolean(2))
     - sail::ops::min(parser.tensor(0), parser.int_list_as_axis(1), parser.boolean(2))
+  return: Tensor
 
 tensordot:
-  full_impl: |
-      static PyObject* sail_tensordot(PyObject* self, PyObject* args, PyObject* kwargs) {
-
-          START_EXCEPTION_HANDLING
-          PyObject* t1;
-          PyObject* t2;
-          PyObject* tuple = Py_None;
-          int v = 2;
-
-          sail::Tensor tensor1;
-          sail::Tensor tensor2;
-
-          static char* kwlist[] = {"a", "b", "axes", NULL};
-
-          if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", kwlist, &t1, &t2,
-                                          &tuple)) {
-              PyErr_SetString(PyExc_TypeError, "incorrect arguments");
-              return nullptr;
-          }
-
-          tensor1 = ((PyTensor*)t1)->tensor;
-          tensor2 = ((PyTensor*)t2)->tensor;
-
-          std::vector<long> axes_1;
-          std::vector<long> axes_2;
-
-          if (PyTuple_Check(tuple)) {
-              PyObject* tuple1 = PyTuple_GetItem(tuple, 0);
-              PyObject* tuple2 = PyTuple_GetItem(tuple, 1);
-
-              tuple1 = PySequence_Tuple(tuple1);
-              tuple2 = PySequence_Tuple(tuple2);
-
-              int len = PyTuple_Size(tuple1);
-              if (len == -1) {
-                  axes_1 = {PyLong_AsLong(tuple1)};
-              } else {
-                  while (len--) {
-                      axes_1.push_back(PyLong_AsLong(PyTuple_GetItem(tuple1, len)));
-                  }
-                  std::reverse(axes_1.begin(), axes_1.end());
-              }
-              len = PyTuple_Size(tuple2);
-              if (len == -1) {
-                  axes_2 = {PyLong_AsLong(tuple2)};
-              } else {
-                  while (len--) {
-                      axes_2.push_back(PyLong_AsLong(PyTuple_GetItem(tuple2, len)));
-                  }
-                  std::reverse(axes_2.begin(), axes_2.end());
-              }
-          } else {
-              if (PyLong_Check(tuple)) {
-                  v = PyLong_AsLong(tuple);
-              }
-              for (int i = tensor1.get_ndim() - 1; i > (tensor1.get_ndim() - v - 1);
-                  i--) {
-                  axes_1.insert(axes_1.begin(), i);
-              }
-
-              for (int i = 0; i < v; i++) {
-                  axes_2.push_back(i);
-              }
-          }
-
-          PyTensor* ret_class;
-          ret_class = (PyTensor*)PyTensorType.tp_alloc(&PyTensorType, 0);
-
-          sail::Tensor res = sail::ops::tensordot(tensor1, tensor2, axes_1, axes_2);
-
-          ret_class->tensor = res;
-
-          return (PyObject*)ret_class;
-          END_EXCEPTION_HANDLING
-      }
-      
-      
+  new: true 
+  signatures:
+    - tensordot(Tensor t1, Tensor t2, int axes = 2)
+    - tensordot(Tensor t1, Tensor t2, ListOfIntList axes = None)
+  internal_calls:
+    - sail::ops::tensordot(parser.tensor(0), parser.tensor(1), parser.integer(2))
+    - sail::ops::tensordot(parser.tensor(0), parser.tensor(1), parser.list_of_int_list(2)[0], parser.list_of_int_list(2)[1])
+  return: Tensor
+ 
+pad:
+  new: true 
+  signatures:
+    - pad(Tensor t1, ListOfIntList sizes)
+    - pad(Tensor t1, IntList sizes)
+  internal_calls:
+    - sail::ops::pad(parser.tensor(0), parser.list_of_int_list(1))
+    - sail::ops::pad(parser.tensor(0), {parser.int_list(1)})
+  return: Tensor
+ 
       
 broadcast_to:
   new: true
@@ -192,6 +148,7 @@ broadcast_to:
     - sail::ops::broadcast_to(parser.tensor(0), parser.int_list(1))
   set_base:
     index: 0
+  return: Tensor
 
 reshape:
   new: true
@@ -203,6 +160,7 @@ reshape:
     - sail::ops::reshape(parser.tensor(0), parser.int_as_list(1))
   set_base:
     index: 0
+  return: Tensor
   
 transpose:
   new: true
@@ -212,6 +170,7 @@ transpose:
     - sail::ops::transpose(parser.tensor(0), parser.int_list(1))
   set_base:
     index: 0
+  return: Tensor
 
 expand_dims:
   new: true
@@ -221,6 +180,7 @@ expand_dims:
     - sail::ops::expand_dims(parser.tensor(0), parser.integer(1))
   set_base:
     index: 0
+  return: Tensor
 
 squeeze:
   new: true
@@ -230,6 +190,7 @@ squeeze:
     - sail::ops::squeeze(parser.tensor(0), parser.integer(1))
   set_base:
     index: 0
+  return: Tensor
 
 
 rollaxis:
@@ -240,6 +201,7 @@ rollaxis:
     - sail::ops::rollaxis(parser.tensor(0), parser.integer(1), parser.integer(2))
   set_base:
     index: 0
+  return: Tensor
 
 moveaxis:
   new: true
@@ -249,6 +211,7 @@ moveaxis:
     - sail::ops::moveaxis(parser.tensor(0), parser.integer(1), parser.integer(2))
   set_base:
     index: 0
+  return: Tensor
 
 cat:
   new: true
@@ -256,6 +219,7 @@ cat:
     - cat(TensorList tensors, int axis = 0)
   internal_calls:
     - sail::ops::cat(parser.tensor_list(0), parser.integer(1))
+  return: Tensor
     
     
 stack:
@@ -264,6 +228,7 @@ stack:
     - stack(TensorList tensors, int axis = 1)
   internal_calls:
     - sail::ops::stack(parser.tensor_list(0), parser.integer(1))
+  return: Tensor
 
 add_docstring:
   full_impl: |    

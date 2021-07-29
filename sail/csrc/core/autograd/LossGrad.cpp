@@ -37,7 +37,7 @@ TensorVector MeanSquaredErrorLoss::backward(Tensor& grad) {
 
     void* data =
         _malloc_align(1, grad.get_info().alignment, grad.get_info().dtype_size);
-    dispatch_all_types(grad.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(grad.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         T inner_data = 2.0 / (T)diff.numel();
         T* d = static_cast<T*>(data);

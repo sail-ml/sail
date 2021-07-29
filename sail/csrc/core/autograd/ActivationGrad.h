@@ -18,25 +18,25 @@ using TensorVector = std::vector<Tensor>;
 class Sigmoid : public Function {
    public:
     TensorBody::pointer sigmoid_stored;
-    explicit Sigmoid(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit Sigmoid() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Softmax : public Function {
    public:
     Tensor softmax_stored;
     int axis;
-    Softmax(int _axis = 1) { axis = _axis; };
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Softmax(int axis = 1) : axis(axis){};
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class ReLU : public Function {
    public:
-    explicit ReLU(){};
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit ReLU() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

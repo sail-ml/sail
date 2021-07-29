@@ -8,6 +8,7 @@
 #include "dtypes.h"
 #include "factories.h"
 #include "kernels/Kernel.h"
+#include "utils.h"
 
 namespace sail {
 namespace ops {
@@ -20,7 +21,7 @@ TensorShape shape_process(const Tensor& tensor1, std::vector<long> axis) {
         new_shape = TensorShape({1});
     } else {
         std::vector<long> sh;
-        int i;
+        int i = 0;
         for (long s : tensor1.get_shape().shape) {
             if (std::find(axis.begin(), axis.end(), i) == axis.end()) {
                 sh.push_back(s);
@@ -33,7 +34,7 @@ TensorShape shape_process(const Tensor& tensor1, std::vector<long> axis) {
 }
 
 std::vector<long> process_axes(const long ndim, std::vector<long> axes) {
-    for (int i = 0; i < axes.size(); i++) {
+    for (const auto i : sail::irange(0, (int)axes.size())) {
         if (axes[i] < 0) {
             axes[i] = axes[i] + ndim;
         }
@@ -41,24 +42,20 @@ std::vector<long> process_axes(const long ndim, std::vector<long> axes) {
     return axes;
 }
 
-Tensor sum(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor sum(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return sum(tensor1, axes, keepdims);
 }
-Tensor sum(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor sum(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        empty_tensor =
-            (new autograd::Sum(axis, keepdims))
-                ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        empty_tensor = (new autograd::Sum(axis, keepdims))->apply(vec);
         return empty_tensor;
     }
-    // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
 
     auto new_shape = shape_process(tensor1, axis);
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
@@ -76,30 +73,41 @@ Tensor sum(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor mean(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor mean(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return mean(tensor1, axes, keepdims);
 }
-Tensor mean(const Tensor& tensor1, std::vector<long> axis,
-            bool keepdims = false) {
+Tensor mean(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
+
     axis = process_axes(tensor1.get_ndim(), axis);
+
+    long numel = 1;
+    if (axis[0] != NULLDIM) {
+        TensorShape t1_shape = tensor1.get_shape();
+        int i = 0;
+        for (long s : t1_shape.shape) {
+            if (std::find(axis.begin(), axis.end(), i) != axis.end()) {
+                numel *= s;
+            }
+            i += 1;
+        }
+    } else {
+        numel = tensor1.numel();
+    }
 
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        empty_tensor =
-            (new autograd::Mean(axis, keepdims))
-                ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        empty_tensor = (new autograd::Mean(axis, keepdims, numel))->apply(vec);
         return empty_tensor;
     }
-    // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
 
     auto new_shape = shape_process(tensor1, axis);
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
 
-    sail::internal::mean_stub(tensor1, axis, empty_tensor);
+    sail::internal::mean_stub(tensor1, axis, empty_tensor, numel);
     if (keepdims) {
         if (axis[0] == NULLDIM) {
             empty_tensor._inplace_reshape(input_shape);
@@ -112,12 +120,11 @@ Tensor mean(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor min(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor min(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return min(tensor1, axes, keepdims);
 }
-Tensor min(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor min(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
@@ -125,15 +132,13 @@ Tensor min(const Tensor& tensor1, std::vector<long> axis,
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        empty_tensor =
-            (new autograd::Min(axis, keepdims))
-                ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        empty_tensor = (new autograd::Min(axis, keepdims))->apply(vec);
         return empty_tensor;
     }
-    // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
 
     auto new_shape = shape_process(tensor1, axis);
-    empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());
+    empty_tensor =
+        zeros(TensorShape(new_shape), tensor1.get_dtype()) + ops::max(tensor1);
 
     sail::internal::min_stub(tensor1, axis, empty_tensor);
     if (keepdims) {
@@ -148,12 +153,11 @@ Tensor min(const Tensor& tensor1, std::vector<long> axis,
     return empty_tensor;
 }
 
-Tensor max(const Tensor& tensor1, int axis = NULLDIM, bool keepdims = false) {
+Tensor max(const Tensor& tensor1, int axis, bool keepdims) {
     std::vector<long> axes = {axis};
     return max(tensor1, axes, keepdims);
 }
-Tensor max(const Tensor& tensor1, std::vector<long> axis,
-           bool keepdims = false) {
+Tensor max(const Tensor& tensor1, std::vector<long> axis, bool keepdims) {
     Tensor empty_tensor;
     TensorShape input_shape = tensor1.get_shape();
     axis = process_axes(tensor1.get_ndim(), axis);
@@ -161,12 +165,9 @@ Tensor max(const Tensor& tensor1, std::vector<long> axis,
     if (tensor1.requires_grad) {
         TensorVector vec;
         vec.emplace_back(tensor1);
-        empty_tensor =
-            (new autograd::Max(axis, keepdims))
-                ->apply(vec);  //{std::make_shared<Tensor>(tensor1)});
+        empty_tensor = (new autograd::Max(axis, keepdims))->apply(vec);
         return empty_tensor;
     }
-    // Tensor empty_tensor = empty_scalar(tensor1.get_dtype());
 
     auto new_shape = shape_process(tensor1, axis);
     empty_tensor = zeros(TensorShape(new_shape), tensor1.get_dtype());

@@ -1,6 +1,6 @@
 # import subprocess
 # subprocess.run(["python", "setup.py", "develop"], cwd="sail/csrc")
-
+import argparse
 import os
 import re
 import sys
@@ -12,7 +12,7 @@ import cpufeature
 import subprocess
 import glob, pathlib
 from shutil import copyfile
-import numpy as np 
+from numpy import get_include 
 
 import distutils
 from distutils.version import LooseVersion
@@ -28,24 +28,28 @@ build_path = ""
 allow_avx = True
 coverage = False
 
-class CICommand(distutils.cmd.Command):
+COVERAGE = False
+CI_MODE = False
+USE_AVX = True
 
-    description = 'build for ci (as in no avx)'
-    user_options = [
-    ]
+# class CICommand(distutils.cmd.Command):
 
-    def initialize_options(self):
-        pass
+#     description = 'build for ci (as in no avx)'
+#     user_options = [
+#     ]
 
-    def finalize_options(self):
-        pass
+#     def initialize_options(self):
+#         pass
+
+#     def finalize_options(self):
+#         pass
 
 
-    def run(self):
-        global allow_avx
-        global coverage
-        allow_avx = False
-        coverage = True
+#     def run(self):
+#         global COVERAGE
+#         global USE_AVX
+#         USE_AVX = False
+#         COVERAGE = True
 
 
 class CMakeExtension(Extension):
@@ -63,6 +67,9 @@ class CMakeBuild(build_ext):
         super().run()
 
     def build_cmake(self, ext):
+
+        global COVERAGE, USE_AVX
+
         subprocess.run(["rm", "-rf", "build/*"])
         subprocess.run(["python", "process_docs.py"], cwd="sail")
         subprocess.run(["python", "generate.py"], cwd="sail/csrc/python")
@@ -88,7 +95,7 @@ class CMakeBuild(build_ext):
             '-DPYTHON_INCLUDE_DIR=' + get_python_inc(),
             '-DPYTHON_LIBRARY=' + sysconfig.get_config_var('LIBDIR'),
             '-DPYTHON_EXECUTABLE=' + sys.executable + "P",
-            '-DPYTHON_NUMPY_INCLUDE_DIR=' + np.get_include()
+            '-DPYTHON_NUMPY_INCLUDE_DIR=' + get_include()
             # '-DCMAKE_C_COMPILER=/usr/bin/gcc',
             # '-DCMAKE_CXX_COMPILER=/usr/bin/g++-8'
         ]
@@ -96,7 +103,7 @@ class CMakeBuild(build_ext):
         print (cmake_args)
 
         print (cpufeature.CPUFeature)
-        if (cpufeature.CPUFeature["AVX2"] and allow_avx):
+        if (cpufeature.CPUFeature["AVX2"] and USE_AVX):
             print ("Compiling Sail with AVX2 Support")
             cmake_args.append("-DUSE_AVX=ON")
             cmake_args.append("-DUSE_MKL=ON")
@@ -105,7 +112,7 @@ class CMakeBuild(build_ext):
             cmake_args.append("-DUSE_AVX=OFF")
             cmake_args.append("-DUSE_MKL=OFF")
 
-        if (coverage):
+        if (COVERAGE):
             cmake_args.append("-DCOVERAGE=ON")
         else:
             cmake_args.append("-DCOVERAGE=OFF")
@@ -118,9 +125,11 @@ class CMakeBuild(build_ext):
 
         os.chdir(str(build_temp))
         print ("executing build")
-        self.spawn(['cmake', str(cwd)] + cmake_args)
+        self.spawn(['cmake', "-G", "Ninja", str(cwd)] + cmake_args)
         if not self.dry_run:
-            self.spawn(['cmake', '--build', '.'] + build_args)
+            self.spawn(['cmake', '--GNinja', '.'])# + build_args)
+            self.spawn(['ninja'])# + build_args)
+            # self.spawn(['cmake', '--build', '.'] + build_args)
         # Troubleshooting: if fail on line above then delete all possible 
         # temporary CMake files including "CMakeCache.txt" in top level dir.
         os.chdir(str(cwd))
@@ -129,17 +138,44 @@ class CMakeBuild(build_ext):
 
         copyfile("%s/libsail.so" % build_path, "sail/csrc/libsail.so")
 
+        # os.link("%s/libsail.so" % build_path, "sail/rand/libsail.so")
+
         subprocess.run(["rm", "-rf", "functions.h"], cwd="sail/csrc/python")
         subprocess.run(["rm", "-rf", "module_def.h"], cwd="sail/csrc/python")
         subprocess.run(["rm", "-rf", "py_module/module.h"], cwd="sail/csrc/python")
 
+def parser():
+
+    global COVERAGE, USE_AVX
+
+    filtered_args = []
+    for i, arg in enumerate(sys.argv):
+        if arg == 'coverage':
+            file = list(glob.glob("**/*.gcda")) + list(glob.glob("**/*.gcno"))
+            for f in file:
+                os.remove(file)
+            COVERAGE = True
+            continue
+        if arg == 'ci':
+            USE_AVX = False
+            COVERAGE = True
+            continue
+        if arg == 'install':
+            arg = 'install' 
+        filtered_args.append(arg)
+    sys.argv = filtered_args
 
 def s():
    
+    parser()
+
     save_gen = False
     if "save-gen" in sys.argv:
         save_gen = True
         sys.argv.remove("save-gen")
+
+    subprocess.run(["python", "tools/pyi/"])
+    
 
     files = glob.glob("sail/csrc/core/**/*.cpp*", recursive=True)
     files = list(files) + list(glob.glob("sail/csrc/core/**/*.h*", recursive=True))
@@ -169,21 +205,40 @@ def s():
         packages = [
             "sail", 
             "sail.csrc",
-            # "sail.modules",
-            # "sail.losses",
-            # "sail.optimizers",
-            # "sail.rand",
-            ],#setuptools.find_packages(),
-        ext_modules=[CMakeExtension('sail.csrc.libsail_c')],
-        cmdclass={'build_ext': CMakeBuild, "ci": CICommand},
-        install_requires=REQUIREMENTS
-        # cmdclass=dict(build_ext=CMakeBuild),
+            "sail.init",
+            "sail.random",
+            "sail.losses",
+            "sail.optimizers",
+            "sail.modules",
+            ],
+        package_data={
+            'sail': [
+                'py.typed',
+                '*.pyi',
+                'csrc/*.pyi',
+                'stubs/*.pyi',
+                'init/*.pyi',
+                'random/*.pyi',
+                'losses/*.pyi',
+                'modules/*.pyi',
+                'optimizers/*.pyi',
+                'csrc/*.so',
+            ]
+        },
+        ext_modules=[CMakeExtension('sail.csrc.libsail')],
+        cmdclass={'build_ext': CMakeBuild},
+        install_requires=REQUIREMENTS,
+        zip_safe=False,
+        # cmdclass=dict(build_ext=CMakeBuild),,
     )
 
     if (not save_gen):
         for f in created_names:
             os.remove(f)
             print (f)
+
+    subprocess.run(["rm", "-rf", "sail/csrc/libsail.pyi"])
+    
 
 s()
 

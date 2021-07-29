@@ -391,3 +391,12 @@ tensor([[1.25234312 1.25234312 1.25234312 1.25234312 1.25234312 1.25234312 1.252
         x = sail.Tensor(x)
         
         self.assert_eq(x.__repr__().replace(" ", ""), comparison.replace(" ", ""))
+
+        comparison = '''
+tensor([ True False  True  True  True False False False  True  True
+        False False  True  True False False  True  True False  True
+         True False False False False False  True], shape=(27))'''
+
+        comparison = comparison[1:]
+        x = sail.Tensor(np.array([1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0,0,0,0,1])).astype(sail.bool_)
+        self.assert_eq(x.__repr__().replace(" ", ""), comparison.replace(" ", ""))

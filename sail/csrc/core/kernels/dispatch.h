@@ -1,35 +1,8 @@
+// allow-no-source allow-impl-in-header
+
 #pragma once
 
 #include <atomic>
-// Implements instruction set specific function dispatch.
-//
-// Kernels that may make use of specialized instruction sets (e.g. AVX) are
-// compiled multiple times with different compiler flags (e.g. -mavx). A
-// DispatchStub contains a table of function pointers for a kernel. At runtime,
-// the fastest available kernel is chosen based on the features reported by
-// cpuinfo.
-//
-// Example:
-//
-// In native/MyKernel.h:
-//   using fn_type = void(*)(const Tensor& x);
-//   DECLARE_DISPATCH(fn_type, stub);
-//
-// In native/MyKernel.cpp
-//   DEFINE_DISPATCH(stub);
-//
-// In native/cpu/MyKernel.cpp:
-//   namespace {
-//     // use anonymous namespace so that different cpu versions won't conflict
-//     void kernel(const Tensor& x) { ... }
-//   }
-//   REGISTER_DISPATCH(stub, &kernel);
-//
-// To call:
-//   stub(kCPU, tensor);
-//
-// TODO: CPU instruction set selection should be folded into whatever
-// the main dispatch mechanism is.
 
 namespace sail {
 namespace internal {
@@ -73,9 +46,7 @@ struct DispatchStub<rT (*)(Args...), T> {
 #endif
             USE = call;
         }
-        // FnPtr call_ptr = DEFAULT;
         return (*USE)(args...);
-        // return (*USE)(std::forward<ArgTypes>(args)...);
     }
 
     FnPtr USE = nullptr;

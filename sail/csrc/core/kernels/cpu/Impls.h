@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <immintrin.h>

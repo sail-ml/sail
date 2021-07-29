@@ -6,9 +6,9 @@
 
 namespace sail {
 using LongVec = std::vector<long>;
+
 class TensorShape {
    public:
-    // int jump = 1;
     LongVec shape;
     LongVec strides;
     LongVec shape_m1;
@@ -20,14 +20,14 @@ class TensorShape {
     int enforced = -1;
     bool is_single = false;
 
-    explicit TensorShape(){};
+    explicit TensorShape() = default;
 
     TensorShape(LongVec shape_, LongVec size_);
     TensorShape(LongVec shape_);
+    TensorShape(std::initializer_list<long> shape_);
 
     TensorShape reverse();
 
-    // template <class T>
     TensorShape reorder(const LongVec& order);
 
     TensorShape roll_axis(long axis, long position);
@@ -37,16 +37,12 @@ class TensorShape {
 
     void insert_one(const int dim);
     void remove_one(const int dim);
-    void remove(const int dim);
     void recompute_strides();
     void recompute(bool strides_too = false);
     void enforce_axis(int axis);
-    std::vector<long> generate_all_indexes();
 
-    bool operator==(const TensorShape& other) const {
-        return other.shape == shape;
-    }
-    long operator[](const int index) const { return shape[index]; }
+    bool operator==(const TensorShape& other) const;
+    long operator[](const int index) const;
 
     int next();
     int next(int n);
@@ -55,10 +51,8 @@ class TensorShape {
     long int* get_shape_ptr();
 
     long numel() const;
-    long numel_avoid(int dim) const;
-    long getTotalSize(int mod);
-    int ndim();
+    long ndim() const;
 
-    std::string get_string();
+    std::string get_string() const;
 };
 }  // namespace sail

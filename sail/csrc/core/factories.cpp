@@ -51,9 +51,8 @@ Tensor empty_like(const Tensor& tensor, Dtype& dt) {
 }
 
 Tensor clone(const Tensor& t) {
-    auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
     void* data;
-    TensorShape s = t.get_shape();  // TensorShape(t.get_shape());
+    TensorShape s = t.get_shape();
     alignemnt_information info = getAlignment(t.get_dtype());
     if (t.is_view()) {
         int numel = s.numel();
@@ -72,41 +71,6 @@ Tensor clone(const Tensor& t) {
     }
     return _empty;
 }
-Tensor clone_to(const Tensor& t, TensorShape shape) {
-    auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
-    void* data;
-    alignemnt_information info = getAlignment(t.get_dtype());
-    if (t.is_view()) {
-        int numel = shape.numel();
-        data = _malloc_align(numel, info.alignment, info.dtype_size);
-        dispatch_all_types(t.get_dtype(), [&](auto pt) {
-            using T = typename decltype(pt)::type;
-            T* base_data = (T*)(t.get_data());
-            T* set_data = (T*)data;
-            MultiTensorIterator iter = MultiTensorIterator(shape);
-            int z = 0;
-            int outer = iter.out_loop_size();
-            int inner = iter.inner_loop_size();
-            for (int i = 0; i < outer; i++) {
-                for (int j = 0; j < inner; j++) {
-                    set_data[z] = base_data[iter.d_ptrs[0]];
-                    iter.advance_d_ptr(1);
-                    z += 1;
-                }
-                iter.backup_d_ptr();
-                iter.next();
-            }
-        });
-    } else {
-        data = _realloc_align(t.get_data(), t.numel(), info.alignment,
-                              info.dtype_size);
-    }
-
-    TensorBody::pointer body = new TensorBody(data, t.get_dtype(), shape);
-
-    Tensor _empty = Tensor(body, t.requires_grad);
-    return _empty;
-}
 
 Tensor make_view(void* data, Dtype dt, TensorShape shape) {
     TensorBody::pointer b =
@@ -119,10 +83,7 @@ Tensor as_strided(const Tensor& t, TensorShape s) {
     return make_view(t.get_data(), t.get_dtype(), s);
 }
 
-Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32) {
-    // if (t.get_ndim() != 1) {
-    //     throw SailCError("Inputs to one_hot must 1d");
-    // }
+Tensor one_hot(const Tensor& t, const int size, Dtype dt) {
     if (t.get_dtype() != Dtype::sInt16 && t.get_dtype() != Dtype::sInt32 &&
         t.get_dtype() != Dtype::sInt64) {
         throw SailCError("inputs must be integers");
@@ -130,7 +91,7 @@ Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32) {
     long total_data = size * t.numel();
     alignemnt_information info = getAlignment(dt);
     void* data = _calloc_align(total_data, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* t_data = (T*)data;
@@ -157,53 +118,16 @@ Tensor make_view(const Tensor& t) {
     return _empty;
 }
 
-// template <typename T>
-// Tensor from_single_value(T value, Dtype dt) {
-//     TensorShape shape = TensorShape({1});
-//     Tensor empty_tensor = empty(0, dt, shape);
-//     dispatch_all_types(dt, [&](auto pt) {
-//         using Tensor_T = typename decltype(pt)::type;
-//         Tensor_T val = static_cast<Tensor_T>(value);
-//         Tensor_T* data = static_cast<Tensor_T*>(empty_tensor.get_data());
-//         data[0] = val;
-//     });
-//     return empty_tensor;
-// }
-
-// Tensor copy(Tensor t) {
-//     auto size = t.get_shape().getTotalSize(GetDtypeSize(t.get_dtype()));
-
-//     alignemnt_information info = getAlignment(t.get_dtype());
-//     void* data = _realloc_align(t.get_data(), t.numel(), info.alignment,
-//                                 info.dtype_size);
-
-//     Tensor _empty = Tensor(t.ndim, data, t.get_dtype(), t.get_shape());
-
-//     return _empty;
-// }
-
-Tensor empty_scalar(Dtype dt) {
-    alignemnt_information info = getAlignment(dt);
-    TensorSize shape = {};
-    TensorShape ts = TensorShape(shape);
-    TensorBody::pointer b = new TensorBody(dt, ts);
-    Tensor _empty = Tensor(b, false);
-
-    return _empty;
-}
-
 Tensor one_scalar(Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* data = _malloc_align(1, info.alignment, info.dtype_size);
 
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
-        // T data2 = (T)1;
-        // memcpy(data, (void*)(&data2), sizeof(T));
         T x = (T)1;
         *(T*)data = x;
     });
-    // memset(data, 1, info.get_dtype()_size);
+
     int zero = 0;
     TensorSize shape = {1};
     TensorShape ts = TensorShape(shape);
@@ -222,11 +146,6 @@ Tensor from_data(void* data, Dtype dt, TensorShape s) {
     return Tensor(b, false);
 }
 
-Tensor from_data_no_realloc(void* data, Dtype dt, TensorShape s) {
-    TensorBody::pointer b = new TensorBody(data, dt, s);
-    return Tensor(b, false);
-}
-
 Tensor zeros(TensorShape size, Dtype dt) {
     alignemnt_information info = getAlignment(dt);
     void* new_data =
@@ -239,7 +158,7 @@ Tensor ones(TensorShape size, Dtype dt) {
     int numel = size.numel();
     void* new_data =
         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_fill = (T*)new_data;
@@ -262,7 +181,7 @@ Tensor full(Numeric n, TensorShape size) {
     int numel = size.numel();
     void* new_data =
         _malloc_align(size.numel(), info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_fill = (T*)new_data;
@@ -277,15 +196,13 @@ Tensor full(Numeric n, TensorShape size) {
     return Tensor(b, false);
 }
 
-namespace random {  // probably want to refactor factories to be in their own
-                    // namespace but rolling with this for now
+namespace random {
 
-// need to be able to instantiate random tensors
-Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
+Tensor uniform(TensorShape size, Dtype dt, double min, double max) {
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -300,21 +217,20 @@ Tensor uniform(TensorShape size, Dtype dt, double min = 0, double max = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
-Tensor uniform(TensorShape size, double min = 0, double max = 1) {
+Tensor uniform(TensorShape size, double min, double max) {
     return uniform(size, default_dtype, min, max);
 }
-Tensor uniform_like(Tensor tensor, double min = 0, double max = 1) {
+Tensor uniform_like(Tensor tensor, double min, double max) {
     TensorShape s = tensor.get_shape();
     Tensor ret = uniform(s, tensor.get_dtype(), min, max);
     ret.requires_grad = tensor.requires_grad;
     return ret;
 }
-Tensor uniform_fill(Tensor tensor, double min = 0, double max = 1) {
+Tensor uniform_fill(Tensor tensor, double min, double max) {
     Dtype dt = tensor.get_dtype();
-    alignemnt_information info = getAlignment(dt);
     int numel = tensor.numel();
     void* data = tensor.get_data();
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -328,14 +244,14 @@ Tensor uniform_fill(Tensor tensor, double min = 0, double max = 1) {
     return tensor;
 }
 
-Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
+Tensor normal(TensorShape size, Dtype dt, double mean, double std) {
     if (std < 0) {
         throw SailCError("Standard deviation cannot be less than 0");
     }
     alignemnt_information info = getAlignment(dt);
     int numel = size.numel();
     void* data = _malloc_align(numel, info.alignment, info.dtype_size);
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;
@@ -350,21 +266,20 @@ Tensor normal(TensorShape size, Dtype dt, double mean = 0, double std = 1) {
     TensorBody::pointer b = new TensorBody(data, dt, size);
     return Tensor(b, false);
 }
-Tensor normal(TensorShape size, double mean = 0, double std = 1) {
+Tensor normal(TensorShape size, double mean, double std) {
     return normal(size, default_dtype, mean, std);
 }
-Tensor normal_like(Tensor tensor, double mean = 0, double std = 1) {
+Tensor normal_like(Tensor tensor, double mean, double std) {
     TensorShape s = tensor.get_shape();
     Tensor ret = normal(s, tensor.get_dtype(), mean, std);
     ret.requires_grad = tensor.requires_grad;
     return ret;
 }
-Tensor normal_fill(Tensor tensor, double mean = 0, double std = 1) {
+Tensor normal_fill(Tensor tensor, double mean, double std) {
     Dtype dt = tensor.get_dtype();
-    alignemnt_information info = getAlignment(dt);
     int numel = tensor.numel();
     void* data = tensor.get_data();
-    dispatch_all_types(dt, [&](auto pt) {
+    dispatch_all_numeric_types(dt, [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* data_rand = (T*)data;

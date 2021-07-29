@@ -6,18 +6,6 @@
 #include "py_tensor/py_tensor_def.h"
 
 #define RETURN_OBJECT static PyObject *
-#define GET_NUMERIC(number, new_tensor)                        \
-    {                                                          \
-        if (PyObject_TypeCheck(number, &PyFloat_Type)) {       \
-            new_tensor = sail::empty_scalar(Dtype::sFloat64);  \
-            double val = PyFloat_AsDouble(number);             \
-            double *ptr = &val;                                \
-            memcpy(new_tensor.get_data(), ptr, sizeof(val));   \
-        } else if (PyObject_TypeCheck(number, &PyLong_Type)) { \
-            PyErr_SetString(PyExc_TypeError, "Nah.");          \
-            return nullptr;                                    \
-        }                                                      \
-    }
 
 #define BINARY_TENSOR_TYPE_CHECK(a, b)               \
     {                                                \
@@ -39,29 +27,6 @@
     {                                        \
         Py_INCREF(src);                      \
         dest->base_object = (PyObject *)src; \
-    }
-
-#define NUMERIC_PROCESS(t1, t2)                              \
-    {                                                        \
-        if (!PyObject_TypeCheck(t1, &PyTensorType) &&        \
-            !PyObject_TypeCheck(t2, &PyTensorType)) {        \
-            return nullptr;                                  \
-        }                                                    \
-        if (PyObject_TypeCheck(t1, &PyTensorType) &&         \
-            PyObject_TypeCheck(t2, &PyTensorType)) {         \
-            tensor1 = ((PyTensor *)t1)->tensor;              \
-            tensor2 = ((PyTensor *)t2)->tensor;              \
-        } else if (PyObject_TypeCheck(t1, &PyTensorType) &&  \
-                   !PyObject_TypeCheck(t2, &PyTensorType)) { \
-            tensor1 = ((PyTensor *)t1)->tensor;              \
-            GET_NUMERIC(t2, tensor2);                        \
-        } else if (!PyObject_TypeCheck(t1, &PyTensorType) && \
-                   PyObject_TypeCheck(t2, &PyTensorType)) {  \
-            tensor1 = ((PyTensor *)t2)->tensor;              \
-            GET_NUMERIC(t1, tensor2);                        \
-        } else {                                             \
-            return nullptr;                                  \
-        }                                                    \
     }
 
 #define GENERATE_FROM_TENSOR(pyobj, t) \

@@ -43,7 +43,7 @@ Tensor sigmoid(const Tensor& tensor1) {
     return empty_tensor;
 }
 
-Tensor softmax(Tensor& tensor1, const int axis = 1) {
+Tensor softmax(Tensor& tensor1, const int axis) {
     Tensor empty_tensor;
     if (tensor1.requires_grad) {
         TensorVector vec;
@@ -57,12 +57,12 @@ Tensor softmax(Tensor& tensor1, const int axis = 1) {
     return empty_tensor;
 }
 
-Tensor log_softmax(const Tensor& input, const int axis = 1) {
+Tensor log_softmax(Tensor& input, const int axis) {
     if (input.requires_grad) {
         TensorVector vec;
         vec.emplace_back(input);
         return (new autograd::Softmax(axis))->apply(vec);
-    }  /////
+    }
 
     Tensor max = ops::max(input, axis, true);
     input = input - max;

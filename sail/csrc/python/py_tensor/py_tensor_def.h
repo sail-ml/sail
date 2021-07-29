@@ -1,3 +1,4 @@
+// allow-no-source allow-comments
 #pragma once
 
 #include <Python.h>
@@ -26,12 +27,14 @@ static void PyTensor_dealloc(PyTensor *self);
 static PyObject *PyTensor_new(PyTypeObject *type, PyObject *args,
                               PyObject *kwds);
 static PyObject *PyTensor_repr(PyTensor *self);
+static PyObject *PyTensor_RichCompare(PyObject *self, PyObject *other, int op);
 
 /////////////// ARITHMETIC /////////////////
 static PyObject *PyTensor_add(PyObject *self, PyObject *other);
 static PyObject *PyTensor_sub(PyObject *self, PyObject *other);
 static PyObject *PyTensor_mul(PyObject *self, PyObject *other);
 static PyObject *PyTensor_truediv(PyObject *self, PyObject *other);
+static PyObject *PyTensor_negate(PyObject *self);
 
 ///////////// MAPPING ///////////////////
 static PyObject *PyTensor_getitem(PyObject *self, PyObject *key);
@@ -81,24 +84,24 @@ static PyNumberMethods PyTensorNumberMethods = {
      * https://docs.python.org/3/c-api/number.html
      */
     (binaryfunc)PyTensor_add,
-    (binaryfunc)PyTensor_sub,  // nb_sub,
-    (binaryfunc)PyTensor_mul,  // nb_mul,
-    0,                         // nb_remainder
-    0,                         // nb_divmod
-    0,                         // nb_power
-    0,                         // nb_negative
-    0,                         // nb_positive
-    0,                         // nb_absolute
-    0,                         // nb_bool
-    0,                         // nb_invert
-    0,                         // nb_lshift
-    0,                         // nb_rshift
-    0,                         // nb_and
-    0,                         // nb_xor
-    0,                         // nb_or
-    0,                         // nb_int
-    0,                         // nb_reserved
-    0,                         // nb_float
+    (binaryfunc)PyTensor_sub,    // nb_sub,
+    (binaryfunc)PyTensor_mul,    // nb_mul,
+    0,                           // nb_remainder
+    0,                           // nb_divmod
+    0,                           // nb_power
+    (unaryfunc)PyTensor_negate,  // nb_negative
+    0,                           // nb_positive
+    0,                           // nb_absolute
+    0,                           // nb_bool
+    0,                           // nb_invert
+    0,                           // nb_lshift
+    0,                           // nb_rshift
+    0,                           // nb_and
+    0,                           // nb_xor
+    0,                           // nb_or
+    0,                           // nb_int
+    0,                           // nb_reserved
+    0,                           // nb_float
 
     0,  // nb_inplace_add
     0,  // nb_inplace_subtract
@@ -149,25 +152,25 @@ static PyTypeObject PyTensorType = {
     0,                                            /* tp_setattro */
     0,                                            /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
-        Py_TPFLAGS_HAVE_GC,          /* tp_flags */
-    "Custom objects",                /* tp_doc */
-    (traverseproc)PyTensor_traverse, /* tp_traverse */
-    (inquiry)PyTensor_clear,         /* tp_clear */
-    0,                               /* tp_richcompare */
-    0,                               /* tp_weaklistoffset */
-    0,                               /* tp_iter */
-    0,                               /* tp_iternext */
-    PyTensor_methods,                /* tp_methods */
-    0,                               /* tp_members */
-    PyTensor_get_setters,            // PyTensor_getsetters, /* tp_getset */
-    0,                               /* tp_base */
-    0,                               /* tp_dict */
-    0,                               /* tp_descr_get */
-    0,                               /* tp_descr_set */
-    0,                               /* tp_dictoffset */
-    (initproc)PyTensor_init,         /* tp_init */
-    0,                               /* tp_alloc */
-    PyTensor_new,                    /* tp_new */
-    PyObject_GC_Del                  /* tp_free */
+        Py_TPFLAGS_HAVE_GC,            /* tp_flags */
+    "Custom objects",                  /* tp_doc */
+    (traverseproc)PyTensor_traverse,   /* tp_traverse */
+    (inquiry)PyTensor_clear,           /* tp_clear */
+    (richcmpfunc)PyTensor_RichCompare, /* tp_richcompare */
+    0,                                 /* tp_weaklistoffset */
+    0,                                 /* tp_iter */
+    0,                                 /* tp_iternext */
+    PyTensor_methods,                  /* tp_methods */
+    0,                                 /* tp_members */
+    PyTensor_get_setters,              // PyTensor_getsetters, /* tp_getset */
+    0,                                 /* tp_base */
+    0,                                 /* tp_dict */
+    0,                                 /* tp_descr_get */
+    0,                                 /* tp_descr_set */
+    0,                                 /* tp_dictoffset */
+    (initproc)PyTensor_init,           /* tp_init */
+    0,                                 /* tp_alloc */
+    PyTensor_new,                      /* tp_new */
+    PyObject_GC_Del                    /* tp_free */
 
 };

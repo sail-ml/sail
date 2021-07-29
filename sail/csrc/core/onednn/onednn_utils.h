@@ -1,5 +1,8 @@
+// allow-no-source
+
 #pragma once
 
+#include <chrono>
 #include <dnnl.hpp>
 #include <list>
 #include <memory>
@@ -8,8 +11,8 @@
 #include <utility>
 #include <vector>
 #include "Tensor.h"
+#include "utils.h"
 
-#include <chrono>
 using namespace std::chrono;
 
 using namespace dnnl;
@@ -37,7 +40,6 @@ class LRUCache {
             return nullptr;
         }
 
-        // Move to the front of LRU list as the most recently accessed.
         lru_list_.erase(it->second.lru_iterator);
         lru_list_.push_front(it->first);
         it->second.lru_iterator = lru_list_.begin();
@@ -49,7 +51,6 @@ class LRUCache {
             _delete();
         }
 
-        // Insert an entry to the front of the LRU list
         lru_list_.push_front(key);
         Item item(op, lru_list_.begin());
         cache_.emplace(std::make_pair(key, std::move(item)));
@@ -58,7 +59,6 @@ class LRUCache {
     void clear() {
         if (lru_list_.empty()) return;
 
-        // Clean up the cache
         cache_.clear();
         lru_list_.clear();
     }
@@ -85,8 +85,6 @@ class LRUCache {
         }
     };
 
-    // Remove the least recently accessed item from LRU list, which
-    // is the tail of lru_list_. Update cache_ correspondingly.
     bool _delete() {
         if (lru_list_.empty()) return false;
         std::string key = lru_list_.back();
@@ -95,22 +93,19 @@ class LRUCache {
         return true;
     }
 
-    // Cache capacity
     size_t capacity_;
 
-    // The cache, a map from std::string key to a LRU item.
     std::unordered_map<std::string, Item> cache_;
 
-    // The LRU list of items.
     std::list<std::string> lru_list_;
 };
 
 class Primitive {
    public:
-    virtual ~Primitive() {}
-    Primitive() {}
+    virtual ~Primitive() = default;
+    Primitive() = default;
     Primitive(const engine& cpu_engine) { cpu_engine_ = cpu_engine; }
-    // Dummy data which MKL DNN never operates on
+
     unsigned char* DummyData = nullptr;
     engine cpu_engine_ = engine(engine::kind::cpu, 0);
     const engine& get_engine() { return cpu_engine_; }
@@ -119,9 +114,9 @@ class Primitive {
 template <typename T>
 class PrimitiveFactory {
    public:
-    PrimitiveFactory() {}
+    PrimitiveFactory() = default;
 
-    ~PrimitiveFactory() {}
+    ~PrimitiveFactory() = default;
 
     Primitive* get(const std::string& key) {
         auto& lru_cache = PrimitiveFactory<T>::get_cache();
@@ -143,7 +138,7 @@ class PrimitiveFactory {
 
 class KeyGenerator {
    public:
-    KeyGenerator(){};
+    KeyGenerator() = default;
 
     KeyGenerator add(std::string data) {
         append(data);
@@ -163,7 +158,7 @@ class KeyGenerator {
     }
 
     KeyGenerator add(memory::dims dims) {
-        for (int i = 0; i < dims.size(); i++) {
+        for (int i : sail::irange(0, static_cast<int>(dims.size()))) {
             add(dims[i]);
         }
         return *this;

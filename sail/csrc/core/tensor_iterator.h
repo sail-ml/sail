@@ -1,3 +1,5 @@
+// allow-impl-in-header
+
 #pragma once
 #include "tensor_shape.h"
 
@@ -37,7 +39,7 @@ class Vec2D {
     size_t cols = 0;
     size_t last_loc = 0;
 
-    explicit Vec2D(){};
+    explicit Vec2D() = default;
     Vec2D(std::vector<T> vect) {
         vec = vect;
         cols = vec.size();
@@ -72,8 +74,8 @@ class TensorIterator {
     std::vector<long> coordinates;
     std::vector<long> lasts;
 
-    explicit TensorIterator(){};
-    TensorIterator(TensorShape& t_shape);
+    explicit TensorIterator() = default;
+    TensorIterator(TensorShape t_shape);
 
     long numel() const;
     long ndim() const;
@@ -97,15 +99,13 @@ class MultiTensorIterator : public TensorIterator {
     Vec2D<long> strides;
     Vec2D<long> strides_back;
     Vec2D<long> coordinates;
-    // std::vector<std::vector<long>> strides_back;
-    // std::vector<std::vector<long>> coordinates;
 
     MultiTensorIterator(TensorShape t_shape);
 
     MultiTensorIterator add_input(TensorShape& t_shape);
 
     inline bool contiguous_at(int index) {
-        int v = 0;  // strides.at(index, 0);
+        int v = 0;
         for (int i = 1; i < shape.size(); i++) {
             if (strides.at(index, i) > v) {
                 return false;
@@ -116,7 +116,7 @@ class MultiTensorIterator : public TensorIterator {
         return true;
     }
 
-    inline void advance_d_ptr(int b) {
+    inline void advance_d_ptr(int b) override {
         if (tensor_count == 2) {
             d_ptrs[0] += lasts[0] * b;
             d_ptrs[1] += lasts[1] * b;
@@ -126,7 +126,7 @@ class MultiTensorIterator : public TensorIterator {
             d_ptrs[a] += lasts[a] * b;
         }
     }
-    inline void backup_d_ptr() {
+    inline void backup_d_ptr() override {
         if (tensor_count == 2) {
             d_ptrs[0] -= lasts[0];
             d_ptrs[1] -= lasts[1];
@@ -147,29 +147,28 @@ class MultiTensorIterator : public TensorIterator {
             for (int i = TensorIterator::_ndim - 2; i >= 0; i--) {
                 if (coordinates.at(a, i) < shape_m1[i]) {
                     coordinates.at(a, i) += 1;
-                    d_ptrs[a] += strides.at(a, i);  //[a][i];
+                    d_ptrs[a] += strides.at(a, i);
                     break;
                 } else {
                     coordinates.at(a, i) = 0;
-                    d_ptrs[a] -= strides_back.at(a, i);  //[a][i];
+                    d_ptrs[a] -= strides_back.at(a, i);
                 }
             }
-            d_ptrs[a] -= strides_back.at_back(a);  //[a].back();
+            d_ptrs[a] -= strides_back.at_back(a);
         }
         return d_ptrs;
     }
 
     inline std::vector<long> get_strides() {
-        std::vector<long> return_;
+        std::vector<long> return_(tensor_count);
         for (int a = 0; a < tensor_count; a++) {
-            return_.emplace_back(strides.at_back(a));
+            return_[a] = strides.at_back(a);
         }
         return return_;
     }
     long tensor_count = 1;
 
     std::vector<long> d_ptrs;
-    //    private:
 };
 
 }  // namespace sail

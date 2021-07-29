@@ -1,3 +1,5 @@
+// allow-no-source
+
 #include "Activation.h"
 #include "Binary.h"
 #include "Compare.h"
@@ -11,5 +13,3 @@
 #include "Reduction.h"
 #include "Repr.h"
 #include "Unary.h"
-
-#include "native/utils.h"

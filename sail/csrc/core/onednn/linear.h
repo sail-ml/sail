@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -26,7 +28,7 @@ struct OneDNNLinearParams {
         const memory::dim N = src.get_shape()[0], IF = input_features,
                           OF = output_features;
 
-        src_dims = {N, IF};  // src.get_shape().shape;
+        src_dims = {N, IF};
         weight_dims = {OF, IF};
         bias_dims = {OF};
         dest_dims = {N, OF};
@@ -127,7 +129,7 @@ class LinearFactory : public PrimitiveFactory<OneDNNLinear> {
         auto p = OneDNNLinearParams(input_tensor, input_tensor.get_shape()[1],
                                     output.get_shape()[1]);
         std::string key = p.get_key();
-        prim = get(key);
+        prim = static_cast<OneDNNLinear*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNLinear(p);
             prim->initialize();
@@ -143,7 +145,7 @@ class LinearFactory : public PrimitiveFactory<OneDNNLinear> {
                                     output.get_shape()[1]);
 
         std::string key = p.get_key();
-        prim = get(key);
+        prim = static_cast<OneDNNLinear*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNLinear(p);
             prim->initialize();

@@ -29,18 +29,17 @@ class MaxPool2D : public Function {
     std::string padding_mode;
 
     TensorShape kernel_size;
-    long pad_y, pad_x;
 
     std::shared_ptr<onednn::OneDNNMaxPoolingParams> params;
     pooling_v2_forward::primitive_desc desc;
 
     MaxPool2D(std::shared_ptr<onednn::OneDNNMaxPoolingParams> params,
               pooling_v2_forward::primitive_desc desc)
-        : params(params), desc(desc){};
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
-    ~MaxPool2D() {}
+        : params(std::move(params)), desc(std::move(desc)){};
+    ~MaxPool2D() override = default;
+
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 #endif
 

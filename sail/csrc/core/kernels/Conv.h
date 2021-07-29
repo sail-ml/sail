@@ -7,10 +7,11 @@ namespace sail {
 
 namespace internal {
 
-using im2col_fn = Tensor (*)(Tensor& input, std::vector<long> kernel_size,
-                             std::vector<long> stride, std::vector<long> pads);
+using conv2d_fn = std::vector<Tensor> (*)(Tensor& input, Tensor& kernel,
+                                          std::vector<long> stride,
+                                          std::string padding_mode);
 
-DECLARE_DISPATCH(im2col_fn, im2col_stub);
+DECLARE_DISPATCH(conv2d_fn, conv2d_stub);
 
 }  // namespace internal
 

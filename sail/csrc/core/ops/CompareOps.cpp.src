@@ -38,11 +38,6 @@ Tensor clip_min(const Tensor& tensor1, const double min) {
 }
 
 Tensor clip_max(const Tensor& tensor1, const double max) {
-    // if (tensor1.requires_grad) {
-    //     TensorVector vec;
-    //     vec.emplace_back(tensor1);
-    //     return (new autograd::ClipMinOnly(min))->apply(vec);
-    // }
     Tensor empty_tensor = empty_like(tensor1);
     sail::internal::clip_max_stub(tensor1, max, empty_tensor);
     return empty_tensor;
@@ -50,13 +45,13 @@ Tensor clip_max(const Tensor& tensor1, const double max) {
 
 // clang-format off
 /** begin block
- * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte]
- * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub]
- * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual]
+ * name = [elementwise_equal, elementwise_lte, elementwise_lt, elementwise_gt, elementwise_gte, elementwise_ne]
+ * stub = [equal_stub, lte_stub, lt_stub, gt_stub, gte_stub, not_equal_stub]
+ * kName = [ElementwiseEquality, ElementwiseLessThanEqual, ElementwiseLessThan, ElementwiseGreaterThan, ElementwiseGreaterThanEqual, ElementwiseNotEqual]
  */
 
 Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
-    Tensor empty_tensor;  //= empty_like(tensor1);
+    Tensor empty_tensor; 
     Tensor t1, t2;
 
     Dtype dt = promote_dtype(tensor1.get_dtype(), tensor2.get_dtype());
@@ -66,14 +61,15 @@ Tensor $name$(const Tensor& tensor1, const Tensor& tensor2) {
         std::vector<long> new_ =
             merge_shapes(tensor1.get_shape().shape, tensor2.get_shape().shape);
         TensorShape s = TensorShape(new_);
-        empty_tensor = empty(s.ndim(), dt, s);
+        empty_tensor = empty(s.ndim(), Dtype::sBool, s);
         empty_tensor.requires_grad = t1.requires_grad;
         t1 = ops::broadcast_to(tensor1, s);
         t2 = ops::broadcast_to(tensor2, s);
     } else {
         t1 = tensor1;
         t2 = tensor2;
-        empty_tensor = empty_like(t1);
+        empty_tensor = empty(0, Dtype::sBool, t1.get_shape());
+
     }
 
     t1 = t1.cast(dt);

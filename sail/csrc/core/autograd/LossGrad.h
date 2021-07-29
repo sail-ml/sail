@@ -16,19 +16,17 @@ using TensorVector = std::vector<Tensor>;
 class SoftmaxCrossEntropyLoss : public Function {
    public:
     Tensor stored_output;
-    explicit SoftmaxCrossEntropyLoss(){};
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit SoftmaxCrossEntropyLoss() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class MeanSquaredErrorLoss : public Function {
    public:
     Tensor stored_output;
-    explicit MeanSquaredErrorLoss(){};
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    explicit MeanSquaredErrorLoss() = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

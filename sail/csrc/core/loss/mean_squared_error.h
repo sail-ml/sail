@@ -6,7 +6,7 @@ namespace loss {
 
 class MeanSquaredError : public sail::modules::Module {
    public:
-    explicit MeanSquaredError(){};
+    explicit MeanSquaredError() = default;
 
     Tensor forward(Tensor& logits, Tensor& targets);
 };

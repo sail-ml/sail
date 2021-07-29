@@ -264,9 +264,11 @@ def run(input, output, output2):
 #include "py_module/py_module.h"
 #include "py_tensor/py_tensor.h"
 
+static PyModuleDef modules_module = {{PyModuleDef_HEAD_INIT, "modules",
+                                     "Modules for SAIL", -1, 0}};
 
-
-PyObject* get_modules(PyObject* m) {{
+PyMODINIT_FUNC PyInit_sail_modules(void) {{
+    auto m = PyModule_Create(&modules_module);
 
     if (PyType_Ready(&PyModuleType) < 0) return NULL;
     {readies}

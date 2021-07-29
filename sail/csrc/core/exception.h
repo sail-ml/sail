@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <iostream>
@@ -66,14 +68,6 @@ class TypeError : public SailCError {
     using SailCError::SailCError;
 };
 
-// #define SAIL_ASSERT(cond, ...)
-//   if (C10_UNLIKELY_OR_CONST(!(cond))) {
-//     ::c10::detail::torchCheckFail(
-//         __func__,
-//         __FILE__,
-//         static_cast<uint32_t>(__LINE__),
-//         #cond "INTERNAL ASSERT FAILED at" C10_STRINGIZE(__FILE__));
-//   }
 #define SAIL_CHECK(cond, ...)          \
     if (!(cond)) {                     \
         throw SailCError(__VA_ARGS__); \
@@ -89,8 +83,4 @@ class TypeError : public SailCError {
     }
 
 #define THROW_ERROR(err_t, ...) throw err_t(__VA_ARGS__)
-#define THROW_ERROR_DETAILED(err_t, ...)               \
-    throw err_t(__VA_ARGS__, "\n", "File: ", __FILE__, \
-                "\nLine: ", __LINE__)  // throw err_t("Error occured at ",
-                                       // __FILE__, ":", __LINE__, ":\n",
-                                       //             ##__VA_ARGS__)
+#define THROW_ERROR_DETAILED(err_t, ...) throw err_t(__VA_ARGS__)

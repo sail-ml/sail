@@ -36,7 +36,7 @@ Note: SAIL only works on linux
 
 Right now, **YOU MUST HAVE NVIDIA TOOLKIT AND AVX2 COMPATIBLE CPU TO RUN**. This is being built to a specific system for now, and in the future that will no longer be and issue.
 
-SAIL is built using GCC and G++ 8.0. To install, you need Python >= 3.8 and NumPy.  Then just run 
+SAIL is built using GCC and G++ 8.0. To install, you need Python >= 3.7 and NumPy.  Then just run 
 `python setup.py install`
 
 That is a super simple explanation but the project is new so  ¯\_(ツ)_/¯

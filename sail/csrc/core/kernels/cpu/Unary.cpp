@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Unary.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -14,11 +16,11 @@ namespace {
 
 template <typename T, typename avx_type>
 struct NegateImpl : cpu::UnaryImpl<T, avx_type> {
-    inline void call_base(T& x1, T& out) { out = -x1; }
-    inline avx_type avx_fcn(avx_type& a) { return -a; }
+    inline void call_base(T& x1, T& out) override { out = -x1; }
+    inline avx_type avx_fcn(avx_type& a) override { return -a; }
 };
 void negate_kernel(const Tensor& t1, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
         using avx_type = xsimd::simd_type<T>;

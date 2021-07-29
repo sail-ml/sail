@@ -1,7 +1,7 @@
+// allow-no-source
 #pragma once
 
 #include <Python.h>
-// #include <pybind11/pybind11.h>
 #include <structmember.h>
 #include <chrono>
 #include <iostream>
@@ -9,7 +9,6 @@
 #include "core/constants.h"
 #include "core/dtypes.h"
 #include "core/exception.h"
-// #include "core/modules/modules.h"
 #include "numpy/arrayobject.h"
 #include "py_utils.h"
 
@@ -21,11 +20,9 @@
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string.hpp>  // Include for boost::split
-#include <boost/algorithm/string/classification.hpp>  // Include boost::for is_any_of
-#include <boost/algorithm/string/split.hpp>  // Include for boost::split
-
-// namespace py = pybind11;
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #define NONE_CHECK_FAIL(v) \
     if (v == Py_None) {    \
@@ -36,8 +33,6 @@
         return true;       \
     }
 
-// namespace sail {
-
 using StringList = typename std::vector<std::string>;
 using StringMap = typename std::unordered_map<std::string, std::string>;
 
@@ -47,6 +42,7 @@ enum class ParameterType {
     FLOAT,
     TENSOR_LIST,
     INT_LIST,
+    LIST_OF_INT_LIST,
     BOOL,
     PYOBJECT,
     STRING,
@@ -67,6 +63,8 @@ std::string type_to_name(ParameterType type_) {
             return "(tuple of ints)";
         case ParameterType::FLOAT_LIST:
             return "(tuple of floats)";
+        case ParameterType::LIST_OF_INT_LIST:
+            return "(tuple of (tuple of ints))";
         case ParameterType::BOOL:
             return "bool";
         case ParameterType::PYOBJECT:
@@ -85,6 +83,7 @@ ParameterType name_to_type(std::string type_) {
     if (type_ == "float") return ParameterType::FLOAT;
     if (type_ == "TensorList") return ParameterType::TENSOR_LIST;
     if (type_ == "IntList") return ParameterType::INT_LIST;
+    if (type_ == "ListOfIntList") return ParameterType::LIST_OF_INT_LIST;
     if (type_ == "FloatList") return ParameterType::FLOAT_LIST;
     if (type_ == "bool") return ParameterType::BOOL;
     if (type_ == "object") return ParameterType::PYOBJECT;
@@ -228,7 +227,6 @@ struct FunctionSignature {
 
             PyObject* arg = passed_args[i];
             if (arg == NULL || arg == nullptr) {
-                // return is_good;
                 continue;
             }
             if (arg == Py_None) {
@@ -248,36 +246,31 @@ struct FunctionSignature {
             try {
                 switch (type_) {
                     case ParameterType::INT64:
-                        is_good = (verify_int(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_int(arg, allow_none));
                         break;
                     case ParameterType::FLOAT:
-                        is_good = (verify_float(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_float(arg, allow_none));
                         break;
                     case ParameterType::TENSOR:
-                        is_good = (verify_Tensor(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_Tensor(arg, allow_none));
                         break;
                     case ParameterType::INT_LIST:
-                        is_good = (verify_int_list(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_int_list(arg, allow_none));
                         break;
                     case ParameterType::FLOAT_LIST:
-                        is_good = (verify_float_list(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_float_list(arg, allow_none));
+                        break;
+                    case ParameterType::LIST_OF_INT_LIST:
+                        is_good = (verify_list_of_int_list(arg, allow_none));
                         break;
                     case ParameterType::TENSOR_LIST:
-                        is_good = (verify_tensor_list(
-                            arg, allow_none));  // || (default_val != "None"));
+                        is_good = (verify_tensor_list(arg, allow_none));
                         break;
                     case ParameterType::BOOL:
-                        is_good = (verify_bool(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_bool(arg, allow_none));
                         break;
                     case ParameterType::STRING:
-                        is_good = (verify_string(
-                            arg, allow_none));  // || (default_val == "None"));
+                        is_good = (verify_string(arg, allow_none));
                         break;
                     case ParameterType::PYOBJECT:
                         is_good = true;
@@ -369,6 +362,32 @@ struct FunctionSignature {
         }
         return true;
     }
+    bool verify_list_of_int_list(PyObject* obj, bool allow_none) {
+        if (!allow_none) {
+            NONE_CHECK_FAIL(obj);
+        } else {
+            NONE_CHECK_PASS(obj);
+        }
+        auto tuple = PyTuple_Check(obj);
+        auto list = PyList_Check(obj);
+
+        if (!tuple && !list) {
+            return false;
+        }
+
+        auto size = tuple ? PyTuple_Size(obj) : PyList_Size(obj);
+        if (size < 0) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            PyObject* check =
+                tuple ? PyTuple_GetItem(obj, i) : PyList_GetItem(obj, i);
+            if (!verify_int_list(check, allow_none)) {
+                return false;
+            }
+        }
+        return true;
+    }
     bool verify_float_list(PyObject* obj, bool allow_none) {
         if (!allow_none) {
             NONE_CHECK_FAIL(obj);
@@ -449,6 +468,15 @@ struct FunctionSignature {
         std::string default_val = args[arg_name];
 
         std::vector<long> out = {};
+
+        return out;
+    }
+    std::vector<std::vector<long>> get_default_list_of_int_list(int i) {
+        std::string arg_name = arg_order[i];
+        std::string type = args_types[arg_name];
+        std::string default_val = args[arg_name];
+
+        std::vector<std::vector<long>> out = {{}};
 
         return out;
     }
@@ -579,8 +607,6 @@ struct PythonArgParser {
 
     bool at(int idx) { return matches[idx]; }
 
-    // getters
-
     PyTensor* py_tensor(int idx) {
         PyObject* val = args[use][idx];
         return ((PyTensor*)val);
@@ -589,9 +615,28 @@ struct PythonArgParser {
         PyObject* val = args[use][idx];
         return ((PyTensor*)val)->tensor;
     }
+    std::vector<long> int_list_inner(PyObject* arg) {
+        std::vector<long> ret;
+        auto tuple = PyTuple_Check(arg);
+
+        auto size = tuple ? PyTuple_Size(arg) : PyList_Size(arg);
+        for (int i = 0; i < size; i++) {
+            PyObject* val =
+                tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
+            ret.push_back(PyLong_AsLong(val));
+        }
+        return ret;
+    }
     std::vector<long> int_list(int idx) {
         PyObject* arg = args[use][idx];
-        std::vector<long> ret;
+        if (arg == nullptr || arg == Py_None) {
+            return signatures[use].get_default_int_list(idx);
+        }
+        return int_list_inner(arg);
+    }
+    std::vector<std::vector<long>> list_of_int_list(int idx) {
+        PyObject* arg = args[use][idx];
+        std::vector<std::vector<long>> ret;
         if (arg == nullptr || arg == Py_None) {
             return ret;
         }
@@ -602,10 +647,8 @@ struct PythonArgParser {
         for (int i = 0; i < size; i++) {
             PyObject* val =
                 tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
-            ret.push_back(PyLong_AsLong(val));
+            ret.push_back(int_list_inner(val));
         }
-        // std::reverse(ret.begin(), ret.end());
-
         return ret;
     }
     std::vector<double> float_list(int idx) {
@@ -624,7 +667,6 @@ struct PythonArgParser {
                 ret.push_back((double)PyLong_AsLong(arg));
             }
         }
-        // std::reverse(ret.begin(), ret.end());
 
         return ret;
     }
@@ -640,7 +682,6 @@ struct PythonArgParser {
                 tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
             ret.push_back(((PyTensor*)val)->tensor);
         }
-        // std::reverse(ret.begin(), ret.end());
 
         return ret;
     }
@@ -693,7 +734,6 @@ struct PythonArgParser {
                 tuple ? PyTuple_GetItem(arg, i) : PyList_GetItem(arg, i);
             ret.push_back(PyLong_AsLong(val));
         }
-        // std::reverse(ret.begin(), ret.end());
 
         return ret;
     }
@@ -712,13 +752,3 @@ struct PythonArgParser {
         return std::string(PyUnicode_AsUTF8(arg));
     }
 };
-// }  // namespace sail
-// if (result == false) {
-//     for (FunctionSignature<N> s : signatures) {
-//         sig_strings += s.signature + "\n";
-//     }
-//     THROW_ERROR_DETAILED(
-//         SailCError,
-//         "Arguments do not match defined function signatures: \n",
-//         sig_strings);
-// }

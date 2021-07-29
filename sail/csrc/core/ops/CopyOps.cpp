@@ -18,8 +18,7 @@ Tensor copy(Tensor& tensor1) {
     empty_tensor =
         empty(tensor1.get_ndim(), tensor1.get_dtype(), tensor1.get_shape());
 
-    sail::internal::cast_stub(tensor1, empty_tensor);  // change to basic copy
-
+    sail::internal::cast_stub(tensor1, empty_tensor);
     return empty_tensor;
 }
 
@@ -29,7 +28,7 @@ void copy(Tensor& dest, const Tensor& source) {
                " ", getVectorString(source.get_shape().shape));
     SAIL_CHECK(dest.get_dtype() == source.get_dtype());
 
-    dispatch_all_types(dest.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(dest.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
 
         T* dst = static_cast<T*>(dest.get_data());
@@ -56,12 +55,9 @@ void copy(Tensor& dest, const Tensor& source) {
     });
 }
 
-Tensor cast(Tensor& tensor1, Dtype dt) {
+Tensor cast(const Tensor& tensor1, Dtype dt) {
     TensorSize new_strides;
-    long dt_size = GetDtypeSize(dt);
-    // for (long s : tensor1.get_shape().shape) {
-    //     new_strides.push_back(dt_size * s);
-    // }
+
     Tensor empty_tensor =
         empty(tensor1.get_ndim(), dt, TensorShape(tensor1.get_shape().shape));
 
@@ -72,19 +68,15 @@ Tensor cast(Tensor& tensor1, Dtype dt) {
 
 Tensor view(Tensor& t1) {
     Tensor new_;
-    // new_.set_data(t1.get_data());
-    // new_.get_dtype() = t1.get_dtype();
     new_.fcn = t1.fcn;
     new_.requires_grad = t1.requires_grad;
-    // new_.get_shape() = t1.get_shape();
-    // new_.is_view()_base_shape = t1.get_shape();
     return new_;
 }
 
 Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
     Tensor ret;
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        dispatch_all_types(dt, [&](auto pt2) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        dispatch_all_numeric_types(dt, [&](auto pt2) {
             using T_in = typename decltype(pt)::type;
             using T_out = typename decltype(pt2)::type;
 
@@ -96,13 +88,9 @@ Tensor internal_fast_cast(Tensor& t1, Dtype dt) {
     return ret;
 }
 
-Tensor pad(Tensor& t1,
-           std::vector<std::vector<long>>
-               x) {  // const std::vector<std::tuple<long, long>> pads
+Tensor pad(const Tensor& t1, std::vector<std::vector<long>> x) {
     return sail::internal::pad_stub(t1, x);
 }
-
-/** end block **/
 
 }  // namespace ops
 

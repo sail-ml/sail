@@ -14,8 +14,6 @@ namespace autograd {
 using TensorVector = std::vector<Tensor>;
 
 Tensor Function::apply(TensorVector& inputs) {
-    // arg_storage = inputs;
-    // arg_storage(inputs);
     COPY_INPUTS(inputs, arg_storage);
     DISABLE_GRAD(inputs);
     Tensor o = forward(inputs);
@@ -26,12 +24,9 @@ Tensor Function::apply(TensorVector& inputs) {
 }
 
 void Function::apply_no_forward(TensorVector& inputs) {
-    // arg_storage = inputs;
     COPY_INPUTS(inputs, arg_storage);
-    // arg_storage(inputs);
 }
 Tensor Function::set_fcn(Tensor& t) {
-    // arg_storage = inputs;
     t.requires_grad = true;
     t.register_op(this);
     return t;

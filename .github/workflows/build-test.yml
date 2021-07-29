@@ -26,7 +26,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
         with:
-          python-version: 3.8
+          python-version: 3.7
 
       - name: Install Python Dependencies
         run: |
@@ -34,10 +34,10 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build Package
-        run: python setup.py ci install
+        run: python setup.py install coverage
 
       - name: Test and generate coverage
-        run: ./test.sh all coverage-xml
+        run: python test.py -a --xml
 
       - uses: codecov/codecov-action@v1
         with:

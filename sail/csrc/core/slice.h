@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 #include <cstdarg>
 #include <iostream>
@@ -8,17 +10,17 @@ namespace sail {
 class Slice {
    public:
     std::vector<std::vector<long>> slices;
-    Slice(std::vector<std::vector<long>> slices) : slices(slices){};
+    Slice(std::vector<std::vector<long>> slices) : slices(std::move(slices)){};
     Slice(std::vector<long> slices) : slices({slices}){};
     Slice(std::vector<long> slice, int axis) {
         for (int i = 0; i < axis; i++) {
-            slices.push_back({});
+            slices.push_back({});  // NOLINT
         }
-        slices.push_back(slice);
+        slices.emplace_back(slice);
     };
 
     void print() {
-        for (std::vector<long> slice : slices) {
+        for (const auto& slice : slices) {
             std::cout << getVectorString(slice) << " ";
         }
         std::cout << std::endl;

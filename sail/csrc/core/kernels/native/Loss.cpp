@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Loss.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -12,11 +14,11 @@ namespace internal {
 namespace {
 
 void mse_kernel(const Tensor& t1, const Tensor& t2, Tensor& out_tensor) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;
 
-        bool broadcast;
+        bool broadcast = false;
         if (t1.is_view() || t2.is_view()) {
             broadcast = true;
         }

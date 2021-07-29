@@ -1,5 +1,7 @@
-#include <iostream>
+// allow-no-source allow-impl-in-header
+#pragma once
 
+#include <iostream>
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "factories.h"

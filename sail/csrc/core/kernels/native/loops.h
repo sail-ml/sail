@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <immintrin.h>
@@ -13,8 +15,6 @@
 #include "xsimd/xsimd.hpp"
 
 using Tensor = sail::Tensor;
-template <std::size_t N, typename... Args>
-using get = typename get_Nth_type<N, Args...>::type;
 
 namespace sail {
 
@@ -30,9 +30,9 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     int i = 0;
     const int jump = t1.get_info().jump;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
-    T __restrict__ *p3;
+    T *p1;
+    T *p2;
+    T *p3;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(t2.get_data());
@@ -41,8 +41,7 @@ void launch_binary_elementwise(Op op, const Tensor &t1, const Tensor &t2,
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator iter =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator iter = MultiTensorIterator(s1).add_input(s2);
 
     int inner_loop_size = iter.inner_loop_size();
     int outer_steps = iter.out_loop_size();
@@ -63,8 +62,8 @@ void launch_binary_elementwise_inplace(Op op, Tensor &t1, Tensor &t2) {
     int i = 0;
     const int jump = t1.get_info().jump;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(t2.get_data());
@@ -72,8 +71,7 @@ void launch_binary_elementwise_inplace(Op op, Tensor &t1, Tensor &t2) {
     TensorShape s1 = t1.get_shape();
     TensorShape s2 = t2.get_shape();
 
-    MultiTensorIterator iter =
-        MultiTensorIterator(s1).add_input(s2);  //.add_input(s3);
+    MultiTensorIterator iter = MultiTensorIterator(s1).add_input(s2);
 
     int inner_loop_size = iter.inner_loop_size();
     int outer_steps = iter.out_loop_size();
@@ -93,8 +91,8 @@ void launch_unary_elementwise(Op op, const Tensor &t1, const Tensor &out) {
     int jump = t1.get_info().jump;
     int i = 0;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(t1.get_data());
     p2 = static_cast<T *>(out.get_data());
@@ -137,8 +135,6 @@ void UnaryElementwise(Op op, const Tensor &t1, const Tensor &t3) {
     inner_elementwise::launch_unary_elementwise<T>(op, t1, t3);
 }
 
-/// reduction loops ///
-
 namespace inner_reduction {
 
 template <typename T, typename Op>
@@ -147,8 +143,8 @@ void launch_reduction(Op op, const Tensor &input, const Tensor &out) {
     int jump = input.get_info().jump;
     int i = 0;
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(input.get_data());
     p2 = static_cast<T *>(out.get_data());
@@ -160,14 +156,14 @@ void launch_reduction(Op op, const Tensor &input, const Tensor &out) {
 
 template <typename T, typename Op>
 void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
-                           int axis) {
+                           int axis, T initial = 0) {
     TensorShape s = TensorShape(input.get_shape());
     int numel = out.get_shape().numel();
     s.recompute();
     s.move_axis(axis, -1);
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(input.get_data());
     p2 = static_cast<T *>(out.get_data());
@@ -178,8 +174,8 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
 
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
-        p2[idx] = 0;
-        while (count != s.shape[s.ndim() - 1]) {  // s.numel_avoid(0)) {
+        p2[idx] = initial;
+        while (count != s.shape[s.ndim() - 1]) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
             count += 1;
@@ -191,7 +187,7 @@ void launch_reduction_axis(Op op, const Tensor &input, const Tensor &out,
 
 template <typename T, typename Op>
 void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
-                                 std::vector<long> axis) {
+                                 std::vector<long> axis, T initial = 0) {
     TensorShape s = TensorShape(input.get_shape());
     int numel = out.get_shape().numel();
     long stop = 1;
@@ -202,8 +198,8 @@ void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
         stop *= s.shape.back();
     }
 
-    T __restrict__ *p1;
-    T __restrict__ *p2;
+    T *p1;
+    T *p2;
 
     p1 = static_cast<T *>(input.get_data());
     p2 = static_cast<T *>(out.get_data());
@@ -214,8 +210,8 @@ void launch_reduction_multi_axis(Op op, const Tensor &input, const Tensor &out,
 
     for (int i = 0; i < out.numel(); i++) {
         count = 0;
-        p2[idx] = 0;
-        while (count != stop) {  // s.shape[last]) {  // s.numel_avoid(0)) {
+        p2[idx] = initial;
+        while (count != stop) {
             op.call_base(p1[s.d_ptr], p2[idx]);
             s.next();
             count += 1;
@@ -234,18 +230,20 @@ void Reduction(Op op, const Tensor &input, const Tensor &out) {
     inner_reduction::launch_reduction<T>(op, input, out);
 }
 template <typename T, typename Op>
-void Reduction(Op op, const Tensor &input, const Tensor &out, int index) {
+void Reduction(Op op, const Tensor &input, const Tensor &out, int index,
+               T initial = 0) {
     bool allows_avx = false;
 
-    inner_reduction::launch_reduction_axis<T>(op, input, out, index);
+    inner_reduction::launch_reduction_axis<T>(op, input, out, index, initial);
 }
 
 template <typename T, typename Op>
 void Reduction(Op op, const Tensor &input, const Tensor &out,
-               std::vector<long> axes) {
+               std::vector<long> axes, T initial = 0) {
     bool allows_avx = false;
 
-    inner_reduction::launch_reduction_multi_axis<T>(op, input, out, axes);
+    inner_reduction::launch_reduction_multi_axis<T>(op, input, out, axes,
+                                                    initial);
 }
 
 }  // namespace native

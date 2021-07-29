@@ -6,7 +6,6 @@ import unittest, random
 
 class MatmulTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base(self, rq):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
@@ -30,28 +29,34 @@ class MatmulTest(UnitTest):
 
         return
 
+    def test_integer(self):
+        a = sail.random.uniform(0, 11, (10, 20)).astype(sail.int32)
+        b = sail.random.uniform(0, 11, (20, 10)).astype(sail.int32)
+
+        c = sail.matmul(a, b)
+        a = a.numpy()
+        b = b.numpy()
+
+        c2 = np.matmul(a, b)
+
+        self.assert_eq_np_sail(c2, c, eps=1e-7)
+
+
+
     def test_error_base(self):
         a = sail.random.uniform(0, 1, (1))
-        b = sail.random.uniform(1, 2, (1, 2))
-        try:
-            sail.matmul(a, b)
-        except Exception as e:
-            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
+        b = sail.random.uniform(1, 2, (1))
+        self.assert_throws(sail.matmul, (a, b), sail.SailError)
 
         a = sail.random.uniform(0, 1, (3, 4, 5))
         b = sail.random.uniform(1, 2, (5, 2))
-        try:
-            sail.matmul(a, b)
-        except Exception as e:
-            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
+        self.assert_throws(sail.matmul, (a, b), sail.SailError)
+
 
         a = sail.random.uniform(0, 1, (3, 5))
         b = sail.random.uniform(1, 2, (3, 5))
-        try:
-            sail.matmul(a, b)
-        except Exception as e:
-            self.assert_eq(e.__class__.__name__, sail.SailError().__class__.__name__)
-
+        self.assert_throws(sail.matmul, (a, b), sail.SailError)
+        
     
     def test_grad(self):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
@@ -77,10 +82,54 @@ class MatmulTest(UnitTest):
                 self.assert_true(check_gradients_vector(forward, dic))
 
         return
+    
+    def test_grad_with_vec1(self):
+        choices = [(3), (18), (33), (64)]
+        choices2 = [(3, 3), (18, 32), (33, 12), (64, 2)]
+        times = []
+
+        def forward(a, b):
+            c = sail.matmul(a, b)
+            d = sail.sum(c)
+            return d
+
+        for ca, cb in zip(choices, choices2):
+            arr1 = np.random.uniform(0, 1, (ca))
+            arr2 = np.random.uniform(0, 1, (cb))
+
+            dic = {
+                "a": arr1,
+                "b": arr2
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic))
+
+        return
+    def test_grad_with_vec2(self):
+        choices2 = [(3), (32), (12), (2)]
+        choices = [(3, 3), (18, 32), (33, 12), (64, 2)]
+        times = []
+
+        def forward(a, b):
+            c = sail.matmul(a, b)
+            d = sail.sum(c)
+            return d
+
+        for ca, cb in zip(choices, choices2):
+            arr1 = np.random.uniform(0, 1, (ca))
+            arr2 = np.random.uniform(0, 1, (cb))
+
+            dic = {
+                "a": arr1,
+                "b": arr2
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic))
+
+        return
 
 class AddmmTest(UnitTest):
 
-    # UnitTest._test_registry.append(AddTest)
     @requires_grad_decorator
     def test_base(self, rq):
         choices = [(3, 3), (12, 18), (2, 33), (32, 64)]
@@ -131,6 +180,22 @@ class AddmmTest(UnitTest):
                 self.assert_true(check_gradients_vector(forward, dic))
 
         return
+
+    
+    def test_error_base(self):
+        a = sail.random.uniform(0, 1, (1))
+        b = sail.random.uniform(1, 2, (1))
+        c = sail.random.uniform(1, 2, (1))
+        self.assert_throws(sail.addmm, (a, b, c), sail.SailError)
+
+        a = sail.random.uniform(0, 1, (3, 4, 5))
+        b = sail.random.uniform(1, 2, (5, 2))
+        self.assert_throws(sail.addmm, (a, b, c), sail.SailError)
+
+
+        a = sail.random.uniform(0, 1, (3, 5))
+        b = sail.random.uniform(1, 2, (3, 5))
+        self.assert_throws(sail.addmm, (a, b, c), sail.SailError)
         
 
 class TensordotTest(UnitTest):

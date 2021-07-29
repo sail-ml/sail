@@ -10,6 +10,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+coverage/
 
 valgrind-out.txt
 
@@ -95,6 +96,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage.html
 *.cover
 *.py,cover
 .hypothesis/
@@ -188,10 +190,8 @@ dmypy.json
 cython_debug/
 
 
-
-test.py
-
 docs/generated
 !docs/Makefile
 wheelhouse/
 examples/mnist/time_mnist_mlp.py
+!tools/coverage

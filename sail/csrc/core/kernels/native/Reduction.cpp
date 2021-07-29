@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Reduction.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -12,8 +14,7 @@ namespace internal {
 namespace {
 
 void sum_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
-        // std::cout << decltype(pt)::type << std::endl;
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {
@@ -28,11 +29,11 @@ void sum_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
     });
 }
 
-void mean_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+void mean_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out,
+                 long numel) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
-        T numel = (T)t1.numel();
         struct Impl {
             T numel;
             Impl(T _numel) { numel = _numel; }
@@ -40,24 +41,15 @@ void mean_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
         };
 
         if (axis[0] != NULLDIM) {
-            numel = 1;
-            TensorShape t1_shape = t1.get_shape();
-            int i = 0;
-            for (long s : t1_shape.shape) {
-                if (std::find(axis.begin(), axis.end(), i) != axis.end()) {
-                    numel *= s;
-                }
-                i += 1;
-            }
-            native::Reduction<T>(Impl{numel}, t1, out, axis);
+            native::Reduction<T>(Impl{(T)numel}, t1, out, axis);
         } else {
-            native::Reduction<T>(Impl{numel}, t1, out);
+            native::Reduction<T>(Impl{(T)numel}, t1, out);
         }
     });
 }
 
 void min_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {
@@ -68,16 +60,18 @@ void min_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
             }
         };
 
+        T initial = ((T*)(out.get_data()))[0];
+
         if (axis[0] == NULLDIM) {
             native::Reduction<T>(Impl{}, t1, out);
         } else {
-            native::Reduction<T>(Impl{}, t1, out, axis);
+            native::Reduction<T>(Impl{}, t1, out, axis, initial);
         }
     });
 }
 
 void max_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         using avx_name = typename decltype(pt)::avx_type;
         struct Impl {
@@ -98,7 +92,6 @@ void max_kernel(const Tensor& t1, std::vector<long> axis, Tensor& out) {
 
 }  // namespace
 REGISTER_ONLY_NATIVE_DISPATCH(sum_stub, &sum_kernel);
-// REGISTER_ONLY_NATIVE_DISPATCH(sum_stub2, &sum_kernel2);
 REGISTER_ONLY_NATIVE_DISPATCH(mean_stub, &mean_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(min_stub, &min_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(max_stub, &max_kernel);

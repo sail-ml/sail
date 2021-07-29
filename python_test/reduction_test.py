@@ -76,6 +76,21 @@ class MeanTest(UnitTest):
             self.assert_eq(x3.requires_grad, rq)
         return
 
+    def test_mean_grad(self):
+        def forward(a):
+            y = sail.mean(a)
+            return y 
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c["shape"]))
+            
+            dic = {
+                "a": arr1,
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic))
+        return
+
 class MaxTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -101,6 +116,40 @@ class MaxTest(UnitTest):
             return y 
         times = []
         for c in grad_choices:
+            arr1 = np.random.uniform(1, 10, c)
+            
+            dic = {
+                "a": arr1,
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic))
+        return
+
+class MinTest(UnitTest):
+
+    # UnitTest._test_registry.append(AddTest)
+    @requires_grad_decorator
+    def test_min(self, rq):
+        times = []
+        for c in choices:
+            arr1 = np.random.uniform(0, 1, (c["shape"]))
+            
+            x1 = sail.Tensor(arr1, requires_grad=rq)
+            
+            x3 = sail.min(x1, c["axis"], keepdims=c["keepdims"])
+            arr3 = np.min(arr1, c["axis"], keepdims=c["keepdims"])
+
+            self.assert_eq(x3.shape, c["result_shape"])
+            self.assert_eq_np_sail(arr3, x3, 1e-7)
+            self.assert_eq(x3.requires_grad, rq)
+        return
+
+    def test_min_grad(self):
+        def forward(a):
+            y = sail.min(a)
+            return y 
+        times = []
+        for c in grad_choices[:1]:
             arr1 = np.random.uniform(1, 10, c)
             
             dic = {

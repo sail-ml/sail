@@ -46,24 +46,24 @@ static PyMethodDef PyOptimizer_methods[] = {
 
 //////////////// TYPE DEF ////////////////////
 static PyTypeObject PyOptimizerType = {
-    PyVarObject_HEAD_INIT(NULL, 0) "libsail_c.Optimizer", /* tp_name */
-    sizeof(PyOptimizer),                                  /* tp_basicsize */
-    0,                                                    /* tp_itemsize */
-    (destructor)PyOptimizer_dealloc,                      /* tp_dealloc */
-    0,                                                    /* tp_print */
-    0,                                                    /* tp_getattr */
-    0,                                                    /* tp_setattr */
-    0,                                                    /* tp_reserved */
-    0,                                                    /* tp_repr */
-    0,                                                    /* tp_as_number */
-    0,                                                    /* tp_as_sequence */
-    0,                                                    /* tp_as_mapping */
-    0,                                                    /* tp_hash */
-    0,                                                    /* tp_call */
-    0,                                                    /* tp_str */
-    0,                                                    /* tp_getattro */
-    0,                                                    /* tp_setattro */
-    0,                                                    /* tp_as_buffer */
+    PyVarObject_HEAD_INIT(NULL, 0) "sail.losses.Optimizer", /* tp_name */
+    sizeof(PyOptimizer),                                    /* tp_basicsize */
+    0,                                                      /* tp_itemsize */
+    (destructor)PyOptimizer_dealloc,                        /* tp_dealloc */
+    0,                                                      /* tp_print */
+    0,                                                      /* tp_getattr */
+    0,                                                      /* tp_setattr */
+    0,                                                      /* tp_reserved */
+    0,                                                      /* tp_repr */
+    0,                                                      /* tp_as_number */
+    0,                                                      /* tp_as_sequence */
+    0,                                                      /* tp_as_mapping */
+    0,                                                      /* tp_hash */
+    0,                                                      /* tp_call */
+    0,                                                      /* tp_str */
+    0,                                                      /* tp_getattro */
+    0,                                                      /* tp_setattro */
+    0,                                                      /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_HAVE_GC,             /* tp_flags */
     NULL,                               /* tp_doc */

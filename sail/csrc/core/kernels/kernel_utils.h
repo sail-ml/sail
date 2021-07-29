@@ -1,3 +1,4 @@
+// allow-no-source
 #pragma once
 
 #include <immintrin.h>
@@ -19,3 +20,6 @@ template <typename T, typename... types>
 struct get_Nth_type<0, T, types...> {
     using type = T;
 };
+
+template <std::size_t N, typename... Args>
+using get = typename get_Nth_type<N, Args...>::type;

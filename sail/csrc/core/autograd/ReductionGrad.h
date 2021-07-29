@@ -47,29 +47,28 @@ using TensorVector = std::vector<Tensor>;
 
 class Reduction : public Function {
    public:
-    std::vector<long> axis;
-    bool keepdims;
-    Reduction(std::vector<long> _axis, bool _keepdims) {
-        axis = _axis;
-        keepdims = _keepdims;
-    };
+    std::vector<long> axis = {NULLDIM};
+    bool keepdims = false;
+    long numel = 1;
+    Reduction(std::vector<long> axis, bool keepdims)
+        : axis(std::move(axis)), keepdims(keepdims){};
+    Reduction(std::vector<long> axis, bool keepdims, long numel)
+        : axis(std::move(axis)), keepdims(keepdims), numel(numel){};
 };
 
 class Sum : public Reduction {
    public:
     using Reduction::Reduction;
 
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 class Mean : public Reduction {
    public:
     using Reduction::Reduction;
 
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 class Max : public Reduction {
@@ -77,18 +76,16 @@ class Max : public Reduction {
     using Reduction::Reduction;
     Tensor stored_output;
 
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 class Min : public Reduction {
    public:
     using Reduction::Reduction;
     Tensor stored_output;
 
-    // RefTensorVector arg_storage;
-    Tensor forward(TensorVector inputs);
-    TensorVector backward(Tensor& grad);
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
 };
 
 }  // namespace autograd

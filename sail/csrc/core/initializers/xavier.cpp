@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <cmath>
+#include <cstdio>
 #include <vector>
 #include "Tensor.h"
 #include "exception.h"
@@ -11,7 +11,7 @@ namespace sail {
 
 namespace initializers {
 
-Tensor xavier_uniform(Tensor input, double gain = 1.0) {
+Tensor xavier_uniform(Tensor input, double gain) {
     std::tuple<long, long> fans = calculate_fan_in_out(input);
     long fan1 = std::get<0>(fans);
     long fan2 = std::get<1>(fans);
@@ -22,7 +22,7 @@ Tensor xavier_uniform(Tensor input, double gain = 1.0) {
     return input;
 }
 
-Tensor xavier_normal(Tensor input, double gain = 1.0) {
+Tensor xavier_normal(Tensor input, double gain) {
     std::tuple<long, long> fans = calculate_fan_in_out(input);
     long fan1 = std::get<0>(fans);
     long fan2 = std::get<1>(fans);

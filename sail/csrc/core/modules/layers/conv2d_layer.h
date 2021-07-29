@@ -3,10 +3,6 @@
 #include "modules/module.h"
 #include "tensor_shape.h"
 
-#ifdef MKLDNN
-#include "onednn/conv2d.h"
-#endif
-
 namespace sail {
 namespace modules {
 
@@ -23,13 +19,6 @@ class Conv2D : public Module {
     bool use_bias;
 
     std::vector<long> strides;
-
-#ifdef MKLDNN
-    std::shared_ptr<onednn::OneDNNConv2DParams> params = nullptr;
-    std::shared_ptr<onednn::OneDNNConv2DBackward> layer2 = nullptr;
-    std::shared_ptr<onednn::OneDNNConv2D> layer = nullptr;
-    // TensorShape output_shape;
-#endif
 
     Conv2D(long _input_channels, long _output_channels,
            std::vector<long> _kernel_size, std::vector<long> _strides,

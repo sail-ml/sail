@@ -8,6 +8,7 @@
 #include "core/dtypes.h"
 #include "numpy/arrayobject.h"
 #include "py_tensor.h"
+#include "py_tensor_def.h"
 
 #include "../error_defs.h"
 #include "../macros.h"
@@ -18,9 +19,10 @@ static PyObject *PyTensor_getitem(PyObject *self, PyObject *key) {
     ret_class = (PyTensor *)PyTensorType.tp_alloc(&PyTensorType, 0);
     if (PySlice_Check(key)) {
         long start, stop, step;
+        step = 1;
         PySlice_GetIndices(key, ((PyTensor *)self)->tensor.len(), &start, &stop,
                            &step);
-        ret_class->tensor = ((PyTensor *)self)->tensor.slice(start, stop);
+        ret_class->tensor = ((PyTensor *)self)->tensor.slice(start, stop, step);
     } else {
         int idx = static_cast<int>(PyLong_AsLong(key));
 

@@ -1,16 +1,16 @@
 #include "conv2d_layer.h"
-#include <math.h> /* pow */
+#include <cmath>
 #include "Tensor.h"
 #include "autograd/autograd.h"
 #include "dtypes.h"
 #include "exception.h"
 #include "factories.h"
 #include "initializers/kaiming.h"
+#include "kernels/utils.h"
 #include "ops/ops.h"
 #include "tensor_shape.h"
-// #include "module.h"
+
 #ifdef MKLDNN
-#include "onednn/conv2d.h"
 #include "onednn/conv2d_forward.h"
 #endif
 namespace sail {
@@ -19,17 +19,20 @@ using TensorVector = std::vector<Tensor>;
 
 Conv2D::Conv2D(long _input_channels, long _output_channels,
                std::vector<long> _kernel_size, std::vector<long> _strides,
-               std::string _padding_mode, bool _bias = true) {
+               std::string _padding_mode, bool _bias) {
+    input_channels = _input_channels;
+    output_channels = _output_channels;
+
     strides = _strides;
     weights = empty(0, default_dtype,
-                    TensorShape({_output_channels, _input_channels,
+                    TensorShape({output_channels, input_channels,
                                  _kernel_size[0], _kernel_size[1]}));
     weights.requires_grad = true;
     weights = initializers::kaiming_uniform(weights);
     register_param(weights);
     padding_mode = _padding_mode;
     if (_bias) {
-        biases = zeros(TensorShape({_output_channels}), default_dtype);
+        biases = zeros(TensorShape({output_channels}), default_dtype);
         biases.requires_grad = true;
         register_param(biases);
     }
@@ -47,47 +50,29 @@ void Conv2D::set_biases(Tensor& new_biases) {
 
 Tensor Conv2D::forward(Tensor& input) {
 #ifdef MKLDNN
-    std::vector<long> padding;
     std::vector<long> padding_r;
     std::vector<long> padding_l;
-    long new_width, new_height;
+
+    auto nh_nw = calculate_nh_nw(input.get_shape(), weights.get_shape(),
+                                 strides, padding_mode);
+    auto new_height = nh_nw[0];
+    auto new_width = nh_nw[1];
+
     if (padding_mode == "same") {
-        long total_height_p = 1 * (weights.get_shape().shape[2] - 1);
-        long top_pad = total_height_p / 2;
-        long bottom_pad = total_height_p - top_pad;
-
-        long total_width_p = 1 * (weights.get_shape().shape[3] - 1);
-        long left_pad = total_width_p / 2;
-        long right_pad = total_height_p - top_pad;
-
-        padding_l.push_back(top_pad);
-        padding_l.push_back(left_pad);
-
-        padding_r.push_back(bottom_pad);
-        padding_r.push_back(right_pad);
-
-        new_width = input.get_shape()[3];
-        new_height = input.get_shape()[2];
+        auto padding = calc_2d_same_padding(weights.get_shape());
+        padding_l = padding[0];
+        padding_r = padding[1];
     } else {
-        padding_r = {0, 0};
         padding_l = {0, 0};
-
-        long k_h = weights.get_shape()[2];
-        long k_w = weights.get_shape()[3];
-
-        new_height = (input.get_shape()[2] - (k_h)) / strides[0] + 1;
-        new_width = (input.get_shape()[3] - (k_w)) / strides[1] + 1;
-
+        padding_r = {0, 0};
     }
 
     long _batch_size = input.get_shape().shape[0];
 
-    // if (_batch_size != batch_size) {
     batch_size = _batch_size;
     TensorShape output_shape = TensorShape(
         {batch_size, weights.get_shape()[0], new_height, new_width});
 
-    // Tensor Tdest = zeros(output_shape, Dtype::sFloat32);
     Tensor Tdest = empty(0, Dtype::sFloat32, output_shape);
 
     if (use_bias) {
@@ -118,7 +103,7 @@ Tensor Conv2D::forward(Tensor& input) {
     return Tdest;
 
 #endif
-    return ops::conv2d(input, weights, strides);
+    return ops::conv2d(input, weights, strides, padding_mode);
 }
 
 }  // namespace modules

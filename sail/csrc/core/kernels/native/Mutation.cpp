@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Mutation.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -6,6 +8,7 @@
 #include "kernels/dispatch.h"
 #include "kernels/native/loops.h"
 #include "tensor_shape.h"
+#include "utils.h"
 
 namespace sail {
 
@@ -22,7 +25,8 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
     std::vector<long> combined = check.shape;
     Dtype dt = tensors[0].get_dtype();
     combined[axis] = 0;
-    for (int i = 0; i < tensors.size(); i++) {
+
+    for (auto i : sail::irange(0, (int)tensors.size())) {
         if (tensors[i].get_ndim() != ndim) {
             THROW_ERROR_DETAILED(DimensionError,
                                  "Number of dimensions must match");
@@ -48,20 +52,16 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
 
     Tensor out = empty(0, dt, TensorShape(combined));
 
-    dispatch_all_types(out.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(out.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         long outer = out.numel() /
                      (out.get_shape()[axis] * out.get_shape().strides[axis]);
         T* result_ptr = (T*)(out.get_data());
 
         for (int i = 0; i < outer; i++) {
-            for (Tensor t : tensors) {
-                // MultiTensorIterator inner_iter =
-                //     MultiTensorIterator(t.get_shape());
+            for (const auto& t : tensors) {
                 int64_t local_inner =
-                    t.get_shape()[axis] *
-                    t.get_shape()
-                        .strides[axis];  // inner_iter.inner_loop_size();
+                    t.get_shape()[axis] * t.get_shape().strides[axis];
                 T* input_ptr = (T*)(t.get_data()) + i * local_inner;
                 int64_t d = 0;
                 for (; d < local_inner; d++) {
@@ -77,12 +77,10 @@ Tensor cat_kernel(std::vector<Tensor> tensors, const int axis, const int cat) {
 Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
     SAIL_CHECK(tensors.size() > 1, "Must pass more than one tensor");
 
-    int ndim = tensors[0].get_ndim();
-
     TensorShape check = tensors[0].get_shape();
     std::vector<long> combined = check.shape;
     Dtype dt = tensors[0].get_dtype();
-    for (int i = 0; i < tensors.size(); i++) {
+    for (auto i : sail::irange(0, (int)tensors.size())) {
         if (tensors[i].is_view()) {
             tensors[i] = clone(tensors[i]);
         }
@@ -97,18 +95,17 @@ Tensor stack_kernel(std::vector<Tensor> tensors, const int axis) {
     TensorShape x = TensorShape(combined);
     Tensor out = empty(0, dt, x);
 
-    dispatch_all_types(out.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(out.get_dtype(), [&](auto pt) {
         using T = typename decltype(pt)::type;
         long outer = out.numel() /
                      (out.get_shape()[axis] * out.get_shape().strides[axis]);
         T* result_ptr = (T*)(out.get_data());
 
         for (int i = 0; i < outer; i++) {
-            for (Tensor t : tensors) {
+            for (const auto& t : tensors) {
                 TensorShape x = t.get_shape();
                 x.insert_one(axis);
-                int64_t local_inner =
-                    x[axis] * x.strides[axis];  // inner_iter.inner_loop_size();
+                int64_t local_inner = x[axis] * x.strides[axis];
                 T* input_ptr = (T*)(t.get_data()) + i * local_inner;
                 int64_t d = 0;
                 for (; d < local_inner; d++) {

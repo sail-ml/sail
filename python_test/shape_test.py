@@ -179,21 +179,18 @@ class SqueezeTest(UnitTest):
                 z += 1
         return
 
-    def test_base(self):
+    def test_error(self):
         x = sail.random.uniform(0, 1, (3, 2, 3, 1))
-        try:
-            sail.squeeze(x, -2)
-        except sail.SailError:
-            self.assert_eq(True, True)
+
+        self.assert_throws(sail.squeeze, (x, -2), sail.DimensionError)
 
         x = sail.random.uniform(0, 1, (3, 2, 30, 1))
-        try:
-            x = sail.squeeze(x, -1)
-            sail.squeeze(x, -1)
-        except sail.SailError:
-            self.assert_eq(True, True)
-        
-    
+        x = sail.squeeze(x, -1)
+        self.assert_throws(sail.squeeze, (x, -1), sail.DimensionError)
+
+        x = sail.random.uniform(0, 1, (3, 2, 30, 1))
+        self.assert_throws(sail.squeeze, (x, 10), sail.DimensionError)
+
 class TransposeTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -278,6 +275,14 @@ class RollaxisTest(UnitTest):
         self.assert_eq_np_sail(b_np, b)
         self.assert_eq(b_np.shape, b.shape)
 
+    def test_error(self):
+        a = sail.random.uniform(0, 1, (10, 20, 30))
+
+        self.assert_throws(sail.rollaxis, (a, -10, 2), sail.SailError)
+        self.assert_throws(sail.rollaxis, (a, 10, 2), sail.SailError)
+        self.assert_throws(sail.rollaxis, (a, 1, -10), sail.SailError)
+        self.assert_throws(sail.rollaxis, (a, 1, 10), sail.SailError)
+
 class MoveaxisTest(UnitTest):
 
     # UnitTest._test_registry.append(AddTest)
@@ -309,3 +314,11 @@ class MoveaxisTest(UnitTest):
 
         self.assert_eq_np_sail(b_np, b)
         self.assert_eq(b_np.shape, b.shape)
+
+    def test_error(self):
+        a = sail.random.uniform(0, 1, (10, 20, 30))
+
+        self.assert_throws(sail.moveaxis, (a, -10, 2), sail.SailError)
+        self.assert_throws(sail.moveaxis, (a, 10, 2), sail.SailError)
+        self.assert_throws(sail.moveaxis, (a, 1, -10), sail.SailError)
+        self.assert_throws(sail.moveaxis, (a, 1, 10), sail.SailError)

@@ -31,7 +31,20 @@ TensorVector Log::backward(Tensor& grad) {
 Tensor Pow::forward(TensorVector inputs) {
     return ops::power(inputs[0], inputs[1]);
 }
-TensorVector Pow::backward(Tensor& grad) { throw SailCError("Not yet"); }
+TensorVector Pow::backward(Tensor& grad) {
+    Tensor x0 = Function::arg_storage[0];
+    Tensor x1 = Function::arg_storage[1];
+
+    auto g0 = x1 * (ops::power(x0, x1 - 1)) * grad;
+    auto g1 = ops::log(x0) * ops::power(x0, x1) * grad;
+
+    auto g01 = ops::broadcast_to(g0, TensorShape(x0.get_shape().shape));
+    auto g11 = ops::broadcast_to(g1, TensorShape(x1.get_shape().shape));
+
+    std::vector<Tensor> o = {clone(g01), clone(g11)};
+
+    return o;
+}
 
 }  // namespace autograd
 }  // namespace sail

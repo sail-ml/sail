@@ -1,7 +1,9 @@
 import unittest
 import numpy as np
-import sail
+import sail, random
 import time, traceback
+from multiprocessing.pool import ThreadPool
+
 # import tracemalloc
 # tracemalloc.start(10)
 
@@ -116,15 +118,22 @@ def dtype_decorator(func):
                 func(self, args[i], args[j])
     return wrapper
 
+def run(c):
+    c.run()
+
 class UnitTest():
 
     @staticmethod
     def execute():
         e_code = 0
-        for C in UnitTest.__subclasses__():
-            c = C()
-            c.run()
-        
+        classes = UnitTest.__subclasses__()
+        classes = [C() for C in classes]
+        # random.shuffle(classes)
+        # p = ThreadPool(8)
+        # xs = p.map(run, classes)
+        # p.close()
+        [c.run() for c in classes]
+
         if RunCounter.global_failures != 0:
             e_code = 1
             print ("Errors: ")
@@ -179,15 +188,26 @@ class UnitTest():
         assert a
 
     @assertion
+    def assert_np_array_equal(self, arr1, arr2):
+        assert (np.array_equal(arr1, arr2)), (arr1, arr2)
+
+    @assertion
+    def assert_throws(self, call, args, error):
+        try:
+            call(*args)
+        except Exception as e:
+            assert(e.__class__.__name__, error().__class__.__name__)
+
+
     def assert_eq_np(self, arr1, arr2, eps=None):
         # print (np.array_equal(np_arr, sail_np))
         if (eps):
             diff = abs(arr1 - arr2)
-            md = np.max(diff)
+            md = np.nanmax(diff)
             self.assert_lt(md, eps)
             return
         
-        assert (np.array_equal(arr1, arr2)), (arr1, arr2)
+        self.assert_np_array_equal(arr1, arr2)
 
     @assertion
     def assert_neq_np(self, arr1, arr2, eps=None):
@@ -195,9 +215,20 @@ class UnitTest():
         
         assert (not np.array_equal(arr1, arr2)), (arr1, arr2)
 
-    @assertion
     def assert_eq_np_sail(self, np_arr, sail_arr, eps=None):
         sail_np = sail_arr.numpy()
+        try:
+            sail_np[sail_np == -np.inf] = 0
+            sail_np[sail_np == np.inf] = 0
+            sail_np[sail_np == np.nan] = 0
+            sail_np[sail_np == -np.nan] = 0
+            np_arr[np_arr == -np.inf] = 0
+            np_arr[np_arr == np.inf] = 0
+            np_arr[np_arr == np.nan] = 0
+            np_arr[np_arr == -np.nan] = 0
+        except:
+            pass
+
         self.assert_eq_np(np_arr, sail_np, eps=eps)
 
     def run(self):

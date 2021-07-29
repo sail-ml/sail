@@ -1,3 +1,4 @@
+// allow-no-source
 #pragma once
 #include "Tensor.h"
 #include "dtypes.h"
@@ -13,7 +14,7 @@ class Module {
    public:
     TensorVector params;
 
-    virtual explicit Module(){};
+    explicit Module() = default;
     virtual void forward(){};
 
     void register_param(Tensor& t) {
@@ -21,7 +22,7 @@ class Module {
         params.push_back(t);
     }
     void register_params(TensorVector& p) {
-        for (Tensor t : p) {
+        for (const auto& t : p) {
             params.push_back(t);
         }
     }

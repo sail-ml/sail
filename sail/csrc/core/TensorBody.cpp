@@ -8,26 +8,16 @@
 namespace sail {
 
 TensorBody::TensorBody(void* _data, Dtype _dtype, TensorShape _shape,
-                       bool _view = false)
+                       bool _view)
     : data(_data),
       dtype(_dtype),
-      // shape(_shape),
       shape(new TensorShape(_shape)),
       view(_view),
       info(getAlignment(_dtype)),
       refcount_(0){};
-// TensorBody::TensorBody(void*& _data, Dtype& _dtype, TensorShape& _shape,
-//                        bool& _view)
-//     : data(_data),
-//       dtype(_dtype),
-//       // shape(_shape),
-//       shape(new TensorShape(_shape)),
-//       view(_view),
-//       info(getAlignment(_dtype)),
-//       refcount_(0){};
-TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view = false) {
+
+TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view) {
     dtype = _dtype;
-    // shape = _shape;
     shape = new TensorShape(_shape);
     info = getAlignment(_dtype);
     refcount_ = 0;
@@ -35,47 +25,27 @@ TensorBody::TensorBody(Dtype _dtype, TensorShape _shape, bool _view = false) {
     data = _malloc_align(shape->numel(), info.alignment, info.dtype_size);
 };
 
-TensorBody::pointer TensorBody::create_owner() {
-    void* _data = data;
-    TensorBody::pointer a = new TensorBody(data, dtype, get_shape(), view);
-    int temp_ref = get_ref_count();
-    refcount_ = a->get_ref_count();  // a->refcount_;
-    a->refcount_ = temp_ref;
-    return a;
-}
-
 TensorBody::~TensorBody() {
-    if (data != 0) {
+    if (data != nullptr) {
         if (!view) {
-            //  #if defined(_ISOC11_SOURCE)
-            std::free(data);
-            // #else
-            // _aligned_free(data);
-            // std::free(data);
-            // #endif
+            std::free(data);  // NOLINT
         }
         delete shape;
         if (_has_grad) {
             delete grad;
         }
 
-        data = 0;
-        shape = NULL;
-        grad = NULL;
+        data = nullptr;
+        shape = nullptr;
+        grad = nullptr;
     }
 }
 
 void TensorBody::set_grad(Tensor& t) {
-    // Tensor b = clone
     if (t.is_view()) {
         t = clone(t);
         grad = new Tensor(t.get_body(), t.requires_grad);
     } else {
-        // void* _data =
-        //     _realloc_align(t.get_data(), t.numel(), t.get_info().alignment,
-        //                 t.get_info().dtype_size);
-        // TensorBody::pointer a =
-        //     new TensorBody(t.get_data(), dtype, t.get_shape(), t.is_view());
         grad = new Tensor(t.get_body(), t.requires_grad);
     }
     _has_grad = true;
@@ -87,10 +57,27 @@ void TensorBody::clear_grad() {
     _has_grad = false;
 }
 
-// void* TensorBody::get_data() { return data; }
-// Dtype TensorBody::get_dtype() { return dtype; }
-// TensorShape TensorBody::get_shape() { return *shape; }
-// alignemnt_information TensorBody::get_info() { return info; }
-// bool TensorBody::is_view() { return view; }
+void* TensorBody::get_data() { return data; }
+Dtype TensorBody::get_dtype() { return dtype; }
+TensorShape TensorBody::get_shape() { return *shape; }
+alignemnt_information TensorBody::get_info() { return info; }
+bool TensorBody::is_view() { return view; }
+bool TensorBody::has_grad() { return _has_grad; }
+void TensorBody::set_is_view(bool x) { view = x; }
+
+int TensorBody::get_ref_count() { return (int)refcount_; }
+void TensorBody::force_incref() {
+    refcount_.fetch_add(1, std::memory_order_relaxed);
+}
+void TensorBody::force_decref() {
+    refcount_.fetch_sub(1, std::memory_order_release);
+}
+
+void TensorBody::set_shape(const TensorShape& s) {
+    delete shape;
+    shape = new TensorShape(s.shape, s.strides);
+}
+
+long int* TensorBody::get_shape_ptr() { return shape->get_shape_ptr(); }
 
 }  // namespace sail

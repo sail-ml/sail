@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -170,7 +172,7 @@ class Conv2DBackwardDataFactory
         src = input_tensor;
 
         std::string key = p.get_key_backward_data();
-        prim = get(key);
+        prim = static_cast<OneDNNConv2DBackwardData*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNConv2DBackwardData(p);
             prim->initialize();

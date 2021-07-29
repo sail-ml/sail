@@ -1,3 +1,5 @@
+// allow-no-header
+
 #include "kernels/Optimizer.h"
 #include "Tensor.h"
 #include "dtypes.h"
@@ -12,7 +14,7 @@ namespace internal {
 namespace {
 
 void sgd_update_kernel(Tensor& t1, Tensor& grad, const float learning_rate) {
-    dispatch_all_types(t1.get_dtype(), [&](auto pt) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         SAIL_CHECK_LINE(t1.is_view() == false, "parameter must not be a view");
         using DtypeType = decltype(pt);
         using T = typename DtypeType::type;

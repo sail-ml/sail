@@ -5,9 +5,10 @@ import time
 import unittest
 import faulthandler
 
-import init_test
 import basic_ops_test
 import loss_test
+import compare_test 
+import init_test
 import shape_test
 import linalg_test
 import layer_test
@@ -16,8 +17,10 @@ import factory_test
 import cat_test 
 import cast_test 
 import print_test
+import pad_test
 
 import integration_tests.basic_mlp
+import integration_tests.basic_cnn
 import integration_tests.integration_test1
 
 if __name__ == "__main__":

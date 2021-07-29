@@ -20,8 +20,12 @@ TensorVector ClipMinOnly::backward(Tensor& grad) {
     Tensor cond_check =
         from_data((void*)(&min), grad.get_dtype(), TensorShape({1}));
     Tensor cond = ops::elementwise_lte(cond_check, Function::arg_storage[0]);
+
     return {grad * cond};
 }
+
+Tensor Negate::forward(TensorVector inputs) { return ops::negate(inputs[0]); }
+TensorVector Negate::backward(Tensor& grad) { return {-grad}; }
 
 Tensor Clip::forward(TensorVector inputs) {
     return ops::clip(inputs[0], min, max);

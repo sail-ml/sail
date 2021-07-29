@@ -1,3 +1,5 @@
+// allow-no-source
+
 #pragma once
 
 #include <dnnl.hpp>
@@ -11,7 +13,6 @@ using dt = memory::data_type;
 namespace sail {
 
 namespace onednn {
-// inline unsigned char* DummyData = nullptr;
 
 class OneDNNReorder : public Primitive {
    public:
@@ -48,8 +49,6 @@ class OneDNNReorder : public Primitive {
         memory::dims to_dims(to_desc.dims, &to_desc.dims[to_desc.ndims]);
         auto from_strides = from_desc.format_desc.blocking.strides;
 
-        // As DNNL memory desc has C style array and only init the used
-        // part, so need use the valid part as key.
         auto from_inner_nblks = from_desc.format_desc.blocking.inner_nblks;
         auto from_inner_blks = from_desc.format_desc.blocking.inner_blks;
         auto from_inner_idxs = from_desc.format_desc.blocking.inner_idxs;
@@ -90,24 +89,20 @@ class OneDNNReorder : public Primitive {
 
         return keygen.get_key();
     }
-
-    // std::shared_ptr<dnnl::stream> GetStream() { return stream_; }
 };
 
 class ReorderFactory : public PrimitiveFactory<OneDNNReorder> {
    public:
     OneDNNReorder* prim;
     ReorderFactory(const memory* from, const memory* to) {
-        // auto p = OneDNNReorder(from, to);
         std::string key = OneDNNReorder::get_key(from, to);
-        prim = get(key);
+        prim = static_cast<OneDNNReorder*>(get(key));
         if (prim == nullptr) {
             prim = new OneDNNReorder(from, to);
 
             add(key, prim);
         }
         prim->SetMemory(from, to);
-        // std::cout << ((float*)(to->get_data_handle()))[0] << std::endl;
     }
 
     std::shared_ptr<primitive> GetPrimitive() { return prim->GetPrimitive(); }

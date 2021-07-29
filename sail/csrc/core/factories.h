@@ -19,21 +19,13 @@ Tensor make_view(void* data, Dtype dt, TensorShape shape);
 Tensor make_view(const Tensor& t);
 Tensor copy(Tensor t);
 Tensor clone(const Tensor& t);
-Tensor clone_to(const Tensor& t, TensorShape shape);
 Tensor one_hot(const Tensor& t, const int size, Dtype dt = Dtype::sInt32);
 
 Tensor as_strided(const Tensor& t, TensorShape s);
 
-// template <typename T>
-// Tensor from_single_value(T value, Dtype dt);
-// Tensor empty_like(int ndims, void* data, Dtype dt, TensorSize strides,
-// TensorSize shape);
-
-Tensor empty_scalar(Dtype dt);
 Tensor one_scalar(Dtype dt);
 
 Tensor from_data(void* data, Dtype dt, TensorShape s);
-Tensor from_data_no_realloc(void* data, Dtype dt, TensorShape s);
 
 Tensor zeros(TensorShape size, Dtype dt);
 Tensor ones(TensorShape size, Dtype dt);
