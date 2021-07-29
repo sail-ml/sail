@@ -161,7 +161,8 @@ PyMODINIT_FUNC PyInit_libsail(void) {
     PyModule_AddFunctions(m, SailOpsMethods);
 
     PyObject *item;
-    PyObject *sys_modules = PyThreadState_GET()->interp->modules;
+    PyObject *sys_modules =
+        PyImport_GetModuleDict();  // PyThreadState_GET()->interp->modules;
 
     PyModule_AddObject(m, "init", (item = PyInit_sail_init()));
     PyDict_SetItemString(sys_modules, "libsail.init", item);
