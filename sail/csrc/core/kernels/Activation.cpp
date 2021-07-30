@@ -5,6 +5,7 @@ namespace sail {
 
 namespace internal {
 
+DEFINE_DISPATCH(tanh_stub);
 DEFINE_DISPATCH(softmax_stub);
 DEFINE_DISPATCH(sigmoid_stub);
 DEFINE_DISPATCH(sigmoid_backward_stub);

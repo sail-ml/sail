@@ -123,3 +123,8 @@ Softmax:
     signature: (int axis=1)
   forward:
     signature: (Tensor x1)
+Tanh:
+  init:
+    signature: ()
+  forward:
+    signature: (Tensor x1)

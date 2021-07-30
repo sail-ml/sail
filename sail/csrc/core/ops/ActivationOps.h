@@ -8,6 +8,7 @@ namespace sail {
 
 namespace ops {
 
+Tensor tanh(const Tensor& tensor1);
 Tensor relu(const Tensor& tensor1);
 Tensor softmax(Tensor& tensor1, const int axis = 1);
 Tensor log_softmax(Tensor& tensor1, const int axis = 1);

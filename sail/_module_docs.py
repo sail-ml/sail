@@ -91,3 +91,12 @@ Applies the relu function to the input data
     \text{ReLU}(x) = \max(0, \text{x})
 
 """)
+
+add_docstring_class("Tanh", r"""
+sail.modules.Tanh()
+Applies the tanh function to the input data
+
+.. math::
+    \text{out} = \text{tanh}(x)
+
+""")

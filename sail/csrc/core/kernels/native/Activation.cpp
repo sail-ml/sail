@@ -13,6 +13,21 @@ namespace internal {
 
 namespace {
 
+void tanh_kernel(const Tensor& t1, Tensor& out) {
+    dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
+        using DtypeType = decltype(pt);
+        using T = typename DtypeType::type;
+
+        struct Impl {
+            T one = (T)1;
+            inline void call_base(T x1, T& out) {
+                out = (T)std::tanh((double)x1);
+            }
+        };
+        native::UnaryElementwise<T>(Impl{}, t1, out);
+    });
+}
+
 void sigmoid_kernel(const Tensor& t1, Tensor& out) {
     dispatch_all_numeric_types(t1.get_dtype(), [&](auto pt) {
         using DtypeType = decltype(pt);
@@ -134,6 +149,7 @@ void softmax_mul_sum_kernel(Tensor& t1, Tensor& targets, Tensor& out_tensor) {
     });
 }
 }  // namespace
+REGISTER_ONLY_NATIVE_DISPATCH(tanh_stub, &tanh_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(softmax_stub, &softmax_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(sigmoid_stub, &sigmoid_kernel);
 REGISTER_ONLY_NATIVE_DISPATCH(sigmoid_backward_stub, &sigmoid_backward_kernel);
