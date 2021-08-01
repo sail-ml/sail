@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 # parameters
-epochs = 100
+epochs = 10000
 batch_size = 64
 learning_rate = 1e-4
 

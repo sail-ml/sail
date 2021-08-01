@@ -54,5 +54,16 @@ TensorVector ReLU::backward(Tensor& grad) {
     return {grad * cond};
 }
 
+Tensor Tanh::forward(TensorVector inputs) {
+    Tensor result = ops::tanh(inputs[0]);
+    storage = make_view(result);
+    return result;
+}
+TensorVector Tanh::backward(Tensor& grad) {
+    auto sq = storage * storage;
+    Tensor v = 1 - sq;
+    return {grad * v};
+}
+
 }  // namespace autograd
 }  // namespace sail

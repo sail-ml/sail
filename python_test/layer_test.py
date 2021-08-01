@@ -212,3 +212,31 @@ class MaxPool2D(UnitTest):
         lay = sail.modules.MaxPool2D(2, padding_mode="same")
         self.assert_throws(lay, (img, ), sail.SailError)
        
+
+class Tanh(UnitTest):
+
+    def test(self):
+        input_values = sail.random.uniform(-2, 2, (10, 10))
+        layer = sail.modules.Tanh()
+        out = layer.forward(input_values)
+        
+        out_np = np.tanh(input_values.numpy())
+        self.assert_eq_np_sail(out_np, out, eps=1e-3)
+
+    def test_grad(self):
+        def forward(a):
+            c = sail.modules.Tanh()(a)
+            d = sail.sum(c)
+            return d
+
+        for c in [(3, 3), (12, 18), (2, 33), (32, 64)]:
+            
+            arr1 = np.random.uniform(-1, 1, (c))
+            
+            dic = {
+                "a": arr1,
+            }
+
+            self.assert_true(check_gradients_vector(forward, dic, rtol=1e-2, atol=1e-4, eps=1e-8))
+
+        return

@@ -16,7 +16,15 @@ namespace ops {
 using TensorVector = std::vector<Tensor>;
 
 Tensor tanh(const Tensor& tensor1) {
-    auto empty_tensor = empty_like(tensor1);
+    Tensor empty_tensor;
+    if (tensor1.requires_grad) {
+        TensorVector vec;
+        vec.emplace_back(tensor1);
+        empty_tensor = (new autograd::Tanh())->apply(vec);
+        return empty_tensor;
+    }
+
+    empty_tensor = empty_like(tensor1);
     sail::internal::tanh_stub(tensor1, empty_tensor);
     return empty_tensor;
 }

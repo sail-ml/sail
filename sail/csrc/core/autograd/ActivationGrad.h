@@ -39,5 +39,14 @@ class ReLU : public Function {
     TensorVector backward(Tensor& grad) override;
 };
 
+class Tanh : public Function {
+   public:
+    Tensor storage;
+    explicit Tanh() = default;
+    ~Tanh() override = default;
+    Tensor forward(TensorVector inputs) override;
+    TensorVector backward(Tensor& grad) override;
+};
+
 }  // namespace autograd
 }  // namespace sail
